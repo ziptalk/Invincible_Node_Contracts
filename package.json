@@ -1,0 +1,23 @@
+{
+  "name": "invincible_node_contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziptalk/Invincible_Node_Contracts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziptalk/Invincible_Node_Contracts/issues"
+  },
+  "homepage": "https://github.com/ziptalk/Invincible_Node_Contracts#readme",
+  "devDependencies": {
+    "hardhat": "^2.13.0"
+  }
+}
