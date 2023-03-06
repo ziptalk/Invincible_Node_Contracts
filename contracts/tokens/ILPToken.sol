@@ -3,10 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract ERCToekn is ERC20 {
+string constant ILP_TOKEN_FULL_NAME = "Invi Liquidity Provider Token";
+string constant ILP_TOKEN_NAME = "ILP";
+
+contract ILPToken is ERC20 {
+
     address public owner;
 
-    constructor(string memory _tokenFullName, string memory _tokenName) ERC20( _tokenFullName, _tokenName) {
+    constructor() ERC20(ILP_TOKEN_FULL_NAME, ILP_TOKEN_NAME) {
         owner = msg.sender;
     }
 
