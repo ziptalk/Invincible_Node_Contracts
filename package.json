@@ -19,5 +19,11 @@
   "homepage": "https://github.com/ziptalk/Invincible_Node_Contracts#readme",
   "devDependencies": {
     "hardhat": "^2.13.0"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "chai": "^4.3.7"
   }
 }
