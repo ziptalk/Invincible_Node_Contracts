@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ERCToekn is ERC20 {
-    address owner;
+    address public owner;
 
     constructor(string memory _tokenFullName, string memory _tokenName) ERC20( _tokenFullName, _tokenName) {
         owner = msg.sender;
@@ -15,7 +15,7 @@ contract ERCToekn is ERC20 {
         _;
     }
 
-    function getOwner(address _account) onlyOwner external  {
+    function setOwner(address _account) onlyOwner external {
         owner = _account;
     }
     
