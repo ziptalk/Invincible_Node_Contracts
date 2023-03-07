@@ -25,6 +25,8 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@openzeppelin/contracts": "^4.8.2",
-    "chai": "^4.3.7"
+    "chai": "^4.3.7",
+    "dotenv": "^16.0.3",
+    "web3": "^1.8.2"
   }
 }

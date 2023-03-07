@@ -1,17 +1,42 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "./interfaces/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract InviTokenStake is ReentrancyGuard {
-    IERC20 public inviToken;
+import "./interfaces/IERC20.sol";
+import "./lib/AddAddress.sol";
 
+contract InviTokenStake is ReentrancyGuard {
+    using AddAddress for address[];
+
+    IERC20 public inviToken;
+    address public owner;
+
+    // stake status
     mapping(address => uint) public stakedAmount;
+    mapping(address => uint) public rewardAmount;
     uint public totalStakedAmount;
+
+    // addresses status
+    address[] public addressList;
+    uint public totalAddressNumber;
 
     constructor(address _invi) {
         inviToken = IERC20(_invi);
+        owner = msg.sender;
+    }
+
+    receive() external payable {
+
+    }
+    fallback() external payable {
+        // update reward when receive native coin
+        _updateReward(msg.value);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "not authorized");
+        _;
     }
     
     // stake inviToken
@@ -22,6 +47,9 @@ contract InviTokenStake is ReentrancyGuard {
         stakedAmount[msg.sender] += _stakeAmount;
         totalStakedAmount += _stakeAmount;
 
+        // add address to address list if new address
+        addressList.addAddress(msg.sender);
+        totalAddressNumber = addressList.length;
 
     }
 
@@ -34,8 +62,25 @@ contract InviTokenStake is ReentrancyGuard {
         require(inviToken.transfer(msg.sender, _unstakeAmount));
     }
 
-    // split rewards
-    function splitRewards() public returns (bool) {
+    // update rewards
+    function _updateReward(uint256 _totalRewardAmount) private {
+        for (uint256 i = 0; i < addressList.length; i++) {
+            _updateAccountReward(addressList[i], _totalRewardAmount);
+        }
+    }
+    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+        // get Account reward 
+        uint256 accountReward = _totalRewardAmount * stakedAmount[_account] / totalStakedAmount;
         
+        // update account reward
+        rewardAmount[_account] += accountReward;
+    }
+
+    // user receive reward(native coin) function
+    function receiveReward() public nonReentrant{
+        require(rewardAmount[msg.sender] != 0, "no rewards available for this user");
+        rewardAmount[msg.sender] = 0;
+
+        require(inviToken.transfer(msg.sender, rewardAmount[msg.sender]), "transfer error");
     }
 }
