@@ -6,11 +6,11 @@ import "./interfaces/IERC20.sol";
 import "./lib/AddAddress.sol";
 
 contract LiquidityProviderPool is ReentrancyGuard {
+     using AddAddress for address[];
+
     
     IERC20 public iLP;
-    address constant public LP_MANAGER = 0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E;
-    address public coreContract = ;
-    address 
+    address constant public LP_MANAGER = 0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E; 
 
     // lp status
     mapping(address => uint) public stakedAmount;

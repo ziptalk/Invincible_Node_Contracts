@@ -7,7 +7,7 @@ import "./interfaces/IERC20.sol";
 import "./lib/AddAddress.sol";
 
 contract InviTokenStake is ReentrancyGuard {
-    using AddressUtils for address[];
+    using AddAddress for address[];
 
     IERC20 public inviToken;
     address public owner;
@@ -65,7 +65,7 @@ contract InviTokenStake is ReentrancyGuard {
     // update rewards
     function _updateReward(uint256 _totalRewardAmount) private {
         for (uint256 i = 0; i < addressList.length; i++) {
-            updateAccountReward(addressList[i], _totalRewardAmount);
+            _updateAccountReward(addressList[i], _totalRewardAmount);
         }
     }
     function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
