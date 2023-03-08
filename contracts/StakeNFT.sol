@@ -3,8 +3,9 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./lib/Structs.sol";
 
-contract StakingNFT is ERC721 {
+contract StakeNFT is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -31,17 +32,17 @@ contract StakingNFT is ERC721 {
     }
 
     // only owner can mint NFT
-    function mintNFT(address _recipient, uint _principal, uint _lockPeriod, uint _expectedReward) public onlyOwner returns (uint) {
+    function mintNFT(StakeInfo memory _stakeInfo) public onlyOwner returns (uint) {
         
         uint newItemId = _tokenIds.current();
-        _mint(_recipient, newItemId);
+        _mint(_stakeInfo.user, newItemId);
 
         // 임시로 설정
-        principal[newItemId] = _principal;
-        lockPeriod[newItemId] = _lockPeriod;
+        principal[newItemId] = _stakeInfo.principal;
+        lockPeriod[newItemId] = _stakeInfo.lockPeriod;
         lockStart[newItemId] = block.timestamp;
-        lockUntil[newItemId] = block.timestamp + _lockPeriod;
-        expectedReward[newItemId] = _expectedReward;
+        lockUntil[newItemId] = block.timestamp + _stakeInfo.lockPeriod;
+        expectedReward[newItemId] = _stakeInfo.expectedReward;
 
          _tokenIds.increment();
         return newItemId;
