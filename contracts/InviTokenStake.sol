@@ -2,15 +2,19 @@
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC20.sol";
 import "./lib/AddAddress.sol";
 
-contract InviTokenStake is ReentrancyGuard {
+contract InviTokenStake is ReentrancyGuard, Initializable {
     using AddAddress for address[];
+    // using AddAddress for address;
 
     IERC20 public inviToken;
     address public owner;
+
+    address public test;
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -21,7 +25,11 @@ contract InviTokenStake is ReentrancyGuard {
     address[] public addressList;
     uint public totalAddressNumber;
 
-    constructor(address _invi) {
+    // constructor(address _invi) {
+    //     inviToken = IERC20(_invi);
+    //     owner = msg.sender;
+    // }
+    function initialize(address _invi) public initializer {
         inviToken = IERC20(_invi);
         owner = msg.sender;
     }
@@ -51,6 +59,9 @@ contract InviTokenStake is ReentrancyGuard {
         addressList.addAddress(msg.sender);
         totalAddressNumber = addressList.length;
 
+
+        // test.addressPlay(temp);
+
     }
 
     // unstake inviToken
@@ -79,8 +90,7 @@ contract InviTokenStake is ReentrancyGuard {
     // user receive reward(native coin) function
     function receiveReward() public nonReentrant{
         require(rewardAmount[msg.sender] != 0, "no rewards available for this user");
-        rewardAmount[msg.sender] = 0;
-
+        rewardAmount[msg.sender] = 0;  
         require(inviToken.transfer(msg.sender, rewardAmount[msg.sender]), "transfer error");
     }
 }
