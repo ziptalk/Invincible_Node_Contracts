@@ -5,7 +5,6 @@ import "dotenv/config";
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;
 const config: HardhatUserConfig = {
   solidity: "0.8.18",
-  defaultNetwork: "goerli",
   paths: {
     artifacts: "./artifacts",
   },
