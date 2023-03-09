@@ -4,6 +4,7 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./lib/Structs.sol";
+import "hardhat/console.sol";
 
 contract StakeNFT is ERC721 {
     using Counters for Counters.Counter;
@@ -23,17 +24,17 @@ contract StakeNFT is ERC721 {
     }
 
     modifier onlyOwner {
+        console.log(msg.sender);
         require(msg.sender == owner, "not authorized");
         _;
     }
 
-    function switchOwner(address _newOwner) public onlyOwner {
+    function setOwner(address _newOwner) public onlyOwner {
         owner = _newOwner;
     }
 
     // only owner can mint NFT
     function mintNFT(StakeInfo memory _stakeInfo) public onlyOwner returns (uint) {
-        
         uint newItemId = _tokenIds.current();
         _mint(_stakeInfo.user, newItemId);
 
