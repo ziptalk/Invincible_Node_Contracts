@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import "@openzeppelin/hardhat-upgrades";
 import "dotenv/config";
 
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;

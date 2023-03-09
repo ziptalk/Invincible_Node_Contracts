@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC20.sol";
-import "./lib/AddAddress.sol";
+import "./lib/AddressUtils.sol";
 
-contract InviTokenStake is ReentrancyGuard {
-    using AddAddress for address[];
+address constant STAKE_MANAGER = 0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE;
+
+contract InviTokenStake is Initializable {
+    // using AddAddress for address;
 
     IERC20 public inviToken;
+    
     address public owner;
+  
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -21,17 +25,14 @@ contract InviTokenStake is ReentrancyGuard {
     address[] public addressList;
     uint public totalAddressNumber;
 
-    constructor(address _invi) {
+ 
+    function initialize(address _invi) public initializer {
         inviToken = IERC20(_invi);
         owner = msg.sender;
     }
 
     receive() external payable {
-
-    }
-    fallback() external payable {
-        // update reward when receive native coin
-        _updateReward(msg.value);
+       
     }
 
     modifier onlyOwner() {
@@ -48,9 +49,8 @@ contract InviTokenStake is ReentrancyGuard {
         totalStakedAmount += _stakeAmount;
 
         // add address to address list if new address
-        addressList.addAddress(msg.sender);
+        addAddress(addressList, msg.sender);
         totalAddressNumber = addressList.length;
-
     }
 
     // unstake inviToken
@@ -63,9 +63,10 @@ contract InviTokenStake is ReentrancyGuard {
     }
 
     // update rewards
-    function _updateReward(uint256 _totalRewardAmount) private {
+    function updateReward() public payable {
+        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
-            _updateAccountReward(addressList[i], _totalRewardAmount);
+            _updateAccountReward(addressList[i], msg.value);
         }
     }
     function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
@@ -77,10 +78,9 @@ contract InviTokenStake is ReentrancyGuard {
     }
 
     // user receive reward(native coin) function
-    function receiveReward() public nonReentrant{
+    function receiveReward() public {
         require(rewardAmount[msg.sender] != 0, "no rewards available for this user");
-        rewardAmount[msg.sender] = 0;
-
-        require(inviToken.transfer(msg.sender, rewardAmount[msg.sender]), "transfer error");
+        rewardAmount[msg.sender] = 0;  
+        
     }
 }

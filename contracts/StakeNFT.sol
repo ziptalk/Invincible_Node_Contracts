@@ -1,51 +1,60 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./lib/Structs.sol";
+import "./lib/ArrayUtils.sol";
 import "hardhat/console.sol";
 
-contract StakeNFT is ERC721 {
+
+contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+    string private _name;
+    string private _symbol;
 
-    address public owner;
+    // show which address have which NFT
+    mapping (address => uint[]) public NFTOwnership;
 
-    // 임시로 설정
-    mapping (uint => uint) public principal; // 원금
-    mapping (uint => uint) public lockPeriod; // lock 기간
-    mapping (uint => uint) public lockStart;
-    mapping (uint => uint) public lockUntil;
-    mapping (uint => uint) public expectedReward; // 보상
+    // store all stakeInfos
+    mapping (uint => StakeInfo) public stakeInfos;
     
-    constructor() ERC721("Stake NFT", "SNFT") {
-        owner = msg.sender;
-    }
 
-    modifier onlyOwner {
-        console.log(msg.sender);
-        require(msg.sender == owner, "not authorized");
-        _;
-    }
+    function initialize() initializer public {
+        __ERC721_init("Stake NFT", "SNFT");
+        __Ownable_init();
+        // set initial state variables
 
-    function setOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
-    }
+
 
     // only owner can mint NFT
     function mintNFT(StakeInfo memory _stakeInfo) public onlyOwner returns (uint) {
         uint newItemId = _tokenIds.current();
         _mint(_stakeInfo.user, newItemId);
 
-        // 임시로 설정
-        principal[newItemId] = _stakeInfo.principal;
-        lockPeriod[newItemId] = _stakeInfo.lockPeriod;
-        lockStart[newItemId] = block.timestamp;
-        lockUntil[newItemId] = block.timestamp + _stakeInfo.lockPeriod;
-        expectedReward[newItemId] = _stakeInfo.expectedReward;
+        _stakeInfo.lockStart = block.timestamp;
+        _stakeInfo.lockEnd =  _stakeInfo.lockStart + _stakeInfo.lockPeriod;
+        stakeInfos[newItemId] = _stakeInfo;
 
+        // update NFT Ownership
+        NFTOwnership[_stakeInfo.user].push(newItemId);
+       
          _tokenIds.increment();
         return newItemId;
+    }
+
+    // override transferFrom function
+    function transferFrom(address from, address to, uint256 tokenId) public override {
+        //solhint-disable-next-line max-line-length
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+
+        // switch token ownership
+        popValueFromUintArray(NFTOwnership[from], tokenId);
+        NFTOwnership[to].push(tokenId);
+
+        _transfer(from, to, tokenId);
     }
 }
