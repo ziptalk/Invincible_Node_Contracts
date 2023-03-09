@@ -9,3 +9,5 @@ typechain-types
 cache
 artifacts
 
+# Joonsun Test Files
+contracts/Test.sol
