@@ -6,6 +6,8 @@ struct StakeInfo{
     uint principal;
     uint leverageRatio;
     uint lockPeriod;
+    uint lockStart;
+    uint lockEnd;
     uint protocolFee;
     uint expectedReward;
 }
