@@ -63,11 +63,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      // update rewards
-    function updateReward() public payable {
+    function distributeReward() public payable {
         ILPHolders = iLP.getILPHolders();
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            _updateAccountReward(ILPHolders[i], msg.value);
+            _distributeAccountReward(ILPHolders[i], msg.value);
         }
     }
 
@@ -91,18 +91,19 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //====== utils functions ======//
 
     // update account reward
-    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+    function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
         // get Account native token reward 
         uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
         // get Account invi Reward
         uint accountInviReward = LiquidityProviderInviRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
 
-        // update account native reward
-        nativeRewardAmount[_account] += accountNativeReward;
+        // send native reward
+        (bool sent, ) = _account.call{value: accountNativeReward}("");
+        require(sent, "Failed to send reward to requester");
 
-        // update account invi reward
-        inviRewardAmount[_account] += accountInviReward;
+        // send invi reward
+        inviToken.mintToken(_account, accountInviReward);
     }
 
     // update total lended amount by invi core
