@@ -27,7 +27,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
         // set initial state variables
-
+    }
 
 
     // only owner can mint NFT

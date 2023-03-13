@@ -10,7 +10,6 @@ import "./lib/RewardLogics.sol";
 address constant STAKE_MANAGER = 0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE;
 
 contract InviTokenStake is Initializable {
-    // using AddAddress for address;
 
     IERC20 public inviToken;
     address public owner;
@@ -24,21 +23,26 @@ contract InviTokenStake is Initializable {
     address[] public addressList;
     uint public totalAddressNumber;
 
- 
+    //====== modifiers ======//
+    modifier onlyOwner() {
+        require(msg.sender == owner, "not authorized");
+        _;
+    }
+    //====== initializer ======//
     function initialize(address _invi) public initializer {
         inviToken = IERC20(_invi);
         owner = msg.sender;
     }
 
-    receive() external payable {
-       
+    //====== getter functions ======//
+    
+    //====== setter functions ======//
+    function setOwner(address _newOwner) public onlyOwner {
+        owner = _newOwner;
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "not authorized");
-        _;
-    }
-    
+    //====== service functions ======//
+
     // stake inviToken
     function stake(uint _stakeAmount) public returns (bool) {
         require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
@@ -68,13 +72,6 @@ contract InviTokenStake is Initializable {
             _updateAccountReward(addressList[i], msg.value);
         }
     }
-    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
-        // get Account reward 
-        uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
-        
-        // update account reward
-        rewardAmount[_account] += accountReward;
-    }
 
     // user receive reward(native coin) function
     function receiveReward() public {
@@ -85,5 +82,16 @@ contract InviTokenStake is Initializable {
         // send reward to requester
         (bool sent, ) = msg.sender.call{value: reward}("");
         require(sent, "Failed to send reward to requester");
+    }
+
+    //====== utils functions ======//
+
+    // update account's reward
+    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+        // get Account reward 
+        uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
+        
+        // update account reward
+        rewardAmount[_account] += accountReward;
     }
 }

@@ -11,28 +11,52 @@ contract LiquidityProviderPool is Initializable {
     IERC20 public iLP;
     IERC20 public inviToken;
     address constant public STAKE_MANAGER = 0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E; 
+    address public INVI_CORE;
     address public owner;
 
     // lp status
     mapping(address => uint) public stakedAmount;
-    uint public totalStakedAmount;
-    uint public totalLended;
     mapping(address => uint) public nativeRewardAmount;
     mapping(address => uint) public inviRewardAmount;
+    uint public totalStakedAmount;
+    uint public totalLendedAmount;
 
     // addresses status
     address[] public addressList;
     uint public totalAddressNumber;
 
+    //====== modifiers ======//
+    modifier onlyOwner {
+        require(msg.sender == owner, "msg sender should be owner");
+        _;
+    }
+
+    modifier onlyInviCore {
+        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        _;
+    }
+
+    //====== initializer ======//
     function initialize(address _iLP, address _inviToken) public initializer {
         iLP = IERC20(_iLP);
         inviToken = IERC20(_inviToken);
         owner = msg.sender;
     }
 
-    receive() external payable {
-
+    //====== getter functions ======//
+    function getRewardAmount() public view returns (uint, uint) {
+        return (nativeRewardAmount[msg.sender], inviRewardAmount[msg.sender]);
     }
+
+    //====== setter functions ======//
+    function setOwner(address _newOwner) public onlyOwner {
+        owner = _newOwner;
+    }
+    function setInviCoreAddress(address _inviCore) public onlyOwner {
+        INVI_CORE = _inviCore;
+    }
+
+    //====== service functions ======//
 
     // stake Native Coin to LP Pool
     function stake() public payable {
@@ -60,6 +84,26 @@ contract LiquidityProviderPool is Initializable {
         }
     }
 
+    // LP receive reward 
+    function receiveReward() public {
+        require(nativeRewardAmount[msg.sender] != 0 || inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
+        uint nativeReward = nativeRewardAmount[msg.sender];
+        uint inviReward = inviRewardAmount[msg.sender];
+        nativeRewardAmount[msg.sender] = 0; 
+        inviRewardAmount[msg.sender] = 0;
+
+        // send native reward to requester 
+        (bool sent, ) = msg.sender.call{value: nativeReward}("");
+        require(sent, "Failed to send reward to requester");
+
+        // send INVI token to requester
+        inviToken.mintToken(msg.sender, inviReward);
+    }
+
+
+    //====== utils functions ======//
+
+    // update account reward
     function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
         // get Account native token reward 
         uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
@@ -74,18 +118,8 @@ contract LiquidityProviderPool is Initializable {
         inviRewardAmount[_account] += accountInviReward;
     }
 
-    function receiveReward() public {
-        require(nativeRewardAmount[msg.sender] != 0 || inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
-        uint nativeReward = nativeRewardAmount[msg.sender];
-        uint inviReward = inviRewardAmount[msg.sender];
-        nativeRewardAmount[msg.sender] = 0; 
-        inviRewardAmount[msg.sender] = 0;
-
-        // send native reward to requester 
-        (bool sent, ) = msg.sender.call{value: nativeReward}("");
-        require(sent, "Failed to send reward to requester");
-
-        // send INVI token to requester
-        inviToken.mintToken(msg.sender, inviReward);
+    // update total lended amount by invi core
+    function updateTotalLendedAmount(uint _lendedAmount) public onlyInviCore {
+        totalLendedAmount += _lendedAmount;
     }
 }
