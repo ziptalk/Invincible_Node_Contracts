@@ -69,7 +69,6 @@ describe("InviToken Stake Test", function () {
   it("Test UpdateReward", async function () {
     console.log("----------------Test Update Reward----------------");
     const {
-      deployer,
       user1,
       user2,
       user3,
@@ -77,8 +76,8 @@ describe("InviToken Stake Test", function () {
       inviTokenContract,
       inviTokenStakeContract,
     } = await deployFixture();
-    const stakeAmount = 1000000;
-    const rewardAmount = 100000000;
+    const stakeAmount: Number = 1000000;
+    const rewardAmountEther: string = "3";
 
     // stake from multiple addresses
     // user 1
@@ -109,15 +108,16 @@ describe("InviToken Stake Test", function () {
     // updateReward to stakers
     await inviTokenStakeContract
       .connect(stakeManager)
-      .updateReward({ value: ethers.utils.parseEther("1") })
-      .then((tx: any) => {
-        console.log(tx);
-      })
+      .updateReward({ value: ethers.utils.parseEther(rewardAmountEther) })
       .catch((error: any) => {
         console.error(error);
       });
-    console.log(
-      await inviTokenStakeContract.functions.rewardAmount(user1.address)
+    const user1Reward = await inviTokenStakeContract.functions.rewardAmount(
+      user1.address
     );
+    const expectedUser1Reward = ethers.utils.parseEther(
+      (parseInt(rewardAmountEther) / 3).toString()
+    );
+    expect(user1Reward.toString()).to.equal(expectedUser1Reward.toString());
   });
 });

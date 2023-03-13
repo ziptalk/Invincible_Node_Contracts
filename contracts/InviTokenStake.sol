@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
+import "./lib/RewardLogics.sol";
 
 address constant STAKE_MANAGER = 0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE;
 
@@ -12,9 +13,7 @@ contract InviTokenStake is Initializable {
     // using AddAddress for address;
 
     IERC20 public inviToken;
-    
     address public owner;
-  
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -71,7 +70,7 @@ contract InviTokenStake is Initializable {
     }
     function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
         // get Account reward 
-        uint256 accountReward = _totalRewardAmount * stakedAmount[_account] / totalStakedAmount;
+        uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
         // update account reward
         rewardAmount[_account] += accountReward;
@@ -80,7 +79,11 @@ contract InviTokenStake is Initializable {
     // user receive reward(native coin) function
     function receiveReward() public {
         require(rewardAmount[msg.sender] != 0, "no rewards available for this user");
+        uint reward = rewardAmount[msg.sender];
         rewardAmount[msg.sender] = 0;  
         
+        // send reward to requester
+        (bool sent, ) = msg.sender.call{value: reward}("");
+        require(sent, "Failed to send reward to requester");
     }
 }

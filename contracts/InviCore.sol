@@ -35,8 +35,10 @@ contract InviCore is ReentrancyGuard {
         uint lockPeriod = _getLockPeriod(_amount, _leverageRatio);
         uint protocolFee = _getProtocolFee(_amount, _leverageRatio);
         uint expectedReward = _getExpectedReward(_amount, _leverageRatio);
+        uint lockStart = block.timestamp;
+        uint lockEnd = block.timestamp + lockPeriod;
 
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _amount, _leverageRatio, lockPeriod, protocolFee, expectedReward);
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _amount, _leverageRatio, lockPeriod, lockStart, lockEnd, protocolFee, expectedReward);
         
         return stakeInfo;
     }
