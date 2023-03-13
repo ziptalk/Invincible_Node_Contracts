@@ -20,7 +20,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public nativeRewardAmount;
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
-    uint public totalLendedAmount;
+    uint public totalLentAmount;
 
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -106,7 +106,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     // update total lended amount by invi core
-    function updateTotalLendedAmount(uint _lendedAmount) public onlyInviCore {
-        totalLendedAmount += _lendedAmount;
+    function updateTotalLentAmount(uint _totalLentAmount) public onlyInviCore {
+        totalLentAmount += _totalLentAmount;
     }
 }

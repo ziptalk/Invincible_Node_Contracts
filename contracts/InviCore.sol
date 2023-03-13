@@ -1,32 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./StakeNFT.sol";
 import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
 import "hardhat/console.sol";
+import "./LiquidityProviderPool.sol";
 
-contract InviCore is ReentrancyGuard {
+contract InviCore is Initializable, OwnableUpgradeable {
 
     StakeNFT public stakeNFTContract;
-    
+    LiquidityProviderPool public lpPoolContract;
     address public stakeManager;
-    address public owner;
+    
     uint public stakingAPR;
-    uint public totalStaked;
-    uint public totalUserStaked;
-    uint public totalLPStaked;
+    uint public totalUserStakedAmount;
+    mapping(address => uint) public userStakedAmount;
 
-    constructor(address _stakeManagerAddr, address stakeNFTAddr){
-        stakeManager = _stakeManagerAddr;
-        owner = msg.sender;
-        stakeNFTContract = StakeNFT(stakeNFTAddr);
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, ERROR_NOT_OWNER);
-        _;
+    function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr) initializer public {
+        stakeManager = _stakeManager;
+        stakeNFTContract = StakeNFT(_stakeNFTAddr);
+        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
+        __Ownable_init();
     }
 
     //====== getter functions ======//
@@ -60,11 +58,6 @@ contract InviCore is ReentrancyGuard {
 
     //====== setter functions ======//
 
-    // set owner function
-    function setOwner() external onlyOwner {
-        owner = msg.sender;
-    }
-
     // set staking ARP function
     function setStakingAPR(uint _stakingAPR) external onlyOwner {
         stakingAPR = _stakingAPR;
@@ -91,10 +84,11 @@ contract InviCore is ReentrancyGuard {
         require(sent, ERROR_FAIL_SEND);
 
         //update stakeAmount info
-        uint borrowed = _stakeInfo.principal * _stakeInfo.leverageRatio;
-        totalStaked += _stakeInfo.principal;
-        totalUserStaked += _stakeInfo.principal + borrowed;
-        totalLPStaked -= borrowed;
+        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1);
+        uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
+        
+        lpPoolContract.updateTotalLentAmount(totalLentAmount);
+        totalUserStakedAmount += _stakeInfo.principal + lentAmount;
     }
 
     // unStake native coin
