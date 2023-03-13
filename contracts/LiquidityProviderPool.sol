@@ -2,17 +2,18 @@
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/RewardLogics.sol";
 
-contract LiquidityProviderPool is Initializable {
+contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     IERC20 public iLP;
     IERC20 public inviToken;
     address constant public STAKE_MANAGER = 0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E; 
     address public INVI_CORE;
-    address public owner;
+    address[] public ILPHolders;
 
     // lp status
     mapping(address => uint) public stakedAmount;
@@ -21,16 +22,7 @@ contract LiquidityProviderPool is Initializable {
     uint public totalStakedAmount;
     uint public totalLendedAmount;
 
-    // addresses status
-    address[] public addressList;
-    uint public totalAddressNumber;
-
     //====== modifiers ======//
-    modifier onlyOwner {
-        require(msg.sender == owner, "msg sender should be owner");
-        _;
-    }
-
     modifier onlyInviCore {
         require(msg.sender == INVI_CORE, "msg sender should be invi core");
         _;
@@ -38,9 +30,9 @@ contract LiquidityProviderPool is Initializable {
 
     //====== initializer ======//
     function initialize(address _iLP, address _inviToken) public initializer {
+        __Ownable_init();
         iLP = IERC20(_iLP);
         inviToken = IERC20(_inviToken);
-        owner = msg.sender;
     }
 
     //====== getter functions ======//
@@ -49,9 +41,7 @@ contract LiquidityProviderPool is Initializable {
     }
 
     //====== setter functions ======//
-    function setOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
-    }
+   
     function setInviCoreAddress(address _inviCore) public onlyOwner {
         INVI_CORE = _inviCore;
     }
@@ -70,17 +60,14 @@ contract LiquidityProviderPool is Initializable {
         // send coin to LP manager
         (bool sent, ) = STAKE_MANAGER.call{value: msg.value}("");
         require(sent, "Failed to send coin to Stake Manager");
-
-        // add address to address list if new address
-        addAddress(addressList, msg.sender);
-        totalAddressNumber = addressList.length;
     }
 
      // update rewards
     function updateReward() public payable {
+        ILPHolders = iLP.getILPHolders();
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
-        for (uint256 i = 0; i < addressList.length; i++) {
-            _updateAccountReward(addressList[i], msg.value);
+        for (uint256 i = 0; i < ILPHolders.length; i++) {
+            _updateAccountReward(ILPHolders[i], msg.value);
         }
     }
 
