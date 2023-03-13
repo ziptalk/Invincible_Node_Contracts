@@ -2,6 +2,7 @@
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
@@ -9,10 +10,9 @@ import "./lib/RewardLogics.sol";
 
 address constant STAKE_MANAGER = 0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE;
 
-contract InviTokenStake is Initializable {
+contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     IERC20 public inviToken;
-    address public owner;
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -24,23 +24,17 @@ contract InviTokenStake is Initializable {
     uint public totalAddressNumber;
 
     //====== modifiers ======//
-    modifier onlyOwner() {
-        require(msg.sender == owner, "not authorized");
-        _;
-    }
+    
     //====== initializer ======//
     function initialize(address _invi) public initializer {
         inviToken = IERC20(_invi);
-        owner = msg.sender;
+        __Ownable_init();
     }
 
     //====== getter functions ======//
     
     //====== setter functions ======//
-    function setOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
-    }
-
+   
     //====== service functions ======//
 
     // stake inviToken
