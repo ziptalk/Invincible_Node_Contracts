@@ -19,7 +19,7 @@ contract LiquidityProviderPool is Initializable {
     mapping(address => uint) public nativeRewardAmount;
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
-    uint public totalLendedAmount;
+    uint public totalLentAmount;
 
     // addresses status
     address[] public addressList;
@@ -119,7 +119,7 @@ contract LiquidityProviderPool is Initializable {
     }
 
     // update total lended amount by invi core
-    function updateTotalLendedAmount(uint _lendedAmount) public onlyInviCore {
-        totalLendedAmount += _lendedAmount;
+    function updateTotalLentAmount(uint _totalLentAmount) public onlyInviCore {
+        totalLentAmount += _totalLentAmount;
     }
 }
