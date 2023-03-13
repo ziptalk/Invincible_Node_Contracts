@@ -17,6 +17,7 @@ interface IERC20 {
     ) external returns (bool);
     function mintToken(address account, uint256 amount) external;
     function burnToken(address account, uint256 amount) external;
+    function getILPHolders() external view returns (address[] memory);
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(
         address indexed owner,

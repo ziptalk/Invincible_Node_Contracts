@@ -15,11 +15,18 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     // track ILP Holder list
     address[] public ILPHolders;
 
+    //====== initializer ======//
     function initialize() initializer public {
         __ERC20_init(ILP_TOKEN_FULL_NAME, ILP_TOKEN_NAME);
         __Ownable_init();
     }
 
+    //====== getter functions ======//
+    function getILPHolders() external view returns (address[] memory){
+        return ILPHolders;
+    }
+
+    //====== service functions ======//
     function mintToken(address _account, uint _amount) onlyOwner external {
         _mint(_account, _amount);
         
@@ -41,7 +48,6 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         return true;
     }
 
-
     function transferFrom(address from,address to,uint256 amount) public override returns (bool) {
         address spender = _msgSender();
         _spendAllowance(from, spender, amount);
@@ -49,7 +55,6 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
         // update ILPHolderList
         addAddress(ILPHolders, to);
-
         return true;
     }
 }
