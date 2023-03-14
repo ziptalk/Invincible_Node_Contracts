@@ -8,13 +8,13 @@ describe("InviToken Stake Test", function () {
   let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, user1, user2, user3] = await ethers.getSigners();
+    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
 
     // deploy inviToken contract
     inviTokenContract = await deployInviToken();
 
     // deploy inviCore contract
-    inviTokenStakeContract = await deployInviTokenStakeContract(inviTokenContract);
+    inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
   });
 
   it("Test deploy success", async () => {

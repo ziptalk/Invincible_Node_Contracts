@@ -20,7 +20,7 @@ describe("Invi Core functions Test", function () {
     // deploy stakeNFT contract
     stakeNFTContract = await deployStakeNFT();
     // deploy liquidity pool contract
-    lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract);
+    lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
     // deploy inviCore contract
     inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract);
 

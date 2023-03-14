@@ -8,52 +8,52 @@ describe("InviToken Stake Test", function () {
   let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
+    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
 
     // deploy inviToken contract
     inviTokenContract = await deployInviToken();
 
     // deploy inviCore contract
-    inviTokenStakeContract = await deployInviTokenStakeContract(inviTokenContract);
+    inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
   });
 
   it("Test Stake", async function () {
     console.log("-------------------Test Stake-------------------");
-    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
+    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
     const amount = 1000000;
-    await inviTokenContract.functions.mintToken(user1.address, amount);
-    await inviTokenContract.connect(user1).approve(inviTokenStakeContract.address, amount);
-    await inviTokenStakeContract.connect(user1).stake(amount);
+    await inviTokenContract.functions.mintToken(userA.address, amount);
+    await inviTokenContract.connect(userA).approve(inviTokenStakeContract.address, amount);
+    await inviTokenStakeContract.connect(userA).stake(amount);
 
-    // expect totalStakedAmount == user1StakedAmount == amount
+    // expect totalStakedAmount == userAStakedAmount == amount
     const totalStakedAmount = await inviTokenStakeContract.functions.totalStakedAmount();
-    const user1StakedAmount = await inviTokenStakeContract.functions.stakedAmount(user1.address);
+    const userAStakedAmount = await inviTokenStakeContract.functions.stakedAmount(userA.address);
     expect(totalStakedAmount.toString()).to.equal(amount.toString());
-    expect(user1StakedAmount.toString()).to.equal(amount.toString());
+    expect(userAStakedAmount.toString()).to.equal(amount.toString());
   });
 
   it("Test UpdateReward", async function () {
     console.log("----------------Test Update Reward----------------");
-    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
+    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
     const stakeAmount: Number = 1000000;
     const rewardAmountEther: string = "3";
 
     // stake from multiple addresses
     // user 1
-    await inviTokenContract.functions.mintToken(user1.address, stakeAmount);
-    await inviTokenContract.connect(user1).approve(inviTokenStakeContract.address, stakeAmount);
-    await inviTokenStakeContract.connect(user1).stake(stakeAmount);
+    await inviTokenContract.functions.mintToken(userA.address, stakeAmount);
+    await inviTokenContract.connect(userA).approve(inviTokenStakeContract.address, stakeAmount);
+    await inviTokenStakeContract.connect(userA).stake(stakeAmount);
     // user 2
-    await inviTokenContract.functions.mintToken(user2.address, stakeAmount);
-    await inviTokenContract.connect(user2).approve(inviTokenStakeContract.address, stakeAmount);
-    await inviTokenStakeContract.connect(user2).stake(stakeAmount);
+    await inviTokenContract.functions.mintToken(userB.address, stakeAmount);
+    await inviTokenContract.connect(userB).approve(inviTokenStakeContract.address, stakeAmount);
+    await inviTokenStakeContract.connect(userB).stake(stakeAmount);
     // user 3
-    await inviTokenContract.functions.mintToken(user3.address, stakeAmount);
-    await inviTokenContract.connect(user3).approve(inviTokenStakeContract.address, stakeAmount);
-    await inviTokenStakeContract.connect(user3).stake(stakeAmount);
+    await inviTokenContract.functions.mintToken(userC.address, stakeAmount);
+    await inviTokenContract.connect(userC).approve(inviTokenStakeContract.address, stakeAmount);
+    await inviTokenStakeContract.connect(userC).stake(stakeAmount);
 
     const totalStakedAmount = await inviTokenStakeContract.functions.totalStakedAmount();
-    const user1StakedAmount = await inviTokenStakeContract.functions.stakedAmount(user1.address);
+    const userAStakedAmount = await inviTokenStakeContract.functions.stakedAmount(userA.address);
     console.log(totalStakedAmount.toString());
 
     // updateReward to stakers
@@ -63,8 +63,24 @@ describe("InviToken Stake Test", function () {
       .catch((error: any) => {
         console.error(error);
       });
-    const user1Reward = await inviTokenStakeContract.functions.rewardAmount(user1.address);
-    const expectedUser1Reward = ethers.utils.parseEther((parseInt(rewardAmountEther) / 3).toString());
-    expect(user1Reward.toString()).to.equal(expectedUser1Reward.toString());
+    const userAReward = await inviTokenStakeContract.functions.rewardAmount(userA.address);
+    const expecteduserAReward = ethers.utils.parseEther((parseInt(rewardAmountEther) / 3).toString());
+    expect(userAReward.toString()).to.equal(expecteduserAReward.toString());
+  });
+
+  it("Test Unstake", async function () {
+    console.log("----------------Test Unstake----------------");
+    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
+    const stakeAmount: Number = 1000000;
+    // stake
+    await inviTokenContract.functions.mintToken(userA.address, stakeAmount);
+    await inviTokenContract.connect(userA).approve(inviTokenStakeContract.address, stakeAmount);
+    await inviTokenStakeContract.connect(userA).stake(stakeAmount);
+    const userAStakedAmount = await inviTokenStakeContract.functions.stakedAmount(userA.address);
+    expect(userAStakedAmount.toString()).to.equal(stakeAmount.toString());
+    // unstake
+    await inviTokenStakeContract.connect(userA).unStake(stakeAmount);
+    const userAStakedAmountAfterUnstake = await inviTokenStakeContract.functions.stakedAmount(userA.address);
+    expect(userAStakedAmountAfterUnstake.toString()).to.equal("0");
   });
 });

@@ -16,7 +16,7 @@ describe("Liquidity Provider Pool Test", function () {
     // deploy inviToken contract
     inviTokenContract = await deployInviToken();
     // deploy liquidity pool contract
-    lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract);
+    lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
     // change ILPToken owner
     await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
     // change inviToken owner
