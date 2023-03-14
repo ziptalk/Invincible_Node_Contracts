@@ -63,46 +63,30 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      // update rewards
-    function updateReward() public payable {
+    function distributeReward() public payable {
         ILPHolders = iLP.getILPHolders();
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            _updateAccountReward(ILPHolders[i], msg.value);
+            _distributeAccountReward(ILPHolders[i], msg.value);
         }
     }
 
-    // LP receive reward 
-    function receiveReward() public {
-        require(nativeRewardAmount[msg.sender] != 0 || inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
-        uint nativeReward = nativeRewardAmount[msg.sender];
-        uint inviReward = inviRewardAmount[msg.sender];
-        nativeRewardAmount[msg.sender] = 0; 
-        inviRewardAmount[msg.sender] = 0;
-
-        // send native reward to requester 
-        (bool sent, ) = msg.sender.call{value: nativeReward}("");
-        require(sent, "Failed to send reward to requester");
-
-        // send INVI token to requester
-        inviToken.mintToken(msg.sender, inviReward);
-    }
-
-
     //====== utils functions ======//
 
-    // update account reward
-    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+    // distribute account reward
+    function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
         // get Account native token reward 
         uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
         // get Account invi Reward
         uint accountInviReward = LiquidityProviderInviRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
 
-        // update account native reward
-        nativeRewardAmount[_account] += accountNativeReward;
+        // distribute account native reward
+        (bool sent, ) = _account.call{value: accountNativeReward}("");
+        require(sent, "Failed to send native coin to ILP holder");
 
-        // update account invi reward
-        inviRewardAmount[_account] += accountInviReward;
+        // distribute account invi reward
+        inviToken.mintToken(_account, accountInviReward);
     }
 
     // update total lended amount by invi core
