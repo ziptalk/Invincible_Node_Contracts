@@ -9,6 +9,7 @@ import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 import "./LiquidityProviderPool.sol";
+import "./lib/RewardLogics.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
 
@@ -43,17 +44,17 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // return lock period by amount & leverage ratio
     function _getLockPeriod(uint _amount, uint _leverageRatio) private view returns (uint) {
-
+        return LockPeriod(_amount, _leverageRatio);
     }
 
     // return protocol fee by amount & leverage ratio
     function _getProtocolFee(uint _amount, uint _leverageRatio) private view returns (uint) {
-
+        return ProtocolFee(_amount, _leverageRatio);
     }
     
     // return expected reward by amount & leverage ratio
     function _getExpectedReward(uint _amount, uint _leverageRatio) private view returns (uint) {
-
+        return ExpectedReward(_amount, _leverageRatio);
     }
 
     //====== setter functions ======//
