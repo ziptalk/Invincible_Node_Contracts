@@ -1,36 +1,50 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
+import { deployInviToken, deployILPToken, deployStakeNFT, deployLpPoolContract, deployInviCoreContract } from "../deploy";
 
 describe("Invi Core functions Test", function () {
-    let inviCoreContract: Contract;
-    let stakeNFTContract: Contract;
+  let inviCoreContract: Contract;
+  let stakeNFTContract: Contract;
+  let lpPoolContract: Contract;
+  let iLPTokenContract: Contract;
+  let inviTokenContract: Contract;
 
-    this.beforeEach(async () => {
-        const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
+  this.beforeEach(async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
-        // stakeNFT contract deploy
-        const StakeNFTContract = await ethers.getContractFactory("StakeNFT");
-        stakeNFTContract = await StakeNFTContract.deploy();
-        await stakeNFTContract.deployed();
-        
-        // inviCore contract deploy
-        const InviCoreContract = await ethers.getContractFactory("InviCore");
-        inviCoreContract = await InviCoreContract.deploy(stakeManager.address, stakeNFTContract.address);
-        await inviCoreContract.deployed();
-    })
+    // deploy inviToken contract
+    inviTokenContract = await deployInviToken();
+    // deploy ILPToken contract
+    iLPTokenContract = await deployILPToken();
+    // deploy stakeNFT contract
+    stakeNFTContract = await deployStakeNFT();
+    // deploy liquidity pool contract
+    lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract);
+    // deploy inviCore contract
+    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract);
 
-    it("Test getStakeInfo function", async() => {
-        const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
-        
-        const principal = 100;
-        const leverageRatio = 2;
+    // change stakeNFT owner
+    await stakeNFTContract.connect(deployer).transferOwnership(inviCoreContract.address);
 
-        const stakeInfo =  await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
-        
-        //verify stake info
-        expect(stakeInfo.user).to.equal(userA.address);
-        expect(stakeInfo.principal).to.equal(principal);
-        expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
-    });
+    // change ILPToken owner
+    await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+
+    // set inviCore contract address
+    await lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
+  });
+
+  it("Test getStakeInfo function", async () => {
+    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
+
+    const principal = 100;
+    const leverageRatio = 2;
+
+    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
+
+    //verify stake info
+    expect(stakeInfo.user).to.equal(userA.address);
+    expect(stakeInfo.principal).to.equal(principal);
+    expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
+  });
 });
