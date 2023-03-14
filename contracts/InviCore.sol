@@ -44,7 +44,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // return lock period by amount & leverage ratio
     function _getLockPeriod(uint _amount, uint _leverageRatio) private view returns (uint) {
-        return LockPeriod(_amount, _leverageRatio);
+        return LockPeriod(_leverageRatio);
     }
 
     // return protocol fee by amount & leverage ratio

@@ -11,7 +11,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     IERC20 public iLP;
     IERC20 public inviToken;
-    address constant public STAKE_MANAGER = 0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E; 
+    address public stakeManager; 
     address public INVI_CORE;
     address[] public ILPHolders;
 
@@ -29,10 +29,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== initializer ======//
-    function initialize(address _iLP, address _inviToken) public initializer {
-        __Ownable_init();
+    function initialize(address _stakeManager, address _iLP, address _inviToken) public initializer {
+        stakeManager = _stakeManager;
         iLP = IERC20(_iLP);
         inviToken = IERC20(_inviToken);
+        __Ownable_init();
     }
 
     //====== getter functions ======//
@@ -58,7 +59,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         iLP.mintToken(msg.sender, msg.value);
         
         // send coin to LP manager
-        (bool sent, ) = STAKE_MANAGER.call{value: msg.value}("");
+        (bool sent, ) = stakeManager.call{value: msg.value}("");
         require(sent, "Failed to send coin to Stake Manager");
     }
 
