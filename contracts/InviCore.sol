@@ -9,7 +9,7 @@ import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 import "./LiquidityProviderPool.sol";
-import "./lib/RewardLogics.sol";
+import "./lib/Logics.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
 
@@ -31,8 +31,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
 
     function getStakeInfo(uint _amount, uint _leverageRatio) public view returns (StakeInfo memory) {
-        uint lockPeriod = _getLockPeriod(_amount, _leverageRatio);
-        uint protocolFee = _getProtocolFee(_amount, _leverageRatio);
+        uint lockPeriod = _getLockPeriod(_leverageRatio);
+        uint protocolFee = _getProtocolFee(_amount);
         uint expectedReward = _getExpectedReward(_amount, _leverageRatio);
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
@@ -43,13 +43,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // return lock period by amount & leverage ratio
-    function _getLockPeriod(uint _amount, uint _leverageRatio) private view returns (uint) {
+    function _getLockPeriod(uint _leverageRatio) private view returns (uint) {
         return LockPeriod(_leverageRatio);
     }
 
     // return protocol fee by amount & leverage ratio
-    function _getProtocolFee(uint _amount, uint _leverageRatio) private view returns (uint) {
-        return ProtocolFee(_amount, _leverageRatio);
+    function _getProtocolFee(uint _amount) private view returns (uint) {
+        uint totalLiquidity = lpPoolContract.getTotalLiquidity();
+        return ProtocolFee(_amount, totalLiquidity);
     }
     
     // return expected reward by amount & leverage ratio
