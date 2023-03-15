@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/RewardLogics.sol";
+import "./lib/Logics.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
@@ -39,6 +39,10 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
     function getRewardAmount() public view returns (uint, uint) {
         return (nativeRewardAmount[msg.sender], inviRewardAmount[msg.sender]);
+    }
+
+    function getTotalLiquidity() public view returns (uint) {
+        return (totalStakedAmount - totalLentAmount);
     }
 
     //====== setter functions ======//
