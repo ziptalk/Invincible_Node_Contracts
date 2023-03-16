@@ -27,6 +27,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint public totalUserStakedAmount;
     mapping(address => uint) public userStakedAmount;
 
+    // variable
+    uint public slippage;
+
     function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr) initializer public {
         stakeManager = _stakeManager;
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
@@ -37,12 +40,16 @@ contract InviCore is Initializable, OwnableUpgradeable {
         __Ownable_init();
     }
 
-    //====== getter functions ======//
+    //====== modifier functions ======//
+    modifier onlySTM {
+        require(msg.sender == stakeManager, "msg sender should be stake manager");
+        _;
+    }
 
+    //====== getter functions ======//
     function getStakeInfo(uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
-        uint leverageUnit = defaultUnit();
         uint lockPeriod = _getLockPeriod(_leverageRatio);
-        uint lentAmount = _principal * (_leverageRatio - leverageUnit) / leverageUnit;
+        uint lentAmount = _principal * (_leverageRatio - 1 * leverageUnit) / leverageUnit;
 
         uint protocolFee = _getProtocolFee(lentAmount, _leverageRatio);
         uint lockStart = block.timestamp;
@@ -103,66 +110,83 @@ contract InviCore is Initializable, OwnableUpgradeable {
         increaseRatio = _increaseRatio;
     }
 
+    // set sliipage function
+    function setSlippage(uint _slippage) external onlyOwner {
+        slippage = _slippage;
+    }
+
     // set exchange ratio function
     function _setExchangeRatio() private {
 
     }
 
+
+
     //====== service functions ======//
     
     // stake native coin
-    function stake(StakeInfo memory _stakeInfo) external payable{
+    function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
 
         // verify given stakeInfo
-        _verifyStakeInfo(_stakeInfo, msg.value);
+        _verifyStakeInfo(_stakeInfo, _slippage, msg.value);
 
         // mint StakeNFT Token by stake info
         uint nftTokenId = stakeNFTContract.mintNFT(_stakeInfo);
 
-        // send principal to STM
-        (bool sent, ) = stakeManager.call{value : _stakeInfo.principal }("");
-        require(sent, ERROR_FAIL_SEND);
-
         //update stakeAmount info
         uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1);
         uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
-        
         lpPoolContract.updateTotalLentAmount(totalLentAmount);
         totalUserStakedAmount += _stakeInfo.principal + lentAmount;
-    }
-
-
-    // stake function. 10 <= leverage ratio <= 50 
-    function newStake(uint _leverageRatio) external payable {
-        StakeInfo memory stakeInfo = getStakeInfo(msg.value, _leverageRatio);
-
-        uint nftTokenId = stakeNFTContract.mintNFT(stakeInfo);
-
-        //update stakeAmount info
-        uint lentAmount = stakeInfo.principal * (stakeInfo.leverageRatio - 1);
-        uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
-        
-        lpPoolContract.updateTotalLentAmount(totalLentAmount);
-        totalUserStakedAmount += stakeInfo.principal + lentAmount;
 
         // send principal to STM
-        (bool sent, ) = stakeManager.call{value : stakeInfo.principal }("");
+        (bool sent, ) = stakeManager.call{value : _stakeInfo.principal }("");
         require(sent, ERROR_FAIL_SEND);
     }
 
     // unStake native coin
-    function _unStake() private {
+    function repayNFT(uint nftTokenId) external {
+        // verify NFT ownership
+        require(stakeNFTContract.verifyOwnership(nftTokenId, msg.sender), ERROR_NOT_OWNED_NFT);
 
+        // get stakeInfo by nftTokenId
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(nftTokenId);
+
+        console.log(stakeInfo.user);
     }
 
-    function _splitRewards(uint _amount) private {
-
+    // split reward
+    function splitRewards(uint _amount) external onlySTM {
+        // lpPoolContract.distributeReward();
     }
     
     //====== utils function ======//
 
     // verify stakeInfo is proper
-    function _verifyStakeInfo(StakeInfo memory _stakeInfo, uint _sendAmount) private pure {
+    function _verifyStakeInfo(StakeInfo memory _stakeInfo, uint _slippage, uint _sendAmount) private view {
+        // verify principal amount
         require(_stakeInfo.principal == _sendAmount, ERROR_INVALID_STAKE_INFO);
+
+        // verify lockPeriod
+        uint lockPeriod = _getLockPeriod(_stakeInfo.leverageRatio);
+        require(_stakeInfo.lockPeriod == lockPeriod, ERROR_INVALID_STAKE_INFO);
+
+        // verify lentAmount
+        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio * leverageUnit - 1 * leverageUnit) / leverageUnit;
+        require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_TOO_MUCH_LENT);
+
+        // verify min/max reward
+        uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio;
+        uint minReward = MinReward(amount, _stakeInfo.lockPeriod, stakingAPR, decreaseRatio);
+        uint maxReward = MaxReward(amount, _stakeInfo.lockPeriod, stakingAPR, increaseRatio);
+        require(minReward == _stakeInfo.minReward, ERROR_INVALID_STAKE_INFO);
+        require(maxReward == _stakeInfo.maxReward, ERROR_INVALID_STAKE_INFO);        
+
+        // verify protocol fee
+        uint minProtocolFee = _stakeInfo.protocolFee * (1 * slippageUnit - _slippage * slippageUnit) / slippageUnit;
+        uint maxProtocolFee = _stakeInfo.protocolFee * (1 * slippageUnit + _slippage * slippageUnit) / slippageUnit;
+        uint protocolFee = _getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
+        require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
+        require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
     }
 }
