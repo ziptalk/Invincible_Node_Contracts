@@ -9,7 +9,8 @@ struct StakeInfo{
     uint lockStart;
     uint lockEnd;
     uint protocolFee;
-    uint expectedReward;
+    uint minReward;
+    uint maxReward;
 }
 
 struct ExchangeRatio{
