@@ -31,8 +31,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stakeManager = _stakeManager;
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
         lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
-        decreaseRatio = 10;
-        increaseRatio = 5;
+        decreaseRatio = 10 * rewardErrorUnit;
+        increaseRatio = 5 * rewardErrorUnit;
         stakingAPR = 10;
         __Ownable_init();
     }
