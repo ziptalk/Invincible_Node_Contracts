@@ -96,6 +96,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     // update total lended amount by invi core
     function updateTotalLentAmount(uint _totalLentAmount) public onlyInviCore {
-        totalLentAmount += _totalLentAmount;
+        totalLentAmount = _totalLentAmount;
     }
 }
