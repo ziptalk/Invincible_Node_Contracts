@@ -34,17 +34,46 @@ describe("Invi Core functions Test", function () {
     await lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   });
 
+  it("Test deploy success", async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    console.log(`invi token contract ${inviTokenContract.address}`);
+    console.log(`iLP token contract ${iLPTokenContract.address}`);
+    console.log(`stakeNft contract ${stakeNFTContract.address}`);
+    console.log(`lpPool contract ${lpPoolContract.address}`);
+    console.log(`invi core contract ${inviCoreContract.address}`);
+
+    // verify init
+    expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
+    expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
+    expect(await lpPoolContract.INVI_CORE()).equals(inviCoreContract.address);
+
+    // verify owner
+    expect(await stakeNFTContract.owner()).equals(inviCoreContract.address);
+    expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
+  });
+
   it("Test getStakeInfo function", async () => {
     const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
 
-    const principal = 100;
-    const leverageRatio = 2;
+    // lp stake coin
+    const lpAmount = 100000;
+    await lpPoolContract.connect(userA).stake({ value: lpAmount });
+    expect(await lpPoolContract.totalStakedAmount()).equals(lpAmount);
 
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
+    const principal = 1000;
+    // unit = 100000
+    const leverageRatio = 200000;
+
+    const stakeInfo = await inviCoreContract.connect(userB).getStakeInfo(principal, leverageRatio);
 
     //verify stake info
-    expect(stakeInfo.user).to.equal(userA.address);
+    expect(stakeInfo.user).to.equal(userB.address);
     expect(stakeInfo.principal).to.equal(principal);
     expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
+
+    const expectedReward = await inviCoreContract.connect(userB).getExpectedReward((principal * leverageRatio) / 100000, stakeInfo.lockPeriod);
+    console.log(stakeInfo.maxReward, stakeInfo.minReward, expectedReward);
+    expect(stakeInfo.maxReward).to.be.greaterThan(expectedReward);
+    expect(expectedReward).to.be.greaterThan(stakeInfo.minReward);
   });
 });

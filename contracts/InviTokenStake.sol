@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/RewardLogics.sol";
+import "./lib/Logics.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
 

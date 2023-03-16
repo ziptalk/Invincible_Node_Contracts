@@ -4,7 +4,9 @@ import { BigNumber, Contract } from "ethers";
 import Web3 from "web3";
 import { deployStakeNFT } from "../deploy";
 
-const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd] = [1000, 10000, 100000, 3, 0, 0, 0];
+const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd, minReward, maxReward] = [
+  1000, 10000, 100000, 3, 0, 0, 0, 100, 200,
+];
 
 describe("Stake NFT Test", function () {
   let stakeNFTContract: Contract;
@@ -28,7 +30,8 @@ describe("Stake NFT Test", function () {
       lockStart: lockStart,
       lockEnd: lockEnd,
       lockPeriod: lockPeriod,
-      expectedReward: expectedReward,
+      minReward: minReward,
+      maxReward: maxReward,
     };
 
     // mint nft
@@ -52,7 +55,8 @@ describe("Stake NFT Test", function () {
       lockStart: lockStart,
       lockEnd: lockEnd,
       lockPeriod: lockPeriod,
-      expectedReward: expectedReward,
+      minReward: minReward,
+      maxReward: maxReward,
     };
 
     // mint nfts
