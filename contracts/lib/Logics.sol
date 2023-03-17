@@ -47,10 +47,10 @@ function ExpectedReward(uint _amount, uint _lockPeriod, uint _apr) pure returns 
 function MinReward(uint _amount, uint _lockPeriod, uint _apr, uint _decreaseRatio) pure returns (uint) {
     // lockPeriod = second, apr = %
     uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (1 * rewardErrorUnit - _decreaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
+    return ((_amount * _lockPeriod * _apr * (100 * rewardErrorUnit - _decreaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
 }
 function MaxReward(uint _amount, uint _lockPeriod, uint _apr, uint _increaseRatio) pure returns (uint) {
     // lockPeriod = second, apr = %
     uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (1 * rewardErrorUnit + _increaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
+    return ((_amount * _lockPeriod * _apr * (100 * rewardErrorUnit + _increaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
 }
