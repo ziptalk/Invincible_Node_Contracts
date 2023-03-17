@@ -90,6 +90,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //====== utils functions ======//
 
     // distribute account reward
+
     function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
         // get Account native token reward 
         uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
