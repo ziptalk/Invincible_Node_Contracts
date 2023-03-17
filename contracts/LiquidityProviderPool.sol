@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
+import "./lib/Unit.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
@@ -14,6 +15,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     address public stakeManager; 
     address public INVI_CORE;
     address[] public ILPHolders;
+    uint public liquidityAllowableRatio;
 
     // lp status
     mapping(address => uint) public stakedAmount;
@@ -21,6 +23,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
     uint public totalLentAmount;
+    
 
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -45,10 +48,18 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         return (totalStakedAmount - totalLentAmount);
     }
 
+    function getMaxLentAmount() public view returns (uint) {
+        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * liqudityAllowableRatioUnit);
+    }
+
     //====== setter functions ======//
    
     function setInviCoreAddress(address _inviCore) public onlyOwner {
         INVI_CORE = _inviCore;
+    }
+
+    function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {
+        liquidityAllowableRatio = _liquidityAllowableRatio;
     }
 
     //====== service functions ======//
