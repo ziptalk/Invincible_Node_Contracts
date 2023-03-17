@@ -6,13 +6,12 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/RewardLogics.sol";
-
-address constant STAKE_MANAGER = 0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE;
+import "./lib/Logics.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     IERC20 public inviToken;
+    address public stakeManager;
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -26,7 +25,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== modifiers ======//
     
     //====== initializer ======//
-    function initialize(address _invi) public initializer {
+    function initialize(address _stakeManager, address _invi) public initializer {
+        stakeManager = _stakeManager;
         inviToken = IERC20(_invi);
         __Ownable_init();
     }

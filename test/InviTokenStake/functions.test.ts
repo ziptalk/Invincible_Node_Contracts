@@ -1,46 +1,30 @@
 import { expect } from "chai";
-import { ethers, upgrades } from "hardhat";
-import Web3 from "web3";
+import { ethers } from "hardhat";
+import { Contract } from "ethers";
+import { deployInviToken, deployInviTokenStakeContract } from "../deploy";
 
 describe("InviToken Stake Test", function () {
-  // deploy contracts
-  async function deployFixture() {
-    const [deployer, user1, user2, user3] = await ethers.getSigners();
-    console.log("addresses: ", deployer.address, user1.address, user2.address);
+  let inviTokenContract: Contract;
+  let inviTokenStakeContract: Contract;
 
-    // deploy InviTokenContract
-    const InviTokenContract = await ethers.getContractFactory("InviToken");
-    const inviTokenContract = await upgrades.deployProxy(
-      InviTokenContract,
-      [],
-      { initializer: "initialize" }
-    );
-    await inviTokenContract.deployed();
+  this.beforeEach(async () => {
+    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
 
-    // deploy InviTokenStakeContract
-    const InviTokenStakeContract = await ethers.getContractFactory(
-      "InviTokenStake"
-    );
-    const inviTokenStakeContract = await upgrades.deployProxy(
-      InviTokenStakeContract,
-      [inviTokenContract.address],
-      {
-        initializer: "initialize",
-      }
-    );
-    await inviTokenStakeContract.deployed();
+    // deploy inviToken contract
+    inviTokenContract = await deployInviToken();
 
-    // expect deployer == owner
-    expect(await inviTokenStakeContract.owner()).to.equal(deployer.address);
-    const web3 = new Web3();
-    return {
-      web3,
-      deployer,
-      user1,
-      user2,
-      user3,
-      inviTokenContract,
-      inviTokenStakeContract,
-    };
-  }
+    // deploy inviCore contract
+    inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
+  });
+
+  it("Test deploy success", async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    console.log(`invi token contract ${inviTokenContract.address}`);
+    console.log(`invi token stake contract ${inviTokenStakeContract.address}`);
+
+    // verify init
+    expect(await inviTokenStakeContract.inviToken()).equals(inviTokenContract.address);
+
+    // verify owner
+  });
 });

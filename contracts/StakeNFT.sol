@@ -29,7 +29,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         // set initial state variables
     }
 
-
     // only owner can mint NFT
     function mintNFT(StakeInfo memory _stakeInfo) public onlyOwner returns (uint) {
         uint newItemId = _tokenIds.current();
@@ -46,6 +45,12 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return newItemId;
     }
 
+    // only owner can burn NFT
+    function burnNFT(uint nftTokenId) public onlyOwner returns (bool) {
+        _burn(nftTokenId);
+
+    }
+
     // override transferFrom function
     function transferFrom(address from, address to, uint256 tokenId) public override {
         //solhint-disable-next-line max-line-length
@@ -57,4 +62,20 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
         _transfer(from, to, tokenId);
     }
+
+    // verify nft ownership
+    function verifyOwnership(uint nftTokenId, address owner) public view returns (bool) {
+        console.log("here", NFTOwnership[owner].length);
+        for(uint i = 0; i < NFTOwnership[owner].length; i++){
+            console.log("here", NFTOwnership[owner][i]);
+            if(NFTOwnership[owner][i] == nftTokenId) return true;
+        }
+        return false;
+    }
+
+    // get stake info by nft token id
+    function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory) {
+        return stakeInfos[nftTokenId];
+    }
+
 }
