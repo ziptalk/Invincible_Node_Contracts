@@ -38,7 +38,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== service functions ======//
 
     // stake inviToken
-    function stake(uint _stakeAmount) public returns (bool) {
+    function stake(uint _stakeAmount) public  {
         require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
 
         // update stake amount
@@ -51,7 +51,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // unstake inviToken
-    function unStake(uint _unstakeAmount) public returns (bool) {
+    function unStake(uint _unstakeAmount) public  {
         // update stake amount
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
         stakedAmount[msg.sender] -= _unstakeAmount;
