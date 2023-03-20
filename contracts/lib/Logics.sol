@@ -3,28 +3,6 @@ pragma solidity ^0.8;
 import "./Unit.sol";
 import "hardhat/console.sol";
 
-//======LP related logic=======//
-// INVI reward amount for LPs 
-function LiquidityProviderInviRewardAmount(uint _totalRewardAmount, uint _stakedAmount, uint _totalStakedAmount) pure returns (uint){
-    // 총 Liquidity 중 본인의 Liquidity 비중 만큼 invi 제공 
-    return ( _totalRewardAmount * _stakedAmount / _totalStakedAmount);
-}
-// Native reward amount for LPs
-function LiquidityProviderNativeRewardAmount(uint _totalRewardAmount, uint _stakedAmount, uint _totalStakedAmount) pure returns (uint){
-    // 총 Liquidity 중 본인의 Liquidity 비중 만큼 reward 제공 
-    return ( _totalRewardAmount * _stakedAmount / _totalStakedAmount);
-}
-// ILP receive amount for LPs 
-function LiquidityProviderILPReceiveAmount(uint _nativeAmount) pure returns (uint) {
-    // nativeAmount 만큼 ILP 제공 
-    return _nativeAmount;
-}
-
-//======INVI stake related logic======/
-function InviTokenStakerNativeRewardAmount(uint _totalRewardAmount, uint _stakedAmount, uint _totalStakedAmount) pure returns (uint) {
-    return ( _totalRewardAmount * _stakedAmount / _totalStakedAmount);
-}
-
 //======User related Logic======//
 
 // return lock period in seconds
@@ -54,4 +32,8 @@ function MaxReward(uint _amount, uint _lockPeriod, uint _apr, uint _increaseRati
     // lockPeriod = second, apr = %
     uint oneYear = 60 * 60 * 24 * 365;
     return ((_amount * _lockPeriod * _apr * (100 * rewardErrorUnit + _increaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
+}
+
+function StakedAmount(uint _principal, uint _leverageRatio) pure returns (uint) {
+    return _principal * _leverageRatio / leverageUnit;
 }

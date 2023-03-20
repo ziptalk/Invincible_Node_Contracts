@@ -5,6 +5,7 @@ struct StakeInfo{
     address user;
     uint principal;
     uint leverageRatio;
+    uint stakedAmount;
     uint lockPeriod;
     uint lockStart;
     uint lockEnd;
@@ -23,4 +24,5 @@ struct UnstakeRequest{
     uint amount;
     uint fee;
     uint requestType; // 0: user, 1: LP, 2: INVI
+
 }

@@ -12,6 +12,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     IERC20 public inviToken;
     address public stakeManager;
+    address public INVI_CORE;
 
     // stake status
     mapping(address => uint) public stakedAmount;
@@ -23,6 +24,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     uint public totalAddressNumber;
 
     //====== modifiers ======//
+    modifier onlyInviCore {
+        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        _;
+    }
     
     //====== initializer ======//
     function initialize(address _stakeManager, address _invi) public initializer {
@@ -34,6 +39,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
     
     //====== setter functions ======//
+
+    function setInviCoreAddress(address _inviCore) public onlyOwner {
+        INVI_CORE = _inviCore;
+    }
    
     //====== service functions ======//
 
@@ -60,17 +69,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // update rewards
-    function distributeNativeReward() external payable {
+    function updateNativeReward(uint _totalRewardAmount) external onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
-            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-
-            (bool sent, ) = account.call{value: rewardAmount}("");
-            require(sent, "Failed to send native coin to ILP holder");
+            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
             
             nativeRewardAmount[account] += rewardAmount;
         }
+    }
+
+        // update rewards
+    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
+        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
+        for (uint256 i = 0; i < addressList.length; i++) {}
     }
 
     // user receive reward(native coin) function
@@ -87,11 +99,11 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== utils functions ======//
 
     // update account's reward
-    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
-        // get Account reward 
-        uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
+    // function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+    //     // get Account reward 
+    //     uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
-        // update account reward
-        nativeRewardAmount[_account] += accountReward;
-    }
+    //     // update account reward
+    //     nativeRewardAmount[_account] += accountReward;
+    // }
 }
