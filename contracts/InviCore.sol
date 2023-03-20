@@ -42,10 +42,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
         decreaseRatio = 10 * rewardErrorUnit;
         increaseRatio = 5 * rewardErrorUnit;
-        stakingAPR = 10;
+        stakingAPR = 10 * aprUnit;
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = rewardPortionTotalUnit - lpPoolRewardPortion;
-        
         __Ownable_init();
     }
 
@@ -65,6 +64,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
         uint minReward = _getMinReward(_principal + lentAmount, lockPeriod);
+
         uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
 
         StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);

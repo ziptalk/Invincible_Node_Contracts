@@ -74,7 +74,7 @@ describe("Invi Core functions Test", function () {
 
     const stakeInfo = await inviCoreContract.connect(userB).getStakeInfo(principal, leverageRatio);
 
-    // //verify stake info
+    //verify stake info
     // expect(stakeInfo.user).to.equal(userB.address);
     // expect(stakeInfo.principal).to.equal(principal);
     // expect(stakeInfo.leverageRatio).to.equal(leverageRatio);

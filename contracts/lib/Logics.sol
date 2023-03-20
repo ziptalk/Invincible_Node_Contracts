@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 import "./Unit.sol";
+import "hardhat/console.sol";
 
 //======LP related logic=======//
 // INVI reward amount for LPs 
@@ -44,7 +45,7 @@ function ExpectedReward(uint _amount, uint _lockPeriod, uint _apr) pure returns 
     uint oneYear = 60 * 60 * 24 * 365;
     return ((_amount * _lockPeriod * _apr) / (oneYear * aprUnit * 100));
 }
-function MinReward(uint _amount, uint _lockPeriod, uint _apr, uint _decreaseRatio) pure returns (uint) {
+function MinReward(uint _amount, uint _lockPeriod, uint _apr, uint _decreaseRatio) view returns (uint) {
     // lockPeriod = second, apr = %
     uint oneYear = 60 * 60 * 24 * 365;
     return ((_amount * _lockPeriod * _apr * (100 * rewardErrorUnit - _decreaseRatio)) / (oneYear * aprUnit * rewardErrorUnit * 100));
