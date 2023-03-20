@@ -15,11 +15,12 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     Counters.Counter private _tokenIds;
     string private _name;
     string private _symbol;
+    address public INVI_CORE;
 
     // show which address have which NFT
     mapping (address => uint[]) public NFTOwnership;
 
-    uint totalStakedAmount;
+    uint public totalStakedAmount;
     uint[] public nftTokenIds;
     mapping (uint => uint) public rewardAmount;
 
@@ -31,6 +32,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
         // set initial state variables
+    }
+
+    //====== modifiers ======//
+    modifier onlyInviCore {
+        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        _;
+    }
+
+    function setInviCoreAddress(address _inviCore) public onlyOwner {
+        INVI_CORE = _inviCore;
     }
 
     // only owner can mint NFT

@@ -55,7 +55,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //====== setter functions ======//
    
-    function setInviCoreAddress(address _inviCore) public onlyOwner {
+    function setInviCoreAddress(address _inviCore) external onlyOwner {
         INVI_CORE = _inviCore;
     }
 
