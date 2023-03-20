@@ -60,28 +60,21 @@ describe("Invi Core functions Test", function () {
   });
 
   it("Test getStakeInfo function", async () => {
-    const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
     // lp stake coin
     const lpAmount = 100000;
-    await lpPoolContract.connect(userA).stake({ value: lpAmount });
-    expect(await lpPoolContract.totalStakedAmount()).equals(lpAmount);
-    expect(await lpPoolContract.getTotalLiquidity()).equals(lpAmount);
+    await lpPoolContract.connect(LP).stake({ value: lpAmount });
 
     const principal = 1000;
-    // unit = 100000
     const leverageRatio = 2 * units.leverageUnit;
-
-    const stakeInfo = await inviCoreContract.connect(userB).getStakeInfo(principal, leverageRatio);
+    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
 
     //verify stake info
-    // expect(stakeInfo.user).to.equal(userB.address);
-    // expect(stakeInfo.principal).to.equal(principal);
-    // expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
-
-    // const expectedReward = await inviCoreContract.connect(userB).getExpectedReward((principal * leverageRatio) / 100000, stakeInfo.lockPeriod);
-    // console.log(stakeInfo.maxReward, stakeInfo.minReward, expectedReward);
-    // expect(stakeInfo.maxReward).to.be.greaterThan(expectedReward);
-    // expect(expectedReward).to.be.greaterThan(stakeInfo.minReward);
+    expect(stakeInfo.user).to.equal(userA.address);
+    expect(stakeInfo.principal).to.equal(principal); 
+    expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
   });
+
+
 });

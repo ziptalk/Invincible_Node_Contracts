@@ -17,3 +17,9 @@ struct ExchangeRatio{
     uint coinToToken;
     uint tokenToCoin;
 }
+
+struct UnstakeRequest{
+    address recipient;
+    uint amount;
+    uint fee;
+}
