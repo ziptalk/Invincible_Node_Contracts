@@ -19,6 +19,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // show which address have which NFT
     mapping (address => uint[]) public NFTOwnership;
 
+    uint totalStakedAmount;
+    uint[] public nftTokenIds;
+    mapping (uint => uint) public rewardAmount;
+
     // store all stakeInfos
     mapping (uint => StakeInfo) public stakeInfos;
     
@@ -54,7 +58,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // override transferFrom function
     function transferFrom(address from, address to, uint256 tokenId) public override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+        require(_isApprovedOrOwner(from, tokenId), "ERC721: caller is not token owner or approved");
 
         // switch token ownership
         popValueFromUintArray(NFTOwnership[from], tokenId);
@@ -63,15 +67,25 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         _transfer(from, to, tokenId);
     }
 
-    // verify nft ownership
-    function verifyOwnership(uint nftTokenId, address owner) public view returns (bool) {
-        console.log("here", NFTOwnership[owner].length);
-        for(uint i = 0; i < NFTOwnership[owner].length; i++){
-            console.log("here", NFTOwnership[owner][i]);
-            if(NFTOwnership[owner][i] == nftTokenId) return true;
+    function distributeReward(uint _totalReward) external onlyOwner{
+        for (uint256 i = 0; i < nftTokenIds.length; i++) {
+            uint nftId = nftTokenIds[i];
+            rewardAmount[account] += (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
         }
-        return false;
+
     }
+
+    // return the address is nft owner
+    function isOwner(uint nftTokenId, address owner) public view returns (bool) {
+        return owner == ownerOf(nftTokenId);
+    }
+
+    // return the nft is unlocked
+    function isUnlock(uint nftTokenId) public view returns (bool) {
+        StakeInfo memory stakeInfo = stakeInfos[nftTokenId];
+        return stakeInfo.lockEnd < block.timestamp;
+    }
+
 
     // get stake info by nft token id
     function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory) {

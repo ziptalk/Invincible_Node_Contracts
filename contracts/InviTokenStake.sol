@@ -15,7 +15,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     // stake status
     mapping(address => uint) public stakedAmount;
-    mapping(address => uint) public rewardAmount;
+    mapping(address => uint) public nativeRewardAmount;
     uint public totalStakedAmount;
 
     // addresses status
@@ -60,18 +60,24 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // update rewards
-    function updateReward() public payable {
+    function distributeNativeReward() external payable {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
-            _updateAccountReward(addressList[i], msg.value);
+            address account = addressList[i];
+            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+
+            (bool sent, ) = account.call{value: rewardAmount}("");
+            require(sent, "Failed to send native coin to ILP holder");
+            
+            nativeRewardAmount[account] += rewardAmount;
         }
     }
 
     // user receive reward(native coin) function
     function receiveReward() public {
-        require(rewardAmount[msg.sender] != 0, "no rewards available for this user");
-        uint reward = rewardAmount[msg.sender];
-        rewardAmount[msg.sender] = 0;  
+        require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
+        uint reward = nativeRewardAmount[msg.sender];
+        nativeRewardAmount[msg.sender] = 0;  
         
         // send reward to requester
         (bool sent, ) = msg.sender.call{value: reward}("");
@@ -86,6 +92,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
         // update account reward
-        rewardAmount[_account] += accountReward;
+        nativeRewardAmount[_account] += accountReward;
     }
 }

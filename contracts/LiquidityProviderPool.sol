@@ -63,6 +63,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         liquidityAllowableRatio = _liquidityAllowableRatio;
     }
 
+    // set total lended amount by invi core
+    function setTotalLentAmount(uint _totalLentAmount) public onlyInviCore {
+        totalLentAmount = _totalLentAmount;
+    }
+
     //====== service functions ======//
 
     // stake Native Coin to LP Pool
@@ -80,10 +85,24 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      // update rewards
-    function distributeReward() public payable {
+    function distributeNativeReward() external payable onlyInviCore {
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            _distributeAccountReward(ILPHolders[i], msg.value);
+            address account = ILPHolders[i];
+            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+
+            (bool sent, ) = account.call{value: rewardAmount}("");
+            require(sent, "Failed to send native coin to ILP holder");
+            
+            nativeRewardAmount[account] += rewardAmount;
+        }
+    }
+
+    function distributeInviReward(uint _totalRewardAmount) external onlyInviCore{
+        ILPHolders = iLP.getILPHolders();
+        for (uint256 i = 0; i < ILPHolders.length; i++) {
+            address account = ILPHolders[i];
+            inviRewardAmount[account] += (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
         }
     }
 
@@ -91,23 +110,19 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     // distribute account reward
 
-    function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
-        // get Account native token reward 
-        uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
+    // function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
+
+    //     // get Account native token reward 
+    //     uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
-        // get Account invi Reward
-        uint accountInviReward = LiquidityProviderInviRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
+    //     // get Account invi Reward
+    //     uint accountInviReward = LiquidityProviderInviRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
 
-        // distribute account native reward
-        (bool sent, ) = _account.call{value: accountNativeReward}("");
-        require(sent, "Failed to send native coin to ILP holder");
+    //     // distribute account native reward
+    //     (bool sent, ) = _account.call{value: accountNativeReward}("");
+    //     require(sent, "Failed to send native coin to ILP holder");
 
-        // distribute account invi reward
-        inviToken.mintToken(_account, accountInviReward);
-    }
-
-    // update total lended amount by invi core
-    function updateTotalLentAmount(uint _totalLentAmount) public onlyInviCore {
-        totalLentAmount = _totalLentAmount;
-    }
+    //     // distribute account invi reward
+    //     inviToken.mintToken(_account, accountInviReward);
+    // }
 }

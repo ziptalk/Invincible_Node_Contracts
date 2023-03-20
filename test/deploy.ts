@@ -1,6 +1,15 @@
 import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
+// deploy test stKlay contract
+export const deployStKlay = async () => {
+  const StKlayContract = await ethers.getContractFactory("StKlay");
+  const stKlayContract = await upgrades.deployProxy(StKlayContract, [], { initializer: "initialize" });
+  await stKlayContract.deployed();
+
+  return stKlayContract;
+};
+
 // deploy InviToken contract
 export const deployInviToken = async () => {
   const InviTokenContract = await ethers.getContractFactory("InviToken");

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-
 uint constant leverageUnit = 10 ** 5;
 uint constant protocolFeeUnit = 10 ** 3;
 uint constant slippageUnit = 10 ** 3;
