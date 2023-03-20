@@ -39,7 +39,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
     
     //====== setter functions ======//
-   
+
     function setInviCoreAddress(address _inviCore) public onlyOwner {
         INVI_CORE = _inviCore;
     }
@@ -69,17 +69,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // update rewards
-    function distributeNativeReward() external payable {
+    function updateNativeReward(uint _totalRewardAmount) external onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
-            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-
-            (bool sent, ) = account.call{value: rewardAmount}("");
-            require(sent, "Failed to send native coin to ILP holder");
+            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
             
             nativeRewardAmount[account] += rewardAmount;
         }
+    }
+
+        // update rewards
+    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
+        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
+        for (uint256 i = 0; i < addressList.length; i++) {}
     }
 
     // user receive reward(native coin) function
@@ -96,11 +99,11 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== utils functions ======//
 
     // update account's reward
-    function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
-        // get Account reward 
-        uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
+    // function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
+    //     // get Account reward 
+    //     uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
         
-        // update account reward
-        nativeRewardAmount[_account] += accountReward;
-    }
+    //     // update account reward
+    //     nativeRewardAmount[_account] += accountReward;
+    // }
 }

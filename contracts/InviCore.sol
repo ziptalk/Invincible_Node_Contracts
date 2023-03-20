@@ -30,8 +30,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (uint => uint) nftReward;
 
     // stake related
-    uint public totalStakedAmount;
-    uint public totalUserStakedAmount;
     mapping(address => uint) public userStakedAmount;
     mapping(address => uint) public userRewardAmount;
 
@@ -74,10 +72,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
         uint minReward = _getMinReward(_principal + lentAmount, lockPeriod);
-
         uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
+        uint stakedAmount = _getStakedAmount(_principal, _leverageRatio);
 
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
         
         return stakeInfo;
     }
@@ -111,6 +109,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
     // return total Liquidity from LP Pool
     function _getTotalLiquidity() private view returns (uint) {
         return lpPoolContract.getTotalLiquidity();
+    }
+
+    // return staked amount
+    function _getStakedAmount(uint _amount, uint _leverageRatio) private view returns (uint) {
+        return StakedAmount(_amount, _leverageRatio);
     }
 
     //====== setter functions ======//
@@ -174,10 +177,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         nftReward[nftTokenId] = 1;
 
         //update stakeAmount info
-        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1) / leverageUnit;
+        uint lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
         uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
-        totalUserStakedAmount += _stakeInfo.principal + lentAmount;
         userList.push(msg.sender);
 
         // send principal to STM
@@ -211,25 +213,24 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     function distributeStKlayReward() external onlyOwner {
+        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         uint totalReward = stKlay.balanceOf(stakeManager) - totalStakedAmount;
-        uint nftReward = totalReward * totalUserStakedAmount / totalStakedAmount;
-        uint lpReward = totalReward * (lpPoolContract.totalStakedAmount - lpPoolContract.totalLentAmount) / totalStakedAmount;
+        uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
 
-        require(nftReward + lpReward >= totalReward - 2, ERROR_NOT_MATCH_REWARD);
+        uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / rewardPortionTotalUnit;
+        uint inviStakerReward = totalReward - nftReward - lpReward;
 
-
+        stakeNFTContract.updateReward(nftReward);
+        lpPoolContract.updateNativeReward(lpReward);
+        inviTokenStakeContract.updateNativeReward(inviStakerReward);
     }
 
-    // split reward to pools
-    function distributeProtocolFee(uint _totalProtocolFee) external onlyOwner {
-        // reward Portion Total = rewardPortionTotalUnit 
-        uint lpPoolReward = _totalProtocolFee * lpPoolRewardPortion / rewardPortionTotalUnit;
-        uint inviTokenStakeReward = _totalProtocolFee * inviTokenStakeRewardPortion / rewardPortionTotalUnit; 
-        lpPoolContract.distributeNativeReward{value: lpPoolReward}();
-        inviTokenStakeContract.distributeNativeReward{value : inviTokenStakeReward}();
-    }
+    function distributeInviTokenReward(uint _totalInviToken) external onlyOwner {
+        uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
+        uint inviStakerReward = _totalInviToken - lpReward;
 
-    function distributeInviToken(uint _totalInviToken) external onlyOwner {
+        lpPoolContract.updateInviTokenReward(lpReward);
+        inviTokenStakeContract.updateInviTokenReward(inviStakerReward);
     }   
     
     //====== utils function ======//
@@ -271,7 +272,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function _distributeUserReward(uint _totalRewardAmount) private onlyOwner {
         for(uint i = 0; i < userList.length; i++){
             address user = userList[i];
-            uint rewardAmount = (_totalRewardAmount * userStakedAmount[user] / totalUserStakedAmount);
+            uint rewardAmount = (_totalRewardAmount * userStakedAmount[user] / stakeNFTContract.totalStakedAmount());
             userRewardAmount[user] += rewardAmount;
         }
 

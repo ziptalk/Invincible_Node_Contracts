@@ -45,23 +45,26 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     // only owner can mint NFT
-    function mintNFT(StakeInfo memory _stakeInfo) public onlyOwner returns (uint) {
-        uint newItemId = _tokenIds.current();
-        _mint(_stakeInfo.user, newItemId);
+    function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint) {
+        uint newTokenId = _tokenIds.current();
+        _mint(_stakeInfo.user, newTokenId);
 
         _stakeInfo.lockStart = block.timestamp;
         _stakeInfo.lockEnd =  _stakeInfo.lockStart + _stakeInfo.lockPeriod;
-        stakeInfos[newItemId] = _stakeInfo;
+        stakeInfos[newTokenId] = _stakeInfo;
 
-        // update NFT Ownership
-        NFTOwnership[_stakeInfo.user].push(newItemId);
+        // update info
+        NFTOwnership[_stakeInfo.user].push(newTokenId);
+        nftTokenIds.push(newTokenId);
+        rewardAmount[newTokenId] = 0;
+        totalStakedAmount += _stakeInfo.stakedAmount;
        
-         _tokenIds.increment();
-        return newItemId;
+        _tokenIds.increment();
+        return newTokenId;
     }
 
     // only owner can burn NFT
-    function burnNFT(uint nftTokenId) public onlyOwner returns (bool) {
+    function burnNFT(uint nftTokenId) public onlyInviCore returns (bool) {
         _burn(nftTokenId);
 
     }
@@ -78,13 +81,13 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         _transfer(from, to, tokenId);
     }
 
-    function distributeReward(uint _totalReward) external onlyOwner{
+    function updateReward(uint _totalReward) external onlyInviCore{
         for (uint256 i = 0; i < nftTokenIds.length; i++) {
             uint nftId = nftTokenIds[i];
-            rewardAmount[account] += (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
+            rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
         }
-
     }
+
 
     // return the address is nft owner
     function isOwner(uint nftTokenId, address owner) public view returns (bool) {
@@ -97,10 +100,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfo.lockEnd < block.timestamp;
     }
 
-
-    // get stake info by nft token id
-    function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory) {
+    function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory){
         return stakeInfos[nftTokenId];
     }
-
 }

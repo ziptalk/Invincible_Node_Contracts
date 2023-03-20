@@ -85,24 +85,39 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      // update rewards
-    function distributeNativeReward() external payable onlyInviCore {
+    function updateNativeReward(uint _totalRewardAmount) external onlyInviCore {
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             address account = ILPHolders[i];
-            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-
-            (bool sent, ) = account.call{value: rewardAmount}("");
-            require(sent, "Failed to send native coin to ILP holder");
+            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
             
             nativeRewardAmount[account] += rewardAmount;
         }
     }
 
-    function distributeInviReward(uint _totalRewardAmount) external onlyInviCore{
+    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore{
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             address account = ILPHolders[i];
-            inviRewardAmount[account] += (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
+            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
+            
+            inviRewardAmount[account] += rewardAmount;
+        }
+    }
+    
+    function distributeNativeReward() external onlyOwner{
+        //TODO : 백엔드에서 unstake 호출하기.
+        ILPHolders = iLP.getILPHolders();
+        for (uint256 i = 0; i < ILPHolders.length; i++) {
+            //TODO : InviCore contract에 unstakeRequest 생성하기.
+        }
+    }
+
+        function distributeInviTokenReward() external onlyOwner{
+        //TODO : 백엔드에서 unstake 호출하기.
+        ILPHolders = iLP.getILPHolders();
+        for (uint256 i = 0; i < ILPHolders.length; i++) {
+            //TODO : InviCore contract에 unstakeRequest 생성하기.
         }
     }
 
