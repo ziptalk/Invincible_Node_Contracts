@@ -23,5 +23,6 @@ struct UnstakeRequest{
     address recipient;
     uint amount;
     uint fee;
-    uint requestType;
+    uint requestType; // 0: user, 1: LP, 2: INVI
+
 }
