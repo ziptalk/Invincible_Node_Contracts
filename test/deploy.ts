@@ -49,11 +49,15 @@ export const deployInviTokenStakeContract = async (stakeManager: string, inviTok
 };
 
 // deploy inviCore contract
-export const deployInviCoreContract = async (stakeManager: string, stakeNFTContract: Contract, lpPoolContract: Contract) => {
+export const deployInviCoreContract = async (stakeManager: string, stakeNFTContract: Contract, lpPoolContract: Contract, inviTokenStakeContract: Contract) => {
   const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stakeManager, stakeNFTContract.address, lpPoolContract.address], {
-    initializer: "initialize",
-  });
+  const inviCoreContract = await upgrades.deployProxy(
+    InviCoreContract,
+    [stakeManager, stakeNFTContract.address, lpPoolContract.address, inviTokenStakeContract.address],
+    {
+      initializer: "initialize",
+    }
+  );
   await inviCoreContract.deployed();
 
   return inviCoreContract;

@@ -9,6 +9,7 @@ import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 import "./LiquidityProviderPool.sol";
+import "./InviTokenStake.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
 
@@ -16,12 +17,16 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
+    InviTokenStake public inviTokenStakeContract;
     address public stakeManager;
     
     // reward related
     uint public stakingAPR;
     uint private decreaseRatio;
     uint private increaseRatio;
+    uint public lpPoolRewardPortion;
+    uint public inviTokenStakeRewardPortion;
+    mapping (uint => uint) nftReward;
 
     // stake status
     uint public totalUserStakedAmount;
@@ -30,13 +35,17 @@ contract InviCore is Initializable, OwnableUpgradeable {
     // variable
     uint public slippage;
 
-    function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr) initializer public {
+    function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr, address _inviTokenStakeAddr) initializer public {
         stakeManager = _stakeManager;
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
         lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
+        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
         decreaseRatio = 10 * rewardErrorUnit;
         increaseRatio = 5 * rewardErrorUnit;
         stakingAPR = 10;
+        lpPoolRewardPortion = 700;
+        inviTokenStakeRewardPortion = rewardPortionTotalUnit - lpPoolRewardPortion;
+        
         __Ownable_init();
     }
 
@@ -50,8 +59,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function getStakeInfo(uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
         uint lockPeriod = _getLockPeriod(_leverageRatio);
         uint lentAmount = _principal * (_leverageRatio - 1 * leverageUnit) / leverageUnit;
-
+        console.log(_principal, lentAmount);
         uint protocolFee = _getProtocolFee(lentAmount, _leverageRatio);
+        console.log(protocolFee);
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
         uint minReward = _getMinReward(_principal + lentAmount, lockPeriod);
@@ -120,7 +130,25 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     }
 
+    // set nft reward
+    function setNFTReward(uint _nftTokenId) external payable onlySTM{
+        // NFT Reward should be updated only once
+        require(nftReward[_nftTokenId] == 1, ERROR_NFT_REWARD_CRASH);
 
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
+
+        // check reward amount and range
+        require(stakeInfo.minReward >= msg.value && stakeInfo.maxReward <= msg.value, ERROR_NFT_REWARD_INVALID_RANGE);
+
+        nftReward[_nftTokenId] = msg.value;
+    }
+
+    // set reward portion
+    function _setRewardPortion(uint _lpPoolRewardPortion, uint _inviTokenStakeRewardPortion) external onlyOwner {
+        require (_lpPoolRewardPortion + _inviTokenStakeRewardPortion == rewardPortionTotalUnit, ERROR_SET_REWARD_PORTION);
+        lpPoolRewardPortion = _lpPoolRewardPortion;
+        inviTokenStakeRewardPortion = _inviTokenStakeRewardPortion;
+    }
 
     //====== service functions ======//
     
@@ -132,9 +160,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // mint StakeNFT Token by stake info
         uint nftTokenId = stakeNFTContract.mintNFT(_stakeInfo);
+        // update nftReward to 1
+        nftReward[nftTokenId] = 1;
 
         //update stakeAmount info
-        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1);
+        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * leverageUnit) / leverageUnit;
         uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.updateTotalLentAmount(totalLentAmount);
         totalUserStakedAmount += _stakeInfo.principal + lentAmount;
@@ -145,19 +175,35 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // unStake native coin
-    function repayNFT(uint nftTokenId) external {
+    function repayNFT(uint _nftTokenId) external {
         // verify NFT ownership
-        require(stakeNFTContract.verifyOwnership(nftTokenId, msg.sender), ERROR_NOT_OWNED_NFT);
+        require(stakeNFTContract.verifyOwnership(_nftTokenId, msg.sender), ERROR_NOT_OWNED_NFT);
 
         // get stakeInfo by nftTokenId
-        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(nftTokenId);
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
 
-        console.log(stakeInfo.user);
+        _verifyNFTExpiration(stakeInfo);
+
+        // transfer nft from msg.sender to inviCore
+        stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId);
+
+        // burn NFT
+        stakeNFTContract.burnNFT(_nftTokenId);  
+
+        // tranfer Reward to msg.sender
+        nftReward[_nftTokenId] = 0;
+        (bool sent, ) = msg.sender.call{value : nftReward[_nftTokenId]}("");
+        require(sent, ERROR_FAIL_SEND);
+
     }
 
-    // split reward
-    function splitRewards(uint _amount) external onlySTM {
-        // lpPoolContract.distributeReward();
+    // split reward to pools
+    function splitRewards() external payable onlySTM {
+        // reward Portion Total = rewardPortionTotalUnit 
+        uint lpPoolReward = msg.value * lpPoolRewardPortion / rewardPortionTotalUnit;
+        uint inviTokenStakeReward = msg.value * inviTokenStakeRewardPortion / rewardPortionTotalUnit; 
+        lpPoolContract.distributeReward{value: lpPoolReward}();
+        // inviTokenStakeContract.updateReward{value: inviTokenStakeReward}();
     }
     
     //====== utils function ======//
@@ -172,21 +218,28 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(_stakeInfo.lockPeriod == lockPeriod, ERROR_INVALID_STAKE_INFO);
 
         // verify lentAmount
-        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio * leverageUnit - 1 * leverageUnit) / leverageUnit;
+        uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * leverageUnit) / leverageUnit;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_TOO_MUCH_LENT);
 
         // verify min/max reward
-        uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio;
+        uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio / leverageUnit;
         uint minReward = MinReward(amount, _stakeInfo.lockPeriod, stakingAPR, decreaseRatio);
         uint maxReward = MaxReward(amount, _stakeInfo.lockPeriod, stakingAPR, increaseRatio);
         require(minReward == _stakeInfo.minReward, ERROR_INVALID_STAKE_INFO);
         require(maxReward == _stakeInfo.maxReward, ERROR_INVALID_STAKE_INFO);        
 
         // verify protocol fee
-        uint minProtocolFee = _stakeInfo.protocolFee * (1 * slippageUnit - _slippage * slippageUnit) / slippageUnit;
-        uint maxProtocolFee = _stakeInfo.protocolFee * (1 * slippageUnit + _slippage * slippageUnit) / slippageUnit;
+        uint minProtocolFee = _stakeInfo.protocolFee * (100 * slippageUnit - _slippage) / (slippageUnit * 100);
+        uint maxProtocolFee = _stakeInfo.protocolFee * (100 * slippageUnit + _slippage) / (slippageUnit * 100);
         uint protocolFee = _getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
         require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
+    }
+
+    // verify NFT expiration
+    function _verifyNFTExpiration(StakeInfo memory _stakeInfo) private view {
+        // verify expire date
+        require(_stakeInfo.lockEnd < block.timestamp, ERROR_NOT_EXPIRED_NFT);
+
     }
 }

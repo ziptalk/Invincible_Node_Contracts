@@ -36,6 +36,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         stakeManager = _stakeManager;
         iLP = IERC20(_iLP);
         inviToken = IERC20(_inviToken);
+        liquidityAllowableRatio = liquidityAllowableRatioUnit * 1;
         __Ownable_init();
     }
 
@@ -49,7 +50,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     function getMaxLentAmount() public view returns (uint) {
-        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * liqudityAllowableRatioUnit);
+        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * liquidityAllowableRatioUnit);
     }
 
     //====== setter functions ======//
@@ -81,7 +82,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      // update rewards
     function distributeReward() public payable {
         ILPHolders = iLP.getILPHolders();
-        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             _distributeAccountReward(ILPHolders[i], msg.value);
         }
