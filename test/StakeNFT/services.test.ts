@@ -12,20 +12,23 @@ describe("Stake NFT Test", function () {
   let stakeNFTContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
 
     // deploy stakeNFT contract
     stakeNFTContract = await deployStakeNFT();
+    // set InviCore Address
+    stakeNFTContract.functions.setInviCoreAddress(inviCore.address);
   });
 
   // 1. test token minting
   it("Test minting logic", async function () {
     console.log("-------------------Test Minting-------------------");
-    const [deployer, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
     const stakeInfo = {
       user: userA.address,
       principal: principal,
       leverageRatio: leverageRatio,
+      stakedAmount: 0,
       protocolFee: protocolFee,
       lockStart: lockStart,
       lockEnd: lockEnd,
@@ -35,7 +38,7 @@ describe("Stake NFT Test", function () {
     };
 
     // mint nft
-    await stakeNFTContract.functions.mintNFT(stakeInfo);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
 
     // check balance
     const userABalance = await stakeNFTContract.functions.balanceOf(userA.address);
@@ -45,12 +48,13 @@ describe("Stake NFT Test", function () {
   // 2. test token transfer
   it("Test token transfer logic", async function () {
     console.log("-------------------Test Token Transfer-------------------");
-    const [deployer, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
     const tokenID = 1;
     const stakeInfo = {
       user: userA.address,
       principal: principal,
       leverageRatio: leverageRatio,
+      stakedAmount: 0,
       protocolFee: protocolFee,
       lockStart: lockStart,
       lockEnd: lockEnd,
@@ -60,8 +64,8 @@ describe("Stake NFT Test", function () {
     };
 
     // mint nfts
-    await stakeNFTContract.functions.mintNFT(stakeInfo);
-    await stakeNFTContract.functions.mintNFT(stakeInfo);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
 
     // user 1 approve user 2 to use token
     await stakeNFTContract.connect(userA).approve(userB.address, tokenID);

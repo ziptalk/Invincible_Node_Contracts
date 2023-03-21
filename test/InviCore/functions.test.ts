@@ -1,7 +1,15 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
-import { deployInviToken, deployILPToken, deployStakeNFT, deployLpPoolContract, deployInviCoreContract, deployInviTokenStakeContract } from "../deploy";
+import {
+  deployInviToken,
+  deployILPToken,
+  deployStakeNFT,
+  deployLpPoolContract,
+  deployInviCoreContract,
+  deployInviTokenStakeContract,
+  deployStKlay,
+} from "../deploy";
 import units from "../units.json";
 
 describe("Invi Core functions Test", function () {
@@ -11,10 +19,13 @@ describe("Invi Core functions Test", function () {
   let iLPTokenContract: Contract;
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
+  let stKlayContract: Contract;
 
   this.beforeEach(async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
+    // deploy stKlay contract
+    stKlayContract = await deployStKlay();
     // deploy inviToken contract
     inviTokenContract = await deployInviToken();
     // deploy ILPToken contract
@@ -26,10 +37,11 @@ describe("Invi Core functions Test", function () {
     // deploy liquidity pool contract
     lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
     // deploy inviCore contract
-    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract);
-
-    // change stakeNFT owner
-    await stakeNFTContract.connect(deployer).transferOwnership(inviCoreContract.address);
+    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
+    +(
+      // change stakeNFT owner
+      (await stakeNFTContract.connect(deployer).transferOwnership(inviCoreContract.address))
+    );
 
     // change ILPToken owner
     await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
@@ -72,9 +84,7 @@ describe("Invi Core functions Test", function () {
 
     //verify stake info
     expect(stakeInfo.user).to.equal(userA.address);
-    expect(stakeInfo.principal).to.equal(principal); 
+    expect(stakeInfo.principal).to.equal(principal);
     expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
   });
-
-
 });
