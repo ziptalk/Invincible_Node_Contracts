@@ -7,6 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
+import "hardhat/console.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
 
@@ -69,12 +70,12 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // update rewards
-    function updateNativeReward(uint _totalRewardAmount) external onlyInviCore {
+    function distributeNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
-            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
-            
+            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+            console.log("reward: ", rewardAmount);
             nativeRewardAmount[account] += rewardAmount;
         }
     }
@@ -95,6 +96,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         (bool sent, ) = msg.sender.call{value: reward}("");
         require(sent, "Failed to send reward to requester");
     }
+
 
     //====== utils functions ======//
 
