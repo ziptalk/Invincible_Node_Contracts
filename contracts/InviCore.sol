@@ -12,10 +12,11 @@ import "./LiquidityProviderPool.sol";
 import "./InviTokenStake.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
+import "./interfaces/IStKlay.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
 
-    IERC20 public stKlay;
+    IStKlay public stKlay;
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
@@ -27,7 +28,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint private increaseRatio;
     uint public lpPoolRewardPortion;
     uint public inviTokenStakeRewardPortion;
-    mapping (uint => uint) nftReward;
+    // mapping (uint => uint) nftReward;
 
     // stake related
     mapping(address => uint) public userStakedAmount;
@@ -41,7 +42,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     address[] public userList;
 
     function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr, address _inviTokenStakeAddr, address _stKlayAddr) initializer public {
-        stKlay = IERC20(_stKlayAddr);
+        stKlay = IStKlay(_stKlayAddr);
         stakeManager = _stakeManager;
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
         lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
@@ -116,6 +117,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         return StakedAmount(_amount, _leverageRatio);
     }
 
+    function getUnstakeRequestsLength() public view returns (uint) {
+        return unstakeRequests.length;
+    }
+
     //====== setter functions ======//
 
     // set staking ARP function
@@ -145,15 +150,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // set nft reward
     function setNFTReward(uint _nftTokenId) external payable onlySTM{
-        // NFT Reward should be updated only once
-        require(nftReward[_nftTokenId] == 1, ERROR_NFT_REWARD_CRASH);
-
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
 
         // check reward amount and range
         require(stakeInfo.minReward >= msg.value && stakeInfo.maxReward <= msg.value, ERROR_NFT_REWARD_INVALID_RANGE);
-
-        nftReward[_nftTokenId] = msg.value;
     }
 
     // set reward portion
@@ -173,8 +173,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // mint StakeNFT Token by stake info
         uint nftTokenId = stakeNFTContract.mintNFT(_stakeInfo);
-        // update nftReward to 1
-        nftReward[nftTokenId] = 1;
 
         //update stakeAmount info
         uint lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
@@ -215,26 +213,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // burn NFT
         stakeNFTContract.burnNFT(_nftTokenId);  
 
-        // create unstake request
-        // UnstakeRequest memory request = UnstakeRequest(msg.sender, stakeInfo.principal)
-
-        // tranfer Reward to msg.sender
-        nftReward[_nftTokenId] = 0;
-        (bool sent, ) = msg.sender.call{value : nftReward[_nftTokenId]}("");
-        require(sent, ERROR_FAIL_SEND);
-    }
-
-    function distributeStKlayReward() external onlyOwner {
-        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
-        uint totalReward = stKlay.balanceOf(stakeManager) - totalStakedAmount;
-        uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
-
-        uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / rewardPortionTotalUnit;
-        uint inviStakerReward = totalReward - nftReward - lpReward;
-
-        stakeNFTContract.updateReward(nftReward);
-        lpPoolContract.updateNativeReward(lpReward);
-        inviTokenStakeContract.updateNativeReward(inviStakerReward);
+       
         // create unstake request for user 
         UnstakeRequest memory request = UnstakeRequest(msg.sender, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
 
@@ -250,24 +229,44 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequests.push(inviStakerRequest);
     }
 
+    function distributeStKlayReward() external onlyOwner {
+        // get total staked amount
+        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
+        // get total rewards
+        uint totalReward = stKlay.balanceOf(stakeManager) - totalStakedAmount;
+
+        // check rewards
+        uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
+        uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / rewardPortionTotalUnit;
+        uint inviStakerReward = totalReward - nftReward - lpReward;
+
+        stakeNFTContract.updateReward(nftReward);
+        
+        // lpPoolContract.updateNativeReward(lpReward);
+        // inviTokenStakeContract.updateNativeReward(inviStakerReward);
+    }
+
     function sendUnstakedAmount() external payable onlySTM{
         uint i = 0;
         while (unstakeRequests[i].amount <= address(this).balance) {
             // check request type (0: user, 1: LP, 2: INVI staker)
             uint requestType = unstakeRequests[i].requestType;
+            uint amount = unstakeRequests[i].amount;
+            address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             popIndexFromUnstakeRequests(unstakeRequests, 0);
             if (requestType == 0) {
-                (bool sent, ) = unstakeRequests[i].recipient.call{value : unstakeRequests[i].amount }("");
+                (bool sent, ) = recipient.call{value : amount }("");
                 require(sent, ERROR_FAIL_SEND);
             } else if (requestType == 1) {
-                lpPoolContract.distributeNativeReward{value : unstakeRequests[i].amount }();
+                lpPoolContract.distributeNativeReward{value : amount }();
             } else if (requestType == 2) {
-                inviTokenStakeContract.distributeNativeReward{value : unstakeRequests[i].amount }();
+                inviTokenStakeContract.distributeNativeReward{value : amount }();
             }
             i++;
+            if (i >= unstakeRequests.length) break;
         }
-    }
+    } 
 
     function distributeInviTokenReward(uint _totalInviToken) external onlyOwner {
         uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
