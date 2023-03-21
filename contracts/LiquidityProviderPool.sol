@@ -7,6 +7,7 @@ import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
+import "./lib/ErrorMessages.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
@@ -81,7 +82,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         
         // send coin to LP manager
         (bool sent, ) = stakeManager.call{value: msg.value}("");
-        require(sent, "Failed to send coin to Stake Manager");
+        require(sent, ERROR_FAIL_SEND);
     }
 
      // update rewards
@@ -105,15 +106,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         }
     }
     
-    function distributeNativeReward() external onlyOwner{
+    function distributeNativeReward() external payable onlyOwner{
         //TODO : 백엔드에서 unstake 호출하기.
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            //TODO : InviCore contract에 unstakeRequest 생성하기.
+            //TODO : InviCore contract에 unstakeRequest 생성하기. (?)
+            address account = ILPHolders[i];
+            uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+            
+            (bool sent, ) = account.call{value: rewardAmount}("");
+            require(sent, ERROR_FAIL_SEND);
         }
     }
 
-        function distributeInviTokenReward() external onlyOwner{
+    function distributeInviTokenReward() external onlyOwner{
         //TODO : 백엔드에서 unstake 호출하기.
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
