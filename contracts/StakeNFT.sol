@@ -39,10 +39,20 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         require(msg.sender == INVI_CORE, "msg sender should be invi core");
         _;
     }
+    
+    //====== getter functions ======//
+
+    function getRewardAmount(uint _tokenId) public view returns (uint) {
+        return rewardAmount[_tokenId];
+    }
+
+    //====== setter functions ======//
 
     function setInviCoreAddress(address _inviCore) public onlyOwner {
         INVI_CORE = _inviCore;
     }
+
+    //====== service functions ======//
 
     // only owner can mint NFT
     function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint) {
