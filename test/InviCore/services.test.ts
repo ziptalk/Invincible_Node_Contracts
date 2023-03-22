@@ -1,7 +1,15 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
-import { deployInviToken, deployILPToken, deployStakeNFT, deployLpPoolContract, deployInviCoreContract, deployInviTokenStakeContract, deployStKlay } from "../deploy";
+import {
+  deployInviToken,
+  deployILPToken,
+  deployStakeNFT,
+  deployLpPoolContract,
+  deployInviCoreContract,
+  deployInviTokenStakeContract,
+  deployStKlay,
+} from "../deploy";
 import units from "../units.json";
 
 describe("Invi Core functions Test", function () {
@@ -12,7 +20,6 @@ describe("Invi Core functions Test", function () {
   let iLPTokenContract: Contract;
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
-  
 
   this.beforeEach(async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
@@ -30,7 +37,7 @@ describe("Invi Core functions Test", function () {
     // deploy liquidity pool contract
     lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
     // deploy inviCore contract
-    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract,stKlayContract);
+    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
 
     // change ILPToken owner
     await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
@@ -41,7 +48,6 @@ describe("Invi Core functions Test", function () {
     stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
     lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
     inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
-    
   });
 
   it("Test stake function", async () => {
@@ -94,7 +100,7 @@ describe("Invi Core functions Test", function () {
     const totalUserStakedAmount = 10000 * 3 + 30000 * 5 + 100000 * 2;
     const totalLPStakedAmount = 10000000000 - (10000 * 2 + 30000 * 4 + 100000 * 1);
     expect(totalUserStakedAmount).to.equals(await stakeNFTContract.totalStakedAmount());
-    expect(totalLPStakedAmount).to.equals(await lpPoolContract.totalStakedAmount() - await lpPoolContract.totalLentAmount());
+    expect(totalLPStakedAmount).to.equals((await lpPoolContract.totalStakedAmount()) - (await lpPoolContract.totalLentAmount()));
 
     const pureReward = 300000;
     await stKlayContract.connect(deployer).mintToken(stakeManager.address, totalUserStakedAmount + totalLPStakedAmount + pureReward);
@@ -116,7 +122,7 @@ describe("Invi Core functions Test", function () {
     const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
     const initSTMBalance = await stakeManager.getBalance();
     const slippage = 3 * units.slippageUnit;
-    const lentAmount = Math.floor(principal *  (leverageRatio - 1) / units.leverageUnit);
+    const lentAmount = Math.floor((principal * (leverageRatio - 1)) / units.leverageUnit);
 
     // user -> stake coin
     await inviCoreContract.connect(userA).stake(stakeInfo, slippage, { value: principal });
@@ -130,6 +136,13 @@ describe("Invi Core functions Test", function () {
 
     // repay nft
     await inviCoreContract.connect(userA).repayNFT(nftId);
+    // check unstake request length
+    const unstakeRequestLength = await inviCoreContract.functions.getUnstakeRequestsLength();
+    expect(unstakeRequestLength.toString()).to.equal("3");
+
+    // send unstaked amount to user / LP / inviStakers
+    const userRewardAmount = await stakeNFTContract.functions.getRewardAmount(nftId);
+    await inviCoreContract.connect(stakeManager).sendUnstakedAmount({ value: userRewardAmount + principal });
   });
 
   // it("Test split reward function", async () => {

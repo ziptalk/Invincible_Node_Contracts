@@ -58,7 +58,7 @@ describe("Liquidity Provider Pool Test", function () {
     // distribute Reward to stakers
     await lpPoolContract
       .connect(stakeManager)
-      .distributeReward({ value: ethers.utils.parseEther(rewardAmountEther) })
+      .distributeNativeReward({ value: ethers.utils.parseEther(rewardAmountEther) })
       .catch((error: any) => {
         console.error(error);
       });
