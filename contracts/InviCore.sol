@@ -278,7 +278,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             } else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
             } else if (requestType == 2) {
-                inviTokenStakeContract.distributeNativeReward{value : amount }();
+                inviTokenStakeContract.updateNativeReward{value : amount }();
             }
             i++;
             if (i >= unstakeRequests.length) break;

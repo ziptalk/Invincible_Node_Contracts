@@ -70,7 +70,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute native rewards
-    function distributeNativeReward() external payable onlyInviCore {
+    function updateNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
@@ -81,7 +81,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token rewards (tbd)
-    function distributeInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
+    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {}
     }
