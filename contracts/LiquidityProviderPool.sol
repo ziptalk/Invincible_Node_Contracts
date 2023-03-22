@@ -70,6 +70,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         totalLentAmount = _totalLentAmount;
     }
 
+    // set total staked amount by invi core
+    function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
+        totalStakedAmount = _totalStakedAmount;
+    }
+
     //====== service functions ======//
 
     // stake Native Coin to LP Pool

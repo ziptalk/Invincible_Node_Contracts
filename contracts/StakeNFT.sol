@@ -57,6 +57,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         INVI_CORE = _inviCore;
     }
 
+    function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
+        totalStakedAmount = _totalStakedAmount;
+    }
+
     //====== service functions ======//
 
     // only owner can mint NFT
@@ -81,7 +85,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // only owner can burn NFT
     function burnNFT(uint nftTokenId) public onlyInviCore returns (bool) {
         _burn(nftTokenId);
-
     }
 
     // override transferFrom function
@@ -98,9 +101,15 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
     function updateReward(uint _totalReward) external onlyInviCore{
         for (uint256 i = 0; i < nftTokenIds.length; i++) {
+            
             uint nftId = nftTokenIds[i];
             rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
         }
+    }
+
+    // return the nft is existed
+    function isExisted(uint nftTokenId) public view returns (bool) {
+        return _exists(nftTokenId);
     }
 
 
@@ -115,7 +124,15 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfo.lockEnd < block.timestamp;
     }
 
+    // return the stakeInfo by nftTokenId
     function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory){
+        StakeInfo memory stakeInfo = stakeInfos[nftTokenId];
+        require(stakeInfo.user != address(0), "stakeInfo is not exist");
         return stakeInfos[nftTokenId];
+    }
+
+    // delete the stakeInfo by nftTokenId
+    function deleteStakeInfo(uint nftTokenId) public returns (bool){
+        stakeInfos[nftTokenId].user = address(0);
     }
 }
