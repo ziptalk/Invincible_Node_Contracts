@@ -12,6 +12,7 @@ import {
   deployAllWithSetting
 } from "../../deploy";
 import units from "../../units.json";
+import { leverageStake, provideLiquidity, verifyRequest } from "../../utils";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
@@ -31,55 +32,51 @@ describe("Invi Core functions Test", function () {
   it("Test stklay reward distribute function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
-    // lp stake coin
+    //* given
     const lpAmount = 10000000000;
-    await lpPoolContract.connect(LP).stake({ value: lpAmount });
+    provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
     // user -> stake coin
-    const slippage = 3 * units.slippageUnit;
-    const stakeInfoA = await inviCoreContract.connect(userA).getStakeInfo(10000, 3 * units.leverageUnit);
-    const stakeInfoB = await inviCoreContract.connect(userB).getStakeInfo(30000, 5 * units.leverageUnit);
-    const stakeInfoC = await inviCoreContract.connect(userC).getStakeInfo(100000, 2 * units.leverageUnit);
-    await inviCoreContract.connect(userA).stake(stakeInfoA, slippage, { value: 10000 });
-    await inviCoreContract.connect(userB).stake(stakeInfoB, slippage, { value: 30000 });
-    await inviCoreContract.connect(userC).stake(stakeInfoC, slippage, { value: 100000 });
-
-    const totalUserStakedAmount = 10000 * 3 + 30000 * 5 + 100000 * 2;
-    const totalLPStakedAmount = 10000000000 - (10000 * 2 + 30000 * 4 + 100000 * 1);
-    expect(totalUserStakedAmount).to.equals(await stakeNFTContract.totalStakedAmount());
-    expect(totalLPStakedAmount).to.equals((await lpPoolContract.totalStakedAmount()) - (await lpPoolContract.totalLentAmount()));
+    const principalA = 1000000;
+    const leverageRatioA = 3 * units.leverageUnit;
+    const stakeInfoA = await leverageStake(inviCoreContract, userA, principalA, leverageRatioA);// userA stake
+    const principalB = 3000000;
+    const leverageRatioB = 2 * units.leverageUnit;
+    const stakeInfoB = await leverageStake(inviCoreContract, userB, principalB, leverageRatioB);// userB stake
+    const principalC = 5000000;
+    const leverageRatioC = 2 * units.leverageUnit;
+    const stakeInfoC = await leverageStake(inviCoreContract, userC, principalC, leverageRatioC);// userC stake
     
-    // generate minting
-    const pureReward = 300000;
-    await stKlayContract.connect(deployer).mintToken(stakeManager.address, totalUserStakedAmount + totalLPStakedAmount + pureReward);
+    // mint reward
+    const pureReward = 10000000; 
+    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
 
-    // distribute reward
-    await inviCoreContract.connect(deployer).distributeStKlayReward();
+    
+    //* when
+    await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
 
-    // verify nft reward distribute 
-    const nftReward = Math.floor(pureReward * (10000 * 3 + 30000 * 5 + 100000 * 2) / (10000000000 - (10000 * 2 + 30000 * 4 + 100000 * 1)));
+    //* then
+    // verify nft reward is distributed correctly
+    const totalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
+    const totalLPStakedAmount = await lpPoolContract.totalStakedAmount();
+    const totalLentAmount = await lpPoolContract.totalLentAmount();
+    const totalNftReward = Math.floor(pureReward * totalUserStakedAmount / (Number(totalUserStakedAmount) + Number(totalLPStakedAmount) - Number(totalLentAmount)));
     const userNFTA = await stakeNFTContract.NFTOwnership(userA.address, 0);
     const userNFTB = await stakeNFTContract.NFTOwnership(userB.address, 0);
     const userNFTC = await stakeNFTContract.NFTOwnership(userC.address, 0);
-    expect(await stakeNFTContract.rewardAmount(userNFTA)).to.equal(Math.floor(10000 * 3 * nftReward / totalUserStakedAmount));
-    expect(await stakeNFTContract.rewardAmount(userNFTB)).to.equal(Math.floor(30000 * 5 * nftReward / totalUserStakedAmount));
-    expect(await stakeNFTContract.rewardAmount(userNFTC)).to.equal(Math.floor(100000 * 2 * nftReward / totalUserStakedAmount));
+    expect(await stakeNFTContract.rewardAmount(userNFTA)).to.equal(Math.floor(stakeInfoA.stakedAmount * totalNftReward / totalUserStakedAmount));
+    expect(await stakeNFTContract.rewardAmount(userNFTB)).to.equal(Math.floor(stakeInfoB.stakedAmount * totalNftReward / totalUserStakedAmount));
+    expect(await stakeNFTContract.rewardAmount(userNFTC)).to.equal(Math.floor(stakeInfoC.stakedAmount * totalNftReward / totalUserStakedAmount));
 
     // verify lp reward distribute
-    const lpReward = Math.floor((pureReward - nftReward) * await inviCoreContract.lpPoolRewardPortion() / units.rewardPortionTotalUnit);
+    const lpReward = Math.floor((pureReward - totalNftReward) * await inviCoreContract.lpPoolRewardPortion() / units.rewardPortionTotalUnit);
     const lpUnstakeRequest = await inviCoreContract.unstakeRequests(0);
-    expect(lpPoolContract.address).to.equal(lpUnstakeRequest.recipient);
-    expect(lpReward).to.equal(lpUnstakeRequest.amount);
-    expect(0).to.equal(lpUnstakeRequest.fee);
-    expect(1).to.equal(lpUnstakeRequest.requestType);
+    verifyRequest(lpUnstakeRequest, lpPoolContract.address, lpReward, 0, 1);
 
     //verify inviStaker reward distribute
-    const inviStakeReward = Math.floor(pureReward - nftReward - lpReward);
+    const inviStakeReward = Math.floor(pureReward - totalNftReward - lpReward);
     const inviStakeUnstakeRequest = await inviCoreContract.unstakeRequests(1);
-    expect(inviTokenStakeContract.address).to.equal(inviStakeUnstakeRequest.recipient);
-    expect(inviStakeReward).to.equal(inviStakeUnstakeRequest.amount);
-    expect(0).to.equal(inviStakeUnstakeRequest.fee);
-    expect(2).to.equal(inviStakeUnstakeRequest.requestType);
+    verifyRequest(inviStakeUnstakeRequest, inviTokenStakeContract.address, inviStakeReward, 0, 2);
   });
   
 });

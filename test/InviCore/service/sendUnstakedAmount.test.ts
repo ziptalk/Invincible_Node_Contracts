@@ -12,8 +12,7 @@ import {
   deployAllWithSetting,
 } from "../../deploy";
 import units from "../../units.json";
-
-const { expectRevert } = require("@openzeppelin/test-helpers");
+import { leverageStake, provideLiquidity } from "../../utils";
 
 describe("Invi Core functions Test", function () {
   let stKlayContract: Contract;
@@ -28,33 +27,64 @@ describe("Invi Core functions Test", function () {
     [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
   });
 
-  it("Test stake function", async () => {
+
+  it("Test sendUnstake function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
-
-    // lp stake coin
+    //* given
     const lpAmount = 10000000000;
-    await lpPoolContract.connect(LP).stake({ value: lpAmount });
-
-    // create stake info
-    const principal = 10000;
-    const leverageRatio = 2 * units.leverageUnit;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
-    const slippage = 3 * units.slippageUnit;
-    const stakedAmount = stakeInfo.stakedAmount;
-    const lentAmount = stakedAmount - principal;
+    provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
     // user -> stake coin
-    await inviCoreContract.connect(userA).stake(stakeInfo, slippage, { value: principal });
+    const principalA = 1000000;
+    const leverageRatioA = 3 * units.leverageUnit;
+    const stakeInfoA = await leverageStake(inviCoreContract, userA, principalA, leverageRatioA);// userA stake
+    const principalB = 3000000;
+    const leverageRatioB = 2 * units.leverageUnit;
+    const stakeInfoB = await leverageStake(inviCoreContract, userB, principalB, leverageRatioB);// userB stake
+    const principalC = 5000000;
+    const leverageRatioC = 2 * units.leverageUnit;
+    const stakeInfoC = await leverageStake(inviCoreContract, userC, principalC, leverageRatioC);// userC stake
+    // mint reward
+    const pureReward = 10000000; 
+    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
+    // distribute reward
+    await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
 
-    // verify stakeNFT contract
-    let result = await stakeNFTContract.functions.NFTOwnership(userA.address, 0);
-    expect(result.toString()).to.equal("0");
+    //* when
+    await inviCoreContract.connect(stakeManager).sendUnstakedAmount({value : 10000000});
 
-    // verify lpPool contract
-    expect(await lpPoolContract.totalStakedAmount()).to.equal(lpAmount);
-    expect(await lpPoolContract.totalLentAmount()).to.equal(lentAmount);
+    //* then
+    expect(await inviCoreContract.getUnstakeRequestsLength()).to.equal(0);
+  });
 
-    // verify inviCore contract
-    expect(await stakeNFTContract.totalStakedAmount()).to.equal(principal + lentAmount);
+  it("Test sendUnstake function _ insufficient allowance", async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    //* given
+    const lpAmount = 10000000000;
+    provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
+
+    // user -> stake coin
+    const principalA = 1000000;
+    const leverageRatioA = 3 * units.leverageUnit;
+    const stakeInfoA = await leverageStake(inviCoreContract, userA, principalA, leverageRatioA);// userA stake
+    const principalB = 3000000;
+    const leverageRatioB = 2 * units.leverageUnit;
+    const stakeInfoB = await leverageStake(inviCoreContract, userB, principalB, leverageRatioB);// userB stake
+    const principalC = 5000000;
+    const leverageRatioC = 2 * units.leverageUnit;
+    const stakeInfoC = await leverageStake(inviCoreContract, userC, principalC, leverageRatioC);// userC stake
+    // mint reward
+    const pureReward = 10000000; 
+    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
+    // distribute reward
+    await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
+
+    const request1 = await inviCoreContract.unstakeRequests(0);
+
+    //* when
+    await inviCoreContract.connect(stakeManager).sendUnstakedAmount({value : request1.amount});
+
+    //* then
+    expect(await inviCoreContract.getUnstakeRequestsLength()).to.equal(1);
   });
 });

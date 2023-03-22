@@ -12,6 +12,7 @@ import {
   deployAllWithSetting
 } from "../../deploy";
 import units from "../../units.json";
+import { provideLiquidity,leverageStake, verifyRequest } from "../../utils";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
@@ -31,81 +32,65 @@ describe("Invi Core functions Test", function () {
   it("Test repayNFT function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
-    // lp stake coin
+    //* given
     const lpAmount = 100000000000;
-    await lpPoolContract.connect(LP).stake({ value: lpAmount });
+    await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
-    // create stake info
-    const principal = 5000000;
+    // userA stake
+    const principal = 500000;
     const leverageRatio = 3 * units.leverageUnit;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
-    const slippage = 3 * units.slippageUnit;
-    const lentAmount = Math.floor(principal * leverageRatio / units.leverageUnit) - principal;
+    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio); 
 
-    // user -> stake coin
-    await inviCoreContract.connect(userA).stake(stakeInfo, slippage, { value: principal });
+    // get nftId
+    let nftId = await stakeNFTContract.NFTOwnership(userA.address, 0); 
+    const nftStakeInfo = await stakeNFTContract.getStakeInfo(nftId);
+
+    // mint reward
+    const pureReward = 10000000; 
+    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principal + pureReward);
+
+    // distribute reward
+    await inviCoreContract.connect(deployer).distributeStKlayReward();
+
     // init value
-    const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
+    const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount(); 
     const initTotalLPStakedAmount = await lpPoolContract.totalStakedAmount();
     const initTotalLentAmount = await lpPoolContract.totalLentAmount();
 
-    // generate minting
-    const pureReward = 10000000;
-    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principal + pureReward);
-    
-    // distribute reward
-    await inviCoreContract.connect(deployer).distributeStKlayReward();
-    
-    // time move to repay nft
-    let nftId = await stakeNFTContract.NFTOwnership(userA.address, 0);
-    const nftStakeInfo = await stakeNFTContract.getStakeInfo(nftId);
 
-    await ethers.provider.send("evm_increaseTime", [nftStakeInfo.lockPeriod.toNumber()]);
+    //* when
+    await ethers.provider.send("evm_increaseTime", [nftStakeInfo.lockPeriod.toNumber()]); // time move to repay nft
     await ethers.provider.send("evm_mine", []);
-
-    // repay nft
     await inviCoreContract.connect(userA).repayNFT(nftId);
 
-    // verify totalUserStakedAmount
+
+    //* then
+    const lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
     const totalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
-    expect(totalUserStakedAmount).to.equal(initTotalUserStakedAmount - principal - lentAmount);
-
-    // verify totalLentAmount & totalLPStakedAmount
     const totalLPStakedAmount = await lpPoolContract.totalStakedAmount();
-    expect(totalLPStakedAmount).to.equal(Number(initTotalLPStakedAmount) + Number(lentAmount));
     const totalLentAmount = await lpPoolContract.totalLentAmount();
-    expect(totalLentAmount).to.equal(Number(initTotalLentAmount) - Number(lentAmount));
-    
-    // verify stakeInfo, nft is burned
-    expect(await stakeNFTContract.isExisted(nftId)).to.equal(false);
-
-    // verify unstake request length
     const unstakeRequestLength = await inviCoreContract.functions.getUnstakeRequestsLength();
-    expect(unstakeRequestLength.toString()).to.equal("5");
+
+    expect(totalUserStakedAmount).to.equal(initTotalUserStakedAmount - principal - lentAmount); // verify totalUserStakedAmount
+    expect(totalLPStakedAmount).to.equal(Number(initTotalLPStakedAmount) + Number(lentAmount)); // verify totalLentAmount
+    expect(totalLentAmount).to.equal(Number(initTotalLentAmount) - Number(lentAmount)); // verify totalLentAmount
+    expect(await stakeNFTContract.isExisted(nftId)).to.equal(false); // verify nft is not existed
+    expect(unstakeRequestLength.toString()).to.equal("5"); // verify unstake request length
 
     // verify nft reward distribute 
     const userRequest = await inviCoreContract.unstakeRequests(2);
     const nftReward = await stakeNFTContract.rewardAmount(nftId);
     const userReward = Math.floor(Number(nftReward) * (100 * units.protocolFeeUnit - stakeInfo.protocolFee) / (units.protocolFeeUnit * 100)) + Number(stakeInfo.principal);
-    expect(userRequest.recipient).to.equal(userA.address);
-    expect(userRequest.amount).to.equal(userReward);
-    expect(userRequest.fee).to.equal(stakeInfo.protocolFee);
-    expect(userRequest.requestType).to.equal(0);
+    verifyRequest(userRequest, userA.address, userReward, 0, 0);
 
     //verify lp reward distribute
     const lpReward = (nftReward - (userReward - stakeInfo.principal)) * await inviCoreContract.lpPoolRewardPortion() / units.rewardPortionTotalUnit;
     const lpRequest = await inviCoreContract.unstakeRequests(3);
-    expect(lpRequest.recipient).to.equal(lpPoolContract.address);
-    expect(lpRequest.amount).to.equal(lpReward);
-    expect(lpRequest.fee).to.equal(0);
-    expect(lpRequest.requestType).to.equal(1);
+    verifyRequest(lpRequest, lpPoolContract.address, lpReward, 0, 1)
 
     //verify inviStaker reward distribute
     const inviStakeReward = nftReward - (userReward - stakeInfo.principal) - lpReward;
     const inviStakeRequest = await inviCoreContract.unstakeRequests(4);
-    expect(inviStakeRequest.recipient).to.equal(inviTokenStakeContract.address);
-    expect(inviStakeRequest.amount).to.equal(inviStakeReward);
-    expect(inviStakeRequest.fee).to.equal(0);
-    expect(inviStakeRequest.requestType).to.equal(2);
+    verifyRequest(inviStakeRequest, inviTokenStakeContract.address, inviStakeReward, 0, 2)
   });
 });

@@ -12,6 +12,7 @@ import {
   deployAllWithSetting
 } from "../../deploy";
 import units from "../../units.json";
+import { provideLiquidity, leverageStake } from "../../utils";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
@@ -31,30 +32,21 @@ describe("Invi Core functions Test", function () {
   it("Test stake function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
-    // lp stake coin
+    //* given
     const lpAmount = 10000000000;
-    await lpPoolContract.connect(LP).stake({ value: lpAmount });
+    await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
-    // create stake info
-    const principal = 10000;
-    const leverageRatio = 2 * units.leverageUnit;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
-    const slippage = 3 * units.slippageUnit;
+    //* when
+    const principal = 1000000;
+    const leverageRatio = 3 * units.leverageUnit;
+    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio);// userA stake
+
+    //* then
     const stakedAmount = stakeInfo.stakedAmount;
     const lentAmount = stakedAmount - principal;
-
-    // user -> stake coin
-    await inviCoreContract.connect(userA).stake(stakeInfo, slippage, { value: principal });
-
-    // verify stakeNFT contract
-    let result = await stakeNFTContract.functions.NFTOwnership(userA.address, 0);
-    expect(result.toString()).to.equal("0");
-
-    // verify lpPool contract
+    expect(await stakeNFTContract.balanceOf(userA.address)).to.equal(1);
     expect(await lpPoolContract.totalStakedAmount()).to.equal(lpAmount);
     expect(await lpPoolContract.totalLentAmount()).to.equal(lentAmount);
-
-    // verify inviCore contract
     expect(await stakeNFTContract.totalStakedAmount()).to.equal(principal + lentAmount);
   });
 });
