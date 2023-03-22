@@ -264,12 +264,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // send unstaked amount to unstakeRequest applicants
     function sendUnstakedAmount() external payable onlySTM{
-        uint i = 0;
-        while (unstakeRequests[i].amount <= address(this).balance) {
+        while (unstakeRequests.length > 0 && unstakeRequests[0].amount <= address(this).balance) {
             // check request type (0: user, 1: LP, 2: INVI staker)
-            uint requestType = unstakeRequests[i].requestType;
-            uint amount = unstakeRequests[i].amount;
-            address recipient = unstakeRequests[i].recipient;
+            uint requestType = unstakeRequests[0].requestType;
+            uint amount = unstakeRequests[0].amount;
+            address recipient = unstakeRequests[0].recipient;
             // remove first element of unstakeRequests
             popIndexFromUnstakeRequests(unstakeRequests, 0);
             if (requestType == 0) {
@@ -280,8 +279,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
             } else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
-            i++;
-            if (i >= unstakeRequests.length) break;
         }
     } 
     
