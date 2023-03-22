@@ -10,22 +10,23 @@ import "./lib/Unit.sol";
 import "./lib/ErrorMessages.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
-
+    //------Contracts and Addresses------//
     IERC20 public iLP;
     IERC20 public inviToken;
     address public stakeManager; 
     address public INVI_CORE;
     address[] public ILPHolders;
-    uint public liquidityAllowableRatio;
 
-    // lp status
+    //------Ratios------//
+    uint public liquidityAllowableRatio;
+    
+    //------lp status------//
     mapping(address => uint) public stakedAmount;
     mapping(address => uint) public nativeRewardAmount;
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
     uint public totalLentAmount;
     
-
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == INVI_CORE, "msg sender should be invi core");
@@ -84,28 +85,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         (bool sent, ) = stakeManager.call{value: msg.value}("");
         require(sent, ERROR_FAIL_SEND);
     }
-
-     // update rewards
-    function updateNativeReward(uint _totalRewardAmount) external onlyInviCore {
-        ILPHolders = iLP.getILPHolders();
-        for (uint256 i = 0; i < ILPHolders.length; i++) {
-            address account = ILPHolders[i];
-            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
-            
-            nativeRewardAmount[account] += rewardAmount;
-        }
-    }
-
-    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore{
-        ILPHolders = iLP.getILPHolders();
-        for (uint256 i = 0; i < ILPHolders.length; i++) {
-            address account = ILPHolders[i];
-            uint rewardAmount = (_totalRewardAmount * stakedAmount[account] / totalStakedAmount);
-            
-            inviRewardAmount[account] += rewardAmount;
-        }
-    }
     
+    // distribute native coin
     function distributeNativeReward() external payable onlyOwner{
         //TODO : 백엔드에서 unstake 호출하기.
         ILPHolders = iLP.getILPHolders();
@@ -119,6 +100,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         }
     }
 
+    // distribute invi token 
     function distributeInviTokenReward() external onlyOwner{
         //TODO : 백엔드에서 unstake 호출하기.
         ILPHolders = iLP.getILPHolders();
@@ -129,21 +111,4 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //====== utils functions ======//
 
-    // distribute account reward
-
-    // function _distributeAccountReward(address _account, uint256 _totalRewardAmount) private {
-
-    //     // get Account native token reward 
-    //     uint accountNativeReward = LiquidityProviderNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
-        
-    //     // get Account invi Reward
-    //     uint accountInviReward = LiquidityProviderInviRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
-
-    //     // distribute account native reward
-    //     (bool sent, ) = _account.call{value: accountNativeReward}("");
-    //     require(sent, "Failed to send native coin to ILP holder");
-
-    //     // distribute account invi reward
-    //     inviToken.mintToken(_account, accountInviReward);
-    // }
 }

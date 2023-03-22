@@ -10,17 +10,17 @@ import "./lib/Logics.sol";
 import "hardhat/console.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
-
+    //------Contracts and Addresses------//
     IERC20 public inviToken;
     address public stakeManager;
     address public INVI_CORE;
 
-    // stake status
+    //------stake status------//
     mapping(address => uint) public stakedAmount;
     mapping(address => uint) public nativeRewardAmount;
     uint public totalStakedAmount;
 
-    // addresses status
+    //------addresses status------//
     address[] public addressList;
     uint public totalAddressNumber;
 
@@ -69,7 +69,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(inviToken.transfer(msg.sender, _unstakeAmount));
     }
 
-    // update rewards
+    // distribute native rewards
     function distributeNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
@@ -80,8 +80,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         }
     }
 
-        // update rewards
-    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
+    // distribute invi token rewards (tbd)
+    function distributeInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {}
     }
@@ -99,13 +99,5 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
 
     //====== utils functions ======//
-
-    // update account's reward
-    // function _updateAccountReward(address _account, uint256 _totalRewardAmount) private {
-    //     // get Account reward 
-    //     uint accountReward = InviTokenStakerNativeRewardAmount(_totalRewardAmount, stakedAmount[_account], totalStakedAmount);
-        
-    //     // update account reward
-    //     nativeRewardAmount[_account] += accountReward;
-    // }
+    
 }

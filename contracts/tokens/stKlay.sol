@@ -9,12 +9,13 @@ string constant TOKEN_FULL_NAME = "Stklay Token";
 string constant TOKEN_NAME = "STKLAY";
 
 contract StKlay is Initializable, ERC20Upgradeable, OwnableUpgradeable {
-
+    //====== initializer ======//
     function initialize() initializer public {
         __ERC20_init(TOKEN_FULL_NAME, TOKEN_NAME);
         __Ownable_init();
     }
 
+    //====== service functions ======//
     function mintToken(address _account, uint _amount) onlyOwner external {
         _mint(_account, _amount);
     }

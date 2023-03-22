@@ -11,7 +11,7 @@ string constant ILP_TOKEN_NAME = "ILP";
 
 
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
-
+    //------Contracts and Addresses------//
     // track ILP Holder list
     address[] public ILPHolders;
 
@@ -25,6 +25,8 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function getILPHolders() external view returns (address[] memory){
         return ILPHolders;
     }
+
+    //======setter functions ======//
 
     //====== service functions ======//
     function mintToken(address _account, uint _amount) onlyOwner external {

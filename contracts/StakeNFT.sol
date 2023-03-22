@@ -13,21 +13,26 @@ import "hardhat/console.sol";
 contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    string private _name;
-    string private _symbol;
+
+    //------Contracts and Addresses------//
     address public INVI_CORE;
 
+    //------mappings------//
     // show which address have which NFT
     mapping (address => uint[]) public NFTOwnership;
-
-    uint public totalStakedAmount;
-    uint[] public nftTokenIds;
     mapping (uint => uint) public rewardAmount;
-
     // store all stakeInfos
     mapping (uint => StakeInfo) public stakeInfos;
-    
 
+    //------public Variables------//
+    uint public totalStakedAmount;
+    uint[] public nftTokenIds;
+
+    //------private Variables------//
+    string private _name;
+    string private _symbol;
+    
+    //====== initializer ======//
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
