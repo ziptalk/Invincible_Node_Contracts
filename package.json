@@ -27,10 +27,10 @@
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.8.2",
     "@openzeppelin/hardhat-upgrades": "^1.22.1",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
-    "chai": "^4.3.7",
     "web3": "^1.8.2"
   }
 }
