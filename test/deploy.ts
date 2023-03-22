@@ -71,3 +71,36 @@ export const deployInviCoreContract = async (stakeManager: string, stakeNFTContr
 
   return inviCoreContract;
 };
+
+
+// deploy entire contract with setting
+export const deployAllWithSetting = async () => {
+  const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+
+  // deploy stKlay contract
+  const stKlayContract = await deployStKlay();
+  // deploy inviToken contract
+  const inviTokenContract = await deployInviToken();
+  // deploy ILPToken contract
+  const iLPTokenContract = await deployILPToken();
+  // deploy stakeNFT contract
+  const stakeNFTContract = await deployStakeNFT();
+  // deploy inviTokenStake Contract
+  const inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
+  // deploy liquidity pool contract
+  const lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
+  // deploy inviCore contract
+  const inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
+
+  // change ILPToken owner
+  await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+  // change inviToken owner
+  await inviTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+
+  // set InviCore contract
+  stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
+  lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
+  inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
+
+  return [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract];
+}

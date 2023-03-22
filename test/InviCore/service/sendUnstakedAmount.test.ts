@@ -9,7 +9,7 @@ import {
   deployInviCoreContract,
   deployInviTokenStakeContract,
   deployStKlay,
-  deployAllWithSetting
+  deployAllWithSetting,
 } from "../../deploy";
 import units from "../../units.json";
 
