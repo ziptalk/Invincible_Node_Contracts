@@ -12,11 +12,10 @@ import "./LiquidityProviderPool.sol";
 import "./InviTokenStake.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
-import "./interfaces/IStKlay.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
-    IStKlay public stKlay;
+    IERC20 public stKlay;
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
@@ -43,7 +42,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //======initializer======//
     function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr, address _inviTokenStakeAddr, address _stKlayAddr) initializer public {
-        stKlay = IStKlay(_stKlayAddr);
+        stKlay = IERC20(_stKlayAddr);
         stakeManager = _stakeManager;
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
         lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
@@ -66,7 +65,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     // get stake info by principal & leverageRatio variables
     function getStakeInfo(uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
         uint lockPeriod = _getLockPeriod(_leverageRatio);
-        uint lentAmount = _principal * (_leverageRatio - 1 * leverageUnit) / leverageUnit;
+        uint lentAmount = _principal * _leverageRatio / leverageUnit - _principal;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_EXCEED_LENNT_AMOUNT);
         
         uint protocolFee = _getProtocolFee(lentAmount, _leverageRatio);
@@ -200,16 +199,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // get user reward without protocol fee
         uint userReward = rewardAmount * (protocolFeeUnit * 100 - protocolFee) / (protocolFeeUnit * 100);
         // get stakers'(INVI staker, LPs) reward
-        uint stakersReward = rewardAmount * (protocolFee / (protocolFeeUnit * 100 ));
+        uint stakersReward = rewardAmount - userReward;
         // split reward to LPs and INVI stakers
         uint lpPoolReward = stakersReward *  lpPoolRewardPortion / rewardPortionTotalUnit;
         uint inviTokenStakeReward = stakersReward * inviTokenStakeRewardPortion / rewardPortionTotalUnit;
-        
-        // transfer nft from msg.sender to inviCore
-        stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId); 
 
-        // burn NFT
-        stakeNFTContract.burnNFT(_nftTokenId);  
+        // set stakeAmount info
+        stakeNFTContract.setTotalStakedAmount(stakeNFTContract.totalStakedAmount() - stakeInfo.stakedAmount);
+        lpPoolContract.setTotalStakedAmount(lpPoolContract.totalStakedAmount() + (stakeInfo.stakedAmount - stakeInfo.principal));
+        lpPoolContract.setTotalLentAmount(lpPoolContract.totalLentAmount() - (stakeInfo.stakedAmount - stakeInfo.principal));
 
         // create unstake request for user 
         UnstakeRequest memory request = UnstakeRequest(msg.sender, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
@@ -222,6 +220,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequests.push(request);
         unstakeRequests.push(lpRequest);
         unstakeRequests.push(inviStakerRequest);
+
+        // transfer nft from msg.sender to inviCore
+        stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId); 
+
+        // burn NFT & delete stakeInfo
+        stakeNFTContract.deleteStakeInfo(_nftTokenId);
+        stakeNFTContract.burnNFT(_nftTokenId);  
     }
 
     // periodic reward distribution, update
@@ -253,8 +258,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
         uint inviStakerReward = _totalInviToken - lpReward;
 
-        lpPoolContract.updateInviTokenReward(lpReward);
-        inviTokenStakeContract.updateInviTokenReward(inviStakerReward);
+        // lpPoolContract.distributeInviTokenReward(lpReward);
+        // inviTokenStakeContract.distributeInviTokenReward(inviStakerReward);
     }   
 
     // send unstaked amount to unstakeRequest applicants
