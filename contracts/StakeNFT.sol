@@ -51,6 +51,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return rewardAmount[_tokenId];
     }
 
+    function getNFTOwnership(address _user) public view returns (uint[] memory) {
+        return NFTOwnership[_user];
+    }
+
     //====== setter functions ======//
 
     function setInviCoreAddress(address _inviCore) public onlyOwner {
