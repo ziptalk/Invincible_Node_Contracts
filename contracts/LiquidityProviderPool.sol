@@ -97,6 +97,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             address account = ILPHolders[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+            nativeRewardAmount[account] += rewardAmount;
             (bool sent, ) = account.call{value: rewardAmount}("");
             require(sent, ERROR_FAIL_SEND);
         }
