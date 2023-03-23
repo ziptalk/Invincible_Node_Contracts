@@ -14,6 +14,13 @@ import {
 import units from "../../units.json";
 import { leverageStake, provideLiquidity } from "../../utils";
 
+interface UnstakeRequest {
+  recipient: string;
+  amount: BigNumber;
+  fee: BigNumber;
+  requestType: BigNumber;
+}
+
 describe("Invi Core functions Test", function () {
   let stKlayContract: Contract;
   let inviCoreContract: Contract;
@@ -50,6 +57,14 @@ describe("Invi Core functions Test", function () {
     // distribute reward
     await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
 
+    const requestLength = await inviCoreContract.getUnstakeRequestsLength();
+    const requests : UnstakeRequest[] = [];
+    const initBalances : BigNumber[] = [];
+    for(let i = 0; i < requestLength; i++){
+      requests.push(await inviCoreContract.unstakeRequests(i));
+      initBalances.push(await ethers.provider.getBalance(requests[i].recipient));
+    }
+
     //* when
     await inviCoreContract.connect(stakeManager).sendUnstakedAmount({value : 10000000});
 
@@ -57,7 +72,7 @@ describe("Invi Core functions Test", function () {
     expect(await inviCoreContract.getUnstakeRequestsLength()).to.equal(0);
   });
 
-  it("Test sendUnstake function _ insufficient allowance", async () => {
+  it("Test sendUnstake function (insufficient allowance)", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
     //* given
     const lpAmount = 10000000000;

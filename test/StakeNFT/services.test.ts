@@ -2,33 +2,39 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
 import Web3 from "web3";
-import { deployStakeNFT } from "../deploy";
+import { deployStakeNFT, deployAllWithSetting } from "../deploy";
+import units from "../units.json";
 
 const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd, minReward, maxReward] = [
   1000, 10000, 100000, 3, 0, 0, 0, 100, 200,
 ];
 
 describe("Stake NFT Test", function () {
+  let stKlayContract: Contract;
+  let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
+  let lpPoolContract: Contract;
+  let iLPTokenContract: Contract;
+  let inviTokenContract: Contract;
+  let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
-
-    // deploy stakeNFT contract
-    stakeNFTContract = await deployStakeNFT();
-    // set InviCore Address
-    stakeNFTContract.functions.setInviCoreAddress(inviCore.address);
+    const [deployer, stakeManager, LP, inviCore, userB, userC] = await ethers.getSigners();
+    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    await stakeNFTContract.connect(deployer).setInviCoreAddress(inviCore.address);
   });
 
+
   // 1. test token minting
-  it("Test minting logic", async function () {
-    console.log("-------------------Test Minting-------------------");
-    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
-    const stakeInfo = {
+  it("Test mint nft", async function () {
+    const [deployer, stakeManager, LP, inviCore, userA, userB, userC] = await ethers.getSigners();
+
+    //* given
+    const stakeInfoA = {
       user: userA.address,
       principal: principal,
       leverageRatio: leverageRatio,
-      stakedAmount: 0,
+      stakedAmount: Math.floor(principal * leverageRatio / units.leverageUnit),
       protocolFee: protocolFee,
       lockStart: lockStart,
       lockEnd: lockEnd,
@@ -37,24 +43,71 @@ describe("Stake NFT Test", function () {
       maxReward: maxReward,
     };
 
-    // mint nft
-    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
+    const stakeInfoA2 = {
+      user: userA.address,
+      principal: principal,
+      leverageRatio: leverageRatio,
+      stakedAmount: Math.floor(principal * leverageRatio / units.leverageUnit),
+      protocolFee: protocolFee,
+      lockStart: lockStart,
+      lockEnd: lockEnd,
+      lockPeriod: lockPeriod,
+      minReward: minReward,
+      maxReward: maxReward,
+    };
 
-    // check balance
-    const userABalance = await stakeNFTContract.functions.balanceOf(userA.address);
-    expect(userABalance.toString()).to.equal("1");
+    const stakeInfoB = {
+      user: userB.address,
+      principal: principal,
+      leverageRatio: leverageRatio,
+      stakedAmount: Math.floor(principal * leverageRatio / units.leverageUnit),
+      protocolFee: protocolFee,
+      lockStart: lockStart,
+      lockEnd: lockEnd,
+      lockPeriod: lockPeriod,
+      minReward: minReward,
+      maxReward: maxReward,
+    };
+
+    const stakeInfoC = {
+      user: userC.address,
+      principal: principal,
+      leverageRatio: leverageRatio,
+      stakedAmount: Math.floor(principal * leverageRatio / units.leverageUnit),
+      protocolFee: protocolFee,
+      lockStart: lockStart,
+      lockEnd: lockEnd,
+      lockPeriod: lockPeriod,
+      minReward: minReward,
+      maxReward: maxReward,
+    };
+
+    //* when
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfoA);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfoA2);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfoB);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfoC);
+
+    //* then
+    expect((await stakeNFTContract.functions.balanceOf(userA.address)).toString()).to.equal("2");
+    expect((await stakeNFTContract.functions.balanceOf(userB.address)).toString()).to.equal("1");
+    expect((await stakeNFTContract.functions.balanceOf(userC.address)).toString()).to.equal("1");
+    expect((await stakeNFTContract.getNFTOwnership(userA.address)).length).to.equal(2);
+    expect((await stakeNFTContract.getNFTOwnership(userB.address)).length).to.equal(1);
+    expect((await stakeNFTContract.getNFTOwnership(userC.address)).length).to.equal(1);
+    expect(await stakeNFTContract.totalStakedAmount()).to.equal(stakeInfoA.stakedAmount + stakeInfoA2.stakedAmount + stakeInfoB.stakedAmount + stakeInfoC.stakedAmount);
   });
 
   // 2. test token transfer
-  it("Test token transfer logic", async function () {
-    console.log("-------------------Test Token Transfer-------------------");
-    const [deployer, inviCore, userA, userB, userC] = await ethers.getSigners();
-    const tokenID = 1;
-    const stakeInfo = {
+  it("Test nft transfer", async function () {
+    const [deployer, stakeManager, LP, inviCore, userA, userB, userC] = await ethers.getSigners();
+
+    //* given
+    const stakeInfoA = {
       user: userA.address,
       principal: principal,
       leverageRatio: leverageRatio,
-      stakedAmount: 0,
+      stakedAmount: Math.floor(principal * leverageRatio / units.leverageUnit),
       protocolFee: protocolFee,
       lockStart: lockStart,
       lockEnd: lockEnd,
@@ -63,25 +116,18 @@ describe("Stake NFT Test", function () {
       maxReward: maxReward,
     };
 
-    // mint nfts
-    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
-    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfo);
+    await stakeNFTContract.connect(inviCore).mintNFT(stakeInfoA); // mint nfts
+    const tokenId = await stakeNFTContract.NFTOwnership(userA.address, 0); // get tokenID
 
-    // user 1 approve user 2 to use token
-    await stakeNFTContract.connect(userA).approve(userB.address, tokenID);
+    //* when
+    await stakeNFTContract.connect(userA).approve(userB.address, tokenId); // approve transfer
+    await stakeNFTContract.connect(userB).transferFrom(userA.address, userB.address, tokenId); // transfer
 
-    // transfer one NFT(tokenID 1) from userA to userB
-    await stakeNFTContract.connect(userB).transferFrom(userA.address, userB.address, tokenID);
-
-    // NFT Ownership - now user 2 owns tokenID 1
-    const userABalance = await stakeNFTContract.functions.balanceOf(userA.address);
-    const userBBalance = await stakeNFTContract.functions.balanceOf(userB.address);
-    const ownership = await stakeNFTContract.functions.NFTOwnership(
-      userB.address,
-      0 // first element
-    );
-    expect(userABalance.toString()).to.equal("1");
-    expect(userBBalance.toString()).to.equal("1");
-    expect(ownership.toString()).to.equal("1");
+    //* then
+    expect((await stakeNFTContract.functions.balanceOf(userA.address)).toString()).to.equal("0");
+    expect((await stakeNFTContract.functions.balanceOf(userB.address)).toString()).to.equal("1");
+    expect(await stakeNFTContract.NFTOwnership(userB.address, 0)).to.equal(tokenId); 
+    expect((await stakeNFTContract.getNFTOwnership(userA.address)).length).to.equal(0);
   });
 });
+

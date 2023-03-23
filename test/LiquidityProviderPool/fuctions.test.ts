@@ -1,27 +1,22 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber, Contract } from "ethers";
-import { deployInviToken, deployILPToken, deployLpPoolContract } from "../deploy";
+import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
 
 describe("Liquidity Provider Pool Test", function () {
+  let stKlayContract: Contract;
+  let inviCoreContract: Contract;
+  let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
   let iLPTokenContract: Contract;
   let inviTokenContract: Contract;
+  let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
-
-    // deploy ILPToken contract
-    iLPTokenContract = await deployILPToken();
-    // deploy inviToken contract
-    inviTokenContract = await deployInviToken();
-    // deploy liquidity pool contract
-    lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
-    // change ILPToken owner
-    await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
   });
 
-  it("Test deploy success", async () => {
+  it("Test getRewardAmount success", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
     console.log(`iLP token contract ${iLPTokenContract.address}`);
     console.log(`LP Pool contract ${lpPoolContract.address}`);

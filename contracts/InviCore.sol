@@ -164,6 +164,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== service functions ======//
     
+    fallback() payable external {}
+
     // stake native coin
     function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
         // verify given stakeInfo
@@ -314,5 +316,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint protocolFee = _getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
         require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
+    }
+
+    // create unstake request for testing
+    function createUnstakeRequest(address _recipient, uint _amount, uint _protocolFee, uint _requestType) external onlyOwner {
+        UnstakeRequest memory request = UnstakeRequest(_recipient, _amount, _protocolFee, _requestType);
+        unstakeRequests.push(request);
     }
 }
