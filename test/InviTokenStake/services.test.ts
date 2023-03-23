@@ -35,7 +35,7 @@ describe("InviToken Stake Test", function () {
     expect(userAStakedAmount.toString()).to.equal(amount.toString());
   });
 
-  it("Test DistributeNativeReward", async function () {
+  it("Test UpdateNativeReward", async function () {
     console.log("----------------Test Update Reward----------------");
     const [deployer, stakeManager, inviCore, userA, userB, userC] = await ethers.getSigners();
     const stakeAmount: Number = 1000000;
@@ -62,7 +62,7 @@ describe("InviToken Stake Test", function () {
     // updateReward to stakers
     await inviTokenStakeContract
       .connect(inviCore)
-      .distributeNativeReward({ value: ethers.utils.parseEther(rewardAmountEther) })
+      .updateNativeReward({ value: ethers.utils.parseEther(rewardAmountEther) })
       .catch((error: any) => {
         console.error(error);
       });

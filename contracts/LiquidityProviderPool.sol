@@ -70,6 +70,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         totalLentAmount = _totalLentAmount;
     }
 
+    // set total staked amount by invi core
+    function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
+        totalStakedAmount = _totalStakedAmount;
+    }
+
     //====== service functions ======//
 
     // stake Native Coin to LP Pool
@@ -87,14 +92,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
     
     // distribute native coin
-    function distributeNativeReward() external payable onlyOwner{
-        //TODO : 백엔드에서 unstake 호출하기.
+    function distributeNativeReward() external payable onlyInviCore{
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            //TODO : InviCore contract에 unstakeRequest 생성하기. (?)
             address account = ILPHolders[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-            
             (bool sent, ) = account.call{value: rewardAmount}("");
             require(sent, ERROR_FAIL_SEND);
         }
@@ -102,10 +104,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     // distribute invi token 
     function distributeInviTokenReward() external onlyOwner{
-        //TODO : 백엔드에서 unstake 호출하기.
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            //TODO : InviCore contract에 unstakeRequest 생성하기.
+            //TODO : ILP Holder staking 양에 비례하게 invi token reward 분배
         }
     }
 

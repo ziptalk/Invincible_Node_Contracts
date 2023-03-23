@@ -4,5 +4,6 @@
   "slippageUnit": 1000,
   "aprUnit": 100,
   "rewardErrorUnit": 1000,
-  "liquidityAllowableRatioUnit": 100
+  "liquidityAllowableRatioUnit": 100,
+  "rewardPortionTotalUnit" : 1000
 }
