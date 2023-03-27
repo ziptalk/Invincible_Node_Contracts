@@ -92,10 +92,8 @@ export const deployAllWithSetting = async () => {
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
 
-  // change ILPToken owner
-  await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
-  // change inviToken owner
-  await inviTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+  // set ILP owner
+  iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
 
   // set InviCore contract
   stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
