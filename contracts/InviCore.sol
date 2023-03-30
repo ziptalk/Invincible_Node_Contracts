@@ -75,7 +75,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
         uint stakedAmount = _getStakedAmount(_principal, _leverageRatio);
 
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward, false);
         
         return stakeInfo;
     }

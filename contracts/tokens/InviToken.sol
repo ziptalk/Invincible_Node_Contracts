@@ -24,7 +24,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
-    function setLendInviToken(address _lendInviToken) onlyOwner external {
+    function setLendInviTokenAddress(address _lendInviToken) onlyOwner external {
         LEND_INVI_TOKEN = _lendInviToken;
     }
 
