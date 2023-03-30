@@ -87,4 +87,18 @@ describe("Invi Core functions Test", function () {
     expect(stakeInfo.principal).to.equal(principal);
     expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
   });
+
+  it("Test getExpectedReward function", async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+
+    // lp stake coin
+    const lpAmount = 100000;
+    await lpPoolContract.connect(LP).stake({ value: lpAmount });
+
+    const principal = 1000;
+    const lockPeriod = 1000000;
+    const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
+
+    console.log("expected reward: ", expectedReward);
+  });
 });
