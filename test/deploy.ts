@@ -72,6 +72,20 @@ export const deployInviCoreContract = async (stakeManager: string, stakeNFTContr
   return inviCoreContract;
 };
 
+export const deployLendInviTokenContract = async (inviToken: Contract, stakeNFTContract: Contract) => {
+  const LendInviTokenContract = await ethers.getContractFactory("LendInviToken");
+  const lendInviTokenContract = await upgrades.deployProxy(
+    LendInviTokenContract,
+    [inviToken.address, stakeNFTContract.address],
+    {
+      initializer: "initialize",
+    }
+  );
+  await lendInviTokenContract.deployed();
+
+  return lendInviTokenContract;
+}
+
 
 // deploy entire contract with setting
 export const deployAllWithSetting = async () => {
@@ -91,14 +105,20 @@ export const deployAllWithSetting = async () => {
   const lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
+  // deploy lendInviToken contract
+  const lendInviTokenContract = await deployLendInviTokenContract(inviTokenContract, stakeNFTContract);
 
   // set ILP owner
   iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+
+  // set lendInvitoken contract
+  inviTokenContract.connect(deployer).setLendInviTokenAddress(lendInviTokenContract.address);
+  stakeNFTContract.connect(deployer).setLendInviTokenAddress(lendInviTokenContract.address);
 
   // set InviCore contract
   stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
 
-  return [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract];
+  return [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract, lendInviTokenContract];
 }
