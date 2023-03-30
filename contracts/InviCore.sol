@@ -63,7 +63,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     // get stake info by principal & leverageRatio variables
-    function getStakeInfo(uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
+    function getStakeInfo(address _account, uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
         uint lockPeriod = _getLockPeriod(_leverageRatio);
         uint lentAmount = _principal * _leverageRatio / leverageUnit - _principal;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_EXCEED_LENNT_AMOUNT);
@@ -75,7 +75,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
         uint stakedAmount = _getStakedAmount(_principal, _leverageRatio);
 
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
+        StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
         
         return stakeInfo;
     }
