@@ -5,6 +5,7 @@ pragma solidity ^0.8;
 string constant ERROR_NOT_OWNER = "not authorized";
 string constant ERROR_INSUFFICIENT_BALANCE = "insufficient balance";
 string constant ERROR_FAIL_SEND = "failed to send";
+string constant ERROR_FAIL_SEND_ERC20 = "failed to send erc20 token";
 
 // stake info error
 string constant ERROR_EXCEED_LENNT_AMOUNT = "exceed the maximum lent amount";
@@ -21,3 +22,6 @@ string constant ERROR_INVALID_LEND_INFO = "invalid lend info";
 string constant ERROR_SET_REWARD_PORTION = "lp pool portion + invi stake portion should equal to rewardPortionTotalUnit";
 string constant ERROR_NFT_REWARD_CRASH = "initial nft reward should be zero";
 string constant ERROR_NFT_REWARD_INVALID_RANGE = "nft reward should be between min reward and max reward";
+
+// swap error
+string constant ERROR_SWAP_SLIPPAGE = "slippage is too high";
