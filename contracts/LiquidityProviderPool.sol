@@ -38,7 +38,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         stakeManager = _stakeManager;
         iLP = IERC20(_iLP);
         inviToken = IERC20(_inviToken);
-        liquidityAllowableRatio = liquidityAllowableRatioUnit * 1;
+        liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
         __Ownable_init();
     }
 
@@ -52,7 +52,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     function getMaxLentAmount() public view returns (uint) {
-        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * liquidityAllowableRatioUnit);
+        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
     }
 
     //====== setter functions ======//
