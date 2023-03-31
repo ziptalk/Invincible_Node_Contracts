@@ -11,6 +11,8 @@ uint constant LIQUIDITY_ALLOWABLE_RATIO_UNIT = 10 ** 2;
 uint constant REWARD_PORTION_TOTAL_UNIT = 10 ** 3;
 uint constant SWAP_FEE_UNIT = 10 ** 3;
 
+
 //------ token Unit ------//
 uint constant INVI_UNIT = 10**18;
 uint constant ILP_UNIT = 10**18;
+
