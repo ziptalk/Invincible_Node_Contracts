@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./lib/Structs.sol";
 import "./lib/ArrayUtils.sol";
 import "hardhat/console.sol";
+import "./LendInviToken.sol";
 
 
 contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
@@ -16,6 +17,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
     //------Contracts and Addresses------//
     address public INVI_CORE;
+    address public LEND_INVI_TOKEN;
 
     //------mappings------//
     // show which address have which NFT
@@ -44,6 +46,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         require(msg.sender == INVI_CORE, "msg sender should be invi core");
         _;
     }
+
+    modifier onlyLendInviToken {
+        require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
+        _;
+    }
     
     //====== getter functions ======//
 
@@ -61,8 +68,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         INVI_CORE = _inviCore;
     }
 
+    function setLendInviTokenAddress(address _lendInviToken) public onlyOwner {
+        LEND_INVI_TOKEN = _lendInviToken;
+    }
+
     function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
         totalStakedAmount = _totalStakedAmount;
+    }
+
+    function setNFTIsLent(uint _tokenId, bool _isLent) public onlyLendInviToken {
+        stakeInfos[_tokenId].isLent = _isLent;
     }
 
     //====== service functions ======//

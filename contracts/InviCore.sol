@@ -75,7 +75,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
         uint stakedAmount = _getStakedAmount(_principal, _leverageRatio);
 
-        StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward);
+        StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward, false);
         
         return stakeInfo;
     }
@@ -169,7 +169,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     // stake native coin
     function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
         // verify given stakeInfo
-        _verifyStakeInfo(_stakeInfo, _slippage, msg.value);
+        _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
         // mint StakeNFT Token by stake info
         uint nftTokenId = stakeNFTContract.mintNFT(_stakeInfo);
@@ -286,7 +286,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
     
     //====== utils function ======//
     // verify stakeInfo is proper
-    function _verifyStakeInfo(StakeInfo memory _stakeInfo, uint _slippage, uint _sendAmount) private view {
+    function _verifyStakeInfo(StakeInfo memory _stakeInfo, uint _slippage, address _msgSender, uint _sendAmount) private view {
+        
+        // verify msg.sender
+        require(_stakeInfo.user == _msgSender, ERROR_INVALID_STAKE_INFO);
+        
         // verify principal amount
         require(_stakeInfo.principal == _sendAmount, ERROR_INVALID_STAKE_INFO);
 

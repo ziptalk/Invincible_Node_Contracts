@@ -16,7 +16,7 @@ import { leverageStake, provideLiquidity, verifyRequest } from "../../utils";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
-describe("Invi Core functions Test", function () {
+describe("Invi core service test", function () {
   let stKlayContract: Contract;
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;

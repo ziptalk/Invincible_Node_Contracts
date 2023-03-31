@@ -12,6 +12,14 @@ struct StakeInfo{
     uint protocolFee;
     uint minReward;
     uint maxReward;
+    bool isLent;
+}
+
+struct LendInfo{
+    address user;
+    uint nftId;
+    uint principal;
+    uint lentAmount;
 }
 
 struct ExchangeRatio{
