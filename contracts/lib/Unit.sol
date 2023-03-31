@@ -8,3 +8,4 @@ uint constant aprUnit = 10 ** 2;
 uint constant rewardErrorUnit = 10 ** 3;
 uint constant liquidityAllowableRatioUnit = 10 ** 2;
 uint constant rewardPortionTotalUnit = 10 ** 3;
+uint constant swapFeeUnit = 10 ** 3;
