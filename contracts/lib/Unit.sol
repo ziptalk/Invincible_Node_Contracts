@@ -17,5 +17,6 @@ uint constant SWAP_RATIO_UNIT = 10 ** 3;
 //------ token Unit ------//
 uint constant INVI_UNIT = 10**18;
 uint constant ILP_UNIT = 10**18;
+uint constant INKLP_UNIT = 10 ** 18;
 
 
