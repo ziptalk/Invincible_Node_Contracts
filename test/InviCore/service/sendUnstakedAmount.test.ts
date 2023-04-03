@@ -21,7 +21,7 @@ interface UnstakeRequest {
   requestType: BigNumber;
 }
 
-describe("Invi Core functions Test", function () {
+describe("Invi core service test", function () {
   let stKlayContract: Contract;
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
