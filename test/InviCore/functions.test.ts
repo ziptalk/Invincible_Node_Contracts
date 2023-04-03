@@ -1,56 +1,20 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
-import {
-  deployInviToken,
-  deployILPToken,
-  deployStakeNFT,
-  deployLpPoolContract,
-  deployInviCoreContract,
-  deployInviTokenStakeContract,
-  deployStKlay,
-} from "../deploy";
+import {deployAllWithSetting} from "../deploy";
 import units from "../units.json";
 
 describe("Invi Core functions Test", function () {
-  let inviCoreContract: Contract;
+  let inviTokenContract: Contract;
+  let iLPTokenContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
-  let stKlayContract: Contract;
+  let inviCoreContract: Contract;
+  
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    ({inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract} = await deployAllWithSetting());
 
-    // deploy stKlay contract
-    stKlayContract = await deployStKlay();
-    // deploy inviToken contract
-    inviTokenContract = await deployInviToken();
-    // deploy ILPToken contract
-    iLPTokenContract = await deployILPToken();
-    // deploy stakeNFT contract
-    stakeNFTContract = await deployStakeNFT();
-    // deploy inviTokenStake Contract
-    inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
-    // deploy liquidity pool contract
-    lpPoolContract = await deployLpPoolContract(stakeManager.address, iLPTokenContract, inviTokenContract);
-    // deploy inviCore contract
-    inviCoreContract = await deployInviCoreContract(stakeManager.address, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
-    +(
-      // change stakeNFT owner
-      (await stakeNFTContract.connect(deployer).transferOwnership(inviCoreContract.address))
-    );
-
-    // change ILPToken owner
-    await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
-
-    // change inviToken owner
-    await inviTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
-
-    // set inviCore contract address
-    await lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   });
 
   it("Test deploy success", async () => {

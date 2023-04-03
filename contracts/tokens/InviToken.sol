@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./lib/Unit.sol";
-import "./lib/ErrorMessages.sol";
+import "../lib/Unit.sol";
+import "../lib/ErrorMessages.sol";
 
 string constant INVI_TOKEN_FULL_NAME = "Invi Token";
 string constant INVI_TOKEN_NAME = "INVI";
@@ -13,19 +13,14 @@ string constant INVI_TOKEN_NAME = "INVI";
 contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //------ contracts ------//
-    address public lendingPool;
+    address public lendingPoolAddress;
 
     //------ Variables ------//
-    // 0.1B
-    uint public regularMintAmount = 100000000;
+    uint public regularMintAmount;
+    uint public mintInterval; 
     uint public lastMinted;
-    // testnet: 30 hours
-    uint public mintInterval = 30 hours;
-    // mainnet
-    // uint public mintInterval = 30 days;
-    bool public firstMint = false;
 
-    address public LEND_INVI_TOKEN;
+    
 
 
     //====== initializer ======//
@@ -33,34 +28,26 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         __ERC20_init(INVI_TOKEN_FULL_NAME, INVI_TOKEN_NAME);
         __Ownable_init();
 
-        // mint for the first time
-        _mint(address(this), regularMintAmount * INVI_UNIT);
-        lastMinted = block.timestamp;
+        regularMintAmount = 100000000;
+        mintInterval = 30 hours; // testnet: 30 hours
+        lastMinted = block.timestamp - mintInterval;
+
     }
 
     //====== modifier ======//
 
     modifier onlyLendingPool {
-        require(msg.sender == lendingPool, "Ownable: caller is not the owner");
+        require(msg.sender == lendingPoolAddress, "Ownable: caller is not the owner");
         _;
     }
 
     //====== getter functions =======//
 
     //====== setter functions ======//
-    function setLendingPool(address _lendingPool) external onlyOwner {
-        lendingPool = _lendingPool;
-    }
-
-    //====== modifiers ======//
-    modifier onlyLendingPool {
-        require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
-        _;
-    }
 
     //====== setter functions ======//
-    function setLendingPoolAddress(address _LendingPool) onlyOwner external {
-        LEND_INVI_TOKEN = _LendingPool;
+    function setLendingPoolAddress(address _lendingPoolAddr) onlyOwner external {
+        lendingPoolAddress = _lendingPoolAddr;
     }
 
     //====== service functions ======//
@@ -85,23 +72,15 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     
     }
 
-----
     // only lendingPool can mint and burn token as needed
-    function mintToken(address _account, uint _amount) onlyLendingPool external {
-        _mint(_account, _amount);
-    }
-    function burnToken(address _account, uint _amount) onlyLendingPool external  {
-----
-    function mintLentToken(address _account, uint _amount) onlyLendingPool external {
-        _mint(_account, _amount);
-    }
-
-    function burnToken(address _account, uint _amount) onlyOwner external  {
-
-        _burn(_account, _amount);
-    }
-
+    function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
     function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
         _burn(_account, _amount);
     }
+
+    function burnToken(address _account, uint _amount) onlyOwner external  {
+        _burn(_account, _amount);
+    }
+
+    
 }

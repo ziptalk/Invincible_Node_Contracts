@@ -5,16 +5,12 @@ import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSet
 import { provideLiquidity } from "../utils";
 
 describe("Liquidity Provider Pool Test", function () {
-  let stKlayContract: Contract;
   let inviCoreContract: Contract;
-  let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
+  
 
   this.beforeEach(async () => {
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({inviCoreContract, lpPoolContract} = await deployAllWithSetting());
   });
 
   it("Test LP Stake", async function () {

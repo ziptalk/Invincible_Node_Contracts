@@ -17,11 +17,11 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     //------Variables------//
     mapping(address => uint) public lpLiquidityKlay;
     mapping(address => uint) public lpLiquidityInvi;
-    uint public totalLiquidityKlay = 1;
-    uint public totalLiquidityInvi = 1;
-    uint public totalFeesKlay = 1;
-    uint public totalFeesInvi = 1;
-    uint public totalAddressNumber = 0;
+    uint public totalLiquidityKlay;
+    uint public totalLiquidityInvi;
+    uint public totalFeesKlay;
+    uint public totalFeesInvi;
+    uint public totalAddressNumber;
     uint public inviFees;
     uint public klayFees;
 
@@ -32,6 +32,11 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
         inviFees = 3 * SWAP_FEE_UNIT;
         klayFees = 3 * SWAP_FEE_UNIT;
+        totalLiquidityKlay = 1;
+        totalLiquidityInvi = 1;
+        totalFeesInvi = 1;
+        totalFeesKlay = 1;
+        totalAddressNumber = 0;
 
         __Ownable_init();
     }
