@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./lib/Structs.sol";
 import "./lib/ArrayUtils.sol";
 import "hardhat/console.sol";
-import "./LendInviToken.sol";
+import "./LendingPool.sol";
 
 
 contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
@@ -16,8 +16,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     Counters.Counter private _tokenIds;
 
     //------Contracts and Addresses------//
-    address public INVI_CORE;
-    address public LEND_INVI_TOKEN;
+    address public inviCoreAddress;
+    address public lendingPoolAddress;
 
     //------mappings------//
     // show which address have which NFT
@@ -38,17 +38,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
-        // set initial state variables
     }
 
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
         _;
     }
 
-    modifier onlyLendInviToken {
-        require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
+    modifier onlyLendingPool {
+        require(msg.sender == address(lendingPoolAddress), "msg sender should be lending pool");
         _;
     }
     
@@ -65,18 +64,18 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //====== setter functions ======//
 
     function setInviCoreAddress(address _inviCore) public onlyOwner {
-        INVI_CORE = _inviCore;
+        inviCoreAddress = _inviCore;
     }
 
-    function setLendInviTokenAddress(address _lendInviToken) public onlyOwner {
-        LEND_INVI_TOKEN = _lendInviToken;
+    function setLendingPoolAddress(address _LendingPool) public onlyOwner {
+        lendingPoolAddress = _LendingPool;
     }
 
     function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
         totalStakedAmount = _totalStakedAmount;
     }
 
-    function setNFTIsLent(uint _tokenId, bool _isLent) public onlyLendInviToken {
+    function setNFTIsLent(uint _tokenId, bool _isLent) public onlyLendingPool {
         stakeInfos[_tokenId].isLent = _isLent;
     }
 

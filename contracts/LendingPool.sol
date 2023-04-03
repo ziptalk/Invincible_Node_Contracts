@@ -12,7 +12,7 @@ import "./tokens/InviToken.sol";
 import "hardhat/console.sol";
 
 
-contract LendInviToken is Initializable, OwnableUpgradeable {
+contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
 
@@ -22,19 +22,18 @@ contract LendInviToken is Initializable, OwnableUpgradeable {
     
     
     //======initializer======//
-    function initialize(address _inviTokenAddr,address _stakeNFTAddr) initializer public {
-        inviToken = InviToken(_inviTokenAddr);
-        stakeNFTContract = StakeNFT(_stakeNFTAddr);
-        lendRatio = 8 * lendRatioUnit / 10 ;
+    function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
+        inviToken = InviToken(inviTokenAddr);
+        lendRatio = 8 * LEND_RATIO_UNIT / 10 ;
     }
 
     //====== modifiers ======//
     
     //====== getter functions ======//
     function getLentAmount(uint _amount) public view returns (uint) {
-        uint swapRatio = 8 * swapRatioUnit / 10 ;
-        return _amount * swapRatio * lendRatio / (swapRatioUnit * lendRatioUnit);
+        uint swapRatio = 8 * SWAP_RATIO_UNIT / 10 ;
+        return _amount * swapRatio * lendRatio / (SWAP_RATIO_UNIT * LEND_RATIO_UNIT);
     }
 
     function createLendInfo(uint _nftId) public view returns (LendInfo memory) {
@@ -46,6 +45,11 @@ contract LendInviToken is Initializable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
+
+    function setStakeNFTContract(address _stakeNFTContract) public onlyOwner {
+        stakeNFTContract = StakeNFT(_stakeNFTContract);
+    }
+
     function setLendRatio(uint _lendRatio) public onlyOwner{
         lendRatio = _lendRatio;
     }

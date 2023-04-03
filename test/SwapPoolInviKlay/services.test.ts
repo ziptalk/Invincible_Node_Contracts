@@ -1,18 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
-import {
-  deployInviToken,
-  deployILPToken,
-  deployStakeNFT,
-  deployLpPoolContract,
-  deployInviCoreContract,
-  deployInviTokenStakeContract,
-  deployStKlay,
-  deployAllWithSetting,
-} from "../deploy";
-import units from "../units.json";
-import { provideLiquidity, leverageStake } from "../utils";
+import {deployAllWithSetting} from "../deploy";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
@@ -21,7 +10,7 @@ describe("SwapPoolInviKlay Service Test", function () {
   let inviTokenContract: Contract;
 
   this.beforeEach(async () => {
-    [inviTokenContract, swapPoolInviKlay] = await deployAllWithSetting();
+    ({swapPoolInviKlay, inviTokenContract} = await deployAllWithSetting());
   });
 
   it("Test stake function", async () => {});

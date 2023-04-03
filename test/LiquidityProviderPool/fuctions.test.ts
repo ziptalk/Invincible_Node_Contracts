@@ -4,16 +4,11 @@ import { BigNumber, Contract } from "ethers";
 import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
 
 describe("Liquidity Provider Pool Test", function () {
-  let stKlayContract: Contract;
-  let inviCoreContract: Contract;
-  let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
   let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({iLPTokenContract, lpPoolContract} = await deployAllWithSetting());
   });
 
   it("Test getRewardAmount success", async () => {

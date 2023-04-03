@@ -17,16 +17,13 @@ import { provideLiquidity, leverageStake } from "../../utils";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
 describe("Invi core service test", function () {
-  let stKlayContract: Contract;
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
+  
 
   this.beforeEach(async () => {
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({inviCoreContract, stakeNFTContract, lpPoolContract} = await deployAllWithSetting());
   });
 
   it("Test stake function", async () => {
