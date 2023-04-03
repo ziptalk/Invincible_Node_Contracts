@@ -30,8 +30,8 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
      function initialize(address _inviAddr) initializer public {
         invi = IERC20(_inviAddr);
 
-        inviFees = 3 * SWAP_FEE_UNIT;
-        klayFees = 3 * SWAP_FEE_UNIT;
+        inviFees = 3;
+        klayFees = 3;
 
         __Ownable_init();
     }
@@ -57,12 +57,19 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     }
 
     //======setter functions======//
-
+    function setInviFees(uint _fees) public onlyOwner {
+        inviFees = _fees;
+    }
+    function setKlayFees(uint _fees) public onlyOwner {
+        klayFees = _fees;
+    }
     //======service functions======//
     function swapInviToKlay(uint _amountIn, uint _amountOutMin) public {
+        uint inviReserve = invi.balanceOf(address(this)) - totalFeesInvi;
+        uint klayReserve = address(this).balance - totalFeesKlay;
        
         // add liquidity provider fees to total liquidity
-        uint256 fees = (_amountIn * 3) / 1000; // 0.3% fee
+        uint256 fees = (_amountIn * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
         totalFeesInvi += fees;
         
         // calculate amount of tokens to be transferred
@@ -79,7 +86,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     }
 
     function swapKlayToInvi(uint _amountOutMin) public payable {
-        require(msg.value > 0, "require klay");
+        require(msg.value > 0, ERROR_SWAP_ZERO);
 
         // add liquidity provider fees to total liquidity
 
@@ -89,7 +96,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
         // calculate amount of tokens to be transferred
         uint256 amountOut = getKlayToInviOutAmount(msg.value, fees);
-        require(amountOut >= _amountOutMin, "Slippage too high");
+        require(amountOut >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
 
         // transfer tokens from sender
         require(invi.transfer(msg.sender, amountOut), ERROR_FAIL_SEND_ERC20);
@@ -97,6 +104,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
       // slippage unit is 0.1%
     function addLiquidity(uint _amountDesiredInvi, uint _slippage) public payable {
+        require(_amountDesiredInvi < totalLiquidityInvi, ERROR_NOT_ENOUGH_LIQUIDITY);
 
         uint minInvi = _amountDesiredInvi - _amountDesiredInvi * _slippage / SLIPPAGE_UNIT;
         uint maxInvi = _amountDesiredInvi + _amountDesiredInvi * _slippage / SLIPPAGE_UNIT;
@@ -114,8 +122,37 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         require(invi.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
     }
 
-    function removeLiquidity(uint _amountRe, uint _amountNa) public {
-        
+    function removeLiquidity(uint liquidityTokens, uint minKlayAmount, uint minInviAmount) public {
+        require(lpLiquidityKlay[msg.sender] > 0 && lpLiquidityInvi[msg.sender] > 0, "No liquidity to remove");
+
+        // Calculate the total amount of liquidity held by the contract
+        uint totalLiquidity = totalLiquidityKlay * totalLiquidityInvi;
+
+        // Calculate the user's proportion of liquidity
+        uint userLiquidity = (liquidityTokens * totalLiquidity) / totalLiquidityInvi;
+
+        // Calculate the amounts of Klay and Invi tokens that the user is entitled to withdraw
+        uint klayAmount = (userLiquidity * totalLiquidityKlay) / totalLiquidity;
+        uint inviAmount = (userLiquidity * totalLiquidityInvi) / totalLiquidity;
+
+        // Check that the contract has sufficient Klay and Invi tokens to withdraw
+        require(address(this).balance >= klayAmount, "Insufficient Klay balance in the contract");
+        require(invi.balanceOf(address(this)) >= inviAmount, "Insufficient Invi token balance in the contract");
+
+        // Transfer the Klay and Invi tokens to the user
+        (bool klaySuccess, ) = msg.sender.call{value: klayAmount}("");
+        require(klaySuccess, "Failed to send Klay");
+        require(invi.transfer(msg.sender, inviAmount), "Failed to send Invi tokens");
+
+        // Update the contract's total liquidity and the user's liquidity holdings
+        totalLiquidityKlay -= klayAmount;
+        totalLiquidityInvi -= inviAmount;
+        lpLiquidityKlay[msg.sender] -= klayAmount;
+        lpLiquidityInvi[msg.sender] -= inviAmount;
+
+        // Check that the amount of Klay and Invi tokens withdrawn meet the minimum amounts specified by the user
+        require(klayAmount >= minKlayAmount, "Klay amount below minimum");
+        require(inviAmount >= minInviAmount, "Invi amount below minimum");
     }
 
     //======utils functions======//
