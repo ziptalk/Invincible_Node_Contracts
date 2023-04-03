@@ -22,10 +22,17 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     uint public totalFeesKlay = 1;
     uint public totalFeesInvi = 1;
     uint public totalAddressNumber = 0;
+    uint public inviFees;
+    uint public klayFees;
+
 
     //======initializer======//
      function initialize(address _inviAddr) initializer public {
         invi = IERC20(_inviAddr);
+
+        inviFees = 3 * SWAP_FEE_UNIT;
+        klayFees = 3 * SWAP_FEE_UNIT;
+
         __Ownable_init();
     }
 
@@ -75,7 +82,9 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         require(msg.value > 0, "require klay");
 
         // add liquidity provider fees to total liquidity
-        uint256 fees = (msg.value * 3) / swapFeeUnit; // 0.3% fee
+
+        uint256 fees = (msg.value * 3) / SWAP_FEE_UNIT; // 0.3% fee
+
         totalFeesInvi += fees;
 
         // calculate amount of tokens to be transferred
@@ -88,8 +97,10 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
       // slippage unit is 0.1%
     function addLiquidity(uint _amountDesiredInvi, uint _slippage) public payable {
-        uint minInvi = _amountDesiredInvi - _amountDesiredInvi * _slippage / slippageUnit;
-        uint maxInvi = _amountDesiredInvi + _amountDesiredInvi * _slippage / slippageUnit;
+
+        uint minInvi = _amountDesiredInvi - _amountDesiredInvi * _slippage / SLIPPAGE_UNIT;
+        uint maxInvi = _amountDesiredInvi + _amountDesiredInvi * _slippage / SLIPPAGE_UNIT;
+
         uint expectedInvi = getAddLiquidityInvi(msg.value);
         require(expectedInvi >= minInvi && expectedInvi <= maxInvi, ERROR_SWAP_SLIPPAGE);
 
