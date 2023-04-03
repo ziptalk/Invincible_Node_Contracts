@@ -15,6 +15,9 @@ string constant ERROR_TOO_MUCH_LENT = "too much lent amount";
 string constant ERROR_NOT_UNLOCKED_NFT = "the nft is still locked";
 string constant ERROR_NOT_MATCH_REWARD = "reward is not correct";
 
+// lend info error
+string constant ERROR_INVALID_LEND_INFO = "invalid lend info";
+
 // setter error
 string constant ERROR_SET_REWARD_PORTION = "lp pool portion + invi stake portion should equal to rewardPortionTotalUnit";
 string constant ERROR_NFT_REWARD_CRASH = "initial nft reward should be zero";

@@ -11,6 +11,7 @@ string constant INVI_TOKEN_FULL_NAME = "Invi Token";
 string constant INVI_TOKEN_NAME = "INVI";
 
 contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
+
     //------ contracts ------//
     address public nftLendingPool;
 
@@ -23,6 +24,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     // mainnet
     // uint public mintInterval = 30 days;
     bool public firstMint = false;
+
+    address public LEND_INVI_TOKEN;
+
 
     //====== initializer ======//
     function initialize() initializer public {
@@ -48,6 +52,17 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         nftLendingPool = _nftLendingPool;
     }
 
+    //====== modifiers ======//
+    modifier onlyLendInviToken {
+        require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
+        _;
+    }
+
+    //====== setter functions ======//
+    function setLendInviTokenAddress(address _lendInviToken) onlyOwner external {
+        LEND_INVI_TOKEN = _lendInviToken;
+    }
+
     //====== service functions ======//
 
     function regularMinting() external onlyOwner {
@@ -70,11 +85,23 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     
     }
 
+----
     // only NftLendingPool can mint and burn token as needed
     function mintToken(address _account, uint _amount) onlyNftLendingPool external {
         _mint(_account, _amount);
     }
     function burnToken(address _account, uint _amount) onlyNftLendingPool external  {
+----
+    function mintLentToken(address _account, uint _amount) onlyLendInviToken external {
+        _mint(_account, _amount);
+    }
+
+    function burnToken(address _account, uint _amount) onlyOwner external  {
+
+        _burn(_account, _amount);
+    }
+
+    function burnLentToken(address _account, uint _amount) onlyLendInviToken external  {
         _burn(_account, _amount);
     }
 }
