@@ -22,11 +22,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     
     
     //======initializer======//
-    function initialize(address _inviTokenAddr,address _stakeNFTAddr) initializer public {
-        inviToken = InviToken(_inviTokenAddr);
-        stakeNFTContract = StakeNFT(_stakeNFTAddr);
-        lendRatio = 8 * LEND_RATIO_UNIT / 10 ;
+    function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
+        inviToken = InviToken(inviTokenAddr);
+        lendRatio = 8 * LEND_RATIO_UNIT / 10 ;
     }
 
     //====== modifiers ======//
@@ -46,6 +45,11 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
+
+    function setStakeNFTContract(address _stakeNFTContract) public onlyOwner {
+        stakeNFTContract = StakeNFT(_stakeNFTContract);
+    }
+
     function setLendRatio(uint _lendRatio) public onlyOwner{
         lendRatio = _lendRatio;
     }

@@ -54,7 +54,6 @@ describe("Liquidity Provider Pool Test", function () {
     //* when
     const rewardAmount = 100000;
     const tx = await deployer.sendTransaction({ to: inviCoreContract.address, value: rewardAmount,  gasLimit: 300000}); // send coin with tx fee to contract
-    
     await inviCoreContract.connect(deployer).createUnstakeRequest(lpPoolContract.address, rewardAmount, 0, 1); // create unstake request
     await inviCoreContract.connect(stakeManager).sendUnstakedAmount(); // send coin to lpPoolContract
 

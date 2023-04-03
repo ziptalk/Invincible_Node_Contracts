@@ -16,8 +16,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     Counters.Counter private _tokenIds;
 
     //------Contracts and Addresses------//
-    address public INVI_CORE;
-    address public LEND_INVI_TOKEN;
+    address public inviCoreAddress;
+    address public lendingPoolAddress;
 
     //------mappings------//
     // show which address have which NFT
@@ -38,17 +38,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
-        // set initial state variables
     }
 
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
         _;
     }
 
     modifier onlyLendingPool {
-        require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
+        require(msg.sender == address(lendingPoolAddress), "msg sender should be lending pool");
         _;
     }
     
@@ -65,11 +64,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //====== setter functions ======//
 
     function setInviCoreAddress(address _inviCore) public onlyOwner {
-        INVI_CORE = _inviCore;
+        inviCoreAddress = _inviCore;
     }
 
     function setLendingPoolAddress(address _LendingPool) public onlyOwner {
-        LEND_INVI_TOKEN = _LendingPool;
+        lendingPoolAddress = _LendingPool;
     }
 
     function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {

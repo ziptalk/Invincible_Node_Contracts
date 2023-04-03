@@ -20,9 +20,6 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint public mintInterval; 
     uint public lastMinted;
 
-    
-
-
     //====== initializer ======//
     function initialize() initializer public {
         __ERC20_init(INVI_TOKEN_FULL_NAME, INVI_TOKEN_NAME);
@@ -77,10 +74,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
         _burn(_account, _amount);
     }
-
-    function burnToken(address _account, uint _amount) onlyOwner external  {
-        _burn(_account, _amount);
-    }
+ 
+    function mintToken(address _account, uint _amount) onlyOwner external {_mint(_account, _amount);}
+    function burnToken(address _account, uint _amount) onlyOwner external  {_burn(_account, _amount);}
 
     
 }

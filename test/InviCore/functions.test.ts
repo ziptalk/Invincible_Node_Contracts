@@ -18,20 +18,14 @@ describe("Invi Core functions Test", function () {
   });
 
   it("Test deploy success", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
-    console.log(`invi token contract ${inviTokenContract.address}`);
-    console.log(`iLP token contract ${iLPTokenContract.address}`);
-    console.log(`stakeNft contract ${stakeNFTContract.address}`);
-    console.log(`lpPool contract ${lpPoolContract.address}`);
-    console.log(`invi core contract ${inviCoreContract.address}`);
-
     // verify init
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
-    expect(await lpPoolContract.INVI_CORE()).equals(inviCoreContract.address);
+    expect(await lpPoolContract.inviCoreAddress()).equals(inviCoreContract.address);
+
+    
 
     // verify owner
-    expect(await stakeNFTContract.owner()).equals(inviCoreContract.address);
     expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
   });
 
@@ -44,7 +38,7 @@ describe("Invi Core functions Test", function () {
 
     const principal = 1000;
     const leverageRatio = 2 * units.leverageUnit;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(principal, leverageRatio);
+    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(userA.address, principal, leverageRatio);
 
     //verify stake info
     expect(stakeInfo.user).to.equal(userA.address);

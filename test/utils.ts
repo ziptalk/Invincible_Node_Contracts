@@ -9,7 +9,7 @@ export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWit
 }
 
 export const leverageStake = async (inviCoreContract: Contract, user: SignerWithAddress, principal: number, leverageRatio: number) => {
-    const stakeInfo = await inviCoreContract.connect(user).getStakeInfo(principal, leverageRatio);
+    const stakeInfo = await inviCoreContract.connect(user).getStakeInfo(await user.getAddress(), principal, leverageRatio);
     const slippage = 3 * units.slippageUnit;
     await inviCoreContract.connect(user).stake(stakeInfo, slippage, { value: principal });
     return stakeInfo;

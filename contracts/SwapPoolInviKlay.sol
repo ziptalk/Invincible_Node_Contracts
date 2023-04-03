@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 
 contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     //------Contracts and Addresses------//
-    IERC20 public invi;
+    IERC20 public inviToken;
 
     //------events------//
 
@@ -27,8 +27,9 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
 
     //======initializer======//
-     function initialize(address _inviAddr) initializer public {
-        invi = IERC20(_inviAddr);
+     function initialize(address _inviTokenAddr) initializer public {
+        __Ownable_init();
+        inviToken = IERC20(_inviTokenAddr);
 
         inviFees = 3 * SWAP_FEE_UNIT;
         klayFees = 3 * SWAP_FEE_UNIT;
@@ -37,8 +38,6 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         totalFeesInvi = 1;
         totalFeesKlay = 1;
         totalAddressNumber = 0;
-
-        __Ownable_init();
     }
 
     //======modifier======//
@@ -75,7 +74,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         require(amountOut >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
         
         // transfer tokens from sender
-        require(invi.transferFrom(msg.sender, address(this), amountOut), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transferFrom(msg.sender, address(this), amountOut), ERROR_FAIL_SEND_ERC20);
         
         // transfer Klay to the sender
         (bool success, ) = msg.sender.call{value: amountOut}("");
@@ -97,7 +96,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         require(amountOut >= _amountOutMin, "Slippage too high");
 
         // transfer tokens from sender
-        require(invi.transfer(msg.sender, amountOut), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transfer(msg.sender, amountOut), ERROR_FAIL_SEND_ERC20);
     }
 
       // slippage unit is 0.1%
@@ -116,7 +115,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         lpLiquidityInvi[msg.sender] += expectedInvi;
 
         // transfer tokens from sender
-        require(invi.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
     }
 
     function removeLiquidity(uint _amountRe, uint _amountNa) public {

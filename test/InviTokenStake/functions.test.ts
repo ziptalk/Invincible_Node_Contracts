@@ -9,8 +9,6 @@ describe("InviToken Stake Test", function () {
 
   this.beforeEach(async () => {
     ({inviTokenContract, inviTokenStakeContract} = await deployAllWithSetting());
-
-  
   });
 
   it("Test deploy success", async () => {
@@ -20,7 +18,5 @@ describe("InviToken Stake Test", function () {
 
     // verify init
     expect(await inviTokenStakeContract.inviToken()).equals(inviTokenContract.address);
-
-    // verify owner
   });
 });
