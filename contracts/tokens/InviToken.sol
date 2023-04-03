@@ -13,7 +13,7 @@ string constant INVI_TOKEN_NAME = "INVI";
 contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //------ contracts ------//
-    address public nftLendingPool;
+    address public lendingPool;
 
     //------ Variables ------//
     // 0.1B
@@ -40,27 +40,27 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //====== modifier ======//
 
-    modifier onlyNftLendingPool {
-        require(msg.sender == nftLendingPool, "Ownable: caller is not the owner");
+    modifier onlyLendingPool {
+        require(msg.sender == lendingPool, "Ownable: caller is not the owner");
         _;
     }
 
     //====== getter functions =======//
 
     //====== setter functions ======//
-    function setNftLendingPool(address _nftLendingPool) external onlyOwner {
-        nftLendingPool = _nftLendingPool;
+    function setLendingPool(address _lendingPool) external onlyOwner {
+        lendingPool = _lendingPool;
     }
 
     //====== modifiers ======//
-    modifier onlyLendInviToken {
+    modifier onlyLendingPool {
         require(msg.sender == address(LEND_INVI_TOKEN), "msg sender should be lend invi token");
         _;
     }
 
     //====== setter functions ======//
-    function setLendInviTokenAddress(address _lendInviToken) onlyOwner external {
-        LEND_INVI_TOKEN = _lendInviToken;
+    function setLendingPoolAddress(address _LendingPool) onlyOwner external {
+        LEND_INVI_TOKEN = _LendingPool;
     }
 
     //====== service functions ======//
@@ -68,15 +68,15 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function regularMinting() external onlyOwner {
         require(block.timestamp > lastMinted + mintInterval, ERROR_MINTING_INTERVAL_NOT_REACHED);
       
-        // get the amout of minted token from NFtLendingPool (can be + or -)
+        // get the amout of minted token from lendingPool (can be + or -)
         bool isPositive = true;
-        uint nftLendingPoolMintedBurnedAmount = 0;
+        uint lendingPoolMintedBurnedAmount = 0;
 
         uint mintAmount;
         if (isPositive) {
-            mintAmount = regularMintAmount * INVI_UNIT + nftLendingPoolMintedBurnedAmount;
+            mintAmount = regularMintAmount * INVI_UNIT + lendingPoolMintedBurnedAmount;
         } else {
-            mintAmount = regularMintAmount * INVI_UNIT - nftLendingPoolMintedBurnedAmount;
+            mintAmount = regularMintAmount * INVI_UNIT - lendingPoolMintedBurnedAmount;
         }
         // mint token
         _mint(address(this), mintAmount);
@@ -86,13 +86,13 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
 ----
-    // only NftLendingPool can mint and burn token as needed
-    function mintToken(address _account, uint _amount) onlyNftLendingPool external {
+    // only lendingPool can mint and burn token as needed
+    function mintToken(address _account, uint _amount) onlyLendingPool external {
         _mint(_account, _amount);
     }
-    function burnToken(address _account, uint _amount) onlyNftLendingPool external  {
+    function burnToken(address _account, uint _amount) onlyLendingPool external  {
 ----
-    function mintLentToken(address _account, uint _amount) onlyLendInviToken external {
+    function mintLentToken(address _account, uint _amount) onlyLendingPool external {
         _mint(_account, _amount);
     }
 
@@ -101,7 +101,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _burn(_account, _amount);
     }
 
-    function burnLentToken(address _account, uint _amount) onlyLendInviToken external  {
+    function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
         _burn(_account, _amount);
     }
 }

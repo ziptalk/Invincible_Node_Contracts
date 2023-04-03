@@ -88,18 +88,18 @@ export const deploySwapPoolInviKlay = async (inviTokenContract: Contract) => {
   return swapPoolInviKlay;
 };
 
-export const deployLendInviTokenContract = async (inviToken: Contract, stakeNFTContract: Contract) => {
-  const LendInviTokenContract = await ethers.getContractFactory("LendInviToken");
-  const lendInviTokenContract = await upgrades.deployProxy(
-    LendInviTokenContract,
+export const deployLendingPoolContract = async (inviToken: Contract, stakeNFTContract: Contract) => {
+  const LendingPoolContract = await ethers.getContractFactory("LendingPool");
+  const LendingPoolContract = await upgrades.deployProxy(
+    LendingPoolContract,
     [inviToken.address, stakeNFTContract.address],
     {
       initializer: "initialize",
     }
   );
-  await lendInviTokenContract.deployed();
+  await LendingPoolContract.deployed();
 
-  return lendInviTokenContract;
+  return LendingPoolContract;
 }
 
 
@@ -128,20 +128,20 @@ export const deployAllWithSetting = async () => {
   // change inviToken owner
   // await inviTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
 
-  // deploy lendInviToken contract
-  const lendInviTokenContract = await deployLendInviTokenContract(inviTokenContract, stakeNFTContract);
+  // deploy LendingPool contract
+  const LendingPoolContract = await deployLendingPoolContract(inviTokenContract, stakeNFTContract);
 
   // set ILP owner
   iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
 
-  // set lendInvitoken contract
-  inviTokenContract.connect(deployer).setLendInviTokenAddress(lendInviTokenContract.address);
-  stakeNFTContract.connect(deployer).setLendInviTokenAddress(lendInviTokenContract.address);
+  // set LendingPool contract
+  inviTokenContract.connect(deployer).setLendingPoolAddress(LendingPoolContract.address);
+  stakeNFTContract.connect(deployer).setLendingPoolAddress(LendingPoolContract.address);
 
   // set InviCore contract
   stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
 
-  return [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract, lendInviTokenContract, swapPoolInviKlay];
+  return [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract, LendingPoolContract, swapPoolInviKlay];
 }

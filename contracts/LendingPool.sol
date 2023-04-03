@@ -12,7 +12,7 @@ import "./tokens/InviToken.sol";
 import "hardhat/console.sol";
 
 
-contract LendInviToken is Initializable, OwnableUpgradeable {
+contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
 
