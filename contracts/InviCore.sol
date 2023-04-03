@@ -41,18 +41,17 @@ contract InviCore is Initializable, OwnableUpgradeable {
     address[] public userList;
 
     //======initializer======//
-    function initialize(address _stakeManager, address _stakeNFTAddr, address _lpPoolAddr, address _inviTokenStakeAddr, address _stKlayAddr) initializer public {
-        stKlay = IERC20(_stKlayAddr);
-        stakeManager = _stakeManager;
-        stakeNFTContract = StakeNFT(_stakeNFTAddr);
-        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
-        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
+    function initialize(address stKlayAddr) initializer public {
+        __Ownable_init();
+        stKlay = IERC20(stKlayAddr);
+
+        slippage = 5 * SLIPPAGE_UNIT;
         decreaseRatio = 10 * REWARD_ERROR_UNIT;
         increaseRatio = 5 * REWARD_ERROR_UNIT;
         stakingAPR = 10 * APR_UNIT;
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
-        __Ownable_init();
+        
     }
 
     //====== modifier functions ======//
@@ -60,6 +59,24 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(msg.sender == stakeManager, ERROR_NOT_OWNER);
         _;
     }
+
+    //====== setter address & contract functions ======//
+    function setStakeManager(address _stakeManager) external onlyOwner {
+        stakeManager = _stakeManager;
+    }
+
+    function setStakeNFTContract(address _stakeNFTAddr) external onlyOwner {
+        stakeNFTContract = StakeNFT(_stakeNFTAddr);
+    }
+
+    function setLpPoolContract(address _lpPoolAddr) external onlyOwner {
+        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
+    }
+
+    function setInviTokenStakeContract(address _inviTokenStakeAddr) external onlyOwner {
+        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
+    }
+    
 
     //====== getter functions ======//
     // get stake info by principal & leverageRatio variables
@@ -163,6 +180,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
+
+    fallback() payable external {}
     
 
     // stake native coin

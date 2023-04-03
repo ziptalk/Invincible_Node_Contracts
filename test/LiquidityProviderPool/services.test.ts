@@ -5,16 +5,12 @@ import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSet
 import { provideLiquidity } from "../utils";
 
 describe("Liquidity Provider Pool Test", function () {
-  let stKlayContract: Contract;
   let inviCoreContract: Contract;
-  let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
+  
 
   this.beforeEach(async () => {
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({inviCoreContract, lpPoolContract} = await deployAllWithSetting());
   });
 
   it("Test LP Stake", async function () {
@@ -58,7 +54,6 @@ describe("Liquidity Provider Pool Test", function () {
     //* when
     const rewardAmount = 100000;
     const tx = await deployer.sendTransaction({ to: inviCoreContract.address, value: rewardAmount,  gasLimit: 300000}); // send coin with tx fee to contract
-    
     await inviCoreContract.connect(deployer).createUnstakeRequest(lpPoolContract.address, rewardAmount, 0, 1); // create unstake request
     await inviCoreContract.connect(stakeManager).sendUnstakedAmount(); // send coin to lpPoolContract
 

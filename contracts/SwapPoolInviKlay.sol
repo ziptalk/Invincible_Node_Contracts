@@ -11,32 +11,40 @@ import "./lib/AddressUtils.sol";
 
 contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
     //------Contracts and Addresses------//
-    IERC20 public invi;
-    IERC20 public inklp;
+
+    IERC20 public inklpToken;
+    IERC20 public inviToken;
+
 
     //------events------//
 
     //------Variables------//
+
     mapping(address => uint) public lpLiquidity;
     mapping (address => uint) public lpRewardKlay;
     mapping (address => uint) public lpRewardInvi;
     address[] public lpList;
 
-    uint public totalLiquidityKlay = 1;
-    uint public totalLiquidityInvi = 1;
-    uint public totalFeesKlay = 1;
-    uint public totalFeesInvi = 1;
- 
+    uint public totalLiquidityKlay;
+    uint public totalLiquidityInvi;
+    uint public totalFeesKlay;
+    uint public totalFeesInvi;
+
     uint public inviFees;
     uint public klayFees;
 
 
     //======initializer======//
+
      function initialize(address _inviAddr, address _inklpAddr) initializer public {
         invi = IERC20(_inviAddr);
         inklp = IERC20(_inklpAddr);
         inviFees = 3;
         klayFees = 3;
+        totalLiquidityKlay = 1;
+        totalLiquidityInvi = 1;
+        totalFeesInvi = 1;
+        totalFeesKlay = 1;
 
         __Ownable_init();
     }
@@ -77,7 +85,8 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         require(amountOut >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
 
         // transfer tokens from sender
-        require(invi.transferFrom(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
+
+        require(inviToken.transferFrom(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
 
         // get fees
         uint256 fees = (amountOut * klayFees) / SWAP_FEE_UNIT; // 0.3% fee
@@ -87,6 +96,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         totalFeesKlay += fees;
 
         splitRewards(0, fees);
+
 
         // transfer Klay to the sender
         (bool success, ) = msg.sender.call{value: amountOut - fees}("");
@@ -110,7 +120,8 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         splitRewards(1, fees);
 
         // transfer tokens from sender
-        require(invi.transfer(msg.sender, amountOut - fees), ERROR_FAIL_SEND_ERC20);
+
+        require(inviToken.transfer(msg.sender, amountOut - fees), ERROR_FAIL_SEND_ERC20);
     }
 
       // slippage unit is 0.1%
@@ -129,14 +140,14 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
         lpLiquidity[msg.sender] += msg.value * expectedInvi;
 
         // transfer tokens from sender
-        require(invi.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
+
+        require(inviToken.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
 
         // mint LP token
         uint lpAmount = msg.value * expectedInvi;
-        inklp.mintToken(msg.sender, lpAmount);
+        inklpToken.mintToken(msg.sender, lpAmount);
 
         addAddress(lpList, msg.sender);
-
     }
 
     function removeLiquidity(uint liquidityTokens, uint minKlayAmount, uint minInviAmount) public {

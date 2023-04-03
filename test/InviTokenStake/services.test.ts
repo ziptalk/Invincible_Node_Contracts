@@ -4,17 +4,11 @@ import { BigNumber, Contract } from "ethers";
 import { deployInviToken, deployInviTokenStakeContract, deployAllWithSetting } from "../deploy";
 
 describe("InviToken Stake Test", function () {
-  let stKlayContract: Contract;
-  let inviCoreContract: Contract;
-  let stakeNFTContract: Contract;
-  let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, LP, inviCore, userB, userC] = await ethers.getSigners();
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({inviTokenContract, inviTokenStakeContract} = await deployAllWithSetting());
     
   });
 

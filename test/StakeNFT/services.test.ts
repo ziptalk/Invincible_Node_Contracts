@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
 import Web3 from "web3";
-import { deployStakeNFT, deployAllWithSetting } from "../deploy";
+import { deployAllWithSetting } from "../deploy";
 import units from "../units.json";
 
 const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd, minReward, maxReward] = [
@@ -10,18 +10,12 @@ const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockSt
 ];
 
 describe("Stake NFT Test", function () {
-  let stKlayContract: Contract;
-  let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
-  let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, LP, inviCore, userB, userC] = await ethers.getSigners();
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
-    await stakeNFTContract.connect(deployer).setInviCoreAddress(inviCore.address);
+    const [deployer, stakeManager, LP, inviCore, userA, userB, userC] = await ethers.getSigners();
+    ({stakeNFTContract} = await deployAllWithSetting());
+    await stakeNFTContract.connect(deployer).setInviCoreAddress(inviCore.address); // set inviCore address (for test)
   });
 
 

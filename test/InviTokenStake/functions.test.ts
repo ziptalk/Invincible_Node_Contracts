@@ -1,20 +1,14 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import { deployInviToken, deployInviTokenStakeContract } from "../deploy";
+import { ethers } from "hardhat";
+import { deployAllWithSetting} from "../deploy";
 
 describe("InviToken Stake Test", function () {
-  let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
+  let  inviTokenContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, stakeManager, user1, user2, user3] = await ethers.getSigners();
-
-    // deploy inviToken contract
-    inviTokenContract = await deployInviToken();
-
-    // deploy inviCore contract
-    inviTokenStakeContract = await deployInviTokenStakeContract(stakeManager.address, inviTokenContract);
+    ({inviTokenContract, inviTokenStakeContract} = await deployAllWithSetting());
   });
 
   it("Test deploy success", async () => {
@@ -24,7 +18,5 @@ describe("InviToken Stake Test", function () {
 
     // verify init
     expect(await inviTokenStakeContract.inviToken()).equals(inviTokenContract.address);
-
-    // verify owner
   });
 });

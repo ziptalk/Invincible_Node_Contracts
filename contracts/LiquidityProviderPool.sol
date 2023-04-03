@@ -14,7 +14,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     IERC20 public iLP;
     IERC20 public inviToken;
     address public stakeManager; 
-    address public INVI_CORE;
+    address public inviCoreAddress;
     address[] public ILPHolders;
 
     //------Ratios------//
@@ -29,17 +29,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
         _;
     }
 
     //====== initializer ======//
-    function initialize(address _stakeManager, address _iLP, address _inviToken) public initializer {
-        stakeManager = _stakeManager;
-        iLP = IERC20(_iLP);
-        inviToken = IERC20(_inviToken);
-        liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
+    function initialize(address iLPAddr, address inviTokenAddr) public initializer {
         __Ownable_init();
+        iLP = IERC20(iLPAddr);
+        inviToken = IERC20(inviTokenAddr);
+        liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
     }
 
     //====== getter functions ======//
@@ -56,9 +55,13 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
+
+    function setStakeManager(address _stakeManager) external onlyOwner {
+        stakeManager = _stakeManager;
+    }
    
     function setInviCoreAddress(address _inviCore) external onlyOwner {
-        INVI_CORE = _inviCore;
+        inviCoreAddress = _inviCore;
     }
 
     function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {

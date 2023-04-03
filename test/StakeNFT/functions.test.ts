@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
 import Web3 from "web3";
-import { deployStakeNFT } from "../deploy";
+import { deployAllWithSetting } from "../deploy";
 
 const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd] = [1000, 10000, 100000, 3, 0, 0, 0];
 
@@ -10,10 +10,7 @@ describe("Stake NFT Test", function () {
   let stakeNFTContract: Contract;
 
   this.beforeEach(async () => {
-    const [deployer, userA, userB, userC] = await ethers.getSigners();
-
-    // deploy stakeNFT contract
-    stakeNFTContract = await deployStakeNFT();
+    ({stakeNFTContract} = await deployAllWithSetting());
   });
 
   it("Test deploy success", async () => {

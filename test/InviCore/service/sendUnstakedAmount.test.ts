@@ -1,16 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
-import {
-  deployInviToken,
-  deployILPToken,
-  deployStakeNFT,
-  deployLpPoolContract,
-  deployInviCoreContract,
-  deployInviTokenStakeContract,
-  deployStKlay,
-  deployAllWithSetting,
-} from "../../deploy";
+import {deployAllWithSetting} from "../../deploy";
 import units from "../../units.json";
 import { leverageStake, provideLiquidity } from "../../utils";
 
@@ -24,14 +15,11 @@ interface UnstakeRequest {
 describe("Invi core service test", function () {
   let stKlayContract: Contract;
   let inviCoreContract: Contract;
-  let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let iLPTokenContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
+  
 
   this.beforeEach(async () => {
-    [stKlayContract, inviCoreContract, iLPTokenContract, stakeNFTContract, inviTokenContract, lpPoolContract, inviTokenStakeContract] = await deployAllWithSetting();
+    ({stKlayContract, inviCoreContract, lpPoolContract} = await deployAllWithSetting());
   });
 
 

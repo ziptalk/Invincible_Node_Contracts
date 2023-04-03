@@ -13,7 +13,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public inviToken;
     address public stakeManager;
-    address public INVI_CORE;
+    address public inviCoreAddress;
 
     //------stake status------//
     mapping(address => uint) public stakedAmount;
@@ -26,23 +26,29 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == INVI_CORE, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
         _;
     }
     
     //====== initializer ======//
-    function initialize(address _stakeManager, address _invi) public initializer {
-        stakeManager = _stakeManager;
-        inviToken = IERC20(_invi);
+    function initialize(address _inviTokenAddr) public initializer {
         __Ownable_init();
+        inviToken = IERC20(_inviTokenAddr);
     }
 
     //====== getter functions ======//
     
     //====== setter functions ======//
+    function setStakeManager(address _stakeManager) external onlyOwner {
+        stakeManager = _stakeManager;
+    }
 
-    function setInviCoreAddress(address _inviCore) public onlyOwner {
-        INVI_CORE = _inviCore;
+    function setInviCoreAddress(address _inviCoreAddr) public onlyOwner {
+        inviCoreAddress = _inviCoreAddr;
+    }
+
+    function setInviTokenAddress(address _inviTokenAddr) public onlyOwner {
+        inviToken = IERC20(_inviTokenAddr);
     }
    
     //====== service functions ======//
