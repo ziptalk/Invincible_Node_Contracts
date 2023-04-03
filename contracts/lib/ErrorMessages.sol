@@ -22,6 +22,8 @@ string constant ERROR_NFT_REWARD_INVALID_RANGE = "nft reward should be between m
 
 // swap error
 string constant ERROR_SWAP_SLIPPAGE = "slippage is too high";
+string constant ERROR_NOT_ENOUGH_LIQUIDITY = "not enough liquidity";
+string constant ERROR_SWAP_ZERO = "swap amount should be greater than zero";
 
 // minting error
 string constant ERROR_MINTING_INTERVAL_NOT_REACHED = "minting interval not reached";
