@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
 
-string constant INKLP_TOKEN_FULL_NAME = "Invi Klay Swap LP Token";
-string constant INKLP_TOKEN_NAME = "INKLP";
+string constant ISPT_TOKEN_FULL_NAME = "Invi Swap Pool Token";
+string constant ISPT_TOKEN_NAME = "ISPT";
 
-contract INKLPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
+contract IPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //------ contracts ------//
     address public INVI_KLAY_SWAP_POOL;
@@ -21,7 +21,7 @@ contract INKLPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //====== initializer ======//
     function initialize() initializer public {
-        __ERC20_init(INKLP_TOKEN_FULL_NAME, INKLP_TOKEN_NAME);
+        __ERC20_init(ISPT_TOKEN_FULL_NAME, ISPT_TOKEN_NAME);
         __Ownable_init();
     }
 
