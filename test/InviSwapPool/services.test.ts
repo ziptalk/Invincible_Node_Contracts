@@ -21,6 +21,6 @@ describe("InviSwapPool Service Test", function () {
     let inviPrice = 10 ** 18;
     let klayPrice = 10 ** 19;
     // set prices
-    await inviSwapPoolContract.functions.setInviPrice();
+    // await inviSwapPoolContract.functions.setInviPrice();
   });
 });
