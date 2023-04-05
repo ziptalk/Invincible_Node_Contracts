@@ -39,7 +39,7 @@ export const deployStakeNFT = async () => {
 
 // deploy ISPTToken contract
 export const deployISPTToken = async () => {
-  const ISPTTokenContract = await ethers.getContractFactory("INKLPToken");
+  const ISPTTokenContract = await ethers.getContractFactory("ISPTToken");
   const iSPTTokenContract = await upgrades.deployProxy(ISPTTokenContract, [], { initializer: "initialize" });
   await iSPTTokenContract.deployed();
 
@@ -87,6 +87,8 @@ export const deployInviSwapPool = async (inviTokenContract: Contract, iSPTTokenC
   const InviSwapPool = await ethers.getContractFactory("InviSwapPool");
   const inviSwapPool = await upgrades.deployProxy(InviSwapPool, [inviTokenContract.address, iSPTTokenContract.address], { initializer: "initialize" });
   await inviSwapPool.deployed();
+
+  return inviSwapPool;
 };
 
 export const deployLendingPoolContract = async (inviToken: Contract) => {
@@ -120,8 +122,8 @@ export const deployAllWithSetting = async () => {
   const lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract);
   // deploy LendingPool contract
   const lendingPoolContract = await deployLendingPoolContract(inviTokenContract);
-  // deploy SwapPoolInviKlay contract
-  const swapPoolInviKlay = await deploySwapPoolInviKlay(inviTokenContract);
+  // // deploy SwapPoolInviKlay contract
+  // const swapPoolInviKlay = await deploySwapPoolInviKlay(inviTokenContract);
   // deploy InviSwapPool contract
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
   // deploy inviCore contract
@@ -132,6 +134,8 @@ export const deployAllWithSetting = async () => {
   await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
   // set inviToken init condition
   await inviTokenContract.connect(deployer).setLendingPoolAddress(lendingPoolContract.address);
+  // set ISPTToken init condition
+  await iSPTTokenContract.connect(deployer).setInviSwapPool(inviSwapPoolContract.address);
   // set stakeNFT init condition
   await stakeNFTContract.connect(deployer).setInviCoreAddress(inviCoreContract.address);
   await stakeNFTContract.connect(deployer).setLendingPoolAddress(lendingPoolContract.address);
@@ -158,6 +162,6 @@ export const deployAllWithSetting = async () => {
     lpPoolContract,
     inviTokenStakeContract,
     lendingPoolContract,
-    swapPoolInviKlay,
+    inviSwapPoolContract,
   };
 };

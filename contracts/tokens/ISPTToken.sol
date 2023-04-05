@@ -10,10 +10,10 @@ import "../lib/ErrorMessages.sol";
 string constant ISPT_TOKEN_FULL_NAME = "Invi Swap Pool Token";
 string constant ISPT_TOKEN_NAME = "ISPT";
 
-contract IPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
+contract ISPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //------ contracts ------//
-    address public INVI_KLAY_SWAP_POOL;
+    address public inviSwapPool;
 
     //------ Variables ------//
   
@@ -27,22 +27,22 @@ contract IPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
 
     //====== modifiers ======//
-    modifier onlyInviKlaySwapPool {
-        require(msg.sender == address(INVI_KLAY_SWAP_POOL), "msg sender should be invi klay swap pool");
+    modifier onlyInviSwapPool {
+        require(msg.sender == inviSwapPool, "msg sender should be invi klay swap pool");
         _;
     }
     //====== setter functions ======//
-    function setInviKlaySwapPool(address _inviKlaySwapPool) external onlyOwner {
-        INVI_KLAY_SWAP_POOL = _inviKlaySwapPool;
+    function setInviSwapPool(address _inviKlaySwapPool) external onlyOwner {
+        inviSwapPool = _inviKlaySwapPool;
     }
 
     //====== service functions ======//
 
 
-    function mintToken(address _account, uint _amount) onlyInviKlaySwapPool external {
+    function mintToken(address _account, uint _amount) onlyInviSwapPool external {
         _mint(_account, _amount);
     }
-    function burnToken(address _account, uint _amount) onlyInviKlaySwapPool external  {
+    function burnToken(address _account, uint _amount) onlyInviSwapPool external  {
         _burn(_account, _amount);
     }
 
