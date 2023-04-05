@@ -1,0 +1,114 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x306d1833a50a6e47bF48Eb71fe8766E4107353d8",
+    "txHash": "0x6d0349a0a0d379d21eb142495d4503dce396677a5055e141671e8699c0055d0b"
+  },
+  "proxies": [],
+  "impls": {
+    "7b9eefa70cb459d98fd5bc031ede9aa01c1c7ec6702c2b54014ac1ff7c123335": {
+      "address": "0xa6c099C21346cdE6b70e82F3eF6881210F6ad1D4",
+      "txHash": "0xcc0ce09462598d6eb9746fe3e17a4294a6d07701ef6cb5339124a1a25f7fd6bd",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "pangeaSwapPool",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IConcentratedLiquidityPool)933",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:20"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:26"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:27"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IConcentratedLiquidityPool)933": {
+            "label": "contract IConcentratedLiquidityPool",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
