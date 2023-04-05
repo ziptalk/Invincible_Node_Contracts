@@ -73,7 +73,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function repay(uint _index) public {
         require(_index < lendInfos[msg.sender].length, "index is out of range");
         LendInfo memory lendInfo = getLendInfo(msg.sender, _index);
-        require(lendInfo.lentAmount > inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
+        require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
 
         // update info
         totalLentAmount -= lendInfo.lentAmount;
