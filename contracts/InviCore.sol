@@ -182,6 +182,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //====== service functions ======//
 
     fallback() payable external {}
+    receive() payable external {}
     
 
     // stake native coin

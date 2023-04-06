@@ -99,6 +99,15 @@ export const deployLendingPoolContract = async (inviToken: Contract) => {
   return lendingPoolContract;
 };
 
+// deploy SwapManager contract
+export const deploySwapManager = async () => {
+  const SwapManagerContract = await ethers.getContractFactory("SwapManager");
+  const swapManagerContract = await upgrades.deployProxy(SwapManagerContract, [], { initializer: "initialize" });
+  await swapManagerContract.deployed();
+
+  return swapManagerContract;
+};
+
 // deploy entire contract with setting
 export const deployAllWithSetting = async () => {
   const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
@@ -128,6 +137,8 @@ export const deployAllWithSetting = async () => {
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stKlayContract);
+  // deploy swapManager contract
+  const swapManagerContract = await deploySwapManager();
 
   // ==================== set init condition ==================== //
   // set iLP init condition
@@ -157,11 +168,13 @@ export const deployAllWithSetting = async () => {
     stKlayContract,
     inviCoreContract,
     iLPTokenContract,
+    iSPTTokenContract,
     stakeNFTContract,
     inviTokenContract,
     lpPoolContract,
     inviTokenStakeContract,
     lendingPoolContract,
     inviSwapPoolContract,
+    swapManagerContract,
   };
 };
