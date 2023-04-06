@@ -1,112 +1,58 @@
 import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
+import { deployAllContract} from "./deployFunctions";
 import address from "./address.json";
 
-async function main() {
-  // deploy stKlay contract
-  const stKlayContract = await deployStKlay();
-  console.log("StKlay contract deployed to:", stKlayContract.address);
-  // deploy inviToken contract
-  const inviTokenContract = await deployInviToken();
-  console.log("InviToken contract deployed to:", inviTokenContract.address);
-  // deploy ILPToken contract
-  const iLPTokenContract = await deployILPToken();
-  console.log("ILPToken contract deployed to:", iLPTokenContract.address);
-  // deploy stakeNFT contract
-  const stakeNFTContract = await deployStakeNFT();
-  console.log("StakeNFT contract deployed to:", stakeNFTContract.address);
-  // deploy inviTokenStake Contract
-  const inviTokenStakeContract = await deployInviTokenStakeContract(address.stakeManager, inviTokenContract);
-  console.log("InviTokenStake contract deployed to:", inviTokenStakeContract.address);
-  // deploy liquidity pool contract
-  const lpPoolContract = await deployLpPoolContract(address.stakeManager, iLPTokenContract, inviTokenContract);
-  console.log("LiquidityProviderPool contract deployed to:", lpPoolContract.address);
-  // deploy inviCore contract
-  const inviCoreContract = await deployInviCoreContract(address.stakeManager, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stKlayContract);
-  console.log("InviCore contract deployed to:", inviCoreContract.address);
+let stKlayContract: Contract;
+let inviTokenContract: Contract;
+let iLPTokenContract: Contract;
+let iSPTTokenContract: Contract;
+
+let stakeNFTContract: Contract;
+let inviTokenStakeContract: Contract;
+let lpPoolContract: Contract;
+let lendingPoolContract: Contract;
+let inviSwapPoolContract: Contract;
+let inviCoreContract: Contract;
+let swapManagerContract: Contract;
+
+
+const deploy = async () => {
+  const [deployer] = await ethers.getSigners();
+  const stakeManager = address.stakeManager;
+  console.log("Deploying contracts with the account:", deployer.address);
+
+  ({ stKlayContract,inviTokenContract, iLPTokenContract, iSPTTokenContract,
+    stakeNFTContract, inviTokenStakeContract, lpPoolContract, lendingPoolContract, 
+    inviSwapPoolContract, inviCoreContract, swapManagerContract} = await deployAllContract());
+
+  // return contract addresses
+  return{
+    stKlayContractAddress: stKlayContract.address,
+    inviTokenContractAddress: inviTokenContract.address,
+    iLPTokenContractAddress: iLPTokenContract.address,
+    iSPTTokenContractAddress: iSPTTokenContract.address,
+    stakeNFTContractAddress: stakeNFTContract.address,
+    inviTokenStakeContractAddress: inviTokenStakeContract.address,
+    lpPoolContractAddress: lpPoolContract.address,
+    lendingPoolContractAddress: lendingPoolContract.address,
+    inviSwapPoolContractAddress: inviSwapPoolContract.address,
+    inviCoreContractAddress: inviCoreContract.address,
+    swapManagerContractAddress: swapManagerContract.address,
+  }
 }
 
-// deploy test stKlay contract
-const deployStKlay = async () => {
-  const StKlayContract = await ethers.getContractFactory("StKlay");
-  const stKlayContract = await upgrades.deployProxy(StKlayContract, [], { initializer: "initialize" });
-  await stKlayContract.deployed();
+const main = async () => {
+  console.log("deploying start ...");
+  const ContractAddresses = await deploy();
+  console.log("deploying end ...");
+  console.log("ContractAddresses: ", ContractAddresses);
+}
 
-  return stKlayContract;
-};
-
-// deploy InviToken contract
-const deployInviToken = async () => {
-  const InviTokenContract = await ethers.getContractFactory("InviToken");
-  const inviTokenContract = await upgrades.deployProxy(InviTokenContract, [], { initializer: "initialize" });
-  await inviTokenContract.deployed();
-
-  return inviTokenContract;
-};
-
-// deploy ILPToken contract
-const deployILPToken = async () => {
-  const ILPTokenContract = await ethers.getContractFactory("ILPToken");
-  const iLPTokenContract = await upgrades.deployProxy(ILPTokenContract, [], { initializer: "initialize" });
-  await iLPTokenContract.deployed();
-
-  return iLPTokenContract;
-};
-
-// deploy stakeNFT contract
-const deployStakeNFT = async () => {
-  const StakeNFTContract = await ethers.getContractFactory("StakeNFT");
-  const stakeNFTContract = await upgrades.deployProxy(StakeNFTContract, [], { initializer: "initialize" });
-  await stakeNFTContract.deployed();
-
-  return stakeNFTContract;
-};
-
-// deploy lpPool contract
-const deployLpPoolContract = async (stakeManager: string, iLPTokenContract: Contract, inviTokenContract: Contract) => {
-  const LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
-  const lpPoolContract = await upgrades.deployProxy(LpPoolContract, [stakeManager, iLPTokenContract.address, inviTokenContract.address], {
-    initializer: "initialize",
-  });
-  await lpPoolContract.deployed();
-
-  return lpPoolContract;
-};
-
-// deploy inviTokenStake contract
-const deployInviTokenStakeContract = async (stakeManager: string, inviTokenContract: Contract) => {
-  const InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
-  const inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [stakeManager, inviTokenContract.address], { initializer: "initialize" });
-  await inviTokenStakeContract.deployed();
-
-  return inviTokenStakeContract;
-};
-
-// deploy inviCore contract
-const deployInviCoreContract = async (
-  stakeManager: string,
-  stakeNFTContract: Contract,
-  lpPoolContract: Contract,
-  inviTokenStakeContract: Contract,
-  stKlayContract: Contract
-) => {
-  const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(
-    InviCoreContract,
-    [stakeManager, stakeNFTContract.address, lpPoolContract.address, inviTokenStakeContract.address, stKlayContract.address],
-    {
-      initializer: "initialize",
-    }
-  );
-  await inviCoreContract.deployed();
-
-  return inviCoreContract;
-};
-
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
+try{
+  main()
+}catch(e){
+  console.error(e)
   process.exitCode = 1;
-});
+}
