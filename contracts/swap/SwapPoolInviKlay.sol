@@ -14,8 +14,7 @@ contract SwapPoolInviKlay is Initializable, OwnableUpgradeable{
 
     IERC20 public inklpToken;
     IERC20 public inviToken;
-
-
+    
     //------events------//
 
     //------Variables------//
