@@ -58,22 +58,25 @@ contract SwapManager is Initializable, OwnableUpgradeable {
 
     //======service functions======//
     function fetchKlayPrice(uint _option) public view returns (uint) {
-        (uint160 klayPrice, int24 tick) = pangeaSwapPool.getPriceAndNearestTicks();
+        // uncomment later
+        // (uint160 klay, int24 tick) = pangeaSwapPool.getPriceAndNearestTicks();
+        // console.log("klay", klay);
+
         uint parseKlay;
         if (_option == 0) {
-             // parse klay in mainnet
-            parseKlay = (klayPrice / 2 ** 96) ** 2;
+            // parse klay in mainnet
+            // parseKlay = (klay / 2 ** 96) ** 2;
         } 
         else {
             // parse klay in testnet 
-            parseKlay = klayPrice;
+            parseKlay = 2* 10 ** 18;
         }
 
         return parseKlay;
     }
 
     function fetchInviPrice() public view returns (uint) {
-        
+        return 1* 10 ** 18;
     }
     
     //======utils functions======//
