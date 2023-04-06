@@ -14,7 +14,7 @@ describe("SwapManager Service Test", function () {
 
   it("Test Fetch Price functions", async () => {
     const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
-    const price = await swapManagerContract.functions.fetchKlayPrice();
+    const price = await swapManagerContract.functions.fetchKlayPrice(1);
     console.log(price);
   });
 });

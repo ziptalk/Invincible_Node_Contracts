@@ -29,6 +29,7 @@ describe("InviSwapPool Service Test", function () {
     // await inviTokenContract.connect(deployer).mintToken(userB.address, liquidityAmount);
     await inviTokenContract.connect(userA).approve(inviSwapPoolContract.address, liquidityAmount);
     await inviSwapPoolContract.connect(userA).functions.addLiquidity(liquidityAmount * 3, maxInviPrice, { value: liquidityAmount });
+
     // check balances
     let inviBalance = await inviTokenContract.balanceOf(userB.address);
     let klayBalance = await ethers.provider.getBalance(userB.address);

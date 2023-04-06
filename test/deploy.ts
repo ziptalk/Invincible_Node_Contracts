@@ -163,6 +163,8 @@ export const deployAllWithSetting = async () => {
   await inviCoreContract.connect(deployer).setStakeManager(stakeManager.address);
   await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address);
   await inviCoreContract.connect(deployer).setInviTokenStakeContract(inviTokenStakeContract.address);
+  // set InviSwapPool contract
+  await inviSwapPoolContract.connect(deployer).setSwapManager(swapManagerContract.address);
 
   return {
     stKlayContract,
