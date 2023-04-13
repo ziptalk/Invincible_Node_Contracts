@@ -9,7 +9,7 @@
   "stakeNFTContractAddress": "0x263D4D3dBe405E2AfE9ac0B0Ef3319a3ED31B452",
   "inviTokenStakeContractAddress": "0xb4247E2e558862bfBAD69a157B14063D909A3B87",
   "lpPoolContractAddress": "0x4369144C4A61d5021FBCF31E70E5D60122CCe8FE",
-  "lendingPoolContractAddress": "0xb2Ed16E5c08ADA6CcF69263913f26BdCDBD37fA5",
+  "lendingPoolContractAddress": "0xCa935E1EdEF493B061e95b47fB69cDbBA7589C5E",
   "inviSwapPoolContractAddress": "0x3FF91bA4cadF66b7F2Dcd8f834f25520BF87F0Bf",
   "inviCoreContractAddress": "0xb4CdE9f9E32DE2e11320dA39Cc5D48192De55637",
   "swapManagerContractAddress": "0x301Ae9E250eD1797bF67a4Ae34b51f33cFC598cc"
