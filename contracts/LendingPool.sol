@@ -10,38 +10,44 @@ import "./lib/ErrorMessages.sol";
 import "./lib/Unit.sol";
 import "./tokens/InviToken.sol";
 import "hardhat/console.sol";
+import "./lib/ErrorMessages.sol";
 
 
 contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
 
-    uint public lendRatio;
+    uint public swapRatio; //invi <-> networkToken swapRatio
+    uint public maxLendRatio;
     uint public totalLentAmount;
-    mapping (address => LendInfo[]) public lendInfos;
+    mapping (uint => LendInfo) public lendInfos;
     
     
     //======initializer======//
     function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(inviTokenAddr);
-        lendRatio = 8 * LEND_RATIO_UNIT / 10 ;
+        swapRatio = 9 * SWAP_RATIO_UNIT / 10; // 0.9
+        maxLendRatio = 8 * LEND_RATIO_UNIT / 10 ; // 0.8
     }
 
     //====== modifiers ======//
     
     //====== getter functions ======//
-    function getLentAmount(uint _amount) public view returns (uint) {
-        uint swapRatio = 8 * SWAP_RATIO_UNIT / 10 ;
-        return _amount * swapRatio * lendRatio / (SWAP_RATIO_UNIT * LEND_RATIO_UNIT);
+
+    function createLendInfo(uint _nftId, uint _lendRatio) public view returns (LendInfo memory) {
+        require(_lendRatio <= maxLendRatio, ERROR_SWAP_RATIO_TOO_HIGH);
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId); // get nft principal value
+        
+        uint lentAmount = getLentAmount(stakeInfo.principal, _lendRatio); // get lent amount by principal
+
+        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, lentAmount, _lendRatio);
+        return lendInfo;
     }
 
-    function createLendInfo(uint _nftId) public view returns (LendInfo memory) {
-        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint lentAmount = getLentAmount(stakeInfo.principal);
-
-        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, lentAmount);
-        return lendInfo;
+    function getLendInfo(uint _nftId) public view returns (LendInfo memory) {
+        require(lendInfos[_nftId].user != address(0), ERROR_NOT_FOUND_LEND_INFO);
+        return lendInfos[_nftId];
     }
 
     //====== setter functions ======//
@@ -50,8 +56,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         stakeNFTContract = StakeNFT(_stakeNFTContract);
     }
 
-    function setLendRatio(uint _lendRatio) public onlyOwner{
-        lendRatio = _lendRatio;
+    function setMaxLendRatio(uint _maxLendRatio) public onlyOwner{
+        maxLendRatio = _maxLendRatio;
+    }
+
+    function setSwapRatio(uint _swapRatio) public onlyOwner{
+        swapRatio = _swapRatio;
     }
 
 
@@ -63,22 +73,23 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
         // update info
         totalLentAmount += _lendInfo.lentAmount;
-        lendInfos[_lendInfo.user].push(_lendInfo);
+        lendInfos[_lendInfo.nftId] = _lendInfo;
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
 
         // transfer inviToken
         inviToken.mintLentToken(_lendInfo.user, _lendInfo.lentAmount);
     }
 
-    function repay(uint _index) public {
-        require(_index < lendInfos[msg.sender].length, "index is out of range");
-        LendInfo memory lendInfo = getLendInfo(msg.sender, _index);
+    function repay(uint nftId) public {
+        require(stakeNFTContract.isOwner(nftId, msg.sender) == true, ERROR_NOT_NFT_OWNER);
+        LendInfo memory lendInfo = lendInfos[nftId];
+        require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
         require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
 
         // update info
         totalLentAmount -= lendInfo.lentAmount;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
-        deleteLendInfo(msg.sender, _index);
+        deleteLendInfo(nftId);
 
         // transfer inviToken
         inviToken.transferFrom(msg.sender, address(this), lendInfo.lentAmount);
@@ -86,27 +97,22 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     //===== utils functions ======//
 
+    // get the lent amount
+    function getLentAmount(uint _amount, uint _lendRatio) private view returns (uint) {
+        return _amount * _lendRatio * swapRatio / (SWAP_RATIO_UNIT * LEND_RATIO_UNIT);
+    }
+
     // verify lendInfo
     function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private {
         require(_lendInfo.user == _msgSender, ERROR_INVALID_LEND_INFO);
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
-        require(_lendInfo.lentAmount == getLentAmount(_lendInfo.principal), ERROR_INVALID_LEND_INFO);
-    }
-
-    // return the lendInof by index
-    function getLendInfo(address user, uint index) public view returns (LendInfo memory){
-        require(index < lendInfos[user].length, "index is out of range");
-        return lendInfos[user][index];
+        require(_lendInfo.lentAmount == getLentAmount(_lendInfo.principal, _lendInfo.lendRatio), ERROR_INVALID_LEND_INFO);
     }
 
     // delete the lendInfo by nftTokenId
-    function deleteLendInfo(address user, uint index) private returns (bool){
-        require(index < lendInfos[user].length, "index is out of range");
-
-        for(uint i = index; i < lendInfos[user].length - 1; i++){
-            lendInfos[user][i] = lendInfos[user][i + 1];
-        }
-
-        lendInfos[user].pop();
+    function deleteLendInfo(uint nftId) private returns (bool){
+        LendInfo memory lendInfo = lendInfos[nftId];
+        require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
+        delete lendInfos[nftId];
     }
 }
