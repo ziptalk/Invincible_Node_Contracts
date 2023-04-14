@@ -58,27 +58,20 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     //======getter functions======//
-    function getInviToKlayOutAmount(uint _amountIn, uint _maxPriceKlay) public view returns (uint) {
-        uint getInvi = getInviPrice();
-        uint getKlay = getKlayPrice();
-        require(klayPrice <= _maxPriceKlay, "price is too high");
-
-        return _amountIn * getKlay / getInvi;
-        
+    function getInviToKlayOutAmount(uint _amountIn) public view returns (uint) {
+        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
+        uint currentInviPrice = swapManager.fetchInviPrice();
+        return _amountIn * currentKlayPrice / currentInviPrice; 
     }
-    function getKlayToInviOutAmount(uint _amountIn, uint _maxPriceInvi) public view returns (uint) {
-        uint getInvi = getInviPrice();
-        uint getKlay = getKlayPrice();
-        require(inviPrice <= _maxPriceInvi, "price is too high");
-
-        return _amountIn * getInvi / getKlay;
+    function getKlayToInviOutAmount(uint _amountIn) public view returns (uint) {
+        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
+        uint currentInviPrice = swapManager.fetchInviPrice();
+        return _amountIn * currentInviPrice / currentKlayPrice;
     }
-    function getAddLiquidityInvi(uint _amountIn, uint _maxPriceInvi) public view returns (uint) {
-        uint getInvi = getInviPrice();
-        uint getKlay = getKlayPrice();
-        require(inviPrice <= _maxPriceInvi, "price is too high");
-
-        return _amountIn * getInvi / getKlay;
+    function getAddLiquidityInvi(uint _amountIn) public view returns (uint) {
+        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
+        uint currentInviPrice = swapManager.fetchInviPrice();
+        return _amountIn * currentInviPrice / currentKlayPrice;
     }
     function getInviPrice() public view returns (uint) {
         return inviPrice;
@@ -114,9 +107,9 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     //======service functions======//
     // set price before swap
-    function swapInviToKlay(uint _amountIn, uint _amountOutMin, uint _maxPriceKlay) public setPrice {
+    function swapInviToKlay(uint _amountIn, uint _amountOutMin) public setPrice {
         // calculate amount of tokens to be transferred
-        uint amountOut = getInviToKlayOutAmount(_amountIn, _maxPriceKlay);
+        uint amountOut = getInviToKlayOutAmount(_amountIn);
         require(amountOut < totalLiquidityKlay, "not enough reserves");
         require(amountOut >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
 
@@ -139,11 +132,11 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     // set price before swap
-    function swapKlayToInvi(uint _amountOutMin, uint _maxPriceInvi) public payable setPrice {
+    function swapKlayToInvi(uint _amountOutMin) public payable setPrice {
         require(msg.value > 0, ERROR_SWAP_ZERO);
 
         // calculate amount of tokens to be transferred
-        uint256 amountOut = getKlayToInviOutAmount(msg.value, _maxPriceInvi);
+        uint256 amountOut = getKlayToInviOutAmount(msg.value);
         require(amountOut < totalLiquidityInvi, ERROR_NOT_ENOUGH_LIQUIDITY);
         require(amountOut >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
         //console.log("amountOut: ", amountOut);
@@ -166,10 +159,13 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     // slippage unit is 0.1%
-    function addLiquidity(uint _maxInvi, uint _maxPriceInvi) public payable setPrice {
+    function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable setPrice {
        
-        uint expectedInvi = getAddLiquidityInvi(msg.value, _maxPriceInvi);
-        require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
+        uint expectedInvi = getAddLiquidityInvi(msg.value);
+        // require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
+        uint expectedAmountInInviMin = _expectedAmountInInvi * (100*SLIPPAGE_UNIT - _slippage) / (100*SLIPPAGE_UNIT);
+        uint expectedAmountInInviMax = _expectedAmountInInvi * (100*SLIPPAGE_UNIT + _slippage)  / (100*SLIPPAGE_UNIT);
+        require(expectedInvi >= expectedAmountInInviMin && expectedInvi <= expectedAmountInInviMax , ERROR_ADD_LIQUIDITY_SLIPPAGE);
 
         // update liquidity
         totalLiquidityKlay += msg.value;
@@ -184,23 +180,27 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         isptToken.mintToken(msg.sender, msg.value * expectedInvi);
     }
 
-    function removeLiquidity(uint _liquidityTokens, uint _minKlayAmount, uint _minInviAmount) public {
+    function removeLiquidity(uint _liquidityTokensAmount, uint _expectedKlayAmount, uint _expectedInviAmount, uint _slippage) public {
         require(lpLiquidity[msg.sender] > 0 , ERROR_ZERO_LIQUIDITY);
 
         // burn liquidity Tokens from sender
-        isptToken.burnToken(msg.sender, _liquidityTokens);
+        isptToken.burnToken(msg.sender, _liquidityTokensAmount);
 
         // calculate amount of tokens to be transferred
-        uint inviAmount = sqrt(_liquidityTokens / totalLiquidityKlay * totalLiquidityInvi);
-        uint klayAmount = sqrt(_liquidityTokens / totalLiquidityInvi * totalLiquidityKlay);
-        
-        // Check that the amount of Klay and Invi tokens withdrawn meet the minimum amounts specified by the user
-        require(klayAmount >= _minKlayAmount, ERROR_AMOUNT_BELOW_MIN);
-        require(inviAmount >= _minInviAmount, ERROR_AMOUNT_BELOW_MIN);
+        uint inviAmount = sqrt(_liquidityTokensAmount / totalLiquidityKlay * totalLiquidityInvi);
+        uint klayAmount = sqrt(_liquidityTokensAmount / totalLiquidityInvi * totalLiquidityKlay);
+
+        uint expectedKlayAmountMin = _expectedKlayAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
+        uint expectedKlayAmountMax = _expectedKlayAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
+        uint expectedInviAmountMin = _expectedInviAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
+        uint expectedInviAmountMax = _expectedInviAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
+
+        require(klayAmount >= expectedKlayAmountMin && klayAmount <= expectedKlayAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
+        require(inviAmount >= expectedInviAmountMin && inviAmount <= expectedInviAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
 
         // Calculate rewards for the user
-        uint klayReward = lpRewardKlay[msg.sender] * _liquidityTokens / lpLiquidity[msg.sender];
-        uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokens / lpLiquidity[msg.sender];
+        uint klayReward = lpRewardKlay[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
+        uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
 
         // Check that the contract has sufficient Klay and Invi tokens to withdraw
         require(address(this).balance >= klayAmount 
@@ -210,7 +210,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         // Update the contract's total liquidity and the user's liquidity holdings and rewards
         totalLiquidityKlay -= klayAmount;
         totalLiquidityInvi -= inviAmount;
-        lpLiquidity[msg.sender] -= _liquidityTokens;
+        lpLiquidity[msg.sender] -= _liquidityTokensAmount;
         lpRewardKlay[msg.sender] -= klayReward;
         lpRewardInvi[msg.sender] -= inviReward;
 

@@ -8,7 +8,7 @@ async function main() {
   });
 
   await swapManager.deployed();
-  console.log("deployed staking nft address: ", swapManager.address);
+  console.log("deployed swap manager address: ", swapManager.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

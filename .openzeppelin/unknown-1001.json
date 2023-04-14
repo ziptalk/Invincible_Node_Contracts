@@ -349,6 +349,56 @@
       "address": "0x6eA468C9f28a9bbeE7789eB600AEEEE291D8035c",
       "txHash": "0x125b653a9c2cb582f8723398bfb2236cd69e1a2310fd287c176d669d790aaf20",
       "kind": "transparent"
+    },
+    {
+      "address": "0x55033772D51E08b47313e97372f62Df117593989",
+      "txHash": "0xbdb21457477b4240fb44622fb89fb443eff740c50c524d42c9c1af56b8dca74e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2080D6fb3D741d142554C6ABC08c496B9E9bC702",
+      "txHash": "0x398390b22106d1b9b89682499f723b0f69325539727e050d24aa57e5da24be88",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x42Ed1Da68D86aBb508F99f2C7A0976e0b63B2D62",
+      "txHash": "0x01ed195981165ffd607a73b1f5b7570ad5e4dd03eaa5f06f46621fc6dc7d8de6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc90f5A5b5D3d94582DF79B45b732ACA3785fe044",
+      "txHash": "0xdf37b57c59c09e3070dfb59799fd29d55a3bb7acde5032236360772ff4ba1a59",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3e64FAEeAe1eac3BE2C545af78B522324B541d8b",
+      "txHash": "0x5ecbeabb7137420c44b8221ff01149a6a3c65ad94efaa4b7c289ab7c6c83b3cb",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD3AD9D279a1A1e7C15204851562307fDB99c8247",
+      "txHash": "0x14e82c7106114cc69c18d7b934e5a396a082358c06f7a6e3020f996f48f18adc",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3ef806c22CE76f21a5b3A5E4F358e66358E8FFA3",
+      "txHash": "0xe88c7e35ee625781401252440ec014284af538aaf3afe39a19a5e50850e99256",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x25Bde0C9Cd70de1029508dE811DA1A70aFD4f589",
+      "txHash": "0xcb007e877100049df106828541e145d710900f9decd15fbc86323b1e8cce9672",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x93cE93398B1cBcE1abA8a0DEC23615044a87384d",
+      "txHash": "0x9f708faaa348aea6ea69dc3f0f42fa0d3c11cbad05079cf3be81ebc43df91a2d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA8f452EB4A2769941CBEbf906372A07494eF13f7",
+      "txHash": "0x03ae9d5759d994d816a32194539d174ca44e5c8e84a8540a3179cb5230177028",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -3045,6 +3095,1062 @@
           },
           "t_contract(IERC20)6746": {
             "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "9cab2e39283fb24071c38aace421720d87e9a80d4fb5942f76d93bd6dd3db46d": {
+      "address": "0x24E75dAfEe2AeAf3A80F1d26EB1c34a7dBf3268D",
+      "txHash": "0xd1cacd944c3423ea217fea042b92301a49ab87d5c061c273488e5f03624a55ce",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "pangeaSwapPool",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IConcentratedLiquidityPool)6658",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:20"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:26"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:27"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IConcentratedLiquidityPool)6658": {
+            "label": "contract IConcentratedLiquidityPool",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "00606f081d6bc96ffbc0fcf65cbae1fb80addd7a20b771d0c4a883643393ec3f": {
+      "address": "0x912925d825cE4d9C034107852F13C5E4114c5B54",
+      "txHash": "0x7bf1d8578fec97714196e4d5932fb18cc77dcfc0fec47562b928d89406c7fad0",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)6746",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)6746",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "swapManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(SwapManager)8319",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardKlay",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityKlay",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalFeesKlay",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalFeesInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "klayFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)6746": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(SwapManager)8319": {
+            "label": "contract SwapManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "4105e7ef6213eb6ca26064e247ccf74fc94d6f38ada5f0b5b05593dbee60644b": {
+      "address": "0xafc144E4c61d82CBa784Cb65F848e2a7B04AAa38",
+      "txHash": "0x31338913640f8190f0e7e75db457d8656749d798fc12ad88c734ce54f248f4f8",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "pangeaSwapPool",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IConcentratedLiquidityPool)933",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:20"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:26"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "SwapManager",
+            "src": "contracts\\swap\\SwapManager.sol:27"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IConcentratedLiquidityPool)933": {
+            "label": "contract IConcentratedLiquidityPool",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a15d2076bd730573e7e84e84094a08801cb229b3bd8ff4381218474c1a2c26dc": {
+      "address": "0xd0c04b46aba632592398B8871CAd6D033Ab12B43",
+      "txHash": "0x17ac37dcccc7bf7c4aecc5b4e2dfb3fb4533bed6f75db630c23fd3201031de43",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)1021",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1021",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "swapManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(SwapManager)2158",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardKlay",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityKlay",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalFeesKlay",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalFeesInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "klayFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1021": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(SwapManager)2158": {
+            "label": "contract SwapManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "d64223a29697890ec741b3d5c67a82deef969f6cc53292a8b9670509629eda3f": {
+      "address": "0x6D3946f0DaC3AD8c7E91E58840723237A03430cC",
+      "txHash": "0x09056010881fa2c84aea7d6477920e49e752f628f24ed1d22efacbaf5b92cdaa",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)1021",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1021",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "swapManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(SwapManager)2171",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardKlay",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityKlay",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalFeesKlay",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalFeesInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "klayFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1021": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(SwapManager)2171": {
+            "label": "contract SwapManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "0801f1fa7c6cc6bed6aa5bd84814d7e4fea0441345e5d61a1b4b7f1fa83e203b": {
+      "address": "0x2D154448c3Ce6582F6660caF313f034cc4737F9e",
+      "txHash": "0x4037d9c301f9131a9eff48a9f3468a5287e7672b27fa4775efa4fc4b53f2d29c",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)6746",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)6746",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "swapManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(SwapManager)8414",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardKlay",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityKlay",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalFeesKlay",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalFeesInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "klayFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "klayPrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)6746": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(SwapManager)8414": {
+            "label": "contract SwapManager",
             "numberOfBytes": "20"
           },
           "t_mapping(t_address,t_uint256)": {

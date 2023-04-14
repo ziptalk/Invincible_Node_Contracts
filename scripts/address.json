@@ -1,5 +1,5 @@
 {
-  "deployer" : "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
+  "deployer": "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   "stakeManager": "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
 
   "stKlayContractAddress": "0x838E3FD5c98d094608156CFeCf74a9fF18745ab5",
@@ -10,7 +10,7 @@
   "inviTokenStakeContractAddress": "0xb4247E2e558862bfBAD69a157B14063D909A3B87",
   "lpPoolContractAddress": "0x4369144C4A61d5021FBCF31E70E5D60122CCe8FE",
   "lendingPoolContractAddress": "0xb2Ed16E5c08ADA6CcF69263913f26BdCDBD37fA5",
-  "inviSwapPoolContractAddress": "0x3FF91bA4cadF66b7F2Dcd8f834f25520BF87F0Bf",
+  "inviSwapPoolContractAddress": "0x93cE93398B1cBcE1abA8a0DEC23615044a87384d",
   "inviCoreContractAddress": "0xb4CdE9f9E32DE2e11320dA39Cc5D48192De55637",
-  "swapManagerContractAddress": "0x301Ae9E250eD1797bF67a4Ae34b51f33cFC598cc"
+  "swapManagerContractAddress": "0xD3AD9D279a1A1e7C15204851562307fDB99c8247"
 }
