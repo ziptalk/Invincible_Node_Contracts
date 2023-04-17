@@ -30,7 +30,8 @@ contract SwapManager is Initializable, OwnableUpgradeable {
 
      function initialize() initializer public {
         pangeaSwapPool = IConcentratedLiquidityPool(PANGEA_SWAP_ADDRESS);
-
+        inviPrice = 10**18;
+        klayPrice = 10**18;
         __Ownable_init();
     }
 
@@ -69,14 +70,14 @@ contract SwapManager is Initializable, OwnableUpgradeable {
         } 
         else {
             // parse klay in testnet 
-            parseKlay = 2* 10 ** 18;
+            parseKlay = klayPrice;
         }
 
         return parseKlay;
     }
 
     function fetchInviPrice() public view returns (uint) {
-        return 1* 10 ** 18;
+        return inviPrice;
     }
     
     //======utils functions======//
