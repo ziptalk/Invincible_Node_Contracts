@@ -18,7 +18,7 @@ async function main() {
 
   const isptContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
   await isptContract.connect(deployer).setInviSwapPool(inviSwapPool.address);
-  console.log("iSPTToken init condition set", await isptContract.functions.inviSwapPool());
+  console.log("iSPTToken init condition set(inviSwapPool address): ", await isptContract.functions.inviSwapPool());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
