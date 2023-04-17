@@ -18,42 +18,52 @@ describe("LendingPool contract services test", function () {
 
   it("Test lend invi token", async function () {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const lendRatio = 0.8 * units.lendRatioUnit;
+    const swapRatio = 0.9;
 
     //* given
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
-    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId))[0]; //TODO : 이게 왜 배열로 들어올까...
+    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     //* when
     await lendingPoolContract.connect(userA).lend(lendInfo);
 
     //* then
     expect(await lendingPoolContract.totalLentAmount()).to.equal(lendInfo.lentAmount);
-    expect((await lendingPoolContract.getLendInfo(userA.address, 0)).user).to.equal(userA.address);
+    expect((await lendingPoolContract.getLendInfo(nftId)).user).to.equal(userA.address);
     expect((await stakeNFTContract.stakeInfos(nftId)).isLent).to.equal(true);
     expect(await inviTokenContract.balanceOf(userA.address)).to.equal(lendInfo.lentAmount);
   });
 
   it("Test repay invi token", async function () {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const lendRatio = 0.8 * units.lendRatioUnit;
+    const swapRatio = 0.9;
 
     //* given
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
-    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId))[0]; //TODO : 이게 왜 배열로 들어올까...
+    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio))[0]; //TODO : 이게 왜 배열로 들어올까...
     await lendingPoolContract.connect(userA).lend(lendInfo);
 
     //* when
     await inviTokenContract.connect(userA).approve(lendingPoolContract.address, lendInfo.lentAmount);
-    await lendingPoolContract.connect(userA).repay(0);
+    await lendingPoolContract.connect(userA).repay(nftId);
 
     //* then
     expect(await lendingPoolContract.totalLentAmount()).to.equal(0);
     expect((await stakeNFTContract.stakeInfos(nftId)).isLent).to.equal(false);
     expect(await inviTokenContract.balanceOf(userA.address)).to.equal(0);
+    
+    try{
+      await lendingPoolContract.getLendInfo(nftId);
+    }catch(e){
+      expect(e.reason).to.equal("not found lend info");
+    }
   });
 })

@@ -25,12 +25,15 @@ describe("LendingPool functions test", function () {
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
 
     //* when
-    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId))[0]; //TODO : 이게 왜 배열로 들어올까...
+    const lendRatio = 0.8 * units.lendRatioUnit;
+    const swapLendRatio = 0.9;
+    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     //* then
     expect(lendInfo.user).to.equals(userA.address);
     expect(lendInfo.nftId).to.equals(nftId);
     expect(lendInfo.principal).to.equals(1000000);
-    expect(lendInfo.lentAmount).to.equals(await lendingPoolContract.getLentAmount(1000000));
+    expect(lendInfo.lentAmount).to.equals(1000000 * lendRatio / units.lendRatioUnit * swapLendRatio);
+    expect(lendInfo.lendRatio).to.equals(lendRatio);
   });
 })
