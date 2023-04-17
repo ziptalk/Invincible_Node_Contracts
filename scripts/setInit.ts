@@ -19,8 +19,8 @@ const main = async () => {
 
     
     // set iLP init condition 
-    await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
-    console.log("iLP init condition set");
+    // await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
+    // console.log("iLP init condition set");
   
     // set inviToken init condition
     await inviTokenContract.connect(deployer).setLendingPoolAddress(lendingPoolContract.address);
