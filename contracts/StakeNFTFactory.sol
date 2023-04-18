@@ -59,19 +59,30 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
         return stakeInfos[nftTokenId];
     }
 
-    function getUserNFTs(address _user) public view returns (uint[] memory) {
-        uint[] memory userNFTs = new uint[](_tokenIds);
-        uint counter = 0;
-        for (uint i = 0; i < _tokenIds; i++) {
-            StakeNFT nft = StakeNFT(nftAddresses[i]);
-            if (nft.owner() == _user) {
-                userNFTs[counter] = nft.tokenId();
-                counter++;
-            }
+  function getUserNFTs(address _user) public view returns (uint[] memory) {
+    uint counter = 0;
+    for (uint i = 0; i < _tokenIds.current(); i++) {
+        StakeNFT nft = StakeNFT(nftAddresses[i]);
+        if (nft.getUser() == _user) {
+            counter++;
         }
-       
-        return userNFTs;
-    } 
+    }
+    uint[] memory userNFTs = new uint[](counter);
+    counter = 0;
+    for (uint i = 0; i < _tokenIds.current(); i++) {
+        StakeNFT nft = StakeNFT(nftAddresses[i]);
+        if (nft.getUser() == _user) {
+            userNFTs[counter] = nft.getTokenId();
+            counter++;
+        }
+    }
+    return userNFTs;
+}
+
+    function getRewardAmount(uint _nftTokenId) public view returns (uint) {
+        StakeNFT nft = StakeNFT(nftAddresses[_nftTokenId]);
+        return nft.getRewardAmount();
+    }
     
     //====== setter functions ======//
 
@@ -89,8 +100,9 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
 
     function setNFTIsLent(uint _tokenId, bool _isLent) public onlyLendingPool {
         stakeInfos[_tokenId].isLent = _isLent;
-        StakeNFT stakeNFT = new StakeNFT(nftAddresses[_tokenId]);
-        stakeNFT.stakeInfo.isLent = _isLent;
+        address nftAddress = nftAddresses[_tokenId];
+        StakeNFT stakeNFT = StakeNFT(nftAddress);
+        stakeNFT.setNFTIsLent(_isLent);
     }
 
     //====== service functions ======//
@@ -106,10 +118,11 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
 
          // create new NFT
         StakeNFT nft = new StakeNFT();
-        nft.initialize(_stakeInfo);
+        nft.initialize(_stakeInfo, newTokenId);
+        console.log("nft address: ", address(nft));
 
-        // mint NFT to user
-        nft.transferFrom(address(this), _stakeInfo.user, newTokenId);
+        // mint nft with tokenId
+        nft.mint(_stakeInfo.user);
 
         // update info
         nftTokenIds.push(newTokenId);
@@ -123,7 +136,7 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
     function burnNFT(uint _tokenId) public onlyInviCore {
         StakeNFT nft = StakeNFT(nftAddresses[_tokenId]);
         // burn nft
-        nft.burn(0);
+        nft.burn(_tokenId);
         // update info
         totalStakedAmount -= stakeInfos[_tokenId].stakedAmount;
          // delete stakeInfo
@@ -137,9 +150,10 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
     function updateReward(uint _totalReward) external onlyInviCore{
         for (uint256 i = 0; i < nftTokenIds.length; i++) {
             StakeNFT nft = StakeNFT(nftAddresses[nftTokenIds[i]]);
-            nft.addReward(_totalReward * nft.stakeInfos.stakedAmount / totalStakedAmount);
+            nft.addReward(_totalReward * nft.getStakedAmount() / totalStakedAmount);
         }
     }
+
 
     //======utils======//
     // check if nft exists
@@ -155,7 +169,7 @@ contract StakeNFTFactory is Initializable, OwnableUpgradeable {
     }
 
     // delete the stakeInfo by nftTokenId
-    function deleteStakeInfo(uint nftTokenId) private returns (bool){
+    function deleteStakeInfo(uint nftTokenId) private {
         stakeInfos[nftTokenId].user = address(0);
     }
 
