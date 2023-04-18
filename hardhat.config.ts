@@ -5,7 +5,15 @@ import "dotenv/config";
 
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;
 const config: HardhatUserConfig = {
-  solidity: "0.8.18",
+  solidity: {
+    version: "0.8.18",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   paths: {
     artifacts: "./artifacts",
   },
