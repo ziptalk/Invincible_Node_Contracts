@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./StakeNFTFactory.sol";
+import "./StakeNFT.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
@@ -15,8 +15,7 @@ import "./lib/ErrorMessages.sol";
 
 contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
-    StakeNFTFactory public stakeNFTFactory;
-
+    StakeNFT public stakeNFTContract;
 
     uint public swapRatio; //invi <-> networkToken swapRatio
     uint public maxLendRatio;
@@ -38,7 +37,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     function createLendInfo(uint _nftId, uint _lendRatio) public view returns (LendInfo memory) {
         require(_lendRatio <= maxLendRatio, ERROR_SWAP_RATIO_TOO_HIGH);
-        StakeInfo memory stakeInfo = stakeNFTFactory.getStakeInfo(_nftId); // get nft principal value
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId); // get nft principal value
         
         uint lentAmount = getLentAmount(stakeInfo.principal, _lendRatio); // get lent amount by principal
 
@@ -53,8 +52,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     //====== setter functions ======//
 
-    function setStakeNFTFactoryContract(address _stakeNFTFactoryContract) public onlyOwner {
-        stakeNFTFactory = StakeNFTFactory(_stakeNFTFactoryContract);
+    function setStakeNFTContract(address _stakeNFTContract) public onlyOwner {
+        stakeNFTContract = StakeNFT(_stakeNFTContract);
     }
 
     function setMaxLendRatio(uint _maxLendRatio) public onlyOwner{
@@ -75,21 +74,21 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         // update info
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
-        stakeNFTFactory.setNFTIsLent(_lendInfo.nftId, true);
+        stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
 
         // transfer inviToken
         inviToken.mintLentToken(_lendInfo.user, _lendInfo.lentAmount);
     }
 
     function repay(uint nftId) public {
-        require(stakeNFTFactory.isOwner(nftId, msg.sender) == true, ERROR_NOT_NFT_OWNER);
+        require(stakeNFTContract.isOwner(nftId, msg.sender) == true, ERROR_NOT_NFT_OWNER);
         LendInfo memory lendInfo = lendInfos[nftId];
         require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
         require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
 
         // update info
         totalLentAmount -= lendInfo.lentAmount;
-        stakeNFTFactory.setNFTIsLent(lendInfo.nftId, false);
+        stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
         deleteLendInfo(nftId);
 
         // transfer inviToken
@@ -106,7 +105,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     // verify lendInfo
     function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private {
         require(_lendInfo.user == _msgSender, ERROR_INVALID_LEND_INFO);
-        require(stakeNFTFactory.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
+        require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
         require(_lendInfo.lentAmount == getLentAmount(_lendInfo.principal, _lendInfo.lendRatio), ERROR_INVALID_LEND_INFO);
     }
 
