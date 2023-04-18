@@ -10,7 +10,7 @@
   "inviTokenStakeContractAddress": "0xb4247E2e558862bfBAD69a157B14063D909A3B87",
   "lpPoolContractAddress": "0x4369144C4A61d5021FBCF31E70E5D60122CCe8FE",
   "lendingPoolContractAddress": "0xb2Ed16E5c08ADA6CcF69263913f26BdCDBD37fA5",
-  "inviSwapPoolContractAddress": "0x7a587CfD34012038f6cF8745B678d9579bb6b14d",
+  "inviSwapPoolContractAddress": "0xECfEd89064668B1e10cF99561C780e7d98d100B7",
   "inviCoreContractAddress": "0xb4CdE9f9E32DE2e11320dA39Cc5D48192De55637",
-  "swapManagerContractAddress": "0xD3AD9D279a1A1e7C15204851562307fDB99c8247"
+  "swapManagerContractAddress": "0x5C2725C28a36D6bEfd23F82156E7c54E39B464B5"
 }
