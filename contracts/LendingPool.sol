@@ -103,14 +103,14 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     // verify lendInfo
-    function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private {
+    function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private view {
         require(_lendInfo.user == _msgSender, ERROR_INVALID_LEND_INFO);
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
         require(_lendInfo.lentAmount == getLentAmount(_lendInfo.principal, _lendInfo.lendRatio), ERROR_INVALID_LEND_INFO);
     }
 
     // delete the lendInfo by nftTokenId
-    function deleteLendInfo(uint nftId) private returns (bool){
+    function deleteLendInfo(uint nftId) private {
         LendInfo memory lendInfo = lendInfos[nftId];
         require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
         delete lendInfos[nftId];

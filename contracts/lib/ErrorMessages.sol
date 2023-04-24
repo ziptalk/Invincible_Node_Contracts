@@ -8,7 +8,7 @@ string constant ERROR_FAIL_SEND = "failed to send";
 string constant ERROR_FAIL_SEND_ERC20 = "failed to send erc20 token";
 
 // stake info error
-string constant ERROR_EXCEED_LENNT_AMOUNT = "exceed the maximum lent amount";
+string constant ERROR_EXCEED_LENT_AMOUNT = "exceed the maximum lent amount";
 string constant ERROR_INVALID_STAKE_INFO = "invalid stake info";
 string constant ERROR_NOT_OWNED_NFT = "not your own nft";
 string constant ERROR_TOO_MUCH_LENT = "too much lent amount";

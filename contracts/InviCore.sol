@@ -80,17 +80,22 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     // get stake info by principal & leverageRatio variables
-    function getStakeInfo(address _account, uint _principal, uint _leverageRatio) public view returns(StakeInfo memory)  {
-        uint lockPeriod = _getLockPeriod(_leverageRatio);
-        uint lentAmount = _principal * _leverageRatio / LEVERAGE_UNIT- _principal;
-        require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_EXCEED_LENNT_AMOUNT);
+    function getStakeInfo(address _account, uint _principal, uint _leverageRatio, uint _lockPeriod) public view returns(StakeInfo memory)  {
         
-        uint protocolFee = _getProtocolFee(lentAmount, _leverageRatio);
+        uint lockPeriod = getLockPeriod(_leverageRatio);
+        // if lock period is less than minimum lock period, set lock period to minimum lock period
+        if (lockPeriod < _lockPeriod) {
+            lockPeriod = _lockPeriod;
+        } 
+        uint lentAmount = _principal * _leverageRatio / LEVERAGE_UNIT- _principal;
+        require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_EXCEED_LENT_AMOUNT);
+        
+        uint protocolFee = getProtocolFee(lentAmount, _leverageRatio);
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
-        uint minReward = _getMinReward(_principal + lentAmount, lockPeriod);
-        uint maxReward = _getMaxReward(_principal + lentAmount, lockPeriod);
-        uint stakedAmount = _getStakedAmount(_principal, _leverageRatio);
+        uint minReward = getMinReward(_principal + lentAmount, lockPeriod);
+        uint maxReward = getMaxReward(_principal + lentAmount, lockPeriod);
+        uint stakedAmount = getStakedAmount(_principal, _leverageRatio);
 
         StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward, false);
         
@@ -103,33 +108,33 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // return lock period by amount & leverage ratio
-    function _getLockPeriod(uint _leverageRatio) private pure returns (uint) {
+    function getLockPeriod(uint _leverageRatio) public pure returns (uint) {
         return LockPeriod(_leverageRatio);
     }
 
     // return protocol fee by amount & leverage ratio
-    function _getProtocolFee(uint _lentAmount, uint _leverageRatio) private view returns (uint) {
+    function getProtocolFee(uint _lentAmount, uint _leverageRatio) public view returns (uint) {
         uint totalLiquidity = lpPoolContract.getTotalLiquidity();
         return ProtocolFee(_lentAmount, _leverageRatio, totalLiquidity);
     }
     
     // return minimum Reward
-    function _getMinReward(uint _amount, uint _lockPeriod) private view returns (uint) {
+    function getMinReward(uint _amount, uint _lockPeriod) public view returns (uint) {
         return MinReward(_amount, _lockPeriod, stakingAPR, decreaseRatio);
     }
 
     // return maximum Reward
-    function _getMaxReward(uint _amount, uint _lockPeriod) private view returns (uint) {
+    function getMaxReward(uint _amount, uint _lockPeriod) public view returns (uint) {
         return MaxReward(_amount, _lockPeriod, stakingAPR, increaseRatio);
     }
 
     // return total Liquidity from LP Pool
-    function _getTotalLiquidity() private view returns (uint) {
+    function getTotalLiquidity() public view returns (uint) {
         return lpPoolContract.getTotalLiquidity();
     }
 
     // return staked amount
-    function _getStakedAmount(uint _amount, uint _leverageRatio) private view returns (uint) {
+    function getStakedAmount(uint _amount, uint _leverageRatio) public view returns (uint) {
         return StakedAmount(_amount, _leverageRatio);
     }
 
@@ -314,8 +319,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(_stakeInfo.principal == _sendAmount, ERROR_INVALID_STAKE_INFO);
 
         // verify lockPeriod
-        uint lockPeriod = _getLockPeriod(_stakeInfo.leverageRatio);
-        require(_stakeInfo.lockPeriod == lockPeriod, ERROR_INVALID_STAKE_INFO);
+        uint minLockPeriod = getLockPeriod(_stakeInfo.leverageRatio);
+        require(_stakeInfo.lockPeriod >= minLockPeriod, ERROR_INVALID_STAKE_INFO);
 
         //verify lockStart & lockEnd
         uint256 today = block.timestamp - (block.timestamp % 86400);
@@ -336,7 +341,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // verify protocol fee
         uint minProtocolFee = _stakeInfo.protocolFee * (100 * SLIPPAGE_UNIT- _slippage) / (SLIPPAGE_UNIT* 100);
         uint maxProtocolFee = _stakeInfo.protocolFee * (100 * SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT* 100);
-        uint protocolFee = _getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
+        uint protocolFee = getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
         require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
     }
