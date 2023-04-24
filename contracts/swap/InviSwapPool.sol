@@ -4,7 +4,7 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "hardhat/console.sol";
-import "./SwapManager.sol";
+import "../PriceManager.sol";
 import "../interfaces/IERC20.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
@@ -15,7 +15,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     //------Contracts and Addresses------//
     IERC20 public isptToken;
     IERC20 public inviToken;
-    SwapManager public swapManager;
+    PriceManager public priceManager;
 
     //------events------//
 
@@ -59,8 +59,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     //======getter functions======//
     function getInviToKlayOutAmount(uint _amountIn) public view returns (uint) {
-        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
-        uint currentInviPrice = swapManager.fetchInviPrice();
+        uint currentKlayPrice = priceManager.getKlayPrice();
+        uint currentInviPrice = priceManager.getInviPrice();
         // get amount out
         uint amountOut = _amountIn * currentKlayPrice / currentInviPrice;
         // get slippage
@@ -69,8 +69,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         return amountOut - slippage; 
     }
     function getKlayToInviOutAmount(uint _amountIn) public view returns (uint) {
-        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
-        uint currentInviPrice = swapManager.fetchInviPrice();
+        uint currentKlayPrice = priceManager.getKlayPrice();
+        uint currentInviPrice = priceManager.getInviPrice();
          // get amount out
         uint amountOut = _amountIn * currentInviPrice / currentKlayPrice;
         // get slippage
@@ -79,8 +79,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         return  amountOut - slippage;
     }
     function getAddLiquidityInvi(uint _amountIn) public view returns (uint) {
-        uint currentKlayPrice = swapManager.fetchKlayPrice(1);
-        uint currentInviPrice = swapManager.fetchInviPrice();
+        uint currentKlayPrice = priceManager.getKlayPrice();
+        uint currentInviPrice = priceManager.getInviPrice();
         return _amountIn * currentInviPrice / currentKlayPrice;
     }
     function getInviPrice() public view returns (uint) {
@@ -91,8 +91,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     //======setter functions======//
-    function setSwapManager(address _swapManager) public onlyOwner {
-        swapManager = SwapManager(_swapManager);
+    function setPriceManager(address _priceManager) public onlyOwner {
+        priceManager = PriceManager(_priceManager);
     }
     function setInviFees(uint _fees) public onlyOwner {
         inviFees = _fees;
@@ -102,14 +102,14 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
     function setInviPrice() internal {
         // uncomment later
-        inviPrice = swapManager.fetchInviPrice();
+        inviPrice = priceManager.getInviPrice();
 
         // for test
         // inviPrice = 1 * 10 ** 18;
     }
     function setKlayPrice() internal {
         // 0: mainnet 1: testnet. uncomment later
-        klayPrice = swapManager.fetchKlayPrice(1);
+        klayPrice = priceManager.getKlayPrice();
         console.log(klayPrice);
         // for test
         // klayPrice = 2 * 10 ** 18; 
@@ -120,6 +120,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     function swapInviToKlay(uint _amountIn, uint _amountOutMin) public setPrice {
         // calculate amount of tokens to be transferred
         uint amountOut = getInviToKlayOutAmount(_amountIn);
+        
         uint fees = (amountOut * klayFees) / SWAP_FEE_UNIT; // 0.3% fee
 
         require(amountOut < totalLiquidityKlay, "not enough reserves");

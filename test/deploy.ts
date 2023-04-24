@@ -99,13 +99,13 @@ export const deployLendingPoolContract = async (inviToken: Contract) => {
   return lendingPoolContract;
 };
 
-// deploy SwapManager contract
-export const deploySwapManager = async () => {
-  const SwapManagerContract = await ethers.getContractFactory("SwapManager");
-  const swapManagerContract = await upgrades.deployProxy(SwapManagerContract, [], { initializer: "initialize" });
-  await swapManagerContract.deployed();
+// deploy PriceManager contract
+export const deployPriceManager = async () => {
+  const PriceManagerContract = await ethers.getContractFactory("PriceManager");
+  const priceManagerContract = await upgrades.deployProxy(PriceManagerContract, [], { initializer: "initialize" });
+  await priceManagerContract.deployed();
 
-  return swapManagerContract;
+  return priceManagerContract;
 };
 
 // deploy entire contract with setting
@@ -137,8 +137,8 @@ export const deployAllWithSetting = async () => {
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stKlayContract);
-  // deploy swapManager contract
-  const swapManagerContract = await deploySwapManager();
+  // deploy priceManager contract
+  const priceManagerContract = await deployPriceManager();
 
   // ==================== set init condition ==================== //
   // set iLP init condition
@@ -164,7 +164,7 @@ export const deployAllWithSetting = async () => {
   await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address);
   await inviCoreContract.connect(deployer).setInviTokenStakeContract(inviTokenStakeContract.address);
   // set InviSwapPool contract
-  await inviSwapPoolContract.connect(deployer).setSwapManager(swapManagerContract.address);
+  await inviSwapPoolContract.connect(deployer).setPriceManager(priceManagerContract.address);
 
   return {
     stKlayContract,
@@ -177,6 +177,6 @@ export const deployAllWithSetting = async () => {
     inviTokenStakeContract,
     lendingPoolContract,
     inviSwapPoolContract,
-    swapManagerContract,
+    priceManagerContract,
   };
 };
