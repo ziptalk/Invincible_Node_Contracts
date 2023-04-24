@@ -93,11 +93,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint protocolFee = getProtocolFee(lentAmount, _leverageRatio);
         uint lockStart = block.timestamp;
         uint lockEnd = block.timestamp + lockPeriod;
-        uint minReward = getMinReward(_principal + lentAmount, lockPeriod);
-        uint maxReward = getMaxReward(_principal + lentAmount, lockPeriod);
         uint stakedAmount = getStakedAmount(_principal, _leverageRatio);
 
-        StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, minReward, maxReward, false);
+        StakeInfo memory stakeInfo = StakeInfo(_account, _principal, _leverageRatio, stakedAmount, lockPeriod, lockStart, lockEnd, protocolFee, false);
         
         return stakeInfo;
     }
@@ -118,16 +116,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         return ProtocolFee(_lentAmount, _leverageRatio, totalLiquidity);
     }
     
-    // return minimum Reward
-    function getMinReward(uint _amount, uint _lockPeriod) public view returns (uint) {
-        return MinReward(_amount, _lockPeriod, stakingAPR, decreaseRatio);
-    }
-
-    // return maximum Reward
-    function getMaxReward(uint _amount, uint _lockPeriod) public view returns (uint) {
-        return MaxReward(_amount, _lockPeriod, stakingAPR, increaseRatio);
-    }
-
     // return total Liquidity from LP Pool
     function getTotalLiquidity() public view returns (uint) {
         return lpPoolContract.getTotalLiquidity();
@@ -173,8 +161,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function setNFTReward(uint _nftTokenId) external payable onlySTM{
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
 
-        // check reward amount and range
-        require(stakeInfo.minReward >= msg.value && stakeInfo.maxReward <= msg.value, ERROR_NFT_REWARD_INVALID_RANGE);
     }
 
     // set reward portion
@@ -333,10 +319,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // verify min/max reward
         uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio / LEVERAGE_UNIT;
-        uint minReward = MinReward(amount, _stakeInfo.lockPeriod, stakingAPR, decreaseRatio);
-        uint maxReward = MaxReward(amount, _stakeInfo.lockPeriod, stakingAPR, increaseRatio);
-        require(minReward == _stakeInfo.minReward, ERROR_INVALID_STAKE_INFO);
-        require(maxReward == _stakeInfo.maxReward, ERROR_INVALID_STAKE_INFO);        
 
         // verify protocol fee
         uint minProtocolFee = _stakeInfo.protocolFee * (100 * SLIPPAGE_UNIT- _slippage) / (SLIPPAGE_UNIT* 100);

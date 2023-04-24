@@ -10,8 +10,6 @@ struct StakeInfo{
     uint lockStart;
     uint lockEnd;
     uint protocolFee;
-    uint minReward;
-    uint maxReward;
     bool isLent;
 }
 

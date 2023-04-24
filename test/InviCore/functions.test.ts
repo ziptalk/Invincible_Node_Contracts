@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
-import {deployAllWithSetting} from "../deploy";
+import { deployAllWithSetting } from "../deploy";
 import units from "../units.json";
 
 describe("Invi Core functions Test", function () {
@@ -10,11 +10,9 @@ describe("Invi Core functions Test", function () {
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
   let inviCoreContract: Contract;
-  
 
   this.beforeEach(async () => {
-    ({inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract} = await deployAllWithSetting());
-
+    ({ inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test deploy success", async () => {
@@ -22,8 +20,6 @@ describe("Invi Core functions Test", function () {
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
     expect(await lpPoolContract.inviCoreAddress()).equals(inviCoreContract.address);
-
-    
 
     // verify owner
     expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
@@ -38,7 +34,9 @@ describe("Invi Core functions Test", function () {
 
     const principal = 1000;
     const leverageRatio = 2 * units.leverageUnit;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(userA.address, principal, leverageRatio);
+    const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
+    const lockPeriod = minLockPeriod * 2;
+    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(userA.address, principal, leverageRatio, lockPeriod);
 
     //verify stake info
     expect(stakeInfo.user).to.equal(userA.address);
