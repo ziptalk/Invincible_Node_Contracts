@@ -15,15 +15,12 @@ async function main() {
 
   const [deployer] = await ethers.getSigners();
 
-  await inviSwapPool.connect(deployer).setSwapManager(address.swapManagerContractAddress);
+  await inviSwapPool.connect(deployer).setPriceManager(address.priceManagerContractAddress);
   console.log("inviSwapPool init condition set");
 
   setTimeout(async () => {
     const isptContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
     await isptContract.connect(deployer).setInviSwapPool(inviSwapPoolAddress);
-  }, 10000);
-
-  setTimeout(async () => {
     console.log("iSPTToken init condition set(inviSwapPool address): ", await isptContract.functions.inviSwapPool());
   }, 10000);
 }
