@@ -8,7 +8,7 @@ string constant ERROR_FAIL_SEND = "failed to send";
 string constant ERROR_FAIL_SEND_ERC20 = "failed to send erc20 token";
 
 // stake info error
-string constant ERROR_EXCEED_LENNT_AMOUNT = "exceed the maximum lent amount";
+string constant ERROR_EXCEED_LENT_AMOUNT = "exceed the maximum lent amount";
 string constant ERROR_INVALID_STAKE_INFO = "invalid stake info";
 string constant ERROR_NOT_OWNED_NFT = "not your own nft";
 string constant ERROR_TOO_MUCH_LENT = "too much lent amount";
@@ -33,6 +33,7 @@ string constant ERROR_SWAP_ZERO = "swap amount should be greater than zero";
 string constant ERROR_ZERO_LIQUIDITY = "zero liquidity";
 string constant ERROR_AMOUNT_BELOW_MIN = "amount below minimum";
 string constant ERROR_SWAP_RATIO_TOO_HIGH = "swap ratio is too high";
+string constant ERROR_ZERO_FEES = "zero fees";
 
 // nft
 string constant ERROR_NOT_NFT_OWNER = "not nft owner";

@@ -23,16 +23,6 @@ function ExpectedReward(uint _amount, uint _lockPeriod, uint _apr) pure returns 
     uint oneYear = 60 * 60 * 24 * 365;
     return ((_amount * _lockPeriod * _apr) / (oneYear * APR_UNIT * 100));
 }
-function MinReward(uint _amount, uint _lockPeriod, uint _apr, uint _decreaseRatio) view returns (uint) {
-    // lockPeriod = second, apr = %
-    uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (100 * REWARD_ERROR_UNIT - _decreaseRatio)) / (oneYear * APR_UNIT * REWARD_ERROR_UNIT* 100 * 100));
-}
-function MaxReward(uint _amount, uint _lockPeriod, uint _apr, uint _increaseRatio) pure returns (uint) {
-    // lockPeriod = second, apr = %
-    uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (100 * REWARD_ERROR_UNIT + _increaseRatio)) / (oneYear * APR_UNIT * REWARD_ERROR_UNIT * 100 * 100));
-}
 
 function StakedAmount(uint _principal, uint _leverageRatio) pure returns (uint) {
     return _principal * _leverageRatio / LEVERAGE_UNIT;

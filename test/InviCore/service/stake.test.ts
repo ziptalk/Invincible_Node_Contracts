@@ -9,7 +9,7 @@ import {
   deployInviCoreContract,
   deployInviTokenStakeContract,
   deployStKlay,
-  deployAllWithSetting
+  deployAllWithSetting,
 } from "../../deploy";
 import units from "../../units.json";
 import { provideLiquidity, leverageStake } from "../../utils";
@@ -20,24 +20,25 @@ describe("Invi core service test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  
 
   this.beforeEach(async () => {
-    ({inviCoreContract, stakeNFTContract, lpPoolContract} = await deployAllWithSetting());
+    ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test stake function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
     //* given
-    const lpAmount = 10000000000;
+    const lpAmount = 100000000000;
     await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
     //* when
     const principal = 1000000;
     const leverageRatio = 3 * units.leverageUnit;
-    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio);// userA stake
-
+    const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
+    const lockPeriod = minLockPeriod * 2;
+    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod); // userA stake
+    console.log("StakeInfo: ", stakeInfo);
     //* then
     const stakedAmount = stakeInfo.stakedAmount;
     const lentAmount = stakedAmount - principal;

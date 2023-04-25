@@ -126,31 +126,31 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     // return the nft is existed
-    function isExisted(uint nftTokenId) public view returns (bool) {
-        return _exists(nftTokenId);
+    function isExisted(uint _nftTokenId) public view returns (bool) {
+        return _exists(_nftTokenId);
     }
 
 
     // return the address is nft owner
-    function isOwner(uint nftTokenId, address owner) public view returns (bool) {
-        return owner == ownerOf(nftTokenId);
+    function isOwner(uint _nftTokenId, address _owner) public view returns (bool) {
+        return _owner == ownerOf(_nftTokenId);
     }
 
     // return the nft is unlocked
-    function isUnlock(uint nftTokenId) public view returns (bool) {
-        StakeInfo memory stakeInfo = stakeInfos[nftTokenId];
+    function isUnlock(uint _nftTokenId) public view returns (bool) {
+        StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         return stakeInfo.lockEnd < block.timestamp;
     }
 
     // return the stakeInfo by nftTokenId
-    function getStakeInfo(uint nftTokenId) public view returns (StakeInfo memory){
-        StakeInfo memory stakeInfo = stakeInfos[nftTokenId];
+    function getStakeInfo(uint _nftTokenId) public view returns (StakeInfo memory){
+        StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         require(stakeInfo.user != address(0), "stakeInfo is not exist");
-        return stakeInfos[nftTokenId];
+        return stakeInfos[_nftTokenId];
     }
 
     // delete the stakeInfo by nftTokenId
-    function deleteStakeInfo(uint nftTokenId) public returns (bool){
-        stakeInfos[nftTokenId].user = address(0);
+    function deleteStakeInfo(uint _nftTokenId) public returns (bool){
+        stakeInfos[_nftTokenId].user = address(0);
     }
 }
