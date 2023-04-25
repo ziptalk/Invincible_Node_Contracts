@@ -81,7 +81,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     function getAddLiquidityInvi(uint _amountIn) public view returns (uint) {
         uint currentKlayPrice = priceManager.getKlayPrice();
         uint currentInviPrice = priceManager.getInviPrice();
-        return _amountIn * currentInviPrice / currentKlayPrice;
+        return _amountIn * currentKlayPrice / currentInviPrice;
     }
     function getInviPrice() public view returns (uint) {
         return inviPrice;

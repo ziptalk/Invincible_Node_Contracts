@@ -24,7 +24,7 @@ describe("InviSwapPool Service Test", function () {
     //* given
     let sendKlay = 10000000000;
     let liquidityAmount = 10000000000000;
-    const slippage = 10 * units.slippageUnit;
+    const slippage = 5 * units.slippageUnit;
 
     // mint token to userA and userC
     await inviTokenContract.connect(deployer).mintToken(userA.address, liquidityAmount * 100);
