@@ -11,9 +11,10 @@ describe("LendingPool contract services test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let inviTokenContract: Contract;
+  let priceManagerContract: Contract;
 
   this.beforeEach(async () => {
-    ({ lpPoolContract, lendingPoolContract, inviCoreContract, stakeNFTContract, inviTokenContract } = await deployAllWithSetting());
+    ({ lpPoolContract, lendingPoolContract, inviCoreContract, stakeNFTContract, inviTokenContract, priceManagerContract } = await deployAllWithSetting());
   });
 
   it("Test lend invi token", async function () {
@@ -22,6 +23,9 @@ describe("LendingPool contract services test", function () {
     const slippage = 3 * units.slippageUnit;
 
     //* given
+    await priceManagerContract.setInviPrice(1000000000000);
+    await priceManagerContract.setKlayPrice(200000000000);
+
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
@@ -29,6 +33,7 @@ describe("LendingPool contract services test", function () {
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio, lockPeriod);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
     let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
+
     //* when
     await lendingPoolContract.connect(userA).lend(lendInfo);
 
@@ -45,6 +50,9 @@ describe("LendingPool contract services test", function () {
     const lendRatio = 0.8 * units.lendRatioUnit;
 
     //* given
+    await priceManagerContract.setInviPrice(1000000000000);
+    await priceManagerContract.setKlayPrice(200000000000);
+
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
@@ -53,6 +61,7 @@ describe("LendingPool contract services test", function () {
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio, lockPeriod);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
     let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
+
     await lendingPoolContract.connect(userA).lend(lendInfo);
     lendInfo = await lendingPoolContract.lendInfos(nftId);
 

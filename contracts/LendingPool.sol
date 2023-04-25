@@ -40,10 +40,11 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function createLendInfo(uint _nftId, uint _lendRatio, uint _slippage) public view returns (LendInfo memory) {
         require(_lendRatio <= maxLendRatio, ERROR_SWAP_RATIO_TOO_HIGH);
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId); // get nft principal value
-
+        console.log(stakeInfo.principal);
         uint lendAmount = getLendAmount(stakeInfo.principal, _lendRatio); // get lent amount by principal
+        console.log(lendAmount);
         uint minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT); // get minLendAmount by slippage
-
+        console.log(minLendAmount);
         LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, _lendRatio, minLendAmount, 0 );
         return lendInfo;
     }
@@ -106,7 +107,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function getLendAmount(uint _amount, uint _lendRatio) private view returns (uint) {
         uint klayPrice = priceManager.getKlayPrice();
         uint inviPrice = priceManager.getInviPrice();
-        return _amount * _lendRatio * (klayPrice / inviPrice) /  LEND_RATIO_UNIT;
+        console.log(klayPrice, inviPrice, _lendRatio);
+        console.log(_amount * _lendRatio * klayPrice / (inviPrice *  LEND_RATIO_UNIT));
+        return _amount * _lendRatio * klayPrice / (inviPrice * LEND_RATIO_UNIT);
     }
 
     // verify lendInfo

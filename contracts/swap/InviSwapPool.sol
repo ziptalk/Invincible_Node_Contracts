@@ -194,7 +194,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         isptToken.mintToken(msg.sender, sqrt(msg.value * expectedInvi));
     }
 
-    function removeLiquidity(uint _liquidityTokensAmount, uint _expectedKlayAmount, uint _expectedInviAmount, uint _slippage) public {
+    function removeLiquidity(uint _liquidityTokensAmount, uint _expectedInviAmount, uint _expectedKlayAmount, uint _slippage) public {
         require(lpLiquidity[msg.sender] > 0 , ERROR_ZERO_LIQUIDITY);
  
         // burn liquidity Tokens from sender
