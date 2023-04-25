@@ -158,6 +158,7 @@ export const deployAllWithSetting = async () => {
   await inviTokenStakeContract.connect(deployer).setStakeManager(stakeManager.address);
   // set lendingPool init condition
   await lendingPoolContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address);
+  await lendingPoolContract.connect(deployer).setPriceManager(priceManagerContract.address);
   // set InviCore contract
   await inviCoreContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address);
   await inviCoreContract.connect(deployer).setStakeManager(stakeManager.address);

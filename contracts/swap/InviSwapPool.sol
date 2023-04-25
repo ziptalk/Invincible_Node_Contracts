@@ -27,8 +27,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     uint public totalLiquidityKlay;
     uint public totalLiquidityInvi;
-    uint public totalFeesKlay;
-    uint public totalFeesInvi;
+    uint public totalRewardKlay;
+    uint public totalRewardInvi;
 
     uint public inviFees;
     uint public klayFees;
@@ -44,8 +44,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         klayFees = 3;
         totalLiquidityKlay = 1;
         totalLiquidityInvi = 1;
-        totalFeesInvi = 1;
-        totalFeesKlay = 1;
+        totalRewardInvi = 1;
+        totalRewardKlay = 1;
 
         __Ownable_init();
     }
@@ -89,6 +89,11 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     function getKlayPrice() public view returns (uint) {
         return klayPrice;
     }
+    function getExpectedAmountsOutRemoveLiquidity(uint _liquidityTokensAmount) public view returns (uint inviAmount, uint klayAmount) {
+        uint expectedInvi = sqrt(_liquidityTokensAmount**2 / totalLiquidityKlay * totalLiquidityInvi);
+        uint expectedKlay = sqrt(_liquidityTokensAmount**2 / totalLiquidityInvi * totalLiquidityKlay);
+        return (expectedInvi, expectedKlay);
+    }
 
     //======setter functions======//
     function setPriceManager(address _priceManager) public onlyOwner {
@@ -110,7 +115,6 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     function setKlayPrice() internal {
         // 0: mainnet 1: testnet. uncomment later
         klayPrice = priceManager.getKlayPrice();
-        console.log(klayPrice);
         // for test
         // klayPrice = 2 * 10 ** 18; 
     }
@@ -131,7 +135,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
         totalLiquidityInvi += _amountIn;
         totalLiquidityKlay -= amountOut-fees;
-        totalFeesKlay += fees;
+        totalRewardKlay += fees;
+        console.log("fees: ", fees);
 
         splitRewards(0, fees);
 
@@ -157,7 +162,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
         totalLiquidityKlay += msg.value;
         totalLiquidityInvi -= amountOut - fees;
-        totalFeesInvi += fees;
+        totalRewardInvi += fees;
+        console.log("fees: ", fees);
 
         splitRewards(1, fees);
 
@@ -177,6 +183,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         // update liquidity
         totalLiquidityKlay += msg.value;
         totalLiquidityInvi += expectedInvi;
+
         lpLiquidity[msg.sender] += msg.value * expectedInvi;
 
         // transfer tokens from sender
@@ -184,48 +191,72 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         addAddress(lpList, msg.sender);
 
         // mint token
-        isptToken.mintToken(msg.sender, msg.value * expectedInvi);
+        isptToken.mintToken(msg.sender, sqrt(msg.value * expectedInvi));
     }
 
     function removeLiquidity(uint _liquidityTokensAmount, uint _expectedKlayAmount, uint _expectedInviAmount, uint _slippage) public {
         require(lpLiquidity[msg.sender] > 0 , ERROR_ZERO_LIQUIDITY);
-
+ 
         // burn liquidity Tokens from sender
         isptToken.burnToken(msg.sender, _liquidityTokensAmount);
 
         // calculate amount of tokens to be transferred
-        uint inviAmount = sqrt(_liquidityTokensAmount / totalLiquidityKlay * totalLiquidityInvi);
-        uint klayAmount = sqrt(_liquidityTokensAmount / totalLiquidityInvi * totalLiquidityKlay);
+        uint inviAmount = sqrt(_liquidityTokensAmount**2 / totalLiquidityKlay * totalLiquidityInvi);
+        uint klayAmount = sqrt(_liquidityTokensAmount**2 / totalLiquidityInvi * totalLiquidityKlay);
 
         uint expectedKlayAmountMin = _expectedKlayAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedKlayAmountMax = _expectedKlayAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedInviAmountMin = _expectedInviAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedInviAmountMax = _expectedInviAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
-
+        console.log("expectedKlayAmountMin: ", expectedKlayAmountMin);
+        console.log("expectedKlayAmountMax: ", expectedKlayAmountMax);
+        console.log("expectedInviAmountMin: ", expectedInviAmountMin);
+        console.log("expectedInviAmountMax: ", expectedInviAmountMax);
+        console.log("actualklayAmount: ", klayAmount);
+        console.log("actualinviAmount: ", inviAmount);
         require(klayAmount >= expectedKlayAmountMin && klayAmount <= expectedKlayAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
         require(inviAmount >= expectedInviAmountMin && inviAmount <= expectedInviAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
 
-        // Calculate rewards for the user
-        uint klayReward = lpRewardKlay[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
-        uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
+        // // Calculate rewards for the user
+        // uint klayReward = lpRewardKlay[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
+        // uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
 
         // Check that the contract has sufficient Klay and Invi tokens to withdraw
-        require(address(this).balance >= klayAmount 
-        + klayReward, ERROR_INSUFFICIENT_BALANCE);
-        require(inviToken.balanceOf(address(this)) >= inviAmount + inviReward, ERROR_INSUFFICIENT_BALANCE);
+        require(address(this).balance >= klayAmount , ERROR_INSUFFICIENT_BALANCE);
+        require(inviToken.balanceOf(address(this)) >= inviAmount, ERROR_INSUFFICIENT_BALANCE);
 
         // Update the contract's total liquidity and the user's liquidity holdings and rewards
         totalLiquidityKlay -= klayAmount;
         totalLiquidityInvi -= inviAmount;
         lpLiquidity[msg.sender] -= _liquidityTokensAmount;
-        lpRewardKlay[msg.sender] -= klayReward;
-        lpRewardInvi[msg.sender] -= inviReward;
 
+        console.log("totalLiquidityKlay: ", totalLiquidityKlay);
+        console.log("totalLiquidityInvi: ", totalLiquidityInvi);
+        // lpRewardKlay[msg.sender] -= klayReward;
+        // lpRewardInvi[msg.sender] -= inviReward;
 
          // Transfer the Klay and Invi tokens to the user
-        (bool klaySuccess, ) = msg.sender.call{value: klayAmount + klayReward}("");
+        (bool klaySuccess, ) = msg.sender.call{value: klayAmount}("");
         require(klaySuccess, ERROR_FAIL_SEND);
-        require(inviToken.transfer(msg.sender, inviAmount + inviReward), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transfer(msg.sender, inviAmount), ERROR_FAIL_SEND_ERC20);
+    }
+
+    function withdrawFees() public {
+        require(lpRewardInvi[msg.sender] > 0 || lpRewardKlay[msg.sender] > 0, ERROR_ZERO_FEES);
+        uint inviReward = lpRewardInvi[msg.sender];
+        uint klayReward = lpRewardKlay[msg.sender];
+        if (inviReward > 0 ) {
+            totalRewardInvi -= inviReward;
+            lpRewardInvi[msg.sender] = 0;
+            require(inviToken.transfer(msg.sender, inviReward), ERROR_FAIL_SEND_ERC20);
+
+        }
+        if (klayReward > 0) {
+            totalRewardKlay -= klayReward;
+            lpRewardKlay[msg.sender] = 0;
+            (bool klaySuccess, ) = msg.sender.call{value: klayReward}("");
+            require(klaySuccess, ERROR_FAIL_SEND);
+        }
     }
 
     //======utils functions======//
@@ -238,9 +269,11 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
             if (_type == 0) {
                 uint klayReward = (_amount * lpAmount) / totalLpAmount;
                 lpRewardKlay[lp] += klayReward;
+                console.log("KlayReward", klayReward);
             } else {
                 uint inviReward = (_amount * lpAmount) / totalLpAmount;
                 lpRewardInvi[lp] += inviReward;
+                console.log("InviReward", inviReward);
             }
         }
     }
