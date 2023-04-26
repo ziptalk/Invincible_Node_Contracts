@@ -31,7 +31,7 @@ npx hardhat run scripts/deployAll.ts --network klaytn_testnet
 
 # Klaytn mainnet
 npx hardhat run scripts/deployAll.ts --network klaytn_mainnet
-```sh
+sh```
 
 2. Copy result addresses to address.json under deployer and stakeManager.
 
