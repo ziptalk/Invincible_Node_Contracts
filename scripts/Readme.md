@@ -25,21 +25,21 @@ npx hardhat run scripts/setInit.ts --network klaytn_mainnet
 
 1. Deploy contracts:
 
-```sh
+```
 # Klaytn testnet
 npx hardhat run scripts/deployAll.ts --network klaytn_testnet
 
 # Klaytn mainnet
 npx hardhat run scripts/deployAll.ts --network klaytn_mainnet
-sh```
+```
 
 2. Copy result addresses to address.json under deployer and stakeManager.
 
 3. Initialize functions in contracts:
-```sh
+```
 # Klaytn testnet
 npx hardhat run scripts/setInit.ts --network klaytn_testnet
 
 # Klaytn mainnet
 npx hardhat run scripts/setInit.ts --network klaytn_mainnet
-```sh
+```
