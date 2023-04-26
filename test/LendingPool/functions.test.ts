@@ -29,7 +29,9 @@ describe("LendingPool functions test", function () {
     //* when
     const lendRatio = 0.8 * units.lendRatioUnit;
     const swapLendRatio = 0.9;
-    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio))[0]; //TODO : 이게 왜 배열로 들어올까...
+    const slippage = 3 * units.slippageUnit;
+
+    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     //* then
     expect(lendInfo.user).to.equals(userA.address);

@@ -1,14 +1,15 @@
 import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
+import address from "../scripts/address.json";
 
 // deploy test stKlay contract
-export const deployStKlay = async () => {
-  const StKlayContract = await ethers.getContractFactory("StKlay");
-  const stKlayContract = await upgrades.deployProxy(StKlayContract, [], { initializer: "initialize" });
-  await stKlayContract.deployed();
+// export const deployStKlay = async () => {
+//   const StKlayContract = await ethers.getContractFactory("StKlay");
+//   const stKlayContract = await upgrades.deployProxy(StKlayContract, [], { initializer: "initialize" });
+//   await stKlayContract.deployed();
 
-  return stKlayContract;
-};
+//   return stKlayContract;
+// };
 
 // deploy InviToken contract
 export const deployInviToken = async () => {
@@ -65,9 +66,9 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract) 
 };
 
 // deploy inviCore contract
-export const deployInviCoreContract = async (inviTokenContract: Contract) => {
+export const deployInviCoreContract = async (stakelyContractAddress: any) => {
   const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [inviTokenContract.address], { initializer: "initialize" });
+  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stakelyContractAddress], { initializer: "initialize" });
   await inviCoreContract.deployed();
 
   return inviCoreContract;
@@ -112,7 +113,7 @@ export const deployPriceManager = async () => {
 export const deployAllContract = async () => {
   // ==================== token contract ==================== //
   // deploy stKlay contract
-  const stKlayContract = await deployStKlay();
+  // const stKlayContract = await deployStKlay();
   // deploy inviToken contract
   const inviTokenContract = await deployInviToken();
   // deploy ILPToken contract
@@ -134,12 +135,11 @@ export const deployAllContract = async () => {
   // deploy InviSwapPool contract
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
   // deploy inviCore contract
-  const inviCoreContract = await deployInviCoreContract(stKlayContract);
+  const inviCoreContract = await deployInviCoreContract(address.stakelyContractAddress);
   // deploy swapManager contract
   const priceManagerContract = await deployPriceManager();
 
   return {
-    stKlayContract,
     inviTokenContract,
     iLPTokenContract,
     iSPTTokenContract,

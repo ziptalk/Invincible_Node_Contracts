@@ -76,6 +76,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function setInviTokenStakeContract(address _inviTokenStakeAddr) external onlyOwner {
         inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
     }
+
+    function setStKlayContract(address _stKlayAddr) external onlyOwner {
+        stKlay = IERC20(_stKlayAddr);
+    }
     
 
     //====== getter functions ======//

@@ -4,7 +4,6 @@ import { Contract, Wallet } from "ethers";
 import { deployAllContract } from "./deployFunctions";
 import address from "./address.json";
 
-let stKlayContract: Contract;
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
 let iSPTTokenContract: Contract;
@@ -23,7 +22,6 @@ const deploy = async () => {
   console.log("Deploying contracts with the account:", deployer.address);
 
   ({
-    stKlayContract,
     inviTokenContract,
     iLPTokenContract,
     iSPTTokenContract,
@@ -38,7 +36,6 @@ const deploy = async () => {
 
   // return contract addresses
   return {
-    stKlayContractAddress: stKlayContract.address,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
     iSPTTokenContractAddress: iSPTTokenContract.address,

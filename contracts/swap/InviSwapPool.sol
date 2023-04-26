@@ -51,18 +51,18 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     //======modifier======//
-    modifier setPrice {
-       setInviPrice();
-       setKlayPrice();
-        _;
-    }
+    // modifier setPrice {
+    //    setInviPrice();
+    //    setKlayPrice();
+    //     _;
+    // }
 
     //======getter functions======//
     function getInviToKlayOutAmount(uint _amountIn) public view returns (uint) {
         uint currentKlayPrice = priceManager.getKlayPrice();
         uint currentInviPrice = priceManager.getInviPrice();
         // get amount out
-        uint amountOut = _amountIn * currentKlayPrice / currentInviPrice;
+        uint amountOut = _amountIn * currentInviPrice / currentKlayPrice;
         // get slippage
         uint slippage = amountOut * amountOut / totalLiquidityKlay;
       
@@ -72,9 +72,12 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         uint currentKlayPrice = priceManager.getKlayPrice();
         uint currentInviPrice = priceManager.getInviPrice();
          // get amount out
-        uint amountOut = _amountIn * currentInviPrice / currentKlayPrice;
+        uint amountOut = _amountIn * currentKlayPrice / currentInviPrice;
         // get slippage
         uint slippage = amountOut * amountOut / totalLiquidityInvi;
+
+        console.log("amountOut: ", amountOut);
+        console.log("slippage: ", slippage);
  
         return  amountOut - slippage;
     }
@@ -82,6 +85,11 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         uint currentKlayPrice = priceManager.getKlayPrice();
         uint currentInviPrice = priceManager.getInviPrice();
         return _amountIn * currentKlayPrice / currentInviPrice;
+    }
+    function getAddLiquidityKlay(uint _amountIn) public view returns (uint) {
+        uint currentKlayPrice = priceManager.getKlayPrice();
+        uint currentInviPrice = priceManager.getInviPrice();
+        return _amountIn * currentInviPrice / currentKlayPrice;
     }
     function getInviPrice() public view returns (uint) {
         return inviPrice;
@@ -121,7 +129,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     //======service functions======//
     // set price before swap
-    function swapInviToKlay(uint _amountIn, uint _amountOutMin) public setPrice {
+    function swapInviToKlay(uint _amountIn, uint _amountOutMin) public {
         // calculate amount of tokens to be transferred
         uint amountOut = getInviToKlayOutAmount(_amountIn);
         
@@ -146,7 +154,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     // set price before swap
-    function swapKlayToInvi(uint _amountOutMin) public payable setPrice {
+    function swapKlayToInvi(uint _amountOutMin) public payable {
         require(msg.value > 0, ERROR_SWAP_ZERO);
 
         // calculate amount of tokens to be transferred
@@ -172,7 +180,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     // slippage unit is 0.1%
-    function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable setPrice {
+    function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable {
        
         uint expectedInvi = getAddLiquidityInvi(msg.value);
         // require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
