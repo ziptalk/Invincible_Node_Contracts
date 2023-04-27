@@ -44,7 +44,7 @@ const main = async () => {
   // set lpPoolContract init condition
   const tx6 = await lpPoolContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
   await tx6.wait();
-  const tx7 = await lpPoolContract.connect(deployer).setInviCoreAddress(inviCoreContract.address, { nonce: nonce++ });
+  const tx7 = await lpPoolContract.connect(deployer).setInviCoreContract(inviCoreContract.address, { nonce: nonce++ });
   await tx7.wait();
   console.log("lpPoolContract init condition set at " + nonce + "");
 

@@ -19,7 +19,7 @@ describe("Invi Core functions Test", function () {
     // verify init
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
-    expect(await lpPoolContract.inviCoreAddress()).equals(inviCoreContract.address);
+    expect(await lpPoolContract.inviCoreContract()).equals(inviCoreContract.address);
 
     // verify owner
     expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
