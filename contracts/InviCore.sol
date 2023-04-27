@@ -22,6 +22,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     address public stakeManager;
 
     //------events------//
+    event Stake(uint indexed amount);
+    event Unstake(uint indexed amount);
     
     //------reward related------//
     uint public stakingAPR;
@@ -57,6 +59,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //====== modifier functions ======//
     modifier onlySTM {
         require(msg.sender == stakeManager, ERROR_NOT_OWNER);
+        _;
+    }
+    modifier onlyLpPool {
+        require(msg.sender == address(lpPoolContract), ERROR_NOT_OWNER);
         _;
     }
 
@@ -197,6 +203,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // send principal to STM
         (bool sent, ) = stakeManager.call{value : _stakeInfo.principal }("");
         require(sent, ERROR_FAIL_SEND);
+
+        emit Stake(_stakeInfo.principal);
     }
 
     // unStake native coin
@@ -243,6 +251,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // burn NFT & delete stakeInfo
         stakeNFTContract.deleteStakeInfo(_nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
+
+        // create unstake event
+        // TODO Q. LPRequest와 inviStakerRequest는 왜 있는 건가요?
+        emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
     // periodic reward distribution, update
@@ -267,16 +279,32 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // push request to unstakeRequests
         unstakeRequests.push(lpRequest);
         unstakeRequests.push(inviStakerRequest);
+
+        emit Unstake(lpReward + inviStakerReward);
     }
 
-    // distribute invi token reward
-    function distributeInviTokenReward(uint _totalInviToken) external onlyOwner {
-        uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
-        uint inviStakerReward = _totalInviToken - lpReward;
+    function stakeLp(uint _requestAmount) external onlyLpPool {
+        emit Stake(_requestAmount);
+    }
 
-        // lpPoolContract.distributeInviTokenReward(lpReward);
-        // inviTokenStakeContract.distributeInviTokenReward(inviStakerReward);
-    }   
+    function unstakeLp(uint _requestAmount) external onlyLpPool {
+        // create unstake request for LPs
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), _requestAmount, 0, 1);
+       
+        // push request to unstakeRequests
+        unstakeRequests.push(lpRequest);
+
+        emit Unstake(_requestAmount);
+    }
+
+    // // distribute invi token reward
+    // function distributeInviTokenReward(uint _totalInviToken) external onlyOwner {
+    //     uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
+    //     uint inviStakerReward = _totalInviToken - lpReward;
+
+    //     // lpPoolContract.distributeInviTokenReward(lpReward);
+    //     // inviTokenStakeContract.distributeInviTokenReward(inviStakerReward);
+    // }   
 
     // send unstaked amount to unstakeRequest applicants
     function sendUnstakedAmount() external payable onlySTM{

@@ -41,8 +41,8 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
      function transfer(address to, uint256 amount) public override returns (bool) {
-        address owner = _msgSender();
-        _transfer(owner, to, amount);
+        address _owner = _msgSender();
+        _transfer(_owner, to, amount);
 
         // update ILPHolderList 
         addAddress(ILPHolders, to);

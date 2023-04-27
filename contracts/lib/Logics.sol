@@ -11,7 +11,9 @@ function LockPeriod(uint _leverageRatio) pure returns (uint) {
     uint c = 10; // coefficient
     uint e = 3; // exponent
     uint const = 50; // constant
-    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day;
+    uint testnetConstant = 24 * 60;
+    // apply testnetConstant for only testnet
+    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day / testnetConstant;
 }
 function ProtocolFee(uint _lentAmount, uint _leverageRatio, uint _totalLiquidity) pure returns (uint) {
     uint c = 360; //coefficient
