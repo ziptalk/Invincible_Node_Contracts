@@ -145,6 +145,9 @@ export const deployAllWithSetting = async () => {
   await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address);
   // set inviToken init condition
   await inviTokenContract.connect(deployer).setLendingPoolAddress(lendingPoolContract.address);
+  await inviTokenContract.connect(deployer).setInviTokenStakeAddress(inviTokenStakeContract.address);
+  await inviTokenContract.connect(deployer).setLpPoolAddress(lpPoolContract.address);
+
   // set ISPTToken init condition
   await iSPTTokenContract.connect(deployer).setInviSwapPool(inviSwapPoolContract.address);
   // set stakeNFT init condition

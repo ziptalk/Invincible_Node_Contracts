@@ -132,13 +132,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // return staked amount
-    function getStakedAmount(uint _amount, uint _leverageRatio) public view returns (uint) {
+    function getStakedAmount(uint _amount, uint _leverageRatio) public pure returns (uint) {
         return StakedAmount(_amount, _leverageRatio);
     }
 
     function getUnstakeRequestsLength() public view returns (uint) {
         return unstakeRequests.length;
     }
+    
 
     //====== setter functions ======//
 
