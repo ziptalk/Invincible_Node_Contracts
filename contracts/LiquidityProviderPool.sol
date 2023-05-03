@@ -8,17 +8,21 @@ import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
 import "./lib/ErrorMessages.sol";
+import "./InviCore.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public iLP;
     IERC20 public inviToken;
     address public stakeManager; 
-    address public inviCoreAddress;
+    InviCore public inviCoreContract;
     address[] public ILPHolders;
 
     //------Ratios------//
     uint public liquidityAllowableRatio;
+
+    //------events------//
+    event Stake(uint amount);
     
     //------lp status------//
     mapping(address => uint) public stakedAmount;
@@ -29,7 +33,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
+        require(msg.sender == address(inviCoreContract), "msg sender should be invi core");
         _;
     }
 
@@ -60,8 +64,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         stakeManager = _stakeManager;
     }
    
-    function setInviCoreAddress(address _inviCore) external onlyOwner {
-        inviCoreAddress = _inviCore;
+    function setInviCoreContract(address payable _inviCore) external onlyOwner {
+        inviCoreContract = InviCore(_inviCore);
     }
 
     function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {
@@ -88,10 +92,29 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         // mint and tranfer ILP to sender
         iLP.mintToken(msg.sender, msg.value);
+
+        console.log("mint success");
         
         // send coin to LP manager
         (bool sent, ) = stakeManager.call{value: msg.value}("");
         require(sent, ERROR_FAIL_SEND);
+
+        // request inviCore
+        inviCoreContract.stakeLp(msg.value);
+    }
+
+    function unstake(uint _amount) public {
+        require(stakedAmount[msg.sender] >= _amount, ERROR_INSUFFICIENT_BALANCE);
+        // update stake amount
+        stakedAmount[msg.sender] -= _amount;
+        totalStakedAmount -= _amount;
+
+        // burn ILP
+        iLP.burnToken(msg.sender, _amount);
+
+        // request inviCore
+        inviCoreContract.unstakeLp(_amount);
+
     }
     
     // distribute native coin

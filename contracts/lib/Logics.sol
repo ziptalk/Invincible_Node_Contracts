@@ -11,7 +11,9 @@ function LockPeriod(uint _leverageRatio) pure returns (uint) {
     uint c = 10; // coefficient
     uint e = 3; // exponent
     uint const = 50; // constant
-    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day;
+    uint testnetConstant = 24 * 60;
+    // apply testnetConstant for only testnet
+    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day / testnetConstant;
 }
 function ProtocolFee(uint _lentAmount, uint _leverageRatio, uint _totalLiquidity) pure returns (uint) {
     uint c = 360; //coefficient
@@ -22,16 +24,6 @@ function ExpectedReward(uint _amount, uint _lockPeriod, uint _apr) pure returns 
     // lockPeriod = second, apr = %
     uint oneYear = 60 * 60 * 24 * 365;
     return ((_amount * _lockPeriod * _apr) / (oneYear * APR_UNIT * 100));
-}
-function MinReward(uint _amount, uint _lockPeriod, uint _apr, uint _decreaseRatio) pure returns (uint) {
-    // lockPeriod = second, apr = %
-    uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (100 * REWARD_ERROR_UNIT - _decreaseRatio)) / (oneYear * APR_UNIT * REWARD_ERROR_UNIT* 100 * 100));
-}
-function MaxReward(uint _amount, uint _lockPeriod, uint _apr, uint _increaseRatio) pure returns (uint) {
-    // lockPeriod = second, apr = %
-    uint oneYear = 60 * 60 * 24 * 365;
-    return ((_amount * _lockPeriod * _apr * (100 * REWARD_ERROR_UNIT + _increaseRatio)) / (oneYear * APR_UNIT * REWARD_ERROR_UNIT * 100 * 100));
 }
 
 function StakedAmount(uint _principal, uint _leverageRatio) pure returns (uint) {
