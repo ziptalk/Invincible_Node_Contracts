@@ -20,6 +20,18 @@ describe("InviToken Stake Test", function () {
 
     //* when
     await inviTokenContract.functions.regularMinting();
+    let interval = await inviTokenContract.functions.mintInterval();
+
+    await ethers.provider.send("evm_increaseTime", [parseInt(interval.toString())]); // time move to repay nft
+    await ethers.provider.send("evm_mine", []);
+
+    await inviTokenContract.functions.regularMinting();
+
+    await ethers.provider.send("evm_increaseTime", [parseInt(interval.toString()) / 2]); // time move to repay nft
+    await ethers.provider.send("evm_mine", []);
+
+    // expect error
+    await expect(inviTokenContract.functions.regularMinting()).to.be.revertedWith("minting interval not reached");
 
     //* then
     console.log(await inviTokenContract.functions.balanceOf(inviTokenStakeContract.address));

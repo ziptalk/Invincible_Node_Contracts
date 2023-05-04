@@ -134,19 +134,27 @@ describe("InviToken Stake Test", function () {
     await inviTokenStakeContract.connect(userC).stake(stakedAmount * ratioC);
     // regular minting
     await inviTokenContract.functions.regularMinting();
+    const balance = await inviTokenContract.balanceOf(inviTokenStakeContract.address);
+    console.log((balance / 10 ** 18).toString());
 
     //* when
     await inviTokenStakeContract.connect(deployer).updateInviTokenReward();
-    await inviTokenStakeContract.connect(userA).receiveNativeReward();
-    await inviTokenStakeContract.connect(userB).receiveNativeReward();
-    await inviTokenStakeContract.connect(userC).receiveNativeReward();
+    const userAReward = await inviTokenStakeContract.inviRewardAmount(userA.address);
+    const userBReward = await inviTokenStakeContract.inviRewardAmount(userB.address);
+    const userCReward = await inviTokenStakeContract.inviRewardAmount(userC.address);
+    console.log((userAReward / 10 ** 18).toString());
+    console.log((userBReward / 10 ** 18).toString());
+    console.log((userCReward / 10 ** 18).toString());
+    await inviTokenStakeContract.connect(userA).receiveInviReward();
+    await inviTokenStakeContract.connect(userB).receiveInviReward();
+    await inviTokenStakeContract.connect(userC).receiveInviReward();
 
     //* then
     console.log(await inviTokenStakeContract.inviRewardAmount(userA.address));
     console.log(await inviTokenStakeContract.inviRewardAmount(userB.address));
     console.log(await inviTokenStakeContract.inviRewardAmount(userC.address));
-    // expect((await inviTokenStakeContract.inviRewardAmount(userA.address)).toString()).to.equal((stakedAmount * ratioA).toString());
-    // expect((await inviTokenStakeContract.inviRewardAmount(userB.address)).toString()).to.equal((stakedAmount * ratioB).toString());
-    // expect((await inviTokenStakeContract.inviRewardAmount(userC.address)).toString()).to.equal((stakedAmount * ratioC).toString());
+    expect((await inviTokenStakeContract.inviRewardAmount(userA.address)).toString()).to.equal("0");
+    expect((await inviTokenStakeContract.inviRewardAmount(userB.address)).toString()).to.equal("0");
+    expect((await inviTokenStakeContract.inviRewardAmount(userC.address)).toString()).to.equal("0");
   });
 });

@@ -28,6 +28,10 @@ const main = async () => {
   // set inviToken init condition
   tx = await inviTokenContract.connect(deployer).setLendingPoolAddress(lendingPoolContract.address, { nonce: nonce++ });
   await tx.wait();
+  tx = await inviTokenContract.connect(deployer).setInviTokenStakeAddress(inviTokenStakeContract.address, { nonce: nonce++ });
+  await tx.wait();
+  tx = await inviTokenContract.connect(deployer).setLpPoolAddress(lpPoolContract.address, { nonce: nonce++ });
+  await tx.wait();
   console.log("inviToken init condition set at " + nonce);
 
   // set ISPTToken init condition

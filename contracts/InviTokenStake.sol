@@ -24,6 +24,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //------ratio------//
     uint public inviRewardInterval;
+    uint public inviReceiveInterval;
     uint public lastInviRewardedTime;
 
     //------addresses status------//
@@ -43,6 +44,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
          inviRewardInterval = 1 hours; // testnet : 1 hours
         // inviRewardInterval = 1 days; // mainnet : 1 days
+
+        inviReceiveInterval = 30 hours; // testnet : 30 hours
+        // inviReceiveInterval = 90 days; // mainnet : 90 days
+
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
     }
 
@@ -102,7 +107,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         uint totalInviToken = inviToken.balanceOf(address(this));
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
-            uint rewardAmount = (totalInviToken * stakedAmount[account] / totalStakedAmount);
+            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
             inviRewardAmount[account] += rewardAmount;
         }
 
@@ -129,8 +134,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(inviToken.transfer(msg.sender, reward), "Failed to send reward to requester");
     }
     
-
-
     //====== utils functions ======//
     
 }

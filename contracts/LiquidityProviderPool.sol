@@ -21,6 +21,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------ratio------//
     uint public liquidityAllowableRatio;
     uint public inviRewardInterval;
+    uint public inviReceiveInterval;
     uint public lastInviRewardedTime;
 
     //------events------//
@@ -48,6 +49,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         inviRewardInterval = 1 hours; // testnet : 1 hours
         // inviRewardInterval = 1 days; // mainnet : 1 days
+
+        inviReceiveInterval = 30 hours; // testnet : 30 hours
+        // inviReceiveInterval = 90 days; // mainnet : 90 days
 
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
     }
@@ -144,7 +148,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             //TODO : ILP Holder staking 양에 비례하게 invi token reward 분배
             address account = ILPHolders[i];
-            uint rewardAmount = (totalInviToken * stakedAmount[account] / totalStakedAmount);
+            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
             uint inviSlippage = 1000;
            
            // send invi token to account
