@@ -83,7 +83,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
 
         // transfer inviToken
-        inviToken.mintLentToken(_lendInfo.user, lendAmount);
+        inviToken.transfer(_lendInfo.user, lendAmount);
     }
 
     function repay(uint nftId) public {

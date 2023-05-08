@@ -68,6 +68,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         // set last Minted
         lastMinted = block.timestamp;
 
+        // send minted token to lendingPool (20%)
+        _transfer(address(this), lendingPoolAddress, mintAmount * 20 / 100);
+
         // send minted token to inviTokenStake (15%)
         _transfer(address(this),inviTokenStakeAddress, mintAmount * 15 / 100);
 
@@ -79,12 +82,13 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         transfer(_receiver, _amount);
     }
 
-    // only lendingPool can mint and burn token as needed
-    function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
+    // only lendingPool can burn token as needed
+    // function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
     function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
         _burn(_account, _amount);
-    }
- 
+    } 
+
+    // for test purposes
     function mintToken(address _account, uint _amount) onlyOwner external {_mint(_account, _amount);}
     function burnToken(address _account, uint _amount) onlyOwner external  {_burn(_account, _amount);}
 }
