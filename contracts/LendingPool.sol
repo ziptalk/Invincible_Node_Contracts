@@ -30,22 +30,21 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(inviTokenAddr);
-        maxLendRatio = 8 * LEND_RATIO_UNIT / 10 ; // 0.8
+        maxLendRatio = 95 * LEND_RATIO_UNIT / 100 ; // 95 %
     }
 
     //====== modifiers ======//
     
     //====== getter functions ======//
 
-    function createLendInfo(uint _nftId, uint _lendRatio, uint _slippage) public view returns (LendInfo memory) {
-        require(_lendRatio <= maxLendRatio, ERROR_SWAP_RATIO_TOO_HIGH);
+    function createLendInfo(uint _nftId, uint _slippage) public view returns (LendInfo memory) {
+        console.log(_nftId);
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId); // get nft principal value
-        console.log(stakeInfo.principal);
-        uint lendAmount = getLendAmount(stakeInfo.principal, _lendRatio); // get lent amount by principal
-        console.log(lendAmount);
+        uint lendAmount = getLendAmount(stakeInfo.principal); // get lent amount by principal
+        console.log("lend: ", lendAmount);
         uint minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT); // get minLendAmount by slippage
-        console.log(minLendAmount);
-        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, _lendRatio, minLendAmount, 0 );
+        console.log("min lend: ", minLendAmount);
+        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, minLendAmount, 0 );
         return lendInfo;
     }
 
@@ -104,20 +103,19 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     //===== utils functions ======//
 
     // get the lent amount
-    function getLendAmount(uint _amount, uint _lendRatio) private view returns (uint) {
+    function getLendAmount(uint _amount) private view returns (uint) {
         uint klayPrice = priceManager.getKlayPrice();
         uint inviPrice = priceManager.getInviPrice();
-        console.log(klayPrice, inviPrice, _lendRatio);
-        console.log(_amount * _lendRatio * klayPrice / (inviPrice *  LEND_RATIO_UNIT));
-        return _amount * _lendRatio * klayPrice / (inviPrice * LEND_RATIO_UNIT);
+        uint totalInviSupply = inviToken.balanceOf(address(this));
+        uint maxLendAmount = _amount * klayPrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
     }
 
     // verify lendInfo
     function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private view returns ( uint ) {
         require(_lendInfo.user == _msgSender, ERROR_INVALID_LEND_INFO);
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
-        require(_lendInfo.lendRatio <= maxLendRatio, ERROR_INVALID_LEND_INFO);
-        uint lendAmount = getLendAmount(_lendInfo.principal, _lendInfo.lendRatio);
+        uint lendAmount = getLendAmount(_lendInfo.principal);
         require(_lendInfo.minLendAmount <=  lendAmount, ERROR_INVALID_LEND_INFO);
         return lendAmount;
     }

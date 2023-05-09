@@ -139,6 +139,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function getUnstakeRequestsLength() public view returns (uint) {
         return unstakeRequests.length;
     }
+    function getTotalStakedAmount() public view returns (uint) {
+        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
+        return totalStakedAmount;
+    }
     
 
     //====== setter functions ======//

@@ -25,6 +25,7 @@ describe("LendingPool contract services test", function () {
     //* given
     await priceManagerContract.setInviPrice(1000000000000);
     await priceManagerContract.setKlayPrice(200000000000);
+    await inviTokenContract.functions.regularMinting();
 
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
@@ -32,8 +33,7 @@ describe("LendingPool contract services test", function () {
     const lockPeriod = minLockPeriod * 2;
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio, lockPeriod);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
-    let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
-    await inviTokenContract.functions.regularMinting();
+    let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     //* when
     await lendingPoolContract.connect(userA).lend(lendInfo);
@@ -62,7 +62,7 @@ describe("LendingPool contract services test", function () {
     const slippage = 3 * units.slippageUnit;
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio, lockPeriod);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
-    let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
+    let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     await lendingPoolContract.connect(userA).lend(lendInfo);
     lendInfo = await lendingPoolContract.lendInfos(nftId);

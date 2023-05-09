@@ -91,4 +91,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     // for test purposes
     function mintToken(address _account, uint _amount) onlyOwner external {_mint(_account, _amount);}
     function burnToken(address _account, uint _amount) onlyOwner external  {_burn(_account, _amount);}
+    // for test purposes
+
+    
 }

@@ -12,5 +12,3 @@ artifacts
 # Joonsun Test Files
 contracts/Test.sol
 
-# unknown files
-.openzeppelin/

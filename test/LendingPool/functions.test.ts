@@ -10,15 +10,17 @@ describe("LendingPool functions test", function () {
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
   let lendingPoolContract: Contract;
+  let inviTokenContract: Contract;
 
   this.beforeEach(async () => {
-    ({ inviCoreContract, stakeNFTContract, lpPoolContract, lendingPoolContract } = await deployAllWithSetting());
+    ({ inviCoreContract, stakeNFTContract, lpPoolContract, lendingPoolContract, inviTokenContract } = await deployAllWithSetting());
   });
 
   it("Test getLendInfo function", async function () {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
     //* given
+    await inviTokenContract.functions.regularMinting();
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
@@ -27,17 +29,16 @@ describe("LendingPool functions test", function () {
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
 
     //* when
-    const lendRatio = 0.8 * units.lendRatioUnit;
     const swapLendRatio = 0.9;
     const slippage = 3 * units.slippageUnit;
-
-    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
+    const maxLendRatio = await lendingPoolContract.functions.maxLendRatio();
+    const lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId.toString(), slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
 
     //* then
     expect(lendInfo.user).to.equals(userA.address);
     expect(lendInfo.nftId).to.equals(nftId);
     expect(lendInfo.principal).to.equals(1000000);
-    expect(lendInfo.lentAmount).to.equals(((1000000 * lendRatio) / units.lendRatioUnit) * swapLendRatio);
-    expect(lendInfo.lendRatio).to.equals(lendRatio);
+    expect(lendInfo.minLendAmount).to.be.below(1000000 * maxLendRatio);
+    expect(lendInfo.minLendAmount).to.be.above(((1000000 * maxLendRatio) / units.lendRatioUnit) * swapLendRatio);
   });
 });
