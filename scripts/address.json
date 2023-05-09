@@ -3,14 +3,14 @@
   "stakeManager": "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
   "stakelyContractAddress": "0x675433Ac642EA193A260D82777C2eC22e22482c2",
 
-  "inviTokenContractAddress": "0xCC5654e6711844aca7E62C59cEF6e03A9725667E",
-  "iLPTokenContractAddress": "0x57B50E6A1c58B75b4e2e3d206Fc20D933a13CEf5",
-  "iSPTTokenContractAddress": "0xF4C56e5075E68e2990b856f4C50BC0cD7DBB7094",
-  "stakeNFTContractAddress": "0x9a5C043c73Df3Aa7591098833BBB097015754CaF",
-  "inviTokenStakeContractAddress": "0x9f83c8A80995D7597ac1900441Ffbaa9a4435eDC",
-  "lpPoolContractAddress": "0x62481c3ECd27E2A78d8Ee6A03e707Ad231437556",
-  "lendingPoolContractAddress": "0xf687d91b6223c2c645B95450EB82fb89A460135a",
-  "inviSwapPoolContractAddress": "0x49Caf411075b1fD4302d90A051743Ec3aEEC034c",
-  "inviCoreContractAddress": "0x5a245D07F8E77a6b39166116bd7FbAf3EEbB14ba",
-  "priceManagerContractAddress": "0x470969D9db417FCeA129e9d6666f66ff0415c8Ea"
+  "inviTokenContractAddress": "0xf06803EDCB74A18f0BfC7C1dEd61D61958b2c687",
+  "iLPTokenContractAddress": "0x72495c49Fc2F79167Af740AeC27238F2C458295f",
+  "iSPTTokenContractAddress": "0xd1D4e467719A764837305F381033405f83bD41C6",
+  "stakeNFTContractAddress": "0x9a557ea504e2642836Da5b4E63945cf36fF400D3",
+  "inviTokenStakeContractAddress": "0x842d214685107Db1ab0bf2b3f2cEc4934073A207",
+  "lpPoolContractAddress": "0x4a54CB66B930e0fb6d8344Fedb766a1f0F997AFf",
+  "lendingPoolContractAddress": "0x8202ab1A288AE3BEa2A28283069e5991Ac331754",
+  "inviSwapPoolContractAddress": "0xCf4DeA008640164Aa2e6339562E136361032F051",
+  "inviCoreContractAddress": "0x3a1F2f11954b352c30F86fB613B36299bAeBAFF2",
+  "priceManagerContractAddress": "0xa1e3870bF7b50cf1A0374389d977889935De57F9"
 }
