@@ -1,16 +1,16 @@
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
-import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting} from "../deploy";
+import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
 import { provideLiquidity } from "../utils";
 
 describe("Liquidity Provider Pool Test", function () {
   let inviCoreContract: Contract;
   let lpPoolContract: Contract;
-  
+  let inviTokenContract: Contract;
 
   this.beforeEach(async () => {
-    ({inviCoreContract, lpPoolContract} = await deployAllWithSetting());
+    ({ inviCoreContract, lpPoolContract, inviTokenContract } = await deployAllWithSetting());
   });
 
   it("Test LP Stake", async function () {
@@ -50,10 +50,9 @@ describe("Liquidity Provider Pool Test", function () {
     const initUserBBalance = await userB.getBalance();
     const initUserCBalance = await userC.getBalance();
 
-
     //* when
     const rewardAmount = 100000;
-    const tx = await deployer.sendTransaction({ to: inviCoreContract.address, value: rewardAmount,  gasLimit: 300000}); // send coin with tx fee to contract
+    const tx = await deployer.sendTransaction({ to: inviCoreContract.address, value: rewardAmount, gasLimit: 300000 }); // send coin with tx fee to contract
     await inviCoreContract.connect(deployer).createUnstakeRequest(lpPoolContract.address, rewardAmount, 0, 1); // create unstake request
     await inviCoreContract.connect(stakeManager).sendUnstakedAmount(); // send coin to lpPoolContract
 
@@ -66,4 +65,29 @@ describe("Liquidity Provider Pool Test", function () {
     expect(await userB.getBalance()).to.equal(initUserBBalance.add(rewardAmount * 0.3));
     expect(await userC.getBalance()).to.equal(initUserCBalance.add(rewardAmount * 0.5));
   });
-})
+
+  it("Test distribute InviToken Reward", async function () {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+
+    //* given
+    const totalStakedAmount = 1000000;
+    const userAStakedAmount = Math.floor(totalStakedAmount * 0.2);
+    const userBStakedAmount = Math.floor(totalStakedAmount * 0.3);
+    const userCStakedAmount = Math.floor(totalStakedAmount * 0.5);
+
+    await provideLiquidity(lpPoolContract, userA, userAStakedAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userB, userBStakedAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userC, userCStakedAmount); // lp stake
+
+    // regular minting
+    await inviTokenContract.functions.regularMinting();
+
+    //* when
+    await lpPoolContract.connect(deployer).distributeInviTokenReward(); // distribute invi token reward
+
+    //* then
+    console.log(await inviTokenContract.balanceOf(userA.getAddress()));
+    console.log(await inviTokenContract.balanceOf(userB.getAddress()));
+    console.log(await inviTokenContract.balanceOf(userC.getAddress()));
+  });
+});

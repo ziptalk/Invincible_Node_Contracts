@@ -18,8 +18,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     InviCore public inviCoreContract;
     address[] public ILPHolders;
 
-    //------Ratios------//
+    //------ratio------//
     uint public liquidityAllowableRatio;
+    uint public inviRewardInterval;
+    uint public inviReceiveInterval;
+    uint public lastInviRewardedTime;
 
     //------events------//
     event Stake(uint amount);
@@ -43,6 +46,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         iLP = IERC20(iLPAddr);
         inviToken = IERC20(inviTokenAddr);
         liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
+
+        inviRewardInterval = 1 hours; // testnet : 1 hours
+        // inviRewardInterval = 1 days; // mainnet : 1 days
+
+        inviReceiveInterval = 30 hours; // testnet : 30 hours
+        // inviReceiveInterval = 90 days; // mainnet : 90 days
+
+        lastInviRewardedTime = block.timestamp - inviRewardInterval;
     }
 
     //====== getter functions ======//
@@ -131,10 +142,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     // distribute invi token 
     function distributeInviTokenReward() external onlyOwner{
+        require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
+        uint totalInviToken = inviToken.balanceOf(address(this));
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             //TODO : ILP Holder staking 양에 비례하게 invi token reward 분배
+            address account = ILPHolders[i];
+            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+            uint inviSlippage = 1000;
+           
+           // send invi token to account
+            require(inviToken.transfer(account, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
         }
+
+        lastInviRewardedTime = block.timestamp;
     }
 
     //====== utils functions ======//

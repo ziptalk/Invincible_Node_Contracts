@@ -7,6 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
+import "./lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
@@ -18,7 +19,13 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //------stake status------//
     mapping(address => uint) public stakedAmount;
     mapping(address => uint) public nativeRewardAmount;
+    mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
+
+    //------ratio------//
+    uint public inviRewardInterval;
+    uint public inviReceiveInterval;
+    uint public lastInviRewardedTime;
 
     //------addresses status------//
     address[] public addressList;
@@ -34,6 +41,14 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     function initialize(address _inviTokenAddr) public initializer {
         __Ownable_init();
         inviToken = IERC20(_inviTokenAddr);
+
+         inviRewardInterval = 1 hours; // testnet : 1 hours
+        // inviRewardInterval = 1 days; // mainnet : 1 days
+
+        inviReceiveInterval = 30 hours; // testnet : 30 hours
+        // inviReceiveInterval = 90 days; // mainnet : 90 days
+
+        lastInviRewardedTime = block.timestamp - inviRewardInterval;
     }
 
     //====== getter functions ======//
@@ -87,13 +102,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token rewards (tbd)
-    function updateInviTokenReward(uint _totalRewardAmount) external onlyInviCore {
-        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
-        for (uint256 i = 0; i < addressList.length; i++) {}
+    function updateInviTokenReward() external onlyOwner{
+        require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
+        uint totalInviToken = inviToken.balanceOf(address(this));
+        for (uint256 i = 0; i < addressList.length; i++) {
+            address account = addressList[i];
+            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+            inviRewardAmount[account] += rewardAmount;
+        }
+
+        lastInviRewardedTime = block.timestamp;
     }
 
     // user receive reward(native coin) function
-    function receiveReward() public {
+    function receiveNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -103,7 +125,15 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
-
+    function receiveInviReward() public {
+        require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
+        uint reward = inviRewardAmount[msg.sender];
+        inviRewardAmount[msg.sender] = 0;  
+        
+        // send reward to requester
+        require(inviToken.transfer(msg.sender, reward), "Failed to send reward to requester");
+    }
+    
     //====== utils functions ======//
     
 }

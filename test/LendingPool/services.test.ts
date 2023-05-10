@@ -33,6 +33,7 @@ describe("LendingPool contract services test", function () {
     await leverageStake(inviCoreContract, userA, 1000000, leverageRatio, lockPeriod);
     const nftId = (await stakeNFTContract.getNFTOwnership(userA.address))[0];
     let lendInfo = (await lendingPoolContract.functions.createLendInfo(nftId, lendRatio, slippage))[0]; //TODO : 이게 왜 배열로 들어올까...
+    await inviTokenContract.functions.regularMinting();
 
     //* when
     await lendingPoolContract.connect(userA).lend(lendInfo);
@@ -52,6 +53,7 @@ describe("LendingPool contract services test", function () {
     //* given
     await priceManagerContract.setInviPrice(1000000000000);
     await priceManagerContract.setKlayPrice(200000000000);
+    await inviTokenContract.functions.regularMinting();
 
     await provideLiquidity(lpPoolContract, LP, 10000000000000);
     const leverageRatio = 3 * units.leverageUnit;

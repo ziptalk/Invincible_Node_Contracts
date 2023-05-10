@@ -132,13 +132,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // return staked amount
-    function getStakedAmount(uint _amount, uint _leverageRatio) public view returns (uint) {
+    function getStakedAmount(uint _amount, uint _leverageRatio) public pure returns (uint) {
         return StakedAmount(_amount, _leverageRatio);
     }
 
     function getUnstakeRequestsLength() public view returns (uint) {
         return unstakeRequests.length;
     }
+    
 
     //====== setter functions ======//
 
@@ -162,17 +163,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         slippage = _slippage;
     }
 
-    // set exchange ratio function
-    function _setExchangeRatio() private {
-
-    }
-
-    // set nft reward
-    function setNFTReward(uint _nftTokenId) external payable onlySTM{
-        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
-
-    }
-
     // set reward portion
     function _setRewardPortion(uint _lpPoolRewardPortion, uint _inviTokenStakeRewardPortion) external onlyOwner {
         require (_lpPoolRewardPortion + _inviTokenStakeRewardPortion == REWARD_PORTION_TOTAL_UNIT, ERROR_SET_REWARD_PORTION);
@@ -192,7 +182,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
         // mint StakeNFT Token by stake info
-        uint nftTokenId = stakeNFTContract.mintNFT(_stakeInfo);
+       stakeNFTContract.mintNFT(_stakeInfo);
 
         //update stakeAmount info
         uint lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
@@ -296,15 +286,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         emit Unstake(_requestAmount);
     }
-
-    // // distribute invi token reward
-    // function distributeInviTokenReward(uint _totalInviToken) external onlyOwner {
-    //     uint lpReward = (_totalInviToken) * lpPoolRewardPortion;
-    //     uint inviStakerReward = _totalInviToken - lpReward;
-
-    //     // lpPoolContract.distributeInviTokenReward(lpReward);
-    //     // inviTokenStakeContract.distributeInviTokenReward(inviStakerReward);
-    // }   
 
     // send unstaked amount to unstakeRequest applicants
     function sendUnstakedAmount() external payable onlySTM{

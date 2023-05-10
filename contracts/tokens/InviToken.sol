@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
+import "hardhat/console.sol";
 
 string constant INVI_TOKEN_FULL_NAME = "Invi Token";
 string constant INVI_TOKEN_NAME = "INVI";
@@ -14,6 +15,8 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //------ contracts ------//
     address public lendingPoolAddress;
+    address public inviTokenStakeAddress;
+    address public lpPoolAddress;
 
     //------ Variables ------//
     uint public regularMintAmount;
@@ -25,7 +28,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         __ERC20_init(INVI_TOKEN_FULL_NAME, INVI_TOKEN_NAME);
         __Ownable_init();
 
-        regularMintAmount = 100000000;
+        regularMintAmount = 100000000; // 100 million
         mintInterval = 30 hours; // testnet: 30 hours
         lastMinted = block.timestamp - mintInterval;
 
@@ -46,37 +49,46 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function setLendingPoolAddress(address _lendingPoolAddr) onlyOwner external {
         lendingPoolAddress = _lendingPoolAddr;
     }
+    function setLpPoolAddress(address _lpPoolAddr) onlyOwner external {
+        lpPoolAddress = _lpPoolAddr;
+    }
+    function setInviTokenStakeAddress(address _inviTokenStakeAddr) onlyOwner external {
+        inviTokenStakeAddress = _inviTokenStakeAddr;
+    }
 
     //====== service functions ======//
 
     function regularMinting() external onlyOwner {
         require(block.timestamp > lastMinted + mintInterval, ERROR_MINTING_INTERVAL_NOT_REACHED);
       
-        // get the amout of minted token from lendingPool (can be + or -)
-        bool isPositive = true;
-        uint lendingPoolMintedBurnedAmount = 0;
-
-        uint mintAmount;
-        if (isPositive) {
-            mintAmount = regularMintAmount * INVI_UNIT + lendingPoolMintedBurnedAmount;
-        } else {
-            mintAmount = regularMintAmount * INVI_UNIT - lendingPoolMintedBurnedAmount;
-        }
+        uint mintAmount = regularMintAmount * INVI_UNIT;
+        
         // mint token
         _mint(address(this), mintAmount);
         // set last Minted
         lastMinted = block.timestamp;
-    
+
+        // send minted token to lendingPool (20%)
+        _transfer(address(this), lendingPoolAddress, mintAmount * 20 / 100);
+
+        // send minted token to inviTokenStake (15%)
+        _transfer(address(this),inviTokenStakeAddress, mintAmount * 15 / 100);
+
+        // send minted token to lpPool (15%)
+        _transfer(address(this), lpPoolAddress, mintAmount * 15 / 100);
     }
 
-    // only lendingPool can mint and burn token as needed
-    function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
+    function sendInvi(address _receiver, uint _amount) external onlyOwner {
+        transfer(_receiver, _amount);
+    }
+
+    // only lendingPool can burn token as needed
+    // function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
     function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
         _burn(_account, _amount);
-    }
- 
+    } 
+
+    // for test purposes
     function mintToken(address _account, uint _amount) onlyOwner external {_mint(_account, _amount);}
     function burnToken(address _account, uint _amount) onlyOwner external  {_burn(_account, _amount);}
-
-    
 }
