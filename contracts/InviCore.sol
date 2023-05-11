@@ -37,6 +37,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //------unstake related------//
     UnstakeRequest[] public unstakeRequests;
+    uint public unstakeRequestsFront;
+    uint public unstakeRequestsRear;
 
     //------other variable------//
     uint public slippage;
@@ -137,7 +139,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     function getUnstakeRequestsLength() public view returns (uint) {
-        return unstakeRequests.length;
+        return unstakeRequestsRear - unstakeRequestsFront;
+    }
+    function getTotalStakedAmount() public view returns (uint) {
+        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
+        return totalStakedAmount;
     }
     
 
@@ -231,9 +237,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), inviTokenStakeReward, 0, 2);
 
         // push request to unstakeRequests
-        unstakeRequests.push(request);
-        unstakeRequests.push(lpRequest);
-        unstakeRequests.push(inviStakerRequest);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
         // transfer nft from msg.sender to inviCore
         stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId); 
@@ -267,8 +273,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // update NFT reward
         stakeNFTContract.updateReward(nftReward);
         // push request to unstakeRequests
-        unstakeRequests.push(lpRequest);
-        unstakeRequests.push(inviStakerRequest);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
         emit Unstake(lpReward + inviStakerReward);
     }
@@ -289,13 +295,18 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // send unstaked amount to unstakeRequest applicants
     function sendUnstakedAmount() external payable onlySTM{
-        while (unstakeRequests.length > 0 && unstakeRequests[0].amount <= address(this).balance) {
+        uint front = unstakeRequestsFront;
+        uint rear = unstakeRequestsRear;
+        for (uint i = front ; i <  rear; i++) {
+            if (unstakeRequests[i].amount > address(this).balance) {
+                break;
+            }
             // check request type (0: user, 1: LP, 2: INVI staker)
-            uint requestType = unstakeRequests[0].requestType;
-            uint amount = unstakeRequests[0].amount;
-            address recipient = unstakeRequests[0].recipient;
+            uint requestType = unstakeRequests[i].requestType;
+            uint amount = unstakeRequests[i].amount;
+            address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
-            popIndexFromUnstakeRequests(unstakeRequests, 0);
+            unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
             if (requestType == 0) {
                 (bool sent, ) = recipient.call{value : amount }("");
                 require(sent, ERROR_FAIL_SEND);

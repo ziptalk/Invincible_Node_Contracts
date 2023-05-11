@@ -17,7 +17,6 @@ struct LendInfo{
     address user;
     uint nftId;
     uint principal;
-    uint lendRatio;
     uint minLendAmount;
     uint lentAmount;
 }

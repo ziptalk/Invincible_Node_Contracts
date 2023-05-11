@@ -97,7 +97,6 @@ describe("Invi core service test", function () {
     await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
     // distribute reward
     await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
-
     const request1 = await inviCoreContract.unstakeRequests(0);
 
     //* when

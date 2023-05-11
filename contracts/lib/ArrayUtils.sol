@@ -20,10 +20,12 @@ function popValueFromUintArray(uint[] storage _arr, uint _value) {
     _arr.pop();
 }
 
-function popIndexFromUnstakeRequests(UnstakeRequest[] storage _arr, uint _index) {
-    require(_index < _arr.length, "Index out of bounds");
-    for (uint i = _index; i < _arr.length - 1; i++) {
-        _arr[i] = _arr[i + 1];
-    }
-    _arr.pop();
+function enqueueUnstakeRequests(UnstakeRequest[] storage _arr, UnstakeRequest memory _value, uint _rear) returns (uint) {
+    _arr.push(_value);
+    return _rear+1;
+}
+function dequeueUnstakeRequests(UnstakeRequest[] storage _arr, uint _front, uint _rear) returns (uint) {
+    require(_front < _rear, "Queue is empty");
+    delete _arr[_front];
+    return _front+1;
 }

@@ -67,19 +67,19 @@ describe("InviSwapPool Service Test", function () {
     console.log("invi: ", inviBalance.toString(), "klay: ", klayBalance.toString());
 
     // swap Klay to invi
-    await inviSwapPoolContract.connect(userB).functions.swapKlayToInvi(sendKlay / 4, { value: sendKlay });
+    await inviSwapPoolContract.connect(userB).functions.swapKlayToInvi(sendKlay / 10, { value: sendKlay });
 
     // check balances
     inviBalance = await inviTokenContract.balanceOf(userB.address);
     klayBalance = await ethers.provider.getBalance(userB.address);
-    console.log("after swap klay to invi User B" + sendKlay + "(klay)");
+    console.log("after swap klay to invi User B " + sendKlay + "(klay)");
     console.log("invi: ", inviBalance.toString(), "klay: ", klayBalance.toString());
 
     // swap invi to klay
     await inviTokenContract.connect(userB).approve(inviSwapPoolContract.address, 1000000000);
     const expectedKlay = await inviSwapPoolContract.connect(userB).functions.getInviToKlayOutAmount(1000000000);
     console.log(expectedKlay);
-    await inviSwapPoolContract.connect(userB).functions.swapInviToKlay(1000000000, expectedKlay.toString() - 10000000);
+    await inviSwapPoolContract.connect(userB).functions.swapInviToKlay(1000000000, Math.floor(parseInt(expectedKlay) * 0.9));
 
     // check balances
     inviBalance = await inviTokenContract.balanceOf(userB.address);
