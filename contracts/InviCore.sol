@@ -260,7 +260,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // get total rewards
         uint totalReward = stKlay.balanceOf(stakeManager) - totalStakedAmount;
 
-        // check rewards
+        // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;
