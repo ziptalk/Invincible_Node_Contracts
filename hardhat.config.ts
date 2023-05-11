@@ -42,6 +42,10 @@ const config: HardhatUserConfig = {
       url: process.env.MANTLE_TESTNET_URL,
       accounts: [OWNER_KEY],
     },
+    bifrost_testnet: {
+      url: process.env.BIFROST_TESTNET_URL,
+      accounts: [OWNER_KEY],
+    },
     // klaytn_mainnet: {
     //   url: process.env.KLAYTN_MAINNET_URL,
     //   accounts: [OWNER_KEY],
