@@ -86,6 +86,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         // update stake amount
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
         stakedAmount[msg.sender] -= _unstakeAmount;
+        // update total staked amount
+        totalStakedAmount -= _unstakeAmount;
 
         require(inviToken.transfer(msg.sender, _unstakeAmount));
     }
