@@ -2,7 +2,8 @@ import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
 import { deployAllContract } from "./deployFunctions";
-import address from "./address.json";
+import addressKlaytn from "./address.klaytn.json";
+import addressBfc from "./address.bfc.json";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
@@ -16,9 +17,15 @@ let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
 let priceManagerContract: Contract;
 
+//-----------------------------------------------------------------------------------------------//
+//====================================== Change this part ========================================//
+const stakeManagerAddress = addressBfc.stakeManager;
+//-----------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------//
+
 const deploy = async () => {
   const [deployer] = await ethers.getSigners();
-  const stakeManager = address.stakeManager;
+  const stakeManager = stakeManagerAddress;
   console.log("Deploying contracts with the account:", deployer.address);
 
   ({

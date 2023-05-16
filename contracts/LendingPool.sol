@@ -104,10 +104,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     // get the lent amount
     function getLendAmount(uint _amount) private view returns (uint) {
-        uint klayPrice = priceManager.getKlayPrice();
+        uint nativePrice = priceManager.getNativePrice();
         uint inviPrice = priceManager.getInviPrice();
         uint totalInviSupply = inviToken.balanceOf(address(this));
-        uint maxLendAmount = _amount * klayPrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        uint maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
         return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
     }
 

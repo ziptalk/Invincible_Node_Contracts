@@ -14,7 +14,7 @@ describe("PriceManager Service Test", function () {
 
   it("Test Fetch Price functions", async () => {
     const [deployer, stakeManager, userA, userB, userC] = await ethers.getSigners();
-    const price = await priceManagerContract.functions.getKlayPrice();
+    const price = await priceManagerContract.functions.getNativePrice();
     console.log(price);
   });
 });
