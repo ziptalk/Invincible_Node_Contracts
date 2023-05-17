@@ -24,14 +24,14 @@ contract PriceManager is Initializable, OwnableUpgradeable {
     //------Variables------//
 
     uint public inviPrice;
-    uint public klayPrice;
+    uint public nativePrice;
 
     //======initializer======//
 
      function initialize() initializer public {
         //pangeaSwapPool = IConcentratedLiquidityPool(PANGEA_SWAP_ADDRESS);
         inviPrice = 10**18;
-        klayPrice = 10**18;
+        nativePrice = 10**18;
         __Ownable_init();
     }
 
@@ -43,8 +43,8 @@ contract PriceManager is Initializable, OwnableUpgradeable {
         return inviPrice;
     }
    
-    function getKlayPrice() public view returns (uint) {
-        return klayPrice;
+    function getNativePrice() public view returns (uint) {
+        return nativePrice;
     }
 
     //======setter functions======//
@@ -53,8 +53,8 @@ contract PriceManager is Initializable, OwnableUpgradeable {
         inviPrice = _price;
     }
    
-    function setKlayPrice(uint _price) public onlyOwner {
-        klayPrice = _price;
+    function setNativePrice(uint _price) public onlyOwner {
+        nativePrice = _price;
     }
 
     //======service functions======//

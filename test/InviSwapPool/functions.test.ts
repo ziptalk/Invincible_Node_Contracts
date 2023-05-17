@@ -37,7 +37,7 @@ describe("InviSwapPool Service Test", function () {
 
     // set prices
     await priceManagerContract.setInviPrice(1000000000000);
-    await priceManagerContract.setKlayPrice(200000000000);
+    await priceManagerContract.setNativePrice(200000000000);
 
     //* when
     // add liquidity

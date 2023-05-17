@@ -38,7 +38,7 @@ describe("InviSwapPool Service Test", function () {
 
     // set prices
     await priceManagerContract.setInviPrice(1000000000000);
-    await priceManagerContract.setKlayPrice(200000000000);
+    await priceManagerContract.setNativePrice(200000000000);
 
     //* when
     // add liquidity
@@ -55,7 +55,7 @@ describe("InviSwapPool Service Test", function () {
     await inviSwapPoolContract.connect(userC).functions.addLiquidity(expectedInInvi.toString(), slippage, { value: liquidityAmount });
 
     // check pool state
-    let totalLiquidityKlay = await inviSwapPoolContract.connect(userA).totalLiquidityKlay();
+    let totalLiquidityKlay = await inviSwapPoolContract.connect(userA).totalLiquidityNative();
     let totalLiquidityInvi = await inviSwapPoolContract.connect(userA).totalLiquidityInvi();
     console.log("total liquidity klay: ", totalLiquidityKlay.toString());
     console.log("total liquidity invi: ", totalLiquidityInvi.toString());
@@ -67,7 +67,7 @@ describe("InviSwapPool Service Test", function () {
     console.log("invi: ", inviBalance.toString(), "klay: ", klayBalance.toString());
 
     // swap Klay to invi
-    await inviSwapPoolContract.connect(userB).functions.swapKlayToInvi(sendKlay / 10, { value: sendKlay });
+    await inviSwapPoolContract.connect(userB).functions.swapNativeToInvi(sendKlay / 10, { value: sendKlay });
 
     // check balances
     inviBalance = await inviTokenContract.balanceOf(userB.address);
@@ -77,9 +77,9 @@ describe("InviSwapPool Service Test", function () {
 
     // swap invi to klay
     await inviTokenContract.connect(userB).approve(inviSwapPoolContract.address, 1000000000);
-    const expectedKlay = await inviSwapPoolContract.connect(userB).functions.getInviToKlayOutAmount(1000000000);
+    const expectedKlay = await inviSwapPoolContract.connect(userB).functions.getInviToNativeOutAmount(1000000000);
     console.log(expectedKlay);
-    await inviSwapPoolContract.connect(userB).functions.swapInviToKlay(1000000000, Math.floor(parseInt(expectedKlay) * 0.9));
+    await inviSwapPoolContract.connect(userB).functions.swapInviToNative(1000000000, Math.floor(parseInt(expectedKlay) * 0.9));
 
     // check balances
     inviBalance = await inviTokenContract.balanceOf(userB.address);
@@ -88,13 +88,13 @@ describe("InviSwapPool Service Test", function () {
     console.log("invi: ", inviBalance.toString(), "klay: ", klayBalance.toString());
 
     // check lp rewards
-    let lpRewardKlay = await inviSwapPoolContract.connect(userA).lpRewardKlay(userA.address);
+    let lpRewardKlay = await inviSwapPoolContract.connect(userA).lpRewardNative(userA.address);
     console.log("userA lp klay reward: ", lpRewardKlay.toString());
     let lpRewardInvi = await inviSwapPoolContract.connect(userA).lpRewardInvi(userA.address);
     console.log("userA lp invi reward: ", lpRewardInvi.toString());
 
     // check current liquidity
-    let klayLiquidity = await inviSwapPoolContract.functions.totalLiquidityKlay();
+    let klayLiquidity = await inviSwapPoolContract.functions.totalLiquidityNative();
     let inviLiquidity = await inviSwapPoolContract.functions.totalLiquidityInvi();
     console.log("klay liquidity: ", klayLiquidity.toString(), "invi liquidity: ", inviLiquidity.toString());
 
@@ -108,7 +108,7 @@ describe("InviSwapPool Service Test", function () {
     await inviSwapPoolContract.connect(userA).removeLiquidity(userAisptBalance, expectedAmountOut[0], expectedAmountOut[1], slippage);
 
     // check liquidity after remove liquidity
-    klayLiquidity = await inviSwapPoolContract.functions.totalLiquidityKlay();
+    klayLiquidity = await inviSwapPoolContract.functions.totalLiquidityNative();
     inviLiquidity = await inviSwapPoolContract.functions.totalLiquidityInvi();
     console.log("klay liquidity: ", klayLiquidity.toString(), "invi liquidity: ", inviLiquidity.toString());
 
@@ -120,11 +120,11 @@ describe("InviSwapPool Service Test", function () {
 
     // get fees status
     const inviFees = await inviSwapPoolContract.functions.totalRewardInvi();
-    const klayFees = await inviSwapPoolContract.functions.totalRewardKlay();
+    const klayFees = await inviSwapPoolContract.functions.totalRewardNative();
     console.log("invi fees: ", inviFees.toString(), "klay fees: ", klayFees.toString());
     let userAInviReward = await inviSwapPoolContract.connect(userA).lpRewardInvi(userA.address);
     console.log("userA fees: ", userAInviReward.toString());
-    let userAKlayReward = await inviSwapPoolContract.connect(userA).lpRewardKlay(userA.address);
+    let userAKlayReward = await inviSwapPoolContract.connect(userA).lpRewardNative(userA.address);
     console.log("userA fees: ", userAKlayReward.toString());
 
     // get contract status

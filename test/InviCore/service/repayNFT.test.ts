@@ -41,7 +41,7 @@ describe("Invi core service test", function () {
     await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principal + pureReward);
 
     // distribute reward
-    await inviCoreContract.connect(deployer).distributeStKlayReward();
+    await inviCoreContract.connect(deployer).distributeStTokenReward();
 
     // init value
     const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount();

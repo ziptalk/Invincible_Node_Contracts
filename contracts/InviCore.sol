@@ -15,7 +15,7 @@ import "./lib/Unit.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
-    IERC20 public stKlay;
+    IERC20 public stToken;
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
@@ -45,9 +45,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     address[] public userList;
 
     //======initializer======//
-    function initialize(address stKlayAddr) initializer public {
+    function initialize(address _stTokenAddr) initializer public {
         __Ownable_init();
-        stKlay = IERC20(stKlayAddr);
+        stToken = IERC20(_stTokenAddr);
 
         slippage = 5 * SLIPPAGE_UNIT;
         decreaseRatio = 10 * REWARD_ERROR_UNIT;
@@ -85,8 +85,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
     }
 
-    function setStKlayContract(address _stKlayAddr) external onlyOwner {
-        stKlay = IERC20(_stKlayAddr);
+    function setStTokenContract(address _stTokenAddr) external onlyOwner {
+        stToken = IERC20(_stTokenAddr);
     }
     
 
@@ -254,13 +254,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // periodic reward distribution, update
-    function distributeStKlayReward() external onlyOwner {
+    function distributeStTokenReward() external onlyOwner {
         // get total staked amount
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         // get total rewards
-        uint totalReward = stKlay.balanceOf(stakeManager) - totalStakedAmount;
+        uint totalReward = stToken.balanceOf(stakeManager) - totalStakedAmount;
 
-        // check rewards
+        // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;

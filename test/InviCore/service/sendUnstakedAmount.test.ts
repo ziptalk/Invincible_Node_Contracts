@@ -50,7 +50,7 @@ describe("Invi core service test", function () {
     const pureReward = 10000000;
     await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
     // distribute reward
-    await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
+    await inviCoreContract.connect(deployer).distributeStTokenReward(); // distribute reward
 
     const requestLength = await inviCoreContract.getUnstakeRequestsLength();
     const requests: UnstakeRequest[] = [];
@@ -96,7 +96,7 @@ describe("Invi core service test", function () {
     const pureReward = 10000000;
     await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principalA + principalB + principalC + pureReward);
     // distribute reward
-    await inviCoreContract.connect(deployer).distributeStKlayReward(); // distribute reward
+    await inviCoreContract.connect(deployer).distributeStTokenReward(); // distribute reward
     const request1 = await inviCoreContract.unstakeRequests(0);
 
     //* when
