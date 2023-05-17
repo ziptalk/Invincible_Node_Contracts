@@ -1,6 +1,13 @@
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import address from "./address.json";
+import klaytnAddress from "./address.klaytn.json";
+import bfcAddress from "./address.bfc.json";
+
+//------------------------------------------------------------------------------------------------//
+//====================================== Change this part ========================================//
+const address = bfcAddress;
+//------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------//
 
 const main = async () => {
   const stakeManager = address.stakeManager;
