@@ -2,11 +2,12 @@ import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import addressKlay from "../scripts/address.klaytn.json";
 import addressBfc from "../scripts/address.bfc.json";
+import addressEvmos from "../scripts/address.evmos.json";
 
 //================================================================================================//
 //====================================== Change this part ========================================//
 //================================================================================================//
-const stTokenContractAddress = addressBfc.stBfc;
+const stTokenContractAddress = addressEvmos.stEvmos;
 //================================================================================================//
 //================================================================================================//
 

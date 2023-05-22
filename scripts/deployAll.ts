@@ -4,6 +4,7 @@ import { Contract, Wallet } from "ethers";
 import { deployAllContract } from "./deployFunctions";
 import addressKlaytn from "./address.klaytn.json";
 import addressBfc from "./address.bfc.json";
+import addressEvmos from "./address.evmos.json";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;

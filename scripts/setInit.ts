@@ -2,10 +2,11 @@ import { ethers } from "hardhat";
 import { Contract } from "ethers";
 import klaytnAddress from "./address.klaytn.json";
 import bfcAddress from "./address.bfc.json";
+import evmosAddress from "./address.evmos.json";
 
 //------------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const address = bfcAddress;
+const address = evmosAddress;
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
