@@ -4,29 +4,46 @@ import klaytnAddress from "./address.klaytn.json";
 import bfcAddress from "./address.bfc.json";
 import evmosAddress from "./address.evmos.json";
 
+// test addresses
+import { testAddressBfc } from "./testAddresses/address.bfc";
+
 //------------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const address = evmosAddress;
+const address = testAddressBfc;
+const network = "BIFROST"; // BIFROST, KLAYTN, EVMOS
+let stakeManager = address.stakeManager;
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
+let iLPTokenContract: Contract;
+let inviTokenContract: Contract;
+let iSPTTokenContract: Contract;
+let stakeNFTContract: Contract;
+let inviTokenStakeContract: Contract;
+let lpPoolContract: Contract;
+let lendingPoolContract: Contract;
+let inviSwapPoolContract: Contract;
+let inviCoreContract: Contract;
+let priceManagerContract: Contract;
+
 const main = async () => {
-  const stakeManager = address.stakeManager;
   const [deployer] = await ethers.getSigners();
   let nonce = await ethers.provider.getTransactionCount(deployer.address);
   let tx;
   console.log("base Nonce : ", nonce);
 
-  const iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
-  const inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-  const iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
-  const stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
-  const inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
-  const lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
-  const lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
-  const inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
-  const inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
-  const priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
+  if (network === "BIFROST") {
+    iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
+    inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
+    iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
+    stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
+    inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
+    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
+    lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
+    inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
+    inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
+    priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
+  }
 
   // set iLP init condition
   tx = await iLPTokenContract.connect(deployer).transferOwnership(lpPoolContract.address, { nonce: nonce++ });
@@ -55,8 +72,11 @@ const main = async () => {
   console.log("stakeNFT init condition set at " + nonce + "");
 
   // set lpPoolContract init condition
-  tx = await lpPoolContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
-  await tx.wait();
+  if (network === "BIFROST") {
+  } else {
+    tx = await lpPoolContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    await tx.wait();
+  }
   tx = await lpPoolContract.connect(deployer).setInviCoreContract(inviCoreContract.address, { nonce: nonce++ });
   await tx.wait();
   console.log("lpPoolContract init condition set at " + nonce + "");
@@ -64,9 +84,11 @@ const main = async () => {
   // set inviTokenStake init condition
   tx = await inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address, { nonce: nonce++ });
   await tx.wait();
-
-  tx = await inviTokenStakeContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
-  await tx.wait();
+  if (network === "BIFROST") {
+  } else {
+    tx = await inviTokenStakeContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    await tx.wait();
+  }
   console.log("inviTokenStake init condition set at " + nonce + "");
 
   // set lendingPool init condition
@@ -79,8 +101,11 @@ const main = async () => {
   // set InviCore contract
   tx = await inviCoreContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address, { nonce: nonce++ });
   await tx.wait();
-  tx = await inviCoreContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
-  await tx.wait();
+  if (network === "BIFROST") {
+  } else {
+    tx = await inviCoreContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    await tx.wait();
+  }
   tx = await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address, { nonce: nonce++ });
   await tx.wait();
   tx = await inviCoreContract.connect(deployer).setInviTokenStakeContract(inviTokenStakeContract.address, { nonce: nonce++ });

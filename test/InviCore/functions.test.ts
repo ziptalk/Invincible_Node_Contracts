@@ -3,6 +3,10 @@ import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import { deployAllWithSetting } from "../deploy";
 import units from "../units.json";
+import { testAddressBfc } from "../../scripts/testAddresses/address.bfc";
+import { currentNetwork } from "../currentNetwork";
+
+let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 
 describe("Invi Core functions Test", function () {
   let inviTokenContract: Contract;
@@ -11,11 +15,26 @@ describe("Invi Core functions Test", function () {
   let lpPoolContract: Contract;
   let inviCoreContract: Contract;
 
-  this.beforeEach(async () => {
-    ({ inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
+  this.beforeAll(async function () {
+    // for testnet test
+    if (network === "BIFROST") {
+      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
+      inviTokenContract = await ethers.getContractAt("InviToken", testAddressBfc.inviTokenContractAddress);
+      iLPTokenContract = await ethers.getContractAt("ILPToken", testAddressBfc.iLPTokenContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
+    } else {
+      ({ inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
+    }
   });
 
   it("Test deploy success", async () => {
+    console.log("invicore address: ", inviCoreContract.address);
+    console.log("inviToken address: ", inviTokenContract.address);
+    console.log("iLPToken address: ", iLPTokenContract.address);
+    console.log("stakeNFT address: ", stakeNFTContract.address);
+    console.log("lpPool address: ", lpPoolContract.address);
+
     // verify init
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
@@ -29,7 +48,7 @@ describe("Invi Core functions Test", function () {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
     // lp stake coin
-    const lpAmount = 100000;
+    const lpAmount = 1000000;
     await lpPoolContract.connect(LP).stake({ value: lpAmount });
 
     const principal = 1000;

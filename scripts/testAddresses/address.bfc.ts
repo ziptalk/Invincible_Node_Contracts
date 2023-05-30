@@ -1,0 +1,16 @@
+export const testAddressBfc = {
+  deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
+  stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
+  bfcLiquidStaking: "0x0C667112139D3E6360C5BA7cF888C0590a80A6DD",
+  stBfc: "0xE8600cf8a02e7C3F41D1917BaD0d4699ed5f4e86",
+  inviTokenContractAddress: "0x66e8c5bF0De1daB7E2932e54Ce908373eF5249dF",
+  iLPTokenContractAddress: "0x600d5eAf57563389556B906775d6d222778edc07",
+  iSPTTokenContractAddress: "0x446d2f77D6154681D0a8A93ED0fCa845378F7aa1",
+  stakeNFTContractAddress: "0x0d0E6cf00C5b652ef9b6221595ccC06baAAcc38b",
+  inviTokenStakeContractAddress: "0x18f8215F2a31cb868bC065284Dd5317ed858Dbc4",
+  lpPoolContractAddress: "0x0497d13730Bc0123DBdB0b37c165Ee1705F4928d",
+  lendingPoolContractAddress: "0x3D92F8fdAA793Fe7aF4cae1941C3F9bf9AEc132A",
+  inviSwapPoolContractAddress: "0xb58aF2E6fFc38141FE78cf8C8e93aF170dAFACB6",
+  inviCoreContractAddress: "0x55158E9eA9AB9518Db5274143a8cD81e76930377",
+  priceManagerContractAddress: "0x3E294aeF5B1776CB5DC992F568979541dD941cf7",
+};

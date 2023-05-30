@@ -20,13 +20,12 @@ let priceManagerContract: Contract;
 
 //-----------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const stakeManagerAddress = addressBfc.stakeManager;
+
 //-----------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------//
 
 const deploy = async () => {
   const [deployer] = await ethers.getSigners();
-  const stakeManager = stakeManagerAddress;
   console.log("Deploying contracts with the account:", deployer.address);
 
   ({

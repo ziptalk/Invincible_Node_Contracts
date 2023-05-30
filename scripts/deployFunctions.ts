@@ -7,9 +7,22 @@ import addressEvmos from "../scripts/address.evmos.json";
 //================================================================================================//
 //====================================== Change this part ========================================//
 //================================================================================================//
-const stTokenContractAddress = addressEvmos.stEvmos;
+const network = "BIFROST"; // BIFROST, KLAYTN, EVMOS
+let stTokenContractAddress: String = "0x0";
+let liquidStakingAddress: String = "0x0";
 //================================================================================================//
 //================================================================================================//
+
+if (network === "BIFROST") {
+  stTokenContractAddress = addressBfc.stBfc;
+  liquidStakingAddress = addressBfc.bfcLiquidStaking;
+} else if (network === "EVMOS") {
+  stTokenContractAddress = addressEvmos.stEvmos;
+  liquidStakingAddress = addressEvmos.evmosLiquidStaking;
+} else {
+  stTokenContractAddress = addressKlay.stakelyContractAddress;
+  liquidStakingAddress = addressKlay.stakelyContractAddress;
+}
 
 // deploy InviToken contract
 export const deployInviToken = async () => {
@@ -66,10 +79,18 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract) 
 };
 
 // deploy inviCore contract
-export const deployInviCoreContract = async (stTokenContractAddress: any) => {
-  const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContractAddress], { initializer: "initialize" });
-  await inviCoreContract.deployed();
+export const deployInviCoreContract = async (stTokenContract: String, liquidStakingAddress: String, network: String) => {
+  let InviCoreContract;
+  let inviCoreContract;
+  if (network === "BIFROST") {
+    InviCoreContract = await ethers.getContractFactory("BfcInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else {
+    InviCoreContract = await ethers.getContractFactory("InviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  }
 
   return inviCoreContract;
 };
@@ -133,7 +154,7 @@ export const deployAllContract = async () => {
   // deploy InviSwapPool contract
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
   // deploy inviCore contract
-  const inviCoreContract = await deployInviCoreContract(stTokenContractAddress);
+  const inviCoreContract = await deployInviCoreContract(stTokenContractAddress, liquidStakingAddress, network);
   // deploy swapManager contract
   const priceManagerContract = await deployPriceManager();
 
