@@ -49,7 +49,13 @@ describe("Invi Core functions Test", function () {
 
     // lp stake coin
     const lpAmount = 1000000;
+    console.log("network: ", network);
+    console.log("lp address: ", LP.address);
+
+    console.log(await lpPoolContract.owner());
+    console.log(await lpPoolContract.inviCoreContract());
     await lpPoolContract.connect(LP).stake({ value: lpAmount });
+    console.log("lp stake completes");
 
     const principal = 1000;
     const leverageRatio = 2 * units.leverageUnit;

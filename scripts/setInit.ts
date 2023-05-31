@@ -9,9 +9,8 @@ import { testAddressBfc } from "./testAddresses/address.bfc";
 
 //------------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const address = testAddressBfc;
+// const address = testAddressBfc;
 const network = "BIFROST"; // BIFROST, KLAYTN, EVMOS
-let stakeManager = address.stakeManager;
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
@@ -26,7 +25,7 @@ let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
 let priceManagerContract: Contract;
 
-const main = async () => {
+export const setInit = async (address: any) => {
   const [deployer] = await ethers.getSigners();
   let nonce = await ethers.provider.getTransactionCount(deployer.address);
   let tx;
@@ -37,11 +36,11 @@ const main = async () => {
     inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
     iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
     stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
-    inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
+    inviTokenStakeContract = await ethers.getContractAt("BfcInviTokenStake", address.inviTokenStakeContractAddress);
+    lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", address.lpPoolContractAddress);
     lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
     inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
-    inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
+    inviCoreContract = await ethers.getContractAt("BfcInviCore", address.inviCoreContractAddress);
     priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
   }
 
@@ -117,5 +116,3 @@ const main = async () => {
   await tx.wait();
   console.log("inviSwapPool init condition set at " + nonce + "");
 };
-
-main();

@@ -1,1 +1,1 @@
-export const currentNetwork = "BIFROST";
+export const currentNetwork = "BIFROST"; // BIFROST / EVMOS / KLAYTN / LOCAL

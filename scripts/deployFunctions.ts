@@ -62,19 +62,33 @@ export const deployISPTToken = async () => {
 
 // deploy lpPool contract
 export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContract: Contract) => {
-  const LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
-  const lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
-  await lpPoolContract.deployed();
+  let LpPoolContract;
+  let lpPoolContract;
+  if (network === "BIFROST") {
+    LpPoolContract = await ethers.getContractFactory("BfcLiquidityProviderPool");
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
+  } else {
+    LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+  }
 
   return lpPoolContract;
 };
 
 // deploy inviTokenStake contract
 export const deployInviTokenStakeContract = async (inviTokenContract: Contract) => {
-  const InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
-  const inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
-  await inviTokenStakeContract.deployed();
-
+  let InviTokenStakeContract;
+  let inviTokenStakeContract;
+  if (network === "BIFROST") {
+    InviTokenStakeContract = await ethers.getContractFactory("BfcInviTokenStake");
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
+  } else {
+    InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
+  }
   return inviTokenStakeContract;
 };
 

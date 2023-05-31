@@ -3,14 +3,32 @@ import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
 import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
 import { provideLiquidity } from "../utils";
+import { testAddressBfc } from "../../scripts/testAddresses/address.bfc";
+import { currentNetwork } from "../currentNetwork";
+
+let network = currentNetwork; // BIFROST, KLAYTN, EVMOS, LOCAL
 
 describe("Liquidity Provider Pool Test", function () {
   let inviCoreContract: Contract;
   let lpPoolContract: Contract;
   let inviTokenContract: Contract;
 
-  this.beforeEach(async () => {
-    ({ inviCoreContract, lpPoolContract, inviTokenContract } = await deployAllWithSetting());
+  let nonceDeployer: number;
+  let nonceLP: number;
+  let nonceUserA: number;
+  let nonceUserB: number;
+  let nonceUserC: number;
+  let tx;
+
+  this.beforeAll(async function () {
+    // for testnet test
+    if (network === "BIFROST") {
+      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
+      inviTokenContract = await ethers.getContractAt("InviToken", testAddressBfc.inviTokenContractAddress);
+      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
+    } else {
+      ({ inviCoreContract, inviTokenContract, lpPoolContract } = await deployAllWithSetting());
+    }
   });
 
   it("Test LP Stake", async function () {
@@ -22,9 +40,9 @@ describe("Liquidity Provider Pool Test", function () {
     const userCStakedAmount = 300000;
 
     //* when
-    await provideLiquidity(lpPoolContract, userA, userAStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userB, userBStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userC, userCStakedAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userA, userAStakedAmount, nonceUserA); // lp stake
+    await provideLiquidity(lpPoolContract, userB, userBStakedAmount, nonceUserB); // lp stake
+    await provideLiquidity(lpPoolContract, userC, userCStakedAmount, nonceUserC); // lp stake
 
     //* then
     expect(await lpPoolContract.totalStakedAmount()).to.equal(userAStakedAmount + userBStakedAmount + userCStakedAmount);
@@ -42,9 +60,9 @@ describe("Liquidity Provider Pool Test", function () {
     const userBStakedAmount = Math.floor(totalStakedAmount * 0.3);
     const userCStakedAmount = Math.floor(totalStakedAmount * 0.5);
 
-    await provideLiquidity(lpPoolContract, userA, userAStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userB, userBStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userC, userCStakedAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userA, userAStakedAmount, nonceUserA); // lp stake
+    await provideLiquidity(lpPoolContract, userB, userBStakedAmount, nonceUserB); // lp stake
+    await provideLiquidity(lpPoolContract, userC, userCStakedAmount, nonceUserC); // lp stake
 
     const initUserABalance = await userA.getBalance();
     const initUserBBalance = await userB.getBalance();
@@ -75,9 +93,9 @@ describe("Liquidity Provider Pool Test", function () {
     const userBStakedAmount = Math.floor(totalStakedAmount * 0.3);
     const userCStakedAmount = Math.floor(totalStakedAmount * 0.5);
 
-    await provideLiquidity(lpPoolContract, userA, userAStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userB, userBStakedAmount); // lp stake
-    await provideLiquidity(lpPoolContract, userC, userCStakedAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userA, userAStakedAmount, nonceUserA); // lp stake
+    await provideLiquidity(lpPoolContract, userB, userBStakedAmount, nonceUserB); // lp stake
+    await provideLiquidity(lpPoolContract, userC, userCStakedAmount, nonceUserC); // lp stake
 
     // regular minting
     await inviTokenContract.functions.regularMinting();

@@ -4,15 +4,23 @@ import { ethers } from "ethers";
 import units from "./units.json";
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };
 
-export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: number) => {
-  await lpPoolContract.connect(user).stake({ value: amount });
+export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: number, nonce: number) => {
+  let tx = await lpPoolContract.connect(user).stake({ value: amount, nonce: nonce });
+  await tx.wait();
 };
 
-export const leverageStake = async (inviCoreContract: Contract, user: SignerWithAddress, principal: number, leverageRatio: number, lockPeriod: number) => {
-  const stakeInfo = await inviCoreContract.connect(user).getStakeInfo(await user.getAddress(), principal, leverageRatio, lockPeriod);
+export const leverageStake = async (
+  inviCoreContract: Contract,
+  user: SignerWithAddress,
+  principal: number,
+  leverageRatio: number,
+  lockPeriod: number,
+  nonce: number
+) => {
+  const stakeInfo = await inviCoreContract.connect(user).getStakeInfo(await user.getAddress(), principal, leverageRatio, lockPeriod, { nonce: nonce });
   const slippage = 3 * units.slippageUnit;
-  console.log(stakeInfo);
-  await inviCoreContract.connect(user).stake(stakeInfo, slippage, { value: principal });
+  let tx = await inviCoreContract.connect(user).stake(stakeInfo, slippage, { value: principal, nonce: nonce });
+  await tx.wait();
   return stakeInfo;
 };
 

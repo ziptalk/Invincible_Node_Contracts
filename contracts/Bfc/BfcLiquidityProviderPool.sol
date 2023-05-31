@@ -8,13 +8,13 @@ import "../lib/AddressUtils.sol";
 import "../lib/Logics.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
-import "./InviCore.sol";
+import "./BfcInviCore.sol";
 
 contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public iLP;
     IERC20 public inviToken;
-    InviCore public inviCoreContract;
+    BfcInviCore public inviCoreContract;
     address[] public ILPHolders;
 
     //------ratio------//
@@ -73,7 +73,7 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
  
    
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
-        inviCoreContract = InviCore(_inviCore);
+        inviCoreContract = BfcInviCore(_inviCore);
     }
 
     function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {
@@ -102,13 +102,9 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
         iLP.mintToken(msg.sender, msg.value);
 
         console.log("mint success");
-        
-        // send coin to LP manager
-        (bool sent, ) = address(inviCoreContract).call{value: msg.value}("");
-        require(sent, ERROR_FAIL_SEND);
-
+    
         // request inviCore
-        inviCoreContract.stakeLp(msg.value);
+        inviCoreContract.stakeLp{value: msg.value}();
     }
 
     function unstake(uint _amount) public {

@@ -8,8 +8,8 @@ import "../StakeNFT.sol";
 import "../lib/Structs.sol";
 import "../lib/ErrorMessages.sol";
 import "hardhat/console.sol";
-import "../LiquidityProviderPool.sol";
-import "../InviTokenStake.sol";
+import "./BfcLiquidityProviderPool.sol";
+import "./BfcInviTokenStake.sol";
 import "../lib/Logics.sol";
 import "../lib/Unit.sol";
 import "../interfaces/IBfcLiquidStaking.sol";
@@ -18,8 +18,8 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public stToken;
     StakeNFT public stakeNFTContract;
-    LiquidityProviderPool public lpPoolContract;
-    InviTokenStake public inviTokenStakeContract;
+    BfcLiquidityProviderPool public lpPoolContract;
+    BfcInviTokenStake public inviTokenStakeContract;
     IBfcLiquidStaking public bfcLiquidStaking;
 
 
@@ -78,11 +78,11 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     }
 
     function setLpPoolContract(address _lpPoolAddr) external onlyOwner {
-        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
+        lpPoolContract = BfcLiquidityProviderPool(_lpPoolAddr);
     }
 
     function setInviTokenStakeContract(address _inviTokenStakeAddr) external onlyOwner {
-        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
+        inviTokenStakeContract = BfcInviTokenStake(_inviTokenStakeAddr);
     }
 
     function setStTokenContract(address _stTokenAddr) external onlyOwner {
@@ -194,7 +194,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         bfcLiquidStaking.stake{value : _stakeInfo.principal}();
 
         // mint StakeNFT Token by stake info
-       stakeNFTContract.mintNFT(_stakeInfo);
+        stakeNFTContract.mintNFT(_stakeInfo);
 
         //update stakeAmount info
         uint lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;

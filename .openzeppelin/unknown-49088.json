@@ -884,6 +884,526 @@
       "address": "0x84A37611701661bCDa533FB448FE1f741160f127",
       "txHash": "0xb5a33a0e8e5b17343ee0b90047f8aa819117ad9ad72a21b30af12ac4ed739929",
       "kind": "transparent"
+    },
+    {
+      "address": "0x7814405750E23D4f967247BA06659974CB0a9f43",
+      "txHash": "0x29184b1a3ec3b59f72fc2706915cb6caf8b976a7e8136f6e4fa556b698f751bb",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xFCaF819c24498627d19F3f4AF1DC7aBf492ad5A4",
+      "txHash": "0xbf8024190e5f1ff0c2ead2f267f76c8114d6e6e61f1d43fd609071ae7612c9ae",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdC459cF35db20db6A2BbA8C2fb71555272B4b504",
+      "txHash": "0x3fe048cd31ac1a288583fd425c6719c489cfd14345448634d55389777132285c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8B7033750f64C60472B8C7D70a9F7E0B0021F3E7",
+      "txHash": "0xc37f90f7bcbb2b9b91a35e49a59f9f7cb78f68b848eab99a2a36e627cea11d4c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x03213967BB3AF1446fC1833708FB772840432F3f",
+      "txHash": "0x7ff45d163bbf4fd04857b6b00408c5c54e9f78950242f3e3c520ebd943835035",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE7f1005808559AADE72ed9878b9fF9B34bf9aa51",
+      "txHash": "0x91b746451afc34ad13a2775c5efdc23621ec4768bc25d5ffb3f0a17386d462b9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6F70dAEED8d807234e4d05A236fa0FA8d809bfC4",
+      "txHash": "0x7f8eb95e50373457773d017c209cfe180cfcc7ed167dab47e2e217228a36afdf",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xb5A493c36e8f3763E16C8c194ea324DE013de300",
+      "txHash": "0x3eec8c57d74d827e34a1ed1d850485688363d1db5ab377921a3a6402a2de763d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA54Ae6cC6836D996CF32F61648Cc7C8c7FF3BA87",
+      "txHash": "0x176975f3048c74b147c157bb8232179965cc046722f247239818deb439453371",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x91136C4908dCD07aD89933B57F0D939C107b5f2d",
+      "txHash": "0x5850cfc7ee9159c578b9a810e9b16217af54543ae23bd7bac045344283acbd04",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xfe5207993cBB7070C6EdBA614b5eb3e2407dC971",
+      "txHash": "0x51034e0564cbea0f3cfd8c54a75af4a1e51332597ec83970ca5522d1c67a95d9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x696901022694ca402E2c9E1282413D083f2b86eF",
+      "txHash": "0x8610456eae8297adf909e5f86294696d231842bdd750991e46df23eec3041539",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x74E9914B6E7ED6A3bBff178832d1FE69fa21d511",
+      "txHash": "0xcad00e19904dbfd3499eeb6a65d610b662bf362b23354ebb034f179e35ffd6da",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xBacEf2d2dA77358aEc433b827fa0Fea7fDe0E72e",
+      "txHash": "0x7f7b01c4194c8a655681a8ffbfced0617a269a689cc4678117fb2910f663a46c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x03596C3085B5101a26DE5393D8994765447C89e6",
+      "txHash": "0xc0b3d2f7b33bb32ed78631daafb65e474c2814e30d6f46cb6123c0a6b89e2723",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4848B2CbB91F3A232B7D7D613112AF97A9eE3444",
+      "txHash": "0xe20189e62b81ae296644442eb54875d6306a735f439f3b8e1f686e0638f5712a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB86CFd04F6dA9329F7d3bDCf06E462fbD4DB8aA2",
+      "txHash": "0xe5d34886944c789008f4c093f6bc64dad4dc2db0e46a0ea0e6bf48ab55dd20dc",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x23488D754611195e9325CeE2B4D72062956c62f3",
+      "txHash": "0xcbcd97a6e7291af459bea3d5f886eba71845cd4f6ddeaa19968c79d2ac758ec0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3BCA40d0699Fa7801A4936D8941F415202AcC735",
+      "txHash": "0x7cf1b3d5d72f90f336e312dded270a6277e2ee6ca0a3a844716f3861d01b5f9c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x77F015842d4d9Fd8C44421905f0d6015fE2731F6",
+      "txHash": "0xa35e61d1240819afd09b5faac789370cf9fa7af31a1b1452be763471064681c9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xefa174d14af47d41d1121B765fF182E23569D596",
+      "txHash": "0x196774b85de13fb2e63e7dace115c1e4a217fa4c7303049fdcb4acdf60424212",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf59E14a2ee7bd915841e978485CF45aC9b28c840",
+      "txHash": "0xe4bc265454800e08ad12c414bc13801ebd4aef69d5b4ec954a010c6abd74e24b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x677F788044Cbe2459eE96308178ea7DB3846D9f1",
+      "txHash": "0x8b7aa9d818c1c0c5df1f0754533a48ce8b590de2563b8cdb8b3cc6f9922ad192",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xea2CC15E551AdC067005EEb0102fb81dedee84F2",
+      "txHash": "0x08b1c5b651dd716377f06d4278099e719b9f49b5177b67258c7f1e0573e0a496",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8aB32802cCcE5a877aC5fc45691e546294067165",
+      "txHash": "0x56d45fe82b038135b26d91ff625d3d8c2b2ad15aedf0065fdc05c33be68eeb92",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA3664Dd3A8cA12B572739e4428D39607d1ef53DE",
+      "txHash": "0xfebf7ea54874c2a00625c4350e0c1d2f97c4cf1e260271bf9effb1f1a84e6a98",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4Bd551C7ab13bA2cC32e8c2DA1981F65b5dd715B",
+      "txHash": "0x754a4b122d94435572a9437013b818c956e171ef30c54e9e4f6cc4cc78a53386",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc81379E04353C726CA88929b662255Fc1Af540aA",
+      "txHash": "0xa2d7c99b46f0b3572df0e66f0037341f6da4501cde30d8c10d9826b4bdb8a6f8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x89dA74ba1e9EC459c19ED8c683D5d652EE17C952",
+      "txHash": "0x96a52ae312a7030c5b606763f9b5de399a8b65a6abd149b8f48f6b7a6b1fbaa9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xF0Cb305b6e618B133B5284A5555d152eb2ff81E4",
+      "txHash": "0xed9e32f5503e321df03f8d73146e51733162a3e1a8c4e8ea06ea38482c133268",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD003822AE06C463D26963198F772A44c194a1571",
+      "txHash": "0x4fba7f9c54a0b2c53858ac37712efc0f6409b58951567fa3e7e83daf0ee6993b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xbd39587C2C4560dC73547475a0c3f58351eb8c22",
+      "txHash": "0xd64c7628650858efeb2d9ee233b29972f04d8834d8ff1e0716bfd79f5101ef5a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x303c2760Db42141699f2c8Bdec28663b21663972",
+      "txHash": "0xcdd75837bf774fad90de2671e7386209d735a3bc07cbe6300bba7abe27e5634a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x186f22f1735310a13aEAc7067CBDC9891953AEFa",
+      "txHash": "0xb2ff7d8f9dad14beb66c45b99c6ee23f3eb0d81633fad37401c17fabef621238",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc9aDEcb8811421fF4fe2A50169A630bfDA8E5c34",
+      "txHash": "0xe687ff6f764057af35e9ccfa37359f82b007142e5ecf26814b55ba8ea83073c7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x65ffFcc241a4318b50B9C5Cd4DdeA5b816BFE82f",
+      "txHash": "0xaa8f8f284ecf6c3b6e83d0569fdb2d539195e2d8eb8ed8a70d3d86c3436e8e95",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8A21D472ea5388Bf0c58E895c4BD55857947Bf34",
+      "txHash": "0x35f0925c5fc711bad4f1651c7870eab9df96550ba045ce7ff83a314ddc2e18ea",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x259E0078cF8aDA348869AF7f2aE6077Fa219d52b",
+      "txHash": "0x98cab84e943fb813afa740a6a14e10e3455a22711adb0a1641f2642c89fd1818",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x58FD5BfB3520182Ffe2c538f46253D71Cc6207C5",
+      "txHash": "0xff578919cd9c2ee030b35067db95cfae5072a4f308a36dac24b1506f4dd14a9a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x153Eb700b7b9E1136a9374bF0CA72896980323a4",
+      "txHash": "0x6e32f01d165f5fa60d1954cc6c04786436c672af407892b62f140620b0a95ffa",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x090CEd7AA36f37e7150b9b9B94f6Ee5b136f03E2",
+      "txHash": "0x4e6a6cb2974ce42adafd29dd002039d8ded85b2571bb027f9355ca7f0fd6cdb2",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB817F4e6Cd10e49593771Fa9D0992a0fEc790331",
+      "txHash": "0x846fa34bcccc3ccec7a78e68a0476b0705946e645344c5f7d1dad7c7e3fca1e4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x40e0a31aA05FC0344e2Eba35171c0390cB260854",
+      "txHash": "0x75eb1deb5e2fdf59cdaa4e4fae2fb8023bae3ce72ad7dd5c6dc42ea18bf76d0b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc72346B8E3F731047922B05691d754512cf1b336",
+      "txHash": "0xab9fa7117b2ebd97779eafbdd582a60348c36442af10ac5fc2cddb487c73e067",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x314c2847b2841925Af39F248c803eDd990a023Ed",
+      "txHash": "0x222ab3ab8e5d95e172b6b69e9eec1580225263b6698341a8f7f166b422984544",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x378e6291e8629a5Fb80D362D5370A0edd1DD28b0",
+      "txHash": "0xe224b9fc3f1159f19a0536739a1c8f4d68c8280b97837e6e40489a64085abb8a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdE967fF9d04d9a7cA864c0ffeFd1b3DdfB473426",
+      "txHash": "0xb82acbef422b246298964bbcaa0bbe74a0061622306b868927416b56cc25bc45",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xabf528a9D9eCA80aBb15F092dDac46cfe8dAbeab",
+      "txHash": "0xf6aa7178c68ec798232cf2509f096cb57ccd495655da254f797b488eb56ea14e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd7a665c75E581ecb885750fC406f6394d56E842A",
+      "txHash": "0xec5ecdc7ce1a5f64145f1ea61a6f430240bcb418849e1136fa625257a7880477",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3C7535A2d306483fe72535D3e8eC657104Afd7A8",
+      "txHash": "0x652c754b4258da2590f20d02be2911059cfc9776869afa662fd00b848235a7ee",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5bad18A71403D0fc4c5c0ed8b12faD52C27E2d0E",
+      "txHash": "0x8cf1c187f67028ac4652595e57c79d76885b12d882f58f704d013b719313bc43",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5c5F058359B7104c1A66AAfDa1A0e8047ad7711D",
+      "txHash": "0x71ecd1b100f7095b6ea842346dd98c780827875f4a678210f9ca830a593b2666",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5558F0A1AF0C60AFd86014e32CE409B6E46D8De5",
+      "txHash": "0x9b2eb263cad138c6ed03d647c17ca53560157bbbbebcb19812a392c8c9a4c170",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2E2dFa312e3d45c91d74D65c5b971977Ff83114a",
+      "txHash": "0xad5628c8e54a093eb1204cd2379092bf3d5903cecebd2e4f4e5d2e73c0c19ef8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3A7699B30C49C3cC805A983c62ab04203aa992b3",
+      "txHash": "0x7b9b7cf05f3966292e1e70840745fc11a433fe275d99e07806df7e9e47769889",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdB74F1E39d693aeC6E151a2555E5147efFF615C6",
+      "txHash": "0x69bc181401b81a578a1e02ed2f7ecda082b029b2198b4ca6a7eeb5a9d92652c5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x94ba7d31360b9fe3FADBa75b33F37B7b9D893C6A",
+      "txHash": "0x3805f31db31e80b492b3b5526fbe83d7ef1fbdb2b260e9b1554ef3b6234c0fed",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3221F0e10F680C76b28902e3da0b2e04d2e158cd",
+      "txHash": "0xf5e53fefa7eb6de25ee629715f5f62830976451d1ec841a753173b0eb6686087",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x576AA7cCE116F7e0E2858F86514f6EeF4469E8C5",
+      "txHash": "0xfc797b6bc29bd6ae4263f6b22da5fd942af7808c89e973318a4b5257a37b9392",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD0De22f5F741B139E3cc446B55F5F9E88fd5802D",
+      "txHash": "0xd9ac70fe90f58f6b41c9e732adb94937b557df2468da50e901fae0395875866e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd1D61e27877A6fbC0fC30b447B5eD16317edF78f",
+      "txHash": "0xfaf4b1d332e6e9f328084d74d1dffd55976bfd95f44fb440c3b95cd242393275",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC0e8C8D35d235F8c983B7f4ad1dCCe343134f7ad",
+      "txHash": "0xa3440129098c840c2f73ac4f3e2e85018488583a3f6e0e39b3d1ec9d18004e1e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5039a4b330687d887475b4D6b7dB424FbeE32ED7",
+      "txHash": "0xf62f73138564b42b3ac833b6cab37b0464b6679555c77c2c094788ecdc79347c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe2c4Af97ce1aA44Ec197EC7686c96c2a60f038c7",
+      "txHash": "0x28825cae540029e67e36fe53880d7a4cbfbe65a472ea288c0c948991ceb304dd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2238a119e7a1A7016855fb03334C308e719FA096",
+      "txHash": "0x23b16fa819810b732e99da282d8cf014509d65e0d8838541649cc4d2f4a4b0f1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2A0D6bcb34F8781FC1a567ab1AF829f3f8896Ab1",
+      "txHash": "0x78c75d75ef7dbcf7597a83f739cf5275203f32298920199979204a6660b30f8b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x198BeBB989C4c1261066a6904A9CE51A79851357",
+      "txHash": "0x34c5aa211e13e18edb0bacdc5ee97cf5ac10209534cecbcc82a3fe1ed0773cea",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x441abe4A112a18cF6a5D1Ad7EB1268c9AfE47FD1",
+      "txHash": "0x209c5d670fd15c5e92080401a99b859f0238e43da1078b7cdd1eb4953a4774ce",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xFC765514813BA7b560D8C98D63136DFf6a8B8375",
+      "txHash": "0x6efe21d7099a0ba5379bd5a65456e5a07b83f8bc84e11e9f557cfd9d0f82da77",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x23a48c820630487283e347736e010320464f306b",
+      "txHash": "0xc58a8af9c922e2924b09f4ed0391c7e84f203724f91b612ae2afe0c31679b186",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2f42AF7dE3840BdA1FF1c7E81f480F398238fD11",
+      "txHash": "0xc6e2310a70a432f5289ddd29ecad60fb75659077c7cafb5c48365ca15073b774",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0B7618bDCB801f04B790968111d07e3394806CF7",
+      "txHash": "0xd18126683cd0ae5e1673a5bad583fbbe9652c5ca3cab35c277bd6fecee333139",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6F4B1FA389b17056aB96fB98A8F8039901dc40A3",
+      "txHash": "0x551e4c71f1e00c3b81a577968014e3bdc61ad8e4f980dc24d72af49a7c4cec84",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xEA97A3297f44D62cfC40b725D807192BebCB0a2A",
+      "txHash": "0x0296b05bfeb319b207b82211e8c7be8db9a2b3a4bc7e0f92e6d4d3d1ac7782a9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x72970dB969D1744Ab1f4e11Bff24f0C88d4928F2",
+      "txHash": "0x910d4ca89cb55169d18e3fffe8804e448eb1d3f15f0e81c56362379dec28ac1a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x00f804cBe65659df4D6F936A8056C7C84A1e5012",
+      "txHash": "0x190600a1d639f59fc6042b4257f0e540173a2f4cc6d43c17b2447a4ea505f300",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xffC0004C7A21fEAfA840dCfAb4BEb5FfFA2e159B",
+      "txHash": "0x1c594010c964adaedbc7a44523f65b7954c6835a4029b69bffe9a38ed3d2481d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2f2e1348d8fFC4C67034eaDD916BfDA4bf783D09",
+      "txHash": "0xc8bda3d15fc59a0b653bbc4603b99d010d67a146614abc2c8b9efb90b365af2a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf971536b1fF8E63EB123C335631140EdF58328a6",
+      "txHash": "0x2597e1c7f610b1082e52a4a87e9173a8635e1da1fccd533837f6fa0c7b7eaa10",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xccF2213E789F8BdD174fFC9E418D758Ae8E6e5E5",
+      "txHash": "0x31f8dfc60667b724e5d4cc7d01aab2532bdafc524b514d2d2d01af7de259cc47",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xafC2da73794Bfd82688538Ee5Ff30Ba3DDD90ffa",
+      "txHash": "0xb26c66e43fc12b4ded0fb57c6bf3ef78d4b09fa6052ca15e97ceb2ac04bd009a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xFE86f0a905A642eaAB9E909c84A5dE4D93E516C0",
+      "txHash": "0x7193e862f173efca3282b0d780188c69056e221fcaa1b0ec8b474890ebee3ea4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC5A4504811e16feF7bb41BE3eD7B4d3153345e30",
+      "txHash": "0x9f835d9d0362579d0cb40bebc8dc1f19a62fdde4f6b55873cd3f7d6ca5b01abb",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD62e80C6E22B373adABC94D5F08FBC7318893e60",
+      "txHash": "0xa57a6d9153d0bc7347c6e4a03289c1c41005b4ef3c2e31d932fe23747e194994",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3adCA8B6981e97Fea5acBe81E385E15195Cc4B8F",
+      "txHash": "0xf100e0880b40c8f723e364289c507dc53a1f877507c7883a9ac3b20d9439a4e0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x169B27581f85F2c477857620aC9dcC1C82E9B6e8",
+      "txHash": "0xb0bf4e5ebe849361442e8a53a5eef512d38b91c22c682a34175dc3d5bbdc0b8c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xcb8680A73822F972c63d6915d34E285BbC760375",
+      "txHash": "0x31026fe004a3835d4bce72bc79a3b2e8c3c5d312d8ab06399a4495688d560d17",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x61e0b43037c2EDF0b4fFBa7712E74489640fcF6C",
+      "txHash": "0x6edfb8ebd34739a80447ec35495db6853fe3120146dfca2449d8cf139f7c7187",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x14F263505eb9DAfF3C434A7D289dE5C55fE52c57",
+      "txHash": "0xf92614ba5cce7a21038a888ca044f0f60b63040735a0bdeb5e78e1ed4bdb9d93",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x99D8528b208c68123B4eE96b20E315746a4B27Ed",
+      "txHash": "0x8cc59d83ee4eacd69091ab05207a4b199b746dc2f3e7cf1c1ec37475a44e9346",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1009C6C6b329fa2326F0A16E1d08c176C180E156",
+      "txHash": "0x085fe270a7fa22c66e17fcac3a1094a3a7edb57d274b40be6345444a07179d51",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x183B078779Ac063B8bF4aC257B830004eFbA7BF0",
+      "txHash": "0xb92f603aa12bda908a434520e290ae22b7c23cc27e7e2d1a54f2501d286630c3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf22D92e62969756c2752cA3aDFE9C18F129dF786",
+      "txHash": "0x2887c3ac4637e3d3632372d91e77767e282d6fea694fc7b5680ff6ea83f68285",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5c8F0DC190E52Cd985Bd77e41AdB226a0d32A9bB",
+      "txHash": "0x1d19e20fd7fa8bd249f7da4831c354120ae4a3688856733fa960f2f2c2aac866",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5C76D2d8Ecf9FEbe607C04d89f726eBC47b93dDD",
+      "txHash": "0x00b3f81310536c0a83fbadc83013154e8448c34b62817ec5be8a0cb9d0f05f9c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9626F286a8B41c41798C978D35ebD9B8b69c1b26",
+      "txHash": "0xe3d39e02861c4ce95e5a41c096f38160b4c947d785ee08891d115ec624730c54",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xEEBF577Ffa15f9c1a0C6E7611D1876cd9376c2E8",
+      "txHash": "0x93c62172fd59049851fdfe91ca6ecf8ae595a416b469deef92f5f3ec2ac59e82",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x05c008DDdB34FA8Bad4481f6CF7c1Be471B935D5",
+      "txHash": "0xccf95dd53717f44b5a3560f029c247aae62329cb4e7d10ea02293e949df9c8f3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1FCb6Bd1364534Bc36B5ed391247573A62A7464A",
+      "txHash": "0x3cb19eb423597d76f2e41239d422b80b7cb68b1a3934998b1e45d75b742af182",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAad85B28Dfd081bd898aecef5121f27d3B1a3013",
+      "txHash": "0x15a58917e6c738f869f014eacff10acf6df3f5a5da6224a9a638ecbb85dc9a10",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x854F27Ae73FbFa1Be48a196Cd29517d878F03EcF",
+      "txHash": "0xfe3b9a3333677d27932e4855cca6a2434f0603a626d51c7b58ef1516deb54a68",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x86d0C71a2d44f6Ec49B166D437a1532573b76721",
+      "txHash": "0xf746fb2e2e424962f7ab16e8217cbd2ac0522f200667b781a5e3492ce5ba2bd4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCb3Fa90FecAB6b59841e64fD8F07D5cc17cBfc71",
+      "txHash": "0x4d1b3f5a2d5a8606ee3f845eadc8bdb99a214300242b52b015b48e94d0dd1b9c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x192e6e49De6830C3F4fFCAb7444D24FD057416C9",
+      "txHash": "0xbe42856b73a6b82d2cd0676a6802a11c048994052524622519137083e281397c",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -3247,6 +3767,1444 @@
             "numberOfBytes": "32"
           },
           "t_struct(UnstakeRequest)9056_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "cb35f09ecd0b86ab3455be1952638fec79dd54498007a64e9ffb52df3b801eda": {
+      "address": "0x6a8B1bd4640C206e135439830F63751cb004E209",
+      "txHash": "0x634a9edfbe08a30b10e90f561ad4c4fa4e19cf898e5442021802788c7c5f6dd2",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9371",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)8934",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(LiquidityProviderPool)8408",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(InviTokenStake)7477",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)8976",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)9871_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9871_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IBfcLiquidStaking)8976": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)9371": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(InviTokenStake)7477": {
+            "label": "contract InviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(LiquidityProviderPool)8408": {
+            "label": "contract LiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)8934": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9871_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "5c717bffa86ca86c5029310a99a0ee6fe6980d37e78dd7df1a0c4c4c276037b7": {
+      "address": "0x5BB733BE3834bf00ea4A465e9Ce16eE4Ac04b425",
+      "txHash": "0xd7b7c6332f41ad7c903d21331d887dc55a3af167601642bbcfdd02cfa07f75d4",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9371",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:15"
+          },
+          {
+            "label": "inviCoreAddress",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:16"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:19"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:20"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:21"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:22"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:25"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:26"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:27"
+          },
+          {
+            "label": "addressList",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:30"
+          },
+          {
+            "label": "totalAddressNumber",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)9371": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "873d6b271210978e3c01b4c1fbf7ad763d9e9e652fd81edcd28dc3471e7a2998": {
+      "address": "0xB1b45E3cc2529673D61DA34A606ba4733280f2EF",
+      "txHash": "0xea7b161668cc49db42a3ef17b4d55ccafaff01226791cf8a7875001f9bd7a980",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "iLP",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9371",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:15"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)9371",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:16"
+          },
+          {
+            "label": "inviCoreContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcInviCore)4950",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:17"
+          },
+          {
+            "label": "ILPHolders",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:18"
+          },
+          {
+            "label": "liquidityAllowableRatio",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:21"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:22"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:23"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:24"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:30"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:31"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:32"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:33"
+          },
+          {
+            "label": "totalLentAmount",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviCore)4950": {
+            "label": "contract BfcInviCore",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)9371": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "06490df2444e6978be46da03800913ae36e006e37e9cce9504a7d4fe7d490791": {
+      "address": "0xCB77e6d8E0e2E84B5C27f5d65d587798a85f1616",
+      "txHash": "0xd7112870220c326e619ea8a625c5b36c40bebbc3a344644d8d49dab2b45bd84c",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "iLP",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)7212",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:15"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)7212",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:16"
+          },
+          {
+            "label": "inviCoreContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcInviCore)4950",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:17"
+          },
+          {
+            "label": "ILPHolders",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:18"
+          },
+          {
+            "label": "liquidityAllowableRatio",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:21"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:22"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:23"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:24"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:30"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:31"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:32"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:33"
+          },
+          {
+            "label": "totalLentAmount",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviCore)4950": {
+            "label": "contract BfcInviCore",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)7212": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "8c42d18db7322d4cae994a111cde2f47ecfd979a2dcfe6a5defde2e8d77f6fd7": {
+      "address": "0x5d5edBe9990962d404bC6E387E6715c58B60A621",
+      "txHash": "0x205f477a99c7be618003c84a052dccde8f972203a932b06bdc78115732fb4c8d",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9353",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)8916",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5790",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5346",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)8958",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5346": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5790": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)8958": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)9353": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)8916": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9861_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "7f8ab21074d35fc489d2a71932229d7a7b01364badb3e7d2f8dd8cde264d358a": {
+      "address": "0xBB370D54E267a1bdD1863ed777CCB20190Fb7d0F",
+      "txHash": "0x0a22932a68fa0d21e167cdfa27f70111364a6a6e8f10076cfe5f97ab6760730b",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9353",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)8916",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5790",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5346",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)8958",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5346": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5790": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)8958": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)9353": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)8916": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9861_storage": {
             "label": "struct UnstakeRequest",
             "members": [
               {

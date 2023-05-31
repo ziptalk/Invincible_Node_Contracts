@@ -38,33 +38,41 @@ describe("Invi core service test", function () {
   it("Test stake function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
+    let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
+    let nonceLP = await ethers.provider.getTransactionCount(LP.address);
+    let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
+    let tx;
+
     //* given
-    const lpAmount = 100000000000;
+    const lpAmount: number = 100000000000;
     const previousUserNftBalance = await stakeNFTContract.balanceOf(userA.address);
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
     const previousTotalLentAmount = await lpPoolContract.totalLentAmount();
     const previousStakeNFTTotalStakedAmount = await stakeNFTContract.totalStakedAmount();
-    await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
+    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP++); // lp stake
+
+    console.log("provided liquidity");
 
     //* when
     const principal = 1000000;
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
+    console.log("minLockPeriod: ", minLockPeriod);
     const lockPeriod = minLockPeriod * 2;
-    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod); // userA stake
+    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
     console.log("StakeInfo: ", stakeInfo);
 
     //* then
-    const stakedAmount = stakeInfo.stakedAmount;
-    const lentAmount = stakedAmount - principal;
-    // expect(await stakeNFTContract.balanceOf(userA.address)).to.equal(parseInt(previousUserNftBalance));
-    // expect(await lpPoolContract.totalStakedAmount()).to.equal(previousTotalStakedAmount + lpAmount);
-    // expect(await lpPoolContract.totalLentAmount()).to.equal(previousTotalLentAmount + lentAmount);
-    // expect(await stakeNFTContract.totalStakedAmount()).to.equal(previousStakeNFTTotalStakedAmount + principal + lentAmount);
-    console.log("staked amount: ", stakedAmount);
-    console.log("lent amount: ", lentAmount);
-    console.log("total staked amount: ", await lpPoolContract.totalStakedAmount());
-    console.log("total lent amount: ", await lpPoolContract.totalLentAmount());
-    console.log("total staked amount in stakeNFT: ", await stakeNFTContract.totalStakedAmount());
+    const stakedAmount: number = stakeInfo.stakedAmount;
+    const lentAmount: number = stakedAmount - principal;
+
+    let userNftBalance = await stakeNFTContract.connect(userA).balanceOf(userA.address);
+    let totalStakedAmount = await lpPoolContract.connect(userA).totalStakedAmount();
+    let totalLentAmount = await lpPoolContract.connect(userA).totalLentAmount();
+    let stakeNFTTotalStakedAmount = await stakeNFTContract.connect(userA).totalStakedAmount();
+    expect(userNftBalance).to.equal(parseInt(previousUserNftBalance) + 1);
+    expect(totalStakedAmount).to.equal(parseInt(previousTotalStakedAmount) + lpAmount);
+    expect(totalLentAmount).to.equal(parseInt(previousTotalLentAmount) + lentAmount);
+    expect(stakeNFTTotalStakedAmount).to.equal(parseInt(previousStakeNFTTotalStakedAmount) + principal + lentAmount);
   });
 });
