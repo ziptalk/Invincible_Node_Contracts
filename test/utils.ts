@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { ethers } from "ethers";
 import units from "./units.json";
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };
@@ -12,7 +12,7 @@ export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWit
 export const leverageStake = async (
   inviCoreContract: Contract,
   user: SignerWithAddress,
-  principal: number,
+  principal: BigNumber,
   leverageRatio: number,
   lockPeriod: number,
   nonce: number

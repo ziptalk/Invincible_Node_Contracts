@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
-import { deployAllWithSetting } from "../deploy";
-import units from "../units.json";
-import { testAddressBfc } from "../../scripts/testAddresses/address.bfc";
-import { currentNetwork } from "../currentNetwork";
+import { deployAllWithSetting } from "../../deploy";
+import units from "../../units.json";
+import { testAddressBfc } from "../../../scripts/testAddresses/address.bfc";
+import { currentNetwork } from "../../currentNetwork";
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 

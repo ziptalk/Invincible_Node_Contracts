@@ -1,15 +1,11 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
-import { deployAllWithSetting } from "../../deploy";
-import units from "../../units.json";
-import { provideLiquidity, leverageStake, verifyRequest } from "../../utils";
-import { testAddressBfc } from "../../../scripts/testAddresses/address.bfc";
-import { currentNetwork } from "../../currentNetwork";
+import { deployAllWithSetting } from "../../../deploy";
+import units from "../../../units.json";
+import { provideLiquidity, leverageStake, verifyRequest } from "../../../utils";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
-
-let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 
 describe("Invi core service test", function () {
   let stKlayContract: Contract;
@@ -20,14 +16,8 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    if (network === "BIFROST") {
-      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
-      inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddressBfc.inviTokenStakeContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
-    } else {
-      ({ inviCoreContract, inviTokenStakeContract, stKlayContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
-    }
+
+    ({ inviCoreContract, inviTokenStakeContract, stKlayContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test repayNFT function", async () => {
@@ -56,12 +46,12 @@ describe("Invi core service test", function () {
     console.log("stake info: ", nftStakeInfo);
 
     // // mint reward
-    // const pureReward = 10000000;
-    // await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principal + pureReward);
+    const pureReward = 10000000;
+    await stKlayContract.connect(deployer).mintToken(stakeManager.address, lpAmount + principal + pureReward);
 
     // distribute reward
-    // const distribute = await inviCoreContract.connect(deployer).distributeStTokenReward({ nonce: nonceDeployer++ });
-    // console.log("distribute: ", distribute);
+    const distribute = await inviCoreContract.connect(deployer).distributeStTokenReward({ nonce: nonceDeployer++ });
+    console.log("distribute: ", distribute);
 
     // init value
     const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
@@ -70,10 +60,9 @@ describe("Invi core service test", function () {
     console.log(initTotalUserStakedAmount, initTotalLPStakedAmount, initTotalLentAmount);
 
     //* when
-    if (network === "LOCAL") {
-      await ethers.provider.send("evm_increaseTime", [nftStakeInfo.lockPeriod.toNumber()]); // time move to repay nft
-      await ethers.provider.send("evm_mine", []);
-    }
+
+    await ethers.provider.send("evm_increaseTime", [nftStakeInfo.lockPeriod.toNumber()]); // time move to repay nft
+    await ethers.provider.send("evm_mine", []);
 
     const repay = await inviCoreContract.connect(userA).repayNFT(nftId, { nonce: ++nonceUserA });
     await repay.wait();

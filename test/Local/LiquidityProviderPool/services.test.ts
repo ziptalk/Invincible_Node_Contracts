@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
-import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
-import { provideLiquidity } from "../utils";
-import { testAddressBfc } from "../../scripts/testAddresses/address.bfc";
-import { currentNetwork } from "../currentNetwork";
+import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../../deploy";
+import { provideLiquidity } from "../../utils";
+import { testAddressBfc } from "../../../scripts/testAddresses/address.bfc";
+import { currentNetwork } from "../../currentNetwork";
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS, LOCAL
 

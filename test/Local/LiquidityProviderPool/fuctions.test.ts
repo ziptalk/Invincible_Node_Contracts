@@ -1,14 +1,14 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber, Contract } from "ethers";
-import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../deploy";
+import { deployInviToken, deployILPToken, deployLpPoolContract, deployAllWithSetting } from "../../deploy";
 
 describe("Liquidity Provider Pool Test", function () {
   let lpPoolContract: Contract;
   let iLPTokenContract: Contract;
 
   this.beforeEach(async () => {
-    ({iLPTokenContract, lpPoolContract} = await deployAllWithSetting());
+    ({ iLPTokenContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test getRewardAmount success", async () => {

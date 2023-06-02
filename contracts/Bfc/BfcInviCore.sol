@@ -268,6 +268,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;
 
+        // request unstake to bfcLiquidStaking
+        bfcLiquidStaking.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
+
         // create unstake request for LPs
         UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), lpReward, 0, 1);
         // create unstake request for INVI stakers

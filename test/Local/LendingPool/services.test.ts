@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import { deployAllWithSetting } from "../deploy";
-import { leverageStake, provideLiquidity } from "../utils";
-import units from "../units.json";
+import { deployAllWithSetting } from "../../deploy";
+import { leverageStake, provideLiquidity } from "../../utils";
+import units from "../../units.json";
 
 describe("LendingPool contract services test", function () {
   let lpPoolContract: Contract;

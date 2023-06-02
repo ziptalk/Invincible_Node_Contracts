@@ -10,15 +10,13 @@ import {
   deployInviTokenStakeContract,
   deployStKlay,
   deployAllWithSetting,
-} from "../../deploy";
-import units from "../../units.json";
-import { leverageStake, provideLiquidity, verifyRequest } from "../../utils";
-import { currentNetwork } from "../../currentNetwork";
-import { testAddressBfc } from "../../../scripts/testAddresses/address.bfc";
+} from "../../../deploy";
+import units from "../../../units.json";
+import { leverageStake, provideLiquidity, verifyRequest } from "../../../utils";
+import { currentNetwork } from "../../../currentNetwork";
+import { testAddressBfc } from "../../../../scripts/testAddresses/address.bfc";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
-
-let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 
 describe("Invi core service test", function () {
   let stKlayContract: Contract;
@@ -29,14 +27,8 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    if (network === "BIFROST") {
-      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
-      inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddressBfc.inviTokenStakeContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
-    } else {
-      ({ inviCoreContract, inviTokenStakeContract, stKlayContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
-    }
+
+    ({ inviCoreContract, inviTokenStakeContract, stKlayContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test stToken reward distribute function", async () => {

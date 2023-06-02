@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
-import { deployAllWithSetting } from "../deploy";
+import { deployAllWithSetting } from "../../deploy";
 import Web3 from "web3";
-import units from "../units.json";
+import units from "../../units.json";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 

@@ -10,14 +10,12 @@ import {
   deployInviTokenStakeContract,
   deployStKlay,
   deployAllWithSetting,
-} from "../../deploy";
-import units from "../../units.json";
-import { provideLiquidity, leverageStake } from "../../utils";
-import { testAddressBfc } from "../../../scripts/testAddresses/address.bfc";
-import { currentNetwork } from "../../currentNetwork";
+} from "../../../deploy";
+import units from "../../../units.json";
+import { provideLiquidity, leverageStake } from "../../../utils";
+import { testAddressBfc } from "../../../../scripts/testAddresses/address.bfc";
+import { currentNetwork } from "../../../currentNetwork";
 const { expectRevert } = require("@openzeppelin/test-helpers");
-
-let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -26,13 +24,8 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    if (network === "BIFROST") {
-      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
-    } else {
-      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
-    }
+
+    ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
   });
 
   it("Test stake function", async () => {
@@ -71,8 +64,8 @@ describe("Invi core service test", function () {
     let totalLentAmount = await lpPoolContract.connect(userA).totalLentAmount();
     let stakeNFTTotalStakedAmount = await stakeNFTContract.connect(userA).totalStakedAmount();
     expect(userNftBalance).to.equal(parseInt(previousUserNftBalance) + 1);
-    expect(totalStakedAmount).to.equal(parseInt(previousTotalStakedAmount) + lpAmount);
-    expect(totalLentAmount).to.equal(parseInt(previousTotalLentAmount) + lentAmount);
-    expect(stakeNFTTotalStakedAmount).to.equal(parseInt(previousStakeNFTTotalStakedAmount) + principal + lentAmount);
+    expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
+    expect(totalLentAmount).to.equal(BigNumber.from(previousTotalLentAmount).add(lentAmount));
+    expect(stakeNFTTotalStakedAmount).to.equal(BigNumber.from(previousStakeNFTTotalStakedAmount).add(principal).add(lentAmount));
   });
 });
