@@ -1,8 +1,8 @@
 export const bfcAddress = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
-  bfcLiquidStaking: "0xa19CD2A10b20Da5b381E6e7DEBEE9811F7F247F9",
-  stBfc: "0x8CEc1c99c41d5e3a39445c187C3C48d2a20EF934",
+  bfcLiquidStaking: "0x1a21fa82DE8604A6f8C7cb406d1D218d4b20Ff7E",
+  stBfc: "0x9b621ef60F6FcDcf7C24400f93Ba4357Bd00f1Af",
 
   inviTokenContractAddress: "0x5C70339f807aeFe4A63614F1a980426F854E1CF3",
   iLPTokenContractAddress: "0x223bb60926b367A190E5aC44240a799ABfdF2191",

@@ -262,7 +262,6 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         // get total rewards
         uint totalReward = stToken.balanceOf(address(this)) - totalStakedAmount;
-
         // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;

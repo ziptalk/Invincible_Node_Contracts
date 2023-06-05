@@ -1454,6 +1454,151 @@
       "address": "0x6c16189cdc93C5E8BFaefbd47adAe54F12C6D5d7",
       "txHash": "0x7ba6c78f83879b1b097147ef87b32fce934ab6f9aa100f9d0f7a583be6c91726",
       "kind": "transparent"
+    },
+    {
+      "address": "0xEDa987d8968c8d58fc1Fc7aF38eE3cc7390D3cd1",
+      "txHash": "0xea5a29f8f3690fe3ebf637c7d1cd572058d489ac2ed1fdaa1daa42df034165a2",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA67E0A7DFEA3c733845A28b6896dCB95a76Ce8Bb",
+      "txHash": "0xd6db6fd6378d9c32ae1fbd260b87a13f40e4f3b6eb4463ac3ffa921894e0bc4d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1e0D7EA389549fC890083223B96cdE7b77fBE0bA",
+      "txHash": "0x252a99ed6d79a1296cb5bb2bd4a18f7ccafd12cb3661ed05e6b9046cee3b8448",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe50B582f67E0bdf637708A9f1082CB52803E0644",
+      "txHash": "0xa238e9996f53aae3191b289675ec7a4693165f62fd816e4c7681286271021e25",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x27D54b41396B7F6A7CAb5595220CA4B731260b83",
+      "txHash": "0xa7319ebee50efa575c64277018372edff9dc6a3219c0cd29cb65ceb97048c761",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5eC26A58D18164a3616a77cEe77Dab2F8127203C",
+      "txHash": "0x387271d0c993433e820e20a5fa59f7048000a7534d8ee18349c6935e070315e1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4147a7246EFA7E32D9E16d7cA6359f5c18D22b6E",
+      "txHash": "0x6c273e0fdb9464c740360e46809f993ab32fc8bd5f01aa7fa7fdd9c2c22128ca",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe512157245fD8f6D337Ab211cD5895b1653D7233",
+      "txHash": "0x5ccad96884d62122ae981620653e681a6b92df24c3af668986415b5fcd97b9ca",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x15aBC992EA3019371dB62C8df5b54Db7B9BF09B6",
+      "txHash": "0x08589a0d307f1a1e3f2313874e5f3200c255adac9f2bb6bae2f2fe834f74d40d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa724f71661EbCcAb85041305bE9046df4ce1c947",
+      "txHash": "0xf78d4d3990fbfccfc97df42b467667dd2f3c73cc16e36707a0361ab683ee2992",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x51D0cD3B59e7106E895413BF76158963474994ED",
+      "txHash": "0x56810e6075543848f1600ddd17c3d92d1b0b9e228b946bc4b27279881d5ac8b3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9B0f9E45142af097aAa8C07bdc37D0ce9eF86150",
+      "txHash": "0xa7ea209108a52df1abc3a7562601b4513e91c1852607c714f3d237efd9ea3333",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x34AD9ab7B886cc7cD95b86783163569D7bD4c280",
+      "txHash": "0x9d90c42c2a64a82124d4b97e75d87c8ab402574e77f66b98963e9d0c384fe44a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd8041B8EFECA30630583bEa100B07E2e53c4De32",
+      "txHash": "0x42d8067a47a60b126a83b9aab52911cdc7d1da2d6ef6985e13960485ac681c84",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x29C01cfBEA4a66D8F85fb59994aB995ceA485177",
+      "txHash": "0xdc55601d5c00aeb1f64fb4fc2cb3aba04c2337ecbc92a8b58ccd9c74880e9704",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xABBAE24ef47393831c996cf891C98BE1Bd50926D",
+      "txHash": "0x26dac931b0da43da4882e5da43a6bd62ecd82a27bc7b53239dedf6bfb0bc632b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x15305caBfe72AA35bb785517D8778F6708F22D60",
+      "txHash": "0xbf6cb7c0bf78894bdf15381ee40e5e7d86b7a811a2f63a4abd036825701e1163",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x85A57c52B787046419C16130A84f17391b282677",
+      "txHash": "0x0d98f08057630192b42653714a2a8bbfffa451d099aac0a99f517a64faf9f95d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5341B4C8e2c88d787f481789C7D5C02fb30C7Cca",
+      "txHash": "0xec6118ecfaea73e3206ad74326ec5b92abcb1edb7184f084fca7bf18b6e09493",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6E33de158Cc06F4b02fa541a8C499D7a50821690",
+      "txHash": "0x5d848fa48e7e4fb12d2578350247872e579c9a9f12d874efb2c9c7f914e2f8c9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x006F7A9534938A6cc61734643Cc54aA44c042BF3",
+      "txHash": "0x637510612bd42dcd6c01fa37630a23ebeb40e48cc65cc3e72276426c9cf010d6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x31a3cb0bc04dF0c6d6186397091f6A8440550B6A",
+      "txHash": "0x417d45c27cd1e6373941ed16420baa27ce2ce9f8e2e34bdd790e20ba3ab92e60",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9Ca42Ea2232fb995353e37c448902dab2597e69a",
+      "txHash": "0xdb3a8144707cd5c64e007b444aecd690adcac59ee3fdc2772c8b03fadc443fa8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x62C118b34DBBf61f858e2eBc2C0D5308A6Bed513",
+      "txHash": "0x2e19a05471dc16560210f1cc64053cb5e3c92cbf2807a75815ee7ae01586573f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x40AcA587749c53e65b4aa65A67620D4BA668e698",
+      "txHash": "0xf4d7e7843721aa87c3866a7b4f2ef629453a4de7d81c29afa0eea9c7832f1893",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5891cE972699E468152190C64f8B7CC4221FdeFE",
+      "txHash": "0xb9339d2b0a3d4c7087d59ed229e5a7c84a90d96feba6c2e35f06300fece3bc62",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3f38e8CD9cf7d0182681C68a23d8989CB0C15945",
+      "txHash": "0x6854edcc11255563556b7ded4e9bfa64fa7d56787a8759b009fa0caa67299beb",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAA893f0e20B980c7646488e4014a8C61f64740E7",
+      "txHash": "0x930466d57e524a817ec28fe56a1df89a7df35eddb2993263d01236c1bf5dc8e0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x310f1820a2182F70F4846B67C995029c23b5D2c6",
+      "txHash": "0x2dc200b5a184044dae4295b71f524f2142225f2ef8e84226cf1be59d2007854e",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -5283,6 +5428,1194 @@
               }
             ],
             "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "f2a53d21871fc107ddabe7496537e8deb1dc79982ff03070e8ff151e8227e7f0": {
+      "address": "0xd1C5890b5Ce4529EBFcFfb1328076ed3C5D963c5",
+      "txHash": "0xab5e8b444b9d90d215cdd5ca06c2e5781016f667997fb9f5157a40ab2e8599b1",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)7222",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)6785",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5800",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5356",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)6827",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)7730_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)7730_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5356": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5800": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)6827": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)7222": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)6785": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)7730_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "ff84534be5c37e9c360a7c5db2954da8696806ff3b30f76cf2dcd34e057a50ab": {
+      "address": "0x8df6EE305b7F3B7Fc36652f9Dc44079AB12B4a52",
+      "txHash": "0x1475d5b5c95269688dd879d0e78c7be2ce3de4cfc3734db2dfb45c79db3ba716",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)9353",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:18"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)8916",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:19"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(LiquidityProviderPool)8390",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:20"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(InviTokenStake)7459",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:21"
+          },
+          {
+            "label": "stakeManager",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_address",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:22"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:29"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:30"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:31"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:32"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:33"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:36"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:40"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:41"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:44"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviCore",
+            "src": "contracts\\InviCore.sol:45"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9861_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)9353": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(InviTokenStake)7459": {
+            "label": "contract InviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(LiquidityProviderPool)8390": {
+            "label": "contract LiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)8916": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9861_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "b110f5c6fd12d35a9b083b6530be51ab9fc731b9453f4eae8306c4b50cb0ce47": {
+      "address": "0xB4784Ddc1d9662d60B5ADa0Ad8584a4b29cA4F8C",
+      "txHash": "0x09cf3ca9d23e6627644ba0f2f38a90a2ad35ad725dd277d61364c10d3529547e",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "priceManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(PriceManager)713",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardNative",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityNative",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalRewardNative",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalRewardInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "nativeFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "nativePrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1108": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(PriceManager)713": {
+            "label": "contract PriceManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "2b7182197a090e1c6119b551dceb35dc62518b4ba65794cdd6af6d0cef92e443": {
+      "address": "0xb4F496784321e7839E21b6E76cc423861a38cA34",
+      "txHash": "0x04da1e8798f71cb0562972776515dfcdf070e1cf0beeaa003c41fa398f6eb158",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "priceManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(PriceManager)713",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardNative",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityNative",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalRewardNative",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalRewardInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "nativeFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "nativePrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1108": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(PriceManager)713": {
+            "label": "contract PriceManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "0d46fd4a580fdfea60fc139d78707adf1487e0a83b54e71e991ab44187602699": {
+      "address": "0x195739f994370A59D77dA3D21C748269f1C5d37B",
+      "txHash": "0xe110afe8bef5ae9ffec6956806d1f896a1fcf10a738981b36d91771e8cfce4e6",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "isptToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:16"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1108",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:17"
+          },
+          {
+            "label": "priceManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(PriceManager)713",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:18"
+          },
+          {
+            "label": "lpLiquidity",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:23"
+          },
+          {
+            "label": "lpRewardNative",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:24"
+          },
+          {
+            "label": "lpRewardInvi",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:25"
+          },
+          {
+            "label": "lpList",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:26"
+          },
+          {
+            "label": "totalLiquidityNative",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:28"
+          },
+          {
+            "label": "totalLiquidityInvi",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:29"
+          },
+          {
+            "label": "totalRewardNative",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:30"
+          },
+          {
+            "label": "totalRewardInvi",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:31"
+          },
+          {
+            "label": "inviFees",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:33"
+          },
+          {
+            "label": "nativeFees",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:34"
+          },
+          {
+            "label": "inviPrice",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:36"
+          },
+          {
+            "label": "nativePrice",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "InviSwapPool",
+            "src": "contracts\\swap\\InviSwapPool.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1108": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(PriceManager)713": {
+            "label": "contract PriceManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
           },
           "t_uint256": {
             "label": "uint256",
