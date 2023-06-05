@@ -13,7 +13,7 @@ import {
 } from "../../../deploy";
 import units from "../../../units.json";
 import { provideLiquidity, leverageStake } from "../../../utils";
-import { testAddressBfc } from "../../../../scripts/testAddresses/address.bfc";
+import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
