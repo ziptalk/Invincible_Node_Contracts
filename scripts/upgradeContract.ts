@@ -2,8 +2,8 @@ import { ethers, upgrades } from "hardhat";
 import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
 
 //--------------------- Change this part ---------------------//
-const targetContract = "InviSwapPool";
-const targetAddress = testAddressBfc.inviSwapPoolContractAddress;
+const targetContract = "BfcInviCore";
+const targetAddress = testAddressBfc.inviCoreContractAddress;
 //=============================================================//
 
 // deploy all contract

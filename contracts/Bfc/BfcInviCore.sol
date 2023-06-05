@@ -248,6 +248,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
 
         // burn NFT & delete stakeInfo
         stakeNFTContract.deleteStakeInfo(_nftTokenId);
+        stakeNFTContract.deleteNFTOwnership(msg.sender, _nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
 
         // create unstake event

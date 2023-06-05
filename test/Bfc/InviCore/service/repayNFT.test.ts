@@ -42,7 +42,7 @@ describe("Invi core service test", function () {
     console.log("user nft list: ", userNftList);
 
     //==================Change This Part==================//
-    const targetNft = 0; // repay first nft
+    const targetNft = 6; // repay first nft
     //==================////////////////==================//
 
     // userA stake
