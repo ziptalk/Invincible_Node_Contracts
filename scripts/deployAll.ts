@@ -2,10 +2,8 @@ import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
 import { deployAllContract } from "./deployFunctions";
-import addressKlaytn from "./address.klaytn.json";
-import addressBfc from "./address.bfc.json";
-import addressEvmos from "./address.evmos.json";
 import { setInit } from "./setInit";
+import { walletAddresses } from "./addresses/walletAddresses";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
@@ -47,8 +45,8 @@ const deploy = async () => {
   console.log("Setting initial states...");
 
   let addresses = {
-    deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
-    stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
+    deployer: walletAddresses.deployer,
+    stakeManager: walletAddresses.stakeManager,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
     iSPTTokenContractAddress: iSPTTokenContract.address,

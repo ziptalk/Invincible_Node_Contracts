@@ -1,11 +1,8 @@
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import klaytnAddress from "./address.klaytn.json";
-import bfcAddress from "./address.bfc.json";
-import evmosAddress from "./address.evmos.json";
 
 // test addresses
-import { testAddressBfc } from "./testAddresses/address.bfc";
+import { walletAddresses } from "./addresses/walletAddresses";
 
 //------------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
@@ -73,7 +70,7 @@ export const setInit = async (address: any) => {
   // set lpPoolContract init condition
   if (network === "BIFROST") {
   } else {
-    tx = await lpPoolContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    tx = await lpPoolContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
   }
   tx = await lpPoolContract.connect(deployer).setInviCoreContract(inviCoreContract.address, { nonce: nonce++ });
@@ -85,7 +82,7 @@ export const setInit = async (address: any) => {
   await tx.wait();
   if (network === "BIFROST") {
   } else {
-    tx = await inviTokenStakeContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    tx = await inviTokenStakeContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
   }
   console.log("inviTokenStake init condition set at " + nonce + "");
@@ -102,7 +99,7 @@ export const setInit = async (address: any) => {
   await tx.wait();
   if (network === "BIFROST") {
   } else {
-    tx = await inviCoreContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
+    tx = await inviCoreContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
   }
   tx = await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address, { nonce: nonce++ });
