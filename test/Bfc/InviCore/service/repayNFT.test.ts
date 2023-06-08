@@ -42,7 +42,7 @@ describe("Invi core service test", function () {
     console.log("user nft list: ", userNftList);
 
     //==================Change This Part==================//
-    const targetNft = 6; // repay first nft
+    const targetNft = 12; // repay first nft
     //==================////////////////==================//
 
     // userA stake
@@ -63,6 +63,10 @@ describe("Invi core service test", function () {
     const initTotalLPStakedAmount = await lpPoolContract.totalStakedAmount();
     const initTotalLentAmount = await lpPoolContract.totalLentAmount();
     console.log(initTotalUserStakedAmount, initTotalLPStakedAmount, initTotalLentAmount);
+
+    const deleteOwnership = await stakeNFTContract.connect(userA).deleteNFTOwnership(userA.address, nftId, { nonce: ++nonceUserA });
+    await deleteOwnership.wait();
+    console.log("deleteOwnership", deleteOwnership);
 
     //* when
     const repay = await inviCoreContract.connect(userA).repayNFT(nftId, { nonce: ++nonceUserA });

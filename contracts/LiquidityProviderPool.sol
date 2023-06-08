@@ -33,6 +33,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
     uint public totalLentAmount;
+
+    //------constants------//
+    uint public totalNativeRewardAmount;
     
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -135,6 +138,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             address account = ILPHolders[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
             nativeRewardAmount[account] += rewardAmount;
+            totalNativeRewardAmount += rewardAmount;
             (bool sent, ) = account.call{value: rewardAmount}("");
             require(sent, ERROR_FAIL_SEND);
         }
