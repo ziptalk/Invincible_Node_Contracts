@@ -29,3 +29,11 @@ function dequeueUnstakeRequests(UnstakeRequest[] storage _arr, uint _front, uint
     delete _arr[_front];
     return _front+1;
 }
+function getIndex(uint[] memory _arr, uint _value) pure  returns (uint) {
+    for (uint i = 0 ; i < _arr.length; i++) {
+        if (_arr[i] == _value) {
+            return i;
+        }
+    }
+    return _arr.length;
+}
