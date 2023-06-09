@@ -243,10 +243,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
-        // // transfer nft from msg.sender to inviCore
-        // stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId); 
-
-        // burn NFT & delete stakeInfo
+        // // burn NFT & delete stakeInfo
         stakeNFTContract.deleteStakeInfo(_nftTokenId);
         stakeNFTContract.deleteNFTOwnership(msg.sender, _nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
@@ -299,7 +296,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), _requestAmount, 0, 1);
        
         // push request to unstakeRequests
-        unstakeRequests.push(lpRequest);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
 
         emit Unstake(_requestAmount);
     }
