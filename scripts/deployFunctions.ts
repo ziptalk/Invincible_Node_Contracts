@@ -1,8 +1,10 @@
 import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
-import addressKlay from "../scripts/address.klaytn.json";
-import addressBfc from "../scripts/address.bfc.json";
-import addressEvmos from "../scripts/address.evmos.json";
+
+// addresses
+import { klaytnAddress } from "./addresses/liveAddresses/address.klaytn";
+import { evmosAddress } from "./addresses/liveAddresses/address.evmos";
+import { bfcAddress } from "./addresses/liveAddresses/address.bfc";
 
 //================================================================================================//
 //====================================== Change this part ========================================//
@@ -14,14 +16,14 @@ let liquidStakingAddress: String = "0x0";
 //================================================================================================//
 
 if (network === "BIFROST") {
-  stTokenContractAddress = addressBfc.stBfc;
-  liquidStakingAddress = addressBfc.bfcLiquidStaking;
+  stTokenContractAddress = bfcAddress.stBfc;
+  liquidStakingAddress = bfcAddress.bfcLiquidStaking;
 } else if (network === "EVMOS") {
-  stTokenContractAddress = addressEvmos.stEvmos;
-  liquidStakingAddress = addressEvmos.evmosLiquidStaking;
+  stTokenContractAddress = evmosAddress.stEvmos;
+  liquidStakingAddress = evmosAddress.evmosLiquidStaking;
 } else {
-  stTokenContractAddress = addressKlay.stakelyContractAddress;
-  liquidStakingAddress = addressKlay.stakelyContractAddress;
+  stTokenContractAddress = klaytnAddress.stakelyContractAddress;
+  liquidStakingAddress = klaytnAddress.stakelyContractAddress;
 }
 
 // deploy InviToken contract

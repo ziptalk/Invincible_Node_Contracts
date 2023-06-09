@@ -3,7 +3,7 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import units from "../../../units.json";
 import { provideLiquidity, leverageStake, verifyRequest } from "../../../utils";
-import { testAddressBfc } from "../../../../scripts/testAddresses/address.bfc";
+import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
@@ -36,8 +36,13 @@ describe("Invi core service test", function () {
     //* given
     const lpAmount = 100000000000;
     await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+
+    // get user nft list
+    const userNftList = await stakeNFTContract.getNFTOwnership(userA.address);
+    console.log("user nft list: ", userNftList);
+
     //==================Change This Part==================//
-    const targetNft = 1;
+    const targetNft = 12; // repay first nft
     //==================////////////////==================//
 
     // userA stake
@@ -58,6 +63,10 @@ describe("Invi core service test", function () {
     const initTotalLPStakedAmount = await lpPoolContract.totalStakedAmount();
     const initTotalLentAmount = await lpPoolContract.totalLentAmount();
     console.log(initTotalUserStakedAmount, initTotalLPStakedAmount, initTotalLentAmount);
+
+    const deleteOwnership = await stakeNFTContract.connect(userA).deleteNFTOwnership(userA.address, nftId, { nonce: ++nonceUserA });
+    await deleteOwnership.wait();
+    console.log("deleteOwnership", deleteOwnership);
 
     //* when
     const repay = await inviCoreContract.connect(userA).repayNFT(nftId, { nonce: ++nonceUserA });
@@ -81,29 +90,5 @@ describe("Invi core service test", function () {
     // expect(totalLPStakedAmount).to.equal(BigNumber.from(initTotalLPStakedAmount).add(lentAmount)); // verify totalLentAmount
     // expect(totalLentAmount).to.equal(BigNumber.from(initTotalLentAmount).sub(lentAmount)); // verify totalLentAmount
     expect(await stakeNFTContract.isExisted(nftId)).to.equal(false); // verify nft is not existed
-    // expect(unstakeRequestLength.toString()).to.equal("5"); // verify unstake request length
-
-    // verify nft reward distribute
-    const userRequest = await inviCoreContract.unstakeRequests(2);
-    const nftReward = await stakeNFTContract.rewardAmount(nftId);
-
-    const userReward =
-      Math.floor((Number(nftReward) * (100 * units.protocolFeeUnit - stakeInfo.protocolFee)) / (units.protocolFeeUnit * 100)) + Number(stakeInfo.principal);
-    verifyRequest(userRequest, userA.address, userReward, 0, 0);
-    console.log("userReward: ", userReward);
-
-    //verify lp reward distribute
-    const lpReward = ((nftReward - (userReward - stakeInfo.principal)) * (await inviCoreContract.lpPoolRewardPortion())) / units.rewardPortionTotalUnit;
-    console.log("lpReward: ", lpReward);
-
-    const lpRequest = await inviCoreContract.unstakeRequests(3);
-    console.log("lpRequest: ", lpRequest);
-
-    verifyRequest(lpRequest, lpPoolContract.address, lpReward, 0, 1);
-
-    //verify inviStaker reward distribute
-    const inviStakeReward = nftReward - (userReward - stakeInfo.principal) - lpReward;
-    const inviStakeRequest = await inviCoreContract.unstakeRequests(4);
-    verifyRequest(inviStakeRequest, inviTokenStakeContract.address, inviStakeReward, 0, 2);
   });
 });

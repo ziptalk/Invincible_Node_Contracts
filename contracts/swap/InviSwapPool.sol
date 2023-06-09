@@ -81,6 +81,22 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
  
         return  amountOut - slippage;
     }
+
+    // upgrades
+    function getNativeToInviOutMaxInput() public view returns (uint) {
+        uint currentNativePrice = priceManager.getNativePrice();
+        uint currentInviPrice = priceManager.getInviPrice();
+        
+        return totalLiquidityInvi * currentInviPrice / (2*currentNativePrice);
+    }
+    function getInviToNativeOutMaxInput() public view returns (uint) {
+        uint currentNativePrice = priceManager.getNativePrice();
+        uint currentInviPrice = priceManager.getInviPrice();
+        
+        return totalLiquidityNative * currentNativePrice / (2*currentInviPrice);
+    }
+
+
     function getAddLiquidityInvi(uint _amountIn) public view returns (uint) {
         uint currentNativePrice = priceManager.getNativePrice();
         uint currentInviPrice = priceManager.getInviPrice();
@@ -130,6 +146,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     //======service functions======//
     // set price before swap
     function swapInviToNative(uint _amountIn, uint _amountOutMin) public {
+        require(_amountIn < getInviToNativeOutMaxInput(), "exceeds max input amount");
         // calculate amount of tokens to be transferred
         uint amountOut = getInviToNativeOutAmount(_amountIn);
         
@@ -155,6 +172,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     // set price before swap
     function swapNativeToInvi(uint _amountOutMin) public payable {
+        require(msg.value < getNativeToInviOutMaxInput(), "exceeds max input amount");
         require(msg.value > 0, ERROR_SWAP_ZERO);
 
         // calculate amount of tokens to be transferred

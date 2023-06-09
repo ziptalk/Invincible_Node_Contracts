@@ -13,11 +13,9 @@ import {
 } from "../../../deploy";
 import units from "../../../units.json";
 import { provideLiquidity, leverageStake } from "../../../utils";
-import { testAddressBfc } from "../../../../scripts/testAddresses/address.bfc";
+import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
 const { expectRevert } = require("@openzeppelin/test-helpers");
-
-let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -26,13 +24,10 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    if (network === "BIFROST") {
-      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
-    } else {
-      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
-    }
+
+    inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
+    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
+    lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
   });
 
   it("Test stake function", async () => {
@@ -43,13 +38,15 @@ describe("Invi core service test", function () {
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let tx;
 
+    console.log("nonce lp: ", nonceLP);
+
     //* given
     const lpAmount: number = 100000000000;
     const previousUserNftBalance = await stakeNFTContract.balanceOf(userA.address);
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
     const previousTotalLentAmount = await lpPoolContract.totalLentAmount();
     const previousStakeNFTTotalStakedAmount = await stakeNFTContract.totalStakedAmount();
-    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP++); // lp stake
+    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
 
     console.log("provided liquidity");
 

@@ -33,11 +33,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //------private Variables------//
     string private _name;
     string private _symbol;
+
+    //------Upgrades------//
+    uint public dummyId;
     
     //====== initializer ======//
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
+
+        dummyId = 10 **18;
     }
 
     //====== modifiers ======//
@@ -150,7 +155,13 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     // delete the stakeInfo by nftTokenId
-    function deleteStakeInfo(uint _nftTokenId) public returns (bool){
+    function deleteStakeInfo(uint _nftTokenId) public onlyInviCore {
         stakeInfos[_nftTokenId].user = address(0);
+    }
+
+    function deleteNFTOwnership(address _nftOwner, uint _nftTokenId) public {
+        // set the nftTokenId to dummyId
+        NFTOwnership[_nftOwner][_nftTokenId] = NFTOwnership[_nftOwner][NFTOwnership[_nftOwner].length - 1];
+        NFTOwnership[_nftOwner].pop();    
     }
 }

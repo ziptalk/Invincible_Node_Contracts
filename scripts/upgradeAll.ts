@@ -1,8 +1,8 @@
+import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
 import { upgradeContracts, upgradeLendingPoolContract } from "./upgradeFunctions";
-import address from "./address.json";
 
 const main = async () => {
-  console.log(address.lendingPoolContractAddress);
+  console.log(testAddressBfc.lendingPoolContractAddress);
   console.log("upgrading start ...");
   await upgradeLendingPoolContract();
   console.log("upgrading end ...");
