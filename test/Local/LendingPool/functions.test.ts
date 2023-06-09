@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { Contract } from "ethers";
 import { deployAllWithSetting } from "../../deploy";
 import { leverageStake, provideLiquidity } from "../../utils";
-import units from "../../units.json";
+import units from "../../units";
 
 describe("LendingPool functions test", function () {
   let inviCoreContract: Contract;

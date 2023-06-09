@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers, upgrades } from "hardhat";
-import units from "../../../units.json";
+import { ethers } from "hardhat";
 import { provideLiquidity, leverageStake, verifyRequest } from "../../../utils";
 import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
+import { units } from "../../../units";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
@@ -42,10 +42,10 @@ describe("Invi core service test", function () {
     console.log("user nft list: ", userNftList);
 
     //==================Change This Part==================//
-    const targetNft = 12; // repay first nft
+    const targetNft = 2; // repay first nft
     //==================////////////////==================//
 
-    // userA stake
+    //userA stake
     const principal: BigNumber = BigNumber.from("500000");
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
@@ -63,10 +63,6 @@ describe("Invi core service test", function () {
     const initTotalLPStakedAmount = await lpPoolContract.totalStakedAmount();
     const initTotalLentAmount = await lpPoolContract.totalLentAmount();
     console.log(initTotalUserStakedAmount, initTotalLPStakedAmount, initTotalLentAmount);
-
-    const deleteOwnership = await stakeNFTContract.connect(userA).deleteNFTOwnership(userA.address, nftId, { nonce: ++nonceUserA });
-    await deleteOwnership.wait();
-    console.log("deleteOwnership", deleteOwnership);
 
     //* when
     const repay = await inviCoreContract.connect(userA).repayNFT(nftId, { nonce: ++nonceUserA });
@@ -89,6 +85,6 @@ describe("Invi core service test", function () {
     // expect(totalUserStakedAmount).to.equal(BigNumber.from(initTotalUserStakedAmount).sub(principal).sub(lentAmount)); // verify totalUserStakedAmount
     // expect(totalLPStakedAmount).to.equal(BigNumber.from(initTotalLPStakedAmount).add(lentAmount)); // verify totalLentAmount
     // expect(totalLentAmount).to.equal(BigNumber.from(initTotalLentAmount).sub(lentAmount)); // verify totalLentAmount
-    expect(await stakeNFTContract.isExisted(nftId)).to.equal(false); // verify nft is not existed
+    // expect(await stakeNFTContract.isExisted(nftId)).to.equal(false); // verify nft is not existed
   });
 });

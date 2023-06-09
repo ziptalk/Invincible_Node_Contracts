@@ -3,7 +3,7 @@ import { ethers, upgrades } from "hardhat";
 import { BigNumber, Contract } from "ethers";
 import Web3 from "web3";
 import { deployAllWithSetting } from "../../deploy";
-import units from "../../units.json";
+import units from "../../units";
 
 const [principal, lockPeriod, expectedReward, leverageRatio, protocolFee, lockStart, lockEnd] = [1000, 10000, 100000, 3, 0, 0, 0];
 

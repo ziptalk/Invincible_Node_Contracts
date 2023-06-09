@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
 import { deployAllWithSetting } from "../../../deploy";
-import units from "../../../units.json";
+import units from "../../../units";
 import { leverageStake, provideLiquidity } from "../../../utils";
 
 interface UnstakeRequest {

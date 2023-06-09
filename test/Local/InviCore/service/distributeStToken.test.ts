@@ -11,7 +11,7 @@ import {
   deployStKlay,
   deployAllWithSetting,
 } from "../../../deploy";
-import units from "../../../units.json";
+import units from "../../../units";
 import { leverageStake, provideLiquidity, verifyRequest } from "../../../utils";
 import { currentNetwork } from "../../../currentNetwork";
 import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";

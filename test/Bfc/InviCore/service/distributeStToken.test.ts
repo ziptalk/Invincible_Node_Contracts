@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
-import units from "../../../units.json";
+import units from "../../../units";
 import { leverageStake, provideLiquidity, verifyRequest } from "../../../utils";
 import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 

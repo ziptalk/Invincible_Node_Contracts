@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import { deployAllWithSetting } from "../../deploy";
-import units from "../../units.json";
+import units from "../../units";
 import { testAddressBfc } from "../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../currentNetwork";
 

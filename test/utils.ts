@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "ethers";
-import units from "./units.json";
+import { units } from "./units";
+
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };
 
 export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: number, nonce: number) => {
