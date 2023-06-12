@@ -28,8 +28,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         __ERC20_init(INVI_TOKEN_FULL_NAME, INVI_TOKEN_NAME);
         __Ownable_init();
 
-        regularMintAmount = 100000000; // 100 million
-        mintInterval = 30 hours; // testnet: 30 hours
+        regularMintAmount = 10000; // 100 million
+        //mintInterval = 30 hours; // testnet: 30 hours
+        mintInterval = 10 days; // mainnet: 10 days
         lastMinted = block.timestamp - mintInterval;
 
     }
@@ -54,6 +55,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
     function setInviTokenStakeAddress(address _inviTokenStakeAddr) onlyOwner external {
         inviTokenStakeAddress = _inviTokenStakeAddr;
+    }
+    function setMintAmount(uint _amount) onlyOwner external {
+        regularMintAmount = _amount;
     }
 
     //====== service functions ======//

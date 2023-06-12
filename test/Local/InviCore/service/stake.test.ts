@@ -11,10 +11,10 @@ import {
   deployStKlay,
   deployAllWithSetting,
 } from "../../../deploy";
-import units from "../../../units";
 import { provideLiquidity, leverageStake } from "../../../utils";
 import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
+import { units } from "../../../units";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
 describe("Invi core service test", function () {
@@ -47,7 +47,7 @@ describe("Invi core service test", function () {
     console.log("provided liquidity");
 
     //* when
-    const principal = 1000000;
+    const principal: BigNumber = BigNumber.from("1000000");
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     console.log("minLockPeriod: ", minLockPeriod);
@@ -57,7 +57,7 @@ describe("Invi core service test", function () {
 
     //* then
     const stakedAmount: number = stakeInfo.stakedAmount;
-    const lentAmount: number = stakedAmount - principal;
+    const lentAmount: BigNumber = BigNumber.from(stakedAmount).sub(principal);
 
     let userNftBalance = await stakeNFTContract.connect(userA).balanceOf(userA.address);
     let totalStakedAmount = await lpPoolContract.connect(userA).totalStakedAmount();

@@ -19,6 +19,7 @@ let priceManagerContract: Contract;
 
 //-----------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
+const network: string = "KLAYTN"; // BIFROST, KLAYTN, EVMOS
 
 //-----------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------//
@@ -39,7 +40,7 @@ const deploy = async () => {
     inviSwapPoolContract,
     inviCoreContract,
     priceManagerContract,
-  } = await deployAllContract());
+  } = await deployAllContract(network));
 
   console.log("Contracts deployed");
   console.log("Setting initial states...");
@@ -62,7 +63,7 @@ const deploy = async () => {
   console.log(addresses);
 
   // set init
-  await setInit(addresses);
+  await setInit(addresses, network);
 
   // return contract addresses
   return {

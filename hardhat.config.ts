@@ -3,12 +3,16 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import "dotenv/config";
 
+// testnet
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;
 const STAKE_MANAGER_KEY: string = process.env.STAKE_MANAGER_PRIVATE_KEY as string;
 const LP_KEY: string = process.env.LP_PRIVATE_KEY as string;
 const USER_A_KEY: string = process.env.USER_A_PRIVATE_KEY as string;
 const USER_B_KEY: string = process.env.USER_B_PRIVATE_KEY as string;
 const USER_C_KEY: string = process.env.USER_C_PRIVATE_KEY as string;
+
+// mainnet
+const MAINNET_OWNER_KEY: string = process.env.MAINNET_OWNER_PRIVATE_KEY as string;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -24,17 +28,18 @@ const config: HardhatUserConfig = {
     artifacts: "./artifacts",
   },
   networks: {
+    // testnets
     goerli: {
       url: process.env.GOERLI_RPC_URL,
       accounts: [OWNER_KEY],
     },
     evmos_testnet: {
       url: process.env.EVMOS_TESTNET_RPC_URL,
-      accounts: [OWNER_KEY],
+      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
     klaytn_testnet: {
       url: process.env.KLAYTN_TESTNET_URL,
-      accounts: [OWNER_KEY],
+      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
     kava_testnet: {
       url: process.env.KAVA_TESTNET_URL,
@@ -52,10 +57,12 @@ const config: HardhatUserConfig = {
       url: process.env.BIFROST_TESTNET_URL,
       accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
-    // klaytn_mainnet: {
-    //   url: process.env.KLAYTN_MAINNET_URL,
-    //   accounts: [OWNER_KEY],
-    // },
+
+    // mainnets
+    klaytn_mainnet: {
+      url: process.env.KLAYTN_MAINNET_URL,
+      accounts: [MAINNET_OWNER_KEY],
+    },
   },
 };
 
