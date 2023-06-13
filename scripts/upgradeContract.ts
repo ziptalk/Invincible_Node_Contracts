@@ -1,9 +1,10 @@
 import { ethers, upgrades } from "hardhat";
 import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
+import { testAddressMainnetKlaytn } from "./addresses/testAddresses/address.klaytn";
 
 //--------------------- Change this part ---------------------//
-const targetContract = "StakeNFT";
-const targetAddress = testAddressBfc.stakeNFTContractAddress;
+const targetContract = "KlaytnInviCore";
+const targetAddress = testAddressMainnetKlaytn.inviCoreContractAddress;
 //=============================================================//
 
 // deploy all contract

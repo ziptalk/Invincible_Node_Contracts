@@ -46,8 +46,6 @@ const deploy = async () => {
   console.log("Setting initial states...");
 
   let addresses = {
-    deployer: walletAddresses.deployer,
-    stakeManager: walletAddresses.stakeManager,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
     iSPTTokenContractAddress: iSPTTokenContract.address,
@@ -61,9 +59,6 @@ const deploy = async () => {
   };
 
   console.log(addresses);
-
-  // set init
-  await setInit(addresses, network);
 
   // return contract addresses
   return {
@@ -84,6 +79,8 @@ const main = async () => {
   console.log("deploying start ...");
   const ContractAddresses = await deploy();
   console.log("deploying end ...");
+  // set init
+  await setInit(ContractAddresses, network);
   console.log("ContractAddresses: ", ContractAddresses);
 };
 

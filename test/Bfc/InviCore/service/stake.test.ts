@@ -51,7 +51,7 @@ describe("Invi core service test", function () {
     console.log("provided liquidity");
 
     //* when
-    const principal: BigNumber = ethers.utils.parseEther("0.01");
+    const principal: BigNumber = ethers.utils.parseEther("0.001");
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     console.log("minLockPeriod: ", minLockPeriod);

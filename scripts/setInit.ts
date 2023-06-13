@@ -25,7 +25,7 @@ export const setInit = async (address: any, network: string) => {
   const [deployer] = await ethers.getSigners();
   let nonce = await ethers.provider.getTransactionCount(deployer.address);
   let tx;
-  console.log("base Nonce : ", nonce);
+  console.log("base Nonce : ", nonce, " network : ", network);
 
   if (network === "BIFROST") {
     iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
@@ -153,15 +153,15 @@ export const setInit = async (address: any, network: string) => {
 // let address = {
 //   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
 //   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
-//   inviTokenContractAddress: "0x132FACF45B25E445a1D2925d1fB36f41fC1a0D2E",
-//   iLPTokenContractAddress: "0x8A90137aCE7CBdAFEb062E9c4Fe9D3811e6Ff7f3",
-//   iSPTTokenContractAddress: "0x60Ac0CAb9361FCed95E9a6eF9051A7D35C03d770",
-//   stakeNFTContractAddress: "0xab98793EE79c3218129DE09147500Ada775D7E4C",
-//   inviTokenStakeContractAddress: "0xd89dB6b4Cb947DF38d23CfFA1666B3040B6fd6eA",
-//   lpPoolContractAddress: "0x43e5850fF7aD818cA3a3cb8dfB034c716379ac7e",
-//   lendingPoolContractAddress: "0xE802342C881230D12690E459FF0CDa6Fa41150bB",
-//   inviSwapPoolContractAddress: "0x2Ce5AEe90E65838F3b654Dc9f112D4247c69542d",
-//   inviCoreContractAddress: "0x8b92d6648d90950e12589aC9bc289f51a5f6a0FB",
-//   priceManagerContractAddress: "0xE8312257CfFbB565a033068B7306bDfA898E40f9",
+//   inviTokenContractAddress: "0x29cC923d9F974F06a56F5bEAA1f5c21E0CD23d49",
+//   iLPTokenContractAddress: "0x5E60cE2290bfb8843b60B395e3804b6978BCcFE4",
+//   iSPTTokenContractAddress: "0xbD126adD28837FA41a4fff60ddb1f2a279D28cb7",
+//   stakeNFTContractAddress: "0x845dD17988246c951e4DC59b88A6e2c624f342fb",
+//   inviTokenStakeContractAddress: "0xC73cD39Da642a84AD7695CDBb2863551957e8F7D",
+//   lpPoolContractAddress: "0xC73cD39Da642a84AD7695CDBb2863551957e8F7D",
+//   lendingPoolContractAddress: "0x2Eb3540D302669A3b7Ce98926c08C89Ec5e0FE60",
+//   inviSwapPoolContractAddress: "0xE07fd4EC873b9aE0699d6344D0a05092AbaF9dC3",
+//   inviCoreContractAddress: "0x9ee674dFADB6aC4cdD64ae7b03224C011E7111b3",
+//   priceManagerContractAddress: "0x0b2Fa4BCe83B8d6ff67c3102d1B0509f3226bD5b",
 // };
-// setInit(address);
+// setInit(address, "KLAYTN");

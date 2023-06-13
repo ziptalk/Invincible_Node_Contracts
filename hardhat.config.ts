@@ -13,6 +13,7 @@ const USER_C_KEY: string = process.env.USER_C_PRIVATE_KEY as string;
 
 // mainnet
 const MAINNET_OWNER_KEY: string = process.env.MAINNET_OWNER_PRIVATE_KEY as string;
+const MAINNET_STAKE_MANAGER_KEY: string = process.env.MAINNET_STAKE_MANAGER_PRIVATE_KEY as string;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -55,13 +56,13 @@ const config: HardhatUserConfig = {
     },
     bifrost_testnet: {
       url: process.env.BIFROST_TESTNET_URL,
-      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
 
     // mainnets
     klaytn_mainnet: {
       url: process.env.KLAYTN_MAINNET_URL,
-      accounts: [MAINNET_OWNER_KEY],
+      accounts: [MAINNET_OWNER_KEY, STAKE_MANAGER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
   },
 };

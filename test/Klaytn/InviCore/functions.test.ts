@@ -4,9 +4,10 @@ import { ethers } from "hardhat";
 import { deployAllWithSetting } from "../../deploy";
 import { currentNetwork } from "../../currentNetwork";
 import { units } from "../../units";
-import { testAddressKlaytn } from "../../../scripts/addresses/testAddresses/address.klaytn";
+import { testAddressKlaytn, testAddressMainnetKlaytn } from "../../../scripts/addresses/testAddresses/address.klaytn";
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
+let targetAddress = testAddressMainnetKlaytn;
 
 describe("Invi Core functions Test", function () {
   let inviTokenContract: Contract;
@@ -17,11 +18,11 @@ describe("Invi Core functions Test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    inviCoreContract = await ethers.getContractAt("KlaytnInviCore", testAddressKlaytn.inviCoreContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", testAddressKlaytn.inviTokenContractAddress);
-    iLPTokenContract = await ethers.getContractAt("ILPToken", testAddressKlaytn.iLPTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressKlaytn.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("KlaytnLiquidityProviderPool", testAddressKlaytn.lpPoolContractAddress);
+    inviCoreContract = await ethers.getContractAt("KlaytnInviCore", targetAddress.inviCoreContractAddress);
+    inviTokenContract = await ethers.getContractAt("InviToken", targetAddress.inviTokenContractAddress);
+    iLPTokenContract = await ethers.getContractAt("ILPToken", targetAddress.iLPTokenContractAddress);
+    stakeNFTContract = await ethers.getContractAt("StakeNFT", targetAddress.stakeNFTContractAddress);
+    lpPoolContract = await ethers.getContractAt("KlaytnLiquidityProviderPool", targetAddress.lpPoolContractAddress);
   });
 
   it("Test deploy success", async () => {
