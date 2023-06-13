@@ -186,7 +186,8 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     
 
     // stake native coin
-    function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
+    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod, uint _slippage) external payable{
+        StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
