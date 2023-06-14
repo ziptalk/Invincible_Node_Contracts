@@ -2861,25 +2861,25 @@
             "label": "inviToken",
             "offset": 0,
             "slot": "101",
-            "type": "t_contract(InviToken)9106",
+            "type": "t_contract(InviToken)15617",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:18"
+            "src": "contracts\\common\\LendingPool.sol:18"
           },
           {
             "label": "stakeNFTContract",
             "offset": 0,
             "slot": "102",
-            "type": "t_contract(StakeNFT)6805",
+            "type": "t_contract(StakeNFT)13337",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:19"
+            "src": "contracts\\common\\LendingPool.sol:19"
           },
           {
             "label": "priceManager",
             "offset": 0,
             "slot": "103",
-            "type": "t_contract(PriceManager)6366",
+            "type": "t_contract(PriceManager)12793",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:20"
+            "src": "contracts\\common\\LendingPool.sol:20"
           },
           {
             "label": "maxLendRatio",
@@ -2887,7 +2887,7 @@
             "slot": "104",
             "type": "t_uint256",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:24"
+            "src": "contracts\\common\\LendingPool.sol:24"
           },
           {
             "label": "totalLentAmount",
@@ -2895,15 +2895,15 @@
             "slot": "105",
             "type": "t_uint256",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:25"
+            "src": "contracts\\common\\LendingPool.sol:25"
           },
           {
             "label": "lendInfos",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_uint256,t_struct(LendInfo)7686_storage)",
+            "type": "t_mapping(t_uint256,t_struct(LendInfo)13852_storage)",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:26"
+            "src": "contracts\\common\\LendingPool.sol:26"
           }
         ],
         "types": {
@@ -2923,23 +2923,23 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(InviToken)9106": {
+          "t_contract(InviToken)15617": {
             "label": "contract InviToken",
             "numberOfBytes": "20"
           },
-          "t_contract(PriceManager)6366": {
+          "t_contract(PriceManager)12793": {
             "label": "contract PriceManager",
             "numberOfBytes": "20"
           },
-          "t_contract(StakeNFT)6805": {
+          "t_contract(StakeNFT)13337": {
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_uint256,t_struct(LendInfo)7686_storage)": {
+          "t_mapping(t_uint256,t_struct(LendInfo)13852_storage)": {
             "label": "mapping(uint256 => struct LendInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(LendInfo)7686_storage": {
+          "t_struct(LendInfo)13852_storage": {
             "label": "struct LendInfo",
             "members": [
               {
@@ -10090,6 +10090,484 @@
               }
             ],
             "numberOfBytes": "288"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "1c58c4274dc3cbbc88ff1d00950cf8a21623be32a664ea536d412bfbec7ab023": {
+      "address": "0xA3378855e0569c0B128344a28617e023e1003FA2",
+      "txHash": "0xc0893a8fd3b9de2f68c2773b78c57588b40ec81ab68445958e73ef6f056b4419",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(InviToken)14207",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:18"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)13331",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:19"
+          },
+          {
+            "label": "priceManager",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(PriceManager)12787",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:20"
+          },
+          {
+            "label": "maxLendRatio",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_uint256",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:24"
+          },
+          {
+            "label": "totalLentAmount",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:25"
+          },
+          {
+            "label": "lendInfos",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_uint256,t_struct(LendInfo)13845_storage)",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:26"
+          },
+          {
+            "label": "nftLentTime",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "LendingPool",
+            "src": "contracts\\common\\LendingPool.sol:29"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(InviToken)14207": {
+            "label": "contract InviToken",
+            "numberOfBytes": "20"
+          },
+          "t_contract(PriceManager)12787": {
+            "label": "contract PriceManager",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)13331": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_uint256,t_struct(LendInfo)13845_storage)": {
+            "label": "mapping(uint256 => struct LendInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(LendInfo)13845_storage": {
+            "label": "struct LendInfo",
+            "members": [
+              {
+                "label": "user",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "nftId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "principal",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "minLendAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "lentAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "1b8c334a3f33373e605defd30a835f8f33727e74f8b2ee1b2bc328e3a494836f": {
+      "address": "0x11B3D58CfF4A8Ea27e0f816fc13A83CADE6864da",
+      "txHash": "0xc51f6591f7437d9917ee554ad5c62f1a07c72b9650c2d27268263013658671ae",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)14644",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)13331",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5816",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5366",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)14249",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)13859_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)13859_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5366": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5816": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)14249": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)14644": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)13331": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)13859_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
           },
           "t_uint256": {
             "label": "uint256",

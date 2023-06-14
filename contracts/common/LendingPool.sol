@@ -24,6 +24,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     uint public maxLendRatio;
     uint public totalLentAmount;
     mapping (uint => LendInfo) public lendInfos;
+
+    //====== Upgrades ======//
+    mapping (uint => uint) public nftLentTime;
     
     
     //======initializer======//
@@ -80,6 +83,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
+        nftLentTime[_lendInfo.nftId] = block.timestamp;
 
         // transfer inviToken
         inviToken.transfer(_lendInfo.user, lendAmount);

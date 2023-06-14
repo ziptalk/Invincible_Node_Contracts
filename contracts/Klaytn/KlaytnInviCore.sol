@@ -49,6 +49,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     uint public slippage;
     address[] public userList;
 
+    //------upgrades------//
+    mapping (uint => uint) public nftUnstakeTime;
+
     //======initializer======//
     function initialize(address _stTokenAddr, address _klaytnLiquidStaking) initializer public {
         __Ownable_init();
@@ -255,6 +258,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
 
         // create unstake event
         klaytnLiquidStaking.unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+
+        // update nft unstake time
+        nftUnstakeTime[_nftTokenId] = block.timestamp;
         
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }

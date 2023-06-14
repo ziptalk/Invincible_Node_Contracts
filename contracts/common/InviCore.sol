@@ -44,6 +44,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint public slippage;
     address[] public userList;
 
+    //------upgrades------//
+    mapping (uint => uint) public nftUnstakeTime;
+
     //======initializer======//
     function initialize(address _stTokenAddr) initializer public {
         __Ownable_init();
@@ -249,7 +252,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stakeNFTContract.burnNFT(_nftTokenId);  
 
         // create unstake event
-        // TODO Q. LPRequest와 inviStakerRequest는 왜 있는 건가요?
+
+        // update nftUnstakeTime
+        nftUnstakeTime[_nftTokenId] = block.timestamp;
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
@@ -350,11 +355,5 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint protocolFee = getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
         require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
-    }
-
-    // create unstake request for testing
-    function createUnstakeRequest(address _recipient, uint _amount, uint _protocolFee, uint _requestType) external onlyOwner {
-        UnstakeRequest memory request = UnstakeRequest(_recipient, _amount, _protocolFee, _requestType);
-        unstakeRequests.push(request);
     }
 }

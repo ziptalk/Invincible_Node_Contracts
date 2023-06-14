@@ -49,6 +49,9 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
     uint public slippage;
     address[] public userList;
 
+    //------upgrades------//
+    mapping (uint => uint) public nftUnstakeTime;
+
     //======initializer======//
     function initialize(address _stTokenAddr, address _evmosLiquidStakingAddr) initializer public {
         __Ownable_init();
@@ -251,6 +254,9 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
         // create unstake event
         evmosLiquidStaking.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
         
+        // update nft unstake time
+        nftUnstakeTime[_nftTokenId] = block.timestamp;
+
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
