@@ -31,11 +31,11 @@ const config: HardhatUserConfig = {
   networks: {
     // testnets
     goerli: {
-      url: process.env.GOERLI_RPC_URL,
+      url: process.env.GOERLI_URL,
       accounts: [OWNER_KEY],
     },
     evmos_testnet: {
-      url: process.env.EVMOS_TESTNET_RPC_URL,
+      url: process.env.EVMOS_TESTNET_URL,
       accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
     klaytn_testnet: {
