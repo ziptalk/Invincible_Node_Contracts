@@ -342,7 +342,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_TOO_MUCH_LENT);
 
         // verify min/max reward
-        uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio / LEVERAGE_UNIT;
+        //uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio / LEVERAGE_UNIT;
 
         // verify protocol fee
         uint minProtocolFee = _stakeInfo.protocolFee * (100 * SLIPPAGE_UNIT- _slippage) / (SLIPPAGE_UNIT* 100);

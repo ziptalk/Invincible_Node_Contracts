@@ -1,6 +1,6 @@
 import { ethers, upgrades } from "hardhat";
-import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
-import { testAddressMainnetKlaytn } from "./addresses/testAddresses/address.klaytn";
+import { testAddressBfc } from "../addresses/testAddresses/address.bfc";
+import { testAddressMainnetKlaytn } from "../addresses/testAddresses/address.klaytn";
 
 //--------------------- Change this part ---------------------//
 const targetContract = "KlaytnInviCore";

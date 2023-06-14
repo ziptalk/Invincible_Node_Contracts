@@ -2,9 +2,9 @@ import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 // addresses
-import { klaytnAddress } from "./addresses/liveAddresses/address.klaytn";
-import { evmosAddress } from "./addresses/liveAddresses/address.evmos";
-import { bfcAddress } from "./addresses/liveAddresses/address.bfc";
+import { klaytnAddress } from "../addresses/liveAddresses/address.klaytn";
+import { evmosAddress } from "../addresses/liveAddresses/address.evmos";
+import { bfcAddress } from "../addresses/liveAddresses/address.bfc";
 
 //================================================================================================//
 //====================================== Change this part ========================================//

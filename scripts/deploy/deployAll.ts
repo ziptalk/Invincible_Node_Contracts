@@ -1,9 +1,9 @@
 import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
-import { deployAllContract } from "./deployFunctions";
+import { deployAllContract } from "../deployFunctions";
 import { setInit } from "./setInit";
-import { walletAddresses } from "./addresses/walletAddresses";
+import { walletAddresses } from "../addresses/walletAddresses";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;

@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { Contract } from "ethers";
 
 // test addresses
-import { walletAddresses } from "./addresses/walletAddresses";
+import { walletAddresses } from "../addresses/walletAddresses";
 
 //------------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
