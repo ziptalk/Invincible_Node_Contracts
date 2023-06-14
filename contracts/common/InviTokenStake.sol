@@ -4,7 +4,7 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import "./interfaces/IERC20.sol";
+import "../interfaces/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "./lib/ErrorMessages.sol";

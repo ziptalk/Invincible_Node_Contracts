@@ -5,9 +5,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "../interfaces/IERC20.sol";
-import "../lib/AddressUtils.sol";
-import "../lib/Logics.sol";
-import "../lib/ErrorMessages.sol";
+import "../common/lib/AddressUtils.sol";
+import "../common/lib/Logics.sol";
+import "../common/lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 
 contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
