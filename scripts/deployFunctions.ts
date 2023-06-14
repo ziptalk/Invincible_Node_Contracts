@@ -96,7 +96,7 @@ export const deployInviCoreContract = async (stTokenContract: String, liquidStak
     InviCoreContract = await ethers.getContractFactory("BfcInviCore");
     inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
     await inviCoreContract.deployed();
-  } else if (network === "Klaytn") {
+  } else if (network === "KLAYTN") {
     InviCoreContract = await ethers.getContractFactory("KlaytnInviCore");
     inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
     await inviCoreContract.deployed();
@@ -160,39 +160,41 @@ export const deployAllContract = async (network: string) => {
     liquidStakingAddress = klaytnAddress.stakelyContractAddress;
   }
 
+  // set nonce
+
   // ==================== token contract ==================== //
   // deploy inviToken contract
   const inviTokenContract = await deployInviToken();
-  console.log("deployed inviToken contract");
+  console.log("deployed inviToken contract: ", inviTokenContract.address);
   // deploy ILPToken contract
   const iLPTokenContract = await deployILPToken();
-  console.log("deployed iLPToken contract");
+  console.log("deployed iLPToken contract: ", iLPTokenContract.address);
   // deploy ISPTToken contract
   const iSPTTokenContract = await deployISPTToken();
-  console.log("deployed iSPTToken contract");
+  console.log("deployed iSPTToken contract: ", iSPTTokenContract.address);
 
   // ==================== service contract ==================== //
   // deploy stakeNFT contract
   const stakeNFTContract = await deployStakeNFT();
-  console.log("deployed stakeNFT contract");
+  console.log("deployed stakeNFT contract: ", stakeNFTContract.address);
   // deploy inviTokenStake Contract
   const inviTokenStakeContract = await deployInviTokenStakeContract(inviTokenContract, network);
-  console.log("deployed inviTokenStake contract");
+  console.log("deployed inviTokenStake contract: ", inviTokenStakeContract.address);
   // deploy liquidity pool contract
   const lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract, network);
-  console.log("deployed lpPool contract");
+  console.log("deployed lpPool contract: ", lpPoolContract.address);
   // deploy LendingPool contract
   const lendingPoolContract = await deployLendingPoolContract(inviTokenContract);
-  console.log("deployed lendingPool contract");
+  console.log("deployed lendingPool contract: ", lendingPoolContract.address);
   // deploy InviSwapPool contract
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
-  console.log("deployed inviSwapPool contract");
+  console.log("deployed inviSwapPool contract: ", inviSwapPoolContract.address);
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stTokenContractAddress, liquidStakingAddress, network);
-  console.log("deployed inviCore contract");
+  console.log("deployed inviCore contract: ", inviCoreContract.address);
   // deploy swapManager contract
   const priceManagerContract = await deployPriceManager(network);
-  console.log("deployed priceManager contract");
+  console.log("deployed priceManager contract: ", priceManagerContract.address);
 
   return {
     inviTokenContract,

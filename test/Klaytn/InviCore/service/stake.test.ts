@@ -55,6 +55,11 @@ describe("Invi core service test", function () {
     let totalStakedAmount = await lpPoolContract.connect(userA).totalStakedAmount();
     let totalLentAmount = await lpPoolContract.connect(userA).totalLentAmount();
     let stakeNFTTotalStakedAmount = await stakeNFTContract.connect(userA).totalStakedAmount();
+    console.log("object: ", userNftBalance, totalStakedAmount, totalLentAmount, stakeNFTTotalStakedAmount);
+
+    // get contract balance
+    const contractBalance = await ethers.provider.getBalance(inviCoreContract.address);
+    console.log("contractBalance: ", contractBalance.toString());
     // expect(userNftBalance).to.equal(parseInt(previousUserNftBalance) + 1);
     // expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
     // expect(totalLentAmount).to.equal(BigNumber.from(previousTotalLentAmount).add(lentAmount));
