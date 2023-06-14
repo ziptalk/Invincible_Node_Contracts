@@ -93,7 +93,6 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
     // get stake info by principal & leverageRatio variables
     function getStakeInfo(address _account, uint _principal, uint _leverageRatio, uint _lockPeriod) public view returns(StakeInfo memory)  {
-        
         uint lockPeriod = getLockPeriod(_leverageRatio);
         // if lock period is less than minimum lock period, set lock period to minimum lock period
         if (lockPeriod < _lockPeriod) {
@@ -186,8 +185,10 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
      /**
      * @notice stake native coin
      */
-    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod, uint _slippage) external payable{
+    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod, uint _slippage) external payable returns (StakeInfo memory) {
+        // get stakeInfo
         StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
+
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
@@ -204,6 +205,7 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         userList.push(msg.sender);
 
         emit Stake(_stakeInfo.principal);
+        return _stakeInfo;
     }
 
      /**
