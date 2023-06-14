@@ -148,7 +148,6 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     
 
     //====== setter functions ======//
-
     // set staking ARP function
     function setStakingAPR(uint _stakingAPR) external onlyOwner {
         stakingAPR = _stakingAPR;
@@ -184,8 +183,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     fallback() payable external {}
     receive() payable external {}
     
-
-    // stake native coin
+     /**
+     * @notice stake native coin
+     */
     function stake(uint _principal, uint _leverageRatio, uint _lockPeriod, uint _slippage) external payable{
         StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
         // verify given stakeInfo
@@ -206,7 +206,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         emit Stake(_stakeInfo.principal);
     }
 
-    // unStake native coin
+     /**
+     * @notice unStake native coin
+     */
     function repayNFT(uint _nftTokenId) external {
         // verify NFT
         require(stakeNFTContract.isOwner(_nftTokenId, msg.sender), ERROR_NOT_OWNED_NFT);
@@ -255,7 +257,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
-    // periodic reward distribution, update
+     /**
+     * @notice Periodic reward distribution
+     */
     function distributeStTokenReward() external onlyOwner {
         // get total staked amount
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
@@ -283,12 +287,18 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         emit Unstake(lpReward + inviStakerReward);
     }
 
+     /**
+     * @notice stake from LPPool
+     */
     function stakeLp() external onlyLpPool payable {
         // stake 
         klaytnLiquidStaking.stake{value : msg.value}();
         emit Stake(msg.value);
     }
 
+     /**
+     * @notice unStake from LP Pool
+     */
     function unstakeLp(uint _requestAmount) external onlyLpPool {
         // create unstake request
         klaytnLiquidStaking.unstake(_requestAmount);
@@ -302,7 +312,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         emit Unstake(_requestAmount);
     }
 
-    // send unstaked amount to unstakeRequest applicants
+     /**
+     * @notice send unstaked amount to unstakeRequest applicants
+     */
     function sendUnstakedAmount() external {
         klaytnLiquidStaking.claim(address(this));
         uint front = unstakeRequestsFront;
@@ -329,7 +341,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     } 
     
     //====== utils function ======//
-    // verify stakeInfo is proper
+    /**
+     * @notice verify stakeInfo is proper
+     */
     function _verifyStakeInfo(StakeInfo memory _stakeInfo, uint _slippage, address _sender, uint _sendAmount) private view {
         
         // verify msg.sender
@@ -357,11 +371,5 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         uint protocolFee = getProtocolFee(lentAmount, _stakeInfo.leverageRatio);
         require(minProtocolFee <= protocolFee, ERROR_INVALID_STAKE_INFO);
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
-    }
-
-    // create unstake request for testing
-    function createUnstakeRequest(address _recipient, uint _amount, uint _protocolFee, uint _requestType) external onlyOwner {
-        UnstakeRequest memory request = UnstakeRequest(_recipient, _amount, _protocolFee, _requestType);
-        unstakeRequests.push(request);
     }
 }

@@ -70,9 +70,6 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
-
- 
-   
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
         inviCoreContract = KlaytnInviCore(_inviCore);
     }
@@ -92,8 +89,9 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
-    // stake Native Coin to LP Pool
+    /**
+     * @notice stake Native Coin to LP Pool
+     */
     function stake() public payable {
         // update stake amount
         stakedAmount[msg.sender] += msg.value;
@@ -108,6 +106,9 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
         inviCoreContract.stakeLp{value: msg.value}();
     }
 
+    /**
+     * @notice  unstake Native Coin from LP Pool
+     */
     function unstake(uint _amount) public {
         require(stakedAmount[msg.sender] >= _amount, ERROR_INSUFFICIENT_BALANCE);
         // update stake amount
@@ -122,7 +123,9 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     }
     
-    // distribute native coin
+    /**
+     * @notice distribute Native coin
+     */
     function distributeNativeReward() external payable onlyInviCore{
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
@@ -135,7 +138,9 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
         }
     }
 
-    // distribute invi token 
+    /**
+     * @notice distribute invi token
+     */
     function distributeInviTokenReward() external onlyOwner{
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));

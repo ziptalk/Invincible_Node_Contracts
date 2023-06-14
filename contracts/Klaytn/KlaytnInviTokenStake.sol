@@ -65,7 +65,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
    
     //====== service functions ======//
 
-    // stake inviToken
+    /**
+     * @notice stake inviToken
+     */
     function stake(uint _stakeAmount) public  {
         require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
 
@@ -78,7 +80,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         totalAddressNumber = addressList.length;
     }
 
-    // unstake inviToken
+    /**
+     * @notice unstake inviToken
+     */
     function unStake(uint _unstakeAmount) public  {
         // update stake amount
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
@@ -89,7 +93,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         require(inviToken.transfer(msg.sender, _unstakeAmount));
     }
 
-    // distribute native rewards
+    /**
+     * @notice distribute native coin rewards
+     */
     function updateNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
@@ -100,7 +106,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         }
     }
 
-    // distribute invi token rewards (tbd)
+    /**
+     * @notice distribute inviToken rewards
+     */
     function updateInviTokenReward() external onlyOwner{
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
@@ -113,7 +121,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         lastInviRewardedTime = block.timestamp;
     }
 
-    // user receive reward(native coin) function
+    /**
+     * @notice user receive reward(native coin) function
+     */
     function receiveNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
@@ -124,6 +134,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
+    /**
+     * @notice user receive reward(inviToken) function
+     */
     function receiveInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
