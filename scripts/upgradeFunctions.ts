@@ -1,5 +1,11 @@
 import { ethers, upgrades } from "hardhat";
-import addresses from "./address.json";
+import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
+
+//--------------------- Change this part ---------------------//
+const targetContract = "InviSwapPool";
+const targetAddress = testAddressBfc.inviSwapPoolContractAddress;
+const addresses = testAddressBfc;
+//=============================================================//
 
 // upgrade inviCore contract
 export const upgradeInviCoreContract = async () => {

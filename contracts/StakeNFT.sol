@@ -33,11 +33,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //------private Variables------//
     string private _name;
     string private _symbol;
+
+    //------Upgrades------//
+    uint public dummyId;
     
     //====== initializer ======//
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
+
+        dummyId = 10 **18;
     }
 
     //====== modifiers ======//
@@ -59,6 +64,22 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
     function getNFTOwnership(address _user) public view returns (uint[] memory) {
         return NFTOwnership[_user];
+    }
+
+        // return the stakeInfo by nftTokenId
+    function getStakeInfo(uint _nftTokenId) public view returns (StakeInfo memory){
+        StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
+        require(stakeInfo.user != address(0), "stakeInfo does not exist");
+        return stakeInfos[_nftTokenId];
+    }
+
+    function getAllStakeInfoOfUser(address _user) public view returns (StakeInfo[] memory) {
+        uint[] memory _nftTokenIds = NFTOwnership[_user];
+        StakeInfo[] memory stakeInfosOfUser = new StakeInfo[](_nftTokenIds.length);
+        for (uint i = 0; i < _nftTokenIds.length; i++) {
+            stakeInfosOfUser[i] = stakeInfos[_nftTokenIds[i]];
+        }
+        return stakeInfosOfUser;
     }
 
     //====== setter functions ======//
@@ -125,6 +146,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         }
     }
 
+    //====== utils functions ======//
+
     // return the nft is existed
     function isExisted(uint _nftTokenId) public view returns (bool) {
         return _exists(_nftTokenId);
@@ -142,15 +165,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfo.lockEnd < block.timestamp;
     }
 
-    // return the stakeInfo by nftTokenId
-    function getStakeInfo(uint _nftTokenId) public view returns (StakeInfo memory){
-        StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
-        require(stakeInfo.user != address(0), "stakeInfo is not exist");
-        return stakeInfos[_nftTokenId];
+    // delete the stakeInfo by nftTokenId
+    function deleteStakeInfo(uint _nftTokenId) public onlyInviCore {
+        stakeInfos[_nftTokenId].user = address(0);
     }
 
-    // delete the stakeInfo by nftTokenId
-    function deleteStakeInfo(uint _nftTokenId) public returns (bool){
-        stakeInfos[_nftTokenId].user = address(0);
+    function deleteNFTOwnership(address _nftOwner, uint _nftTokenId) public onlyInviCore {
+        // get the index of nftTokenId
+        uint _nftTokenIndex = getIndex(NFTOwnership[_nftOwner], _nftTokenId);
+        // set the nftTokenId to dummyId
+        NFTOwnership[_nftOwner][_nftTokenIndex] = NFTOwnership[_nftOwner][NFTOwnership[_nftOwner].length - 1];
+        NFTOwnership[_nftOwner].pop();    
     }
 }

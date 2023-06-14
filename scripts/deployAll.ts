@@ -2,8 +2,8 @@ import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
 import { deployAllContract } from "./deployFunctions";
-import addressKlaytn from "./address.klaytn.json";
-import addressBfc from "./address.bfc.json";
+import { setInit } from "./setInit";
+import { walletAddresses } from "./addresses/walletAddresses";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
@@ -19,15 +19,16 @@ let priceManagerContract: Contract;
 
 //-----------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const stakeManagerAddress = addressBfc.stakeManager;
+const network: string = "KLAYTN"; // BIFROST, KLAYTN, EVMOS
+
 //-----------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------//
 
 const deploy = async () => {
   const [deployer] = await ethers.getSigners();
-  const stakeManager = stakeManagerAddress;
   console.log("Deploying contracts with the account:", deployer.address);
 
+  // deploy contracts
   ({
     inviTokenContract,
     iLPTokenContract,
@@ -39,7 +40,25 @@ const deploy = async () => {
     inviSwapPoolContract,
     inviCoreContract,
     priceManagerContract,
-  } = await deployAllContract());
+  } = await deployAllContract(network));
+
+  console.log("Contracts deployed");
+  console.log("Setting initial states...");
+
+  let addresses = {
+    inviTokenContractAddress: inviTokenContract.address,
+    iLPTokenContractAddress: iLPTokenContract.address,
+    iSPTTokenContractAddress: iSPTTokenContract.address,
+    stakeNFTContractAddress: stakeNFTContract.address,
+    inviTokenStakeContractAddress: inviTokenStakeContract.address,
+    lpPoolContractAddress: lpPoolContract.address,
+    lendingPoolContractAddress: lendingPoolContract.address,
+    inviSwapPoolContractAddress: inviSwapPoolContract.address,
+    inviCoreContractAddress: inviCoreContract.address,
+    priceManagerContractAddress: priceManagerContract.address,
+  };
+
+  console.log(addresses);
 
   // return contract addresses
   return {
@@ -60,6 +79,8 @@ const main = async () => {
   console.log("deploying start ...");
   const ContractAddresses = await deploy();
   console.log("deploying end ...");
+  // set init
+  await setInit(ContractAddresses, network);
   console.log("ContractAddresses: ", ContractAddresses);
 };
 
