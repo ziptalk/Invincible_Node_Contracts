@@ -22,6 +22,8 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint public regularMintAmount;
     uint public mintInterval; 
     uint public lastMinted;
+    uint public mintAmountChangeInterval;
+    uint public lastMintAmountChange;
 
     //====== initializer ======//
     function initialize() initializer public {
@@ -32,7 +34,8 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         //mintInterval = 30 hours; // testnet: 30 hours
         mintInterval = 10 days; // mainnet: 10 days
         lastMinted = block.timestamp - mintInterval;
-
+        mintAmountChangeInterval = 10 days; // 10 days
+        lastMintAmountChange = block.timestamp - mintAmountChangeInterval;
     }
 
     //====== modifier ======//
@@ -57,6 +60,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         inviTokenStakeAddress = _inviTokenStakeAddr;
     }
     function setMintAmount(uint _amount) onlyOwner external {
+        require(block.timestamp > lastMintAmountChange + mintAmountChangeInterval, "minting amount can be changed once in 10 days");
         regularMintAmount = _amount;
     }
 
