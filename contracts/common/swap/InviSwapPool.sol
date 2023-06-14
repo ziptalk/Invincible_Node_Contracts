@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "hardhat/console.sol";
 import "../PriceManager.sol";
-import "../interfaces/IERC20.sol";
+import "../../interfaces/IERC20.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
 import "../lib/AddressUtils.sol";

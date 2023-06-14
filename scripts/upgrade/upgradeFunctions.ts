@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat";
-import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
+import { testAddressBfc } from "../addresses/testAddresses/address.bfc";
 
 //--------------------- Change this part ---------------------//
 const targetContract = "InviSwapPool";

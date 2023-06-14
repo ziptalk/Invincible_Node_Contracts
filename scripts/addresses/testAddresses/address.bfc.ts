@@ -1,4 +1,4 @@
-export const testAddressBfc = {
+export const testAddressTestnetBfc = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
   bfcLiquidStaking: "0x1a21fa82DE8604A6f8C7cb406d1D218d4b20Ff7E",
@@ -15,3 +15,5 @@ export const testAddressBfc = {
   inviCoreContractAddress: "0x15aBC992EA3019371dB62C8df5b54Db7B9BF09B6",
   priceManagerContractAddress: "0xa724f71661EbCcAb85041305bE9046df4ce1c947",
 };
+
+export const testAddressMainnetBfc = {};

@@ -1,9 +1,10 @@
 import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
 import { Contract, Wallet } from "ethers";
-import { deployAllContract } from "./deployFunctions";
 import { setInit } from "./setInit";
-import { walletAddresses } from "./addresses/walletAddresses";
+import { walletAddresses } from "../addresses/walletAddresses";
+import { deployAllContract } from "./deployFunctions";
+import { targets } from "../targets";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
@@ -19,7 +20,7 @@ let priceManagerContract: Contract;
 
 //-----------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
-const network: string = "KLAYTN"; // BIFROST, KLAYTN, EVMOS
+const network: string = targets.network; // BIFROST, KLAYTN, EVMOS
 
 //-----------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------//

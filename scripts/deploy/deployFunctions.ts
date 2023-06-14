@@ -2,9 +2,10 @@ import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 // addresses
-import { klaytnAddress } from "./addresses/liveAddresses/address.klaytn";
-import { evmosAddress } from "./addresses/liveAddresses/address.evmos";
-import { bfcAddress } from "./addresses/liveAddresses/address.bfc";
+import { evmosMainnetLiveAddress, evmosTestnetLiveAddress } from "../addresses/liveAddresses/address.evmos";
+import { bfcMainnetLiveAddress, bfcTestnetLiveAddress } from "../addresses/liveAddresses/address.bfc";
+import { klaytnMainnetLiveAddress, klaytnTestnetLiveAddress } from "../addresses/liveAddresses/address.klaytn";
+import { targets } from "../targets";
 
 //================================================================================================//
 //====================================== Change this part ========================================//
@@ -147,20 +148,33 @@ export const deployPriceManager = async (network: string) => {
 // deploy all contract
 export const deployAllContract = async (network: string) => {
   if (network === "BIFROST") {
-    stTokenContractAddress = bfcAddress.stBfc;
-    liquidStakingAddress = bfcAddress.bfcLiquidStaking;
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = bfcTestnetLiveAddress.stBfc;
+      liquidStakingAddress = bfcTestnetLiveAddress.bfcLiquidStaking;
+    } else {
+      // stTokenContractAddress = bfcMainnetLiveAddress.stBfc;
+      // liquidStakingAddress = bfcMainnetLiveAddress.bfcLiquidStaking;
+    }
   } else if (network === "EVMOS") {
-    stTokenContractAddress = evmosAddress.stEvmos;
-    liquidStakingAddress = evmosAddress.evmosLiquidStaking;
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = evmosTestnetLiveAddress.stEvmos;
+      liquidStakingAddress = evmosTestnetLiveAddress.evmosLiquidStaking;
+    } else {
+      // stTokenContractAddress = evmosAddress.stEvmos;
+      // liquidStakingAddress = evmosAddress.evmosLiquidStaking;
+    }
   } else if (network === "KLAYTN") {
-    stTokenContractAddress = klaytnAddress.stakelyContractAddress;
-    liquidStakingAddress = klaytnAddress.stakelyContractAddress;
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+      liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+    } else {
+      stTokenContractAddress = klaytnMainnetLiveAddress.stakelyContractAddress;
+      liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+    }
   } else {
-    stTokenContractAddress = klaytnAddress.stakelyContractAddress;
-    liquidStakingAddress = klaytnAddress.stakelyContractAddress;
+    // stTokenContractAddress = klaytnAddress.stakelyContractAddress;
+    // liquidStakingAddress = klaytnAddress.stakelyContractAddress;
   }
-
-  // set nonce
 
   // ==================== token contract ==================== //
   // deploy inviToken contract

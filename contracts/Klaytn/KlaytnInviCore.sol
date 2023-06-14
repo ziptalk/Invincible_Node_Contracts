@@ -4,12 +4,12 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../StakeNFT.sol";
-import "../lib/Structs.sol";
-import "../lib/ErrorMessages.sol";
+import "../common/StakeNFT.sol";
+import "../common/lib/Structs.sol";
+import "../common/lib/ErrorMessages.sol";
 import "hardhat/console.sol";
-import "../lib/Logics.sol";
-import "../lib/Unit.sol";
+import "../common/lib/Logics.sol";
+import "../common/lib/Unit.sol";
 import "./KlaytnLiquidityProviderPool.sol";
 import "./KlaytnInviTokenStake.sol"; 
 import "../interfaces/IStKlay.sol";
@@ -48,6 +48,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     //------other variable------//
     uint public slippage;
     address[] public userList;
+
+    //------upgrades------//
+    mapping (uint => uint) public nftUnstakeTime;
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _klaytnLiquidStaking) initializer public {
@@ -255,6 +258,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
 
         // create unstake event
         klaytnLiquidStaking.unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+
+        // update nft unstake time
+        nftUnstakeTime[_nftTokenId] = block.timestamp;
         
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }

@@ -122,7 +122,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     // only owner can burn NFT
-    function burnNFT(uint nftTokenId) public onlyInviCore returns (bool) {
+    function burnNFT(uint nftTokenId) public onlyInviCore  {
         _burn(nftTokenId);
     }
 

@@ -1,4 +1,4 @@
-import { testAddressBfc } from "./addresses/testAddresses/address.bfc";
+import { testAddressBfc } from "../addresses/testAddresses/address.bfc";
 import { upgradeContracts, upgradeLendingPoolContract } from "./upgradeFunctions";
 
 const main = async () => {

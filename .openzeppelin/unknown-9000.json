@@ -1366,25 +1366,25 @@
             "label": "inviToken",
             "offset": 0,
             "slot": "101",
-            "type": "t_contract(InviToken)9106",
+            "type": "t_contract(InviToken)15617",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:18"
+            "src": "contracts\\common\\LendingPool.sol:18"
           },
           {
             "label": "stakeNFTContract",
             "offset": 0,
             "slot": "102",
-            "type": "t_contract(StakeNFT)6805",
+            "type": "t_contract(StakeNFT)13337",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:19"
+            "src": "contracts\\common\\LendingPool.sol:19"
           },
           {
             "label": "priceManager",
             "offset": 0,
             "slot": "103",
-            "type": "t_contract(PriceManager)6366",
+            "type": "t_contract(PriceManager)12793",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:20"
+            "src": "contracts\\common\\LendingPool.sol:20"
           },
           {
             "label": "maxLendRatio",
@@ -1392,7 +1392,7 @@
             "slot": "104",
             "type": "t_uint256",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:24"
+            "src": "contracts\\common\\LendingPool.sol:24"
           },
           {
             "label": "totalLentAmount",
@@ -1400,15 +1400,15 @@
             "slot": "105",
             "type": "t_uint256",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:25"
+            "src": "contracts\\common\\LendingPool.sol:25"
           },
           {
             "label": "lendInfos",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_uint256,t_struct(LendInfo)7686_storage)",
+            "type": "t_mapping(t_uint256,t_struct(LendInfo)13852_storage)",
             "contract": "LendingPool",
-            "src": "contracts\\LendingPool.sol:26"
+            "src": "contracts\\common\\LendingPool.sol:26"
           }
         ],
         "types": {
@@ -1428,23 +1428,23 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(InviToken)9106": {
+          "t_contract(InviToken)15617": {
             "label": "contract InviToken",
             "numberOfBytes": "20"
           },
-          "t_contract(PriceManager)6366": {
+          "t_contract(PriceManager)12793": {
             "label": "contract PriceManager",
             "numberOfBytes": "20"
           },
-          "t_contract(StakeNFT)6805": {
+          "t_contract(StakeNFT)13337": {
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_uint256,t_struct(LendInfo)7686_storage)": {
+          "t_mapping(t_uint256,t_struct(LendInfo)13852_storage)": {
             "label": "mapping(uint256 => struct LendInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(LendInfo)7686_storage": {
+          "t_struct(LendInfo)13852_storage": {
             "label": "struct LendInfo",
             "members": [
               {

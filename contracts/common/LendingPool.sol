@@ -4,7 +4,7 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./StakeNFT.sol";
-import "./interfaces/IERC20.sol";
+import "../interfaces/IERC20.sol";
 import "./lib/Structs.sol";
 import "./lib/ErrorMessages.sol";
 import "./lib/Unit.sol";
@@ -24,6 +24,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     uint public maxLendRatio;
     uint public totalLentAmount;
     mapping (uint => LendInfo) public lendInfos;
+
+    //====== Upgrades ======//
+    mapping (uint => uint) public nftLentTime;
     
     
     //======initializer======//
@@ -80,6 +83,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
+        nftLentTime[_lendInfo.nftId] = block.timestamp;
 
         // transfer inviToken
         inviToken.transfer(_lendInfo.user, lendAmount);

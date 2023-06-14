@@ -4,14 +4,14 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../StakeNFT.sol";
-import "../lib/Structs.sol";
-import "../lib/ErrorMessages.sol";
+import "../common/StakeNFT.sol";
+import "../common/lib/Structs.sol";
+import "../common/lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 import "./BfcLiquidityProviderPool.sol";
 import "./BfcInviTokenStake.sol";
-import "../lib/Logics.sol";
-import "../lib/Unit.sol";
+import "../common/lib/Logics.sol";
+import "../common/lib/Unit.sol";
 import "../interfaces/IBfcLiquidStaking.sol";
 
 contract BfcInviCore is Initializable, OwnableUpgradeable {
