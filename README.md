@@ -4,7 +4,6 @@
 
 - [Introduction](#introduction)
 - [URL](#url)
-- [Wallet Addresses](#walletAddresses)
 - [Contract Addresses](#contractAddresses)
 - [Product Explanation](#productExplanation)
 
@@ -19,13 +18,6 @@ via Invincible node in order to contribute to becoming sustainable, interoperabl
 <a id="url"></a>
 https://www.invinciblenode.app/
 
-# Wallet Addresses
-
-<a id="walletAddresses"></a>
-|Wallet Name|Address|
-|------|---|
-|Stake Manager|0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE|
-|LP Manager|0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E|
 
 # Contract Addresses
 
