@@ -1,11 +1,8 @@
 import { ethers, upgrades } from "hardhat";
-import { testAddressBfc } from "../addresses/testAddresses/address.bfc";
-import { testAddressMainnetKlaytn } from "../addresses/testAddresses/address.klaytn";
+import { targets } from "../targets";
 
-//--------------------- Change this part ---------------------//
-const targetContract = "KlaytnInviCore";
-const targetAddress = testAddressMainnetKlaytn.inviCoreContractAddress;
-//=============================================================//
+const targetContract = targets.upgradingContract;
+let targetAddress: string = targets.upgradingContractAddress;
 
 // deploy all contract
 async function main() {
@@ -14,7 +11,7 @@ async function main() {
   const upgradeContract = await upgrades.upgradeProxy(targetAddress, UpgradeContract);
 
   await upgradeContract.deployed();
-  console.log("deployed" + targetContract + "address: ", upgradeContract.address);
+  console.log("upgraded " + targetContract + " address: ", upgradeContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

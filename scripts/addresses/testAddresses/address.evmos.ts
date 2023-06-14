@@ -1,4 +1,4 @@
-export const evmosTestnetLiveAddress = {
+export const testAddressTestnetEvmos = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
   evmosLiquidStaking: "0xDdC784d684247bb3dd19EAaD7E36eaEdD1D5D81D",
@@ -16,4 +16,4 @@ export const evmosTestnetLiveAddress = {
   priceManagerContractAddress: "0x347cAD7cFaA7c182cD226f8b90111C94375C1Cf2",
 };
 
-export const evmosMainnetLiveAddress = {};
+export const testAddressMainnetEvmos = {};

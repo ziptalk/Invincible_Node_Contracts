@@ -1,17 +1,19 @@
-export const bfcAddress = {
+export const bfcTestnetLiveAddress = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
   bfcLiquidStaking: "0x1a21fa82DE8604A6f8C7cb406d1D218d4b20Ff7E",
   stBfc: "0x9b621ef60F6FcDcf7C24400f93Ba4357Bd00f1Af",
 
-  inviTokenContractAddress: "0x5C70339f807aeFe4A63614F1a980426F854E1CF3",
-  iLPTokenContractAddress: "0x223bb60926b367A190E5aC44240a799ABfdF2191",
-  iSPTTokenContractAddress: "0x0679Ccd15bCC431e88936A33EaE6eEB7a05C8E08",
-  stakeNFTContractAddress: "0xB78B888c4a513025491D5c1696f4c2F280d376E3",
-  inviTokenStakeContractAddress: "0x1568f9dD510dF1ed38f819f2Aefc8F04e92CDDd9",
-  lpPoolContractAddress: "0x072307f4A81B94Dc7A1B12Da1895Ed80F38247F7",
-  lendingPoolContractAddress: "0x54C7743CBEBB0Ca9D7A8b8dA2d70abb43e479395",
-  inviSwapPoolContractAddress: "0x1F18DcDB2e229c7aa8F999d02Aae42bEF734cA14",
-  inviCoreContractAddress: "0x7B8AF412f0d469168F86dC626728C4C456772005",
-  priceManagerContractAddress: "0x9B20ceBA220Bde17d21153f8dF29dABFa481f8de",
+  inviTokenContractAddress: "0xEDa987d8968c8d58fc1Fc7aF38eE3cc7390D3cd1",
+  iLPTokenContractAddress: "0xA67E0A7DFEA3c733845A28b6896dCB95a76Ce8Bb",
+  iSPTTokenContractAddress: "0x1e0D7EA389549fC890083223B96cdE7b77fBE0bA",
+  stakeNFTContractAddress: "0xe50B582f67E0bdf637708A9f1082CB52803E0644",
+  inviTokenStakeContractAddress: "0x27D54b41396B7F6A7CAb5595220CA4B731260b83",
+  lpPoolContractAddress: "0x5eC26A58D18164a3616a77cEe77Dab2F8127203C",
+  lendingPoolContractAddress: "0x4147a7246EFA7E32D9E16d7cA6359f5c18D22b6E",
+  inviSwapPoolContractAddress: "0xe512157245fD8f6D337Ab211cD5895b1653D7233",
+  inviCoreContractAddress: "0x15aBC992EA3019371dB62C8df5b54Db7B9BF09B6",
+  priceManagerContractAddress: "0xa724f71661EbCcAb85041305bE9046df4ce1c947",
 };
+
+export const bfcMainnetLiveAddress = {};
