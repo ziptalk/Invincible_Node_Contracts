@@ -12,13 +12,13 @@ function LockPeriod(uint _leverageRatio) pure returns (uint) {
     uint e = 3; // exponent
     uint const = 50; // constant
     // uint testnetConstant = 24 * 60;
-    // uint onlyForTestConstant = 24 * 60 * 600;
+    uint onlyForTestConstant = 24 * 60 * 600;
     
     // apply testnetConstant for only testnet
-    //return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day / onlyForTestConstant;
+    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day / onlyForTestConstant;
 
     // for mainnet
-    return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day;
+   // return (c * (_leverageRatio ** e) / (LEVERAGE_UNIT ** e) + const) * day;
 }
 function ProtocolFee(uint _lentAmount, uint _leverageRatio, uint _totalLiquidity) pure returns (uint) {
     uint c = 360; //coefficient

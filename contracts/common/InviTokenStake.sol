@@ -117,7 +117,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // user receive reward(native coin) function
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -127,7 +127,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  

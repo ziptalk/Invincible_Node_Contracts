@@ -91,7 +91,6 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
 
     // distribute native rewards
     function updateNativeReward() external payable onlyInviCore {
-        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
@@ -114,7 +113,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // user receive reward(native coin) function
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -124,7 +123,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  

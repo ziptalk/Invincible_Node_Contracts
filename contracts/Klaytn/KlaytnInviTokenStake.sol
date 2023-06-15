@@ -124,7 +124,7 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @notice user receive reward(native coin) function
      */
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -137,7 +137,7 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @notice user receive reward(inviToken) function
      */
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  

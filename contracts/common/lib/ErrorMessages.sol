@@ -42,3 +42,6 @@ string constant ERROR_NOT_NFT_OWNER = "not nft owner";
 // interval error
 string constant ERROR_MINTING_INTERVAL_NOT_REACHED = "minting interval not reached";
 string constant ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED = "distribute interval not reached";
+
+// claim error
+string constant ERROR_NO_CLAIMABLE_AMOUNT = "no claimable amount";

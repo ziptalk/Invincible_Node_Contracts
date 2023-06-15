@@ -24,6 +24,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //------events------//
     event Stake(uint indexed amount);
     event Unstake(uint indexed amount);
+    event SendUnstakedAmount(uint indexed counts);
+
     
     //------reward related------//
     uint public stakingAPR;
@@ -46,6 +48,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
+    mapping (address => uint) public claimableAmount;
 
     //======initializer======//
     function initialize(address _stTokenAddr) initializer public {
@@ -302,26 +305,40 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function sendUnstakedAmount() external payable onlySTM{
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
+        uint count = 0;
         for (uint i = front ; i <  rear; i++) {
             if (unstakeRequests[i].amount > address(this).balance) {
                 break;
             }
+            count++;
             // check request type (0: user, 1: LP, 2: INVI staker)
             uint requestType = unstakeRequests[i].requestType;
             uint amount = unstakeRequests[i].amount;
             address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+            
             if (requestType == 0) {
-                (bool sent, ) = recipient.call{value : amount }("");
-                require(sent, ERROR_FAIL_SEND);
+                claimableAmount[recipient] += amount;
             } else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
             } else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        emit SendUnstakedAmount(count);
+
     } 
+
+    // claim unstaked amount
+    function claimUnstaked() external {
+        require(claimableAmount[msg.sender] > 0, ERROR_NO_CLAIMABLE_AMOUNT);
+        uint amount = claimableAmount[msg.sender];
+        claimableAmount[msg.sender] = 0;
+        (bool sent, ) = msg.sender.call{value : amount }("");
+        require(sent, ERROR_FAIL_SEND);
+    }
     
     //====== utils function ======//
     // verify stakeInfo is proper
