@@ -51,6 +51,10 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
 
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
+    mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
+
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _klaytnLiquidStaking) initializer public {
@@ -292,6 +296,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        lastStTokenDistributeTime = block.timestamp;
+
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -337,16 +344,32 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
             address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+             // if normal user
             if (requestType == 0) {
-                (bool sent, ) = recipient.call{value : amount }("");
-                require(sent, ERROR_FAIL_SEND);
-            } else if (requestType == 1) {
+                claimableAmount[recipient] += amount;
+            } 
+            // if lp pool
+            else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
-            } else if (requestType == 2) {
+            } 
+            // if invi token stake
+            else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        // update sendUnstakedAmountTime
+        lastSendUnstakedAmountTime = block.timestamp;
     } 
+
+    // claim unstaked amount
+    function claimUnstaked() external {
+        require(claimableAmount[msg.sender] > 0, ERROR_NO_CLAIMABLE_AMOUNT);
+        uint amount = claimableAmount[msg.sender];
+        claimableAmount[msg.sender] = 0;
+        (bool sent, ) = msg.sender.call{value : amount }("");
+        require(sent, ERROR_FAIL_SEND);
+    }
     
     //====== utils function ======//
     /**

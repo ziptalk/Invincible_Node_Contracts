@@ -36,6 +36,12 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //------constants------//
     uint public totalNativeRewardAmount;
+    uint public totalInviRewardAmount;
+    mapping (address => uint) public totalInviRewardAmountByAddress;
+    mapping (address => uint) public totalNativeRewardAmountByAddress;
+
+    //====== Upgrades ======//
+    uint public lastNativeRewardDistributeTime;
     
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -137,11 +143,15 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             address account = ILPHolders[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
+           
+             // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            (bool sent, ) = account.call{value: rewardAmount}("");
-            require(sent, ERROR_FAIL_SEND);
+            totalInviRewardAmountByAddress[account] += rewardAmount;
         }
+
+        // update last distribute time
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     // distribute invi token 
@@ -153,13 +163,35 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             //TODO : ILP Holder staking 양에 비례하게 invi token reward 분배
             address account = ILPHolders[i];
             uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
-            uint inviSlippage = 1000;
-           
-           // send invi token to account
-            require(inviToken.transfer(account, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
+              
+            // update rewards
+            inviRewardAmount[account] += rewardAmount;
+            totalInviRewardAmount += rewardAmount;
+            totalInviRewardAmountByAddress[account] += rewardAmount;
         }
 
         lastInviRewardedTime = block.timestamp;
+    }
+
+    function claimInviReward() external {
+        require(inviRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+        uint rewardAmount = inviRewardAmount[msg.sender];
+        inviRewardAmount[msg.sender] = 0;
+        uint inviSlippage = 1000;
+
+        // send invi token to account
+        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
+    }
+
+    function claimNativeReward() external {
+        require(nativeRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+        uint rewardAmount = nativeRewardAmount[msg.sender];
+        nativeRewardAmount[msg.sender] = 0;
+        uint nativeSlippage = 1000;
+       
+         // send native coin to account
+        (bool sent, ) = msg.sender.call{value: rewardAmount - nativeSlippage}("");
+        require(sent, ERROR_FAIL_SEND);
     }
 
     //====== utils functions ======//

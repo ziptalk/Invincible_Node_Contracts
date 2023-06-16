@@ -26,6 +26,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     //------events------//
     event Stake(uint indexed amount);
     event Unstake(uint indexed amount);
+    event SendUnstakedAmount(uint indexed counts);
     
     //------reward related------//
     uint public stakingAPR;
@@ -48,6 +49,12 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     //------other variable------//
     uint public slippage;
     address[] public userList;
+
+    //------ Upgradable ------//
+    mapping (uint => uint) public nftUnstakeTime;
+    mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _bfcLiquidStakingAddr) initializer public {
@@ -186,7 +193,10 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     
 
     // stake native coin
-    function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
+    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod,uint _slippage) external payable{
+         // get stakeInfo
+        StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
+
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
@@ -251,6 +261,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         // create unstake event
         bfcLiquidStaking.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
         
+        // update nft unstake time
+        nftUnstakeTime[_nftTokenId] = block.timestamp;
+
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
@@ -279,6 +292,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // update lastStTokenDistributeTime
+        lastStTokenDistributeTime = block.timestamp;
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -306,26 +322,46 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         bfcLiquidStaking.claim();
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
+        uint count = 0;
         for (uint i = front ; i <  rear; i++) {
             if (unstakeRequests[i].amount > address(this).balance) {
                 break;
             }
+            count++;
             // check request type (0: user, 1: LP, 2: INVI staker)
             uint requestType = unstakeRequests[i].requestType;
             uint amount = unstakeRequests[i].amount;
             address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+            // if normal user
             if (requestType == 0) {
-                (bool sent, ) = recipient.call{value : amount }("");
-                require(sent, ERROR_FAIL_SEND);
-            } else if (requestType == 1) {
+                claimableAmount[recipient] += amount;
+            } 
+            // if lp pool
+            else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
-            } else if (requestType == 2) {
+            } 
+            // if invi token stake
+            else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        // update lastUnstakeTime
+        lastSendUnstakedAmountTime = block.timestamp;
+
+        emit SendUnstakedAmount(count);
     } 
+
+    // claim unstaked amount
+    function claimUnstaked() external {
+        require(claimableAmount[msg.sender] > 0, ERROR_NO_CLAIMABLE_AMOUNT);
+        uint amount = claimableAmount[msg.sender];
+        claimableAmount[msg.sender] = 0;
+        (bool sent, ) = msg.sender.call{value : amount }("");
+        require(sent, ERROR_FAIL_SEND);
+    }
     
     //====== utils function ======//
     // verify stakeInfo is proper

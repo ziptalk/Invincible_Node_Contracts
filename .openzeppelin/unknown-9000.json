@@ -1754,7 +1754,7 @@
             "label": "stToken",
             "offset": 0,
             "slot": "101",
-            "type": "t_contract(IERC20)7200",
+            "type": "t_contract(IERC20)9371",
             "contract": "InviCore",
             "src": "contracts\\InviCore.sol:18"
           },
@@ -1762,7 +1762,7 @@
             "label": "stakeNFTContract",
             "offset": 0,
             "slot": "102",
-            "type": "t_contract(StakeNFT)6805",
+            "type": "t_contract(StakeNFT)8934",
             "contract": "InviCore",
             "src": "contracts\\InviCore.sol:19"
           },
@@ -1770,7 +1770,7 @@
             "label": "lpPoolContract",
             "offset": 0,
             "slot": "103",
-            "type": "t_contract(LiquidityProviderPool)6279",
+            "type": "t_contract(LiquidityProviderPool)8408",
             "contract": "InviCore",
             "src": "contracts\\InviCore.sol:20"
           },
@@ -1778,7 +1778,7 @@
             "label": "inviTokenStakeContract",
             "offset": 0,
             "slot": "104",
-            "type": "t_contract(InviTokenStake)5348",
+            "type": "t_contract(InviTokenStake)7477",
             "contract": "InviCore",
             "src": "contracts\\InviCore.sol:21"
           },
@@ -1842,7 +1842,7 @@
             "label": "unstakeRequests",
             "offset": 0,
             "slot": "112",
-            "type": "t_array(t_struct(UnstakeRequest)7700_storage)dyn_storage",
+            "type": "t_array(t_struct(UnstakeRequest)9871_storage)dyn_storage",
             "contract": "InviCore",
             "src": "contracts\\InviCore.sol:39"
           },
@@ -1888,7 +1888,7 @@
             "label": "address[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_struct(UnstakeRequest)7700_storage)dyn_storage": {
+          "t_array(t_struct(UnstakeRequest)9871_storage)dyn_storage": {
             "label": "struct UnstakeRequest[]",
             "numberOfBytes": "32"
           },
@@ -1904,19 +1904,19 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(IERC20)7200": {
+          "t_contract(IERC20)9371": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_contract(InviTokenStake)5348": {
+          "t_contract(InviTokenStake)7477": {
             "label": "contract InviTokenStake",
             "numberOfBytes": "20"
           },
-          "t_contract(LiquidityProviderPool)6279": {
+          "t_contract(LiquidityProviderPool)8408": {
             "label": "contract LiquidityProviderPool",
             "numberOfBytes": "20"
           },
-          "t_contract(StakeNFT)6805": {
+          "t_contract(StakeNFT)8934": {
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
@@ -1924,7 +1924,7 @@
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
-          "t_struct(UnstakeRequest)7700_storage": {
+          "t_struct(UnstakeRequest)9871_storage": {
             "label": "struct UnstakeRequest",
             "members": [
               {

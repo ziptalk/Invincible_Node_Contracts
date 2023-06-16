@@ -51,6 +51,10 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
 
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
+    mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
+
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _evmosLiquidStakingAddr) initializer public {
@@ -189,7 +193,10 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
     
 
     // stake native coin
-    function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
+    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod, uint _slippage) external payable{
+         // get stakeInfo
+        StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
+        
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
@@ -285,6 +292,9 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // update lastDistributeTime
+        lastStTokenDistributeTime = block.timestamp;
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -322,16 +332,32 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
             address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+            // if normal user
             if (requestType == 0) {
-                (bool sent, ) = recipient.call{value : amount }("");
-                require(sent, ERROR_FAIL_SEND);
-            } else if (requestType == 1) {
+                claimableAmount[recipient] += amount;
+            } 
+            // if lp pool
+            else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
-            } else if (requestType == 2) {
+            } 
+            // if invi token stake
+            else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+        
+        // update lastSendUnstakedTime
+        lastSendUnstakedAmountTime = block.timestamp;
     } 
+
+    // claim unstaked amount
+    function claimUnstaked() external {
+        require(claimableAmount[msg.sender] > 0, ERROR_NO_CLAIMABLE_AMOUNT);
+        uint amount = claimableAmount[msg.sender];
+        claimableAmount[msg.sender] = 0;
+        (bool sent, ) = msg.sender.call{value : amount }("");
+        require(sent, ERROR_FAIL_SEND);
+    }
     
     //====== utils function ======//
     // verify stakeInfo is proper

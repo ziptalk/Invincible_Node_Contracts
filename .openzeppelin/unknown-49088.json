@@ -4343,7 +4343,7 @@
             "label": "inviToken",
             "offset": 0,
             "slot": "101",
-            "type": "t_contract(IERC20)9371",
+            "type": "t_contract(IERC20)10465",
             "contract": "BfcInviTokenStake",
             "src": "contracts\\Bfc\\BfcInviTokenStake.sol:15"
           },
@@ -4449,7 +4449,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(IERC20)9371": {
+          "t_contract(IERC20)10465": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
@@ -4715,7 +4715,7 @@
             "label": "iLP",
             "offset": 0,
             "slot": "101",
-            "type": "t_contract(IERC20)7212",
+            "type": "t_contract(IERC20)9403",
             "contract": "BfcLiquidityProviderPool",
             "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:15"
           },
@@ -4723,7 +4723,7 @@
             "label": "inviToken",
             "offset": 0,
             "slot": "102",
-            "type": "t_contract(IERC20)7212",
+            "type": "t_contract(IERC20)9403",
             "contract": "BfcLiquidityProviderPool",
             "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:16"
           },
@@ -4731,7 +4731,7 @@
             "label": "inviCoreContract",
             "offset": 0,
             "slot": "103",
-            "type": "t_contract(BfcInviCore)4950",
+            "type": "t_contract(BfcInviCore)4966",
             "contract": "BfcLiquidityProviderPool",
             "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:17"
           },
@@ -4837,11 +4837,11 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(BfcInviCore)4950": {
+          "t_contract(BfcInviCore)4966": {
             "label": "contract BfcInviCore",
             "numberOfBytes": "20"
           },
-          "t_contract(IERC20)7212": {
+          "t_contract(IERC20)9403": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
@@ -10568,6 +10568,1850 @@
               }
             ],
             "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "4263c1f9159ce7dfc576697398dd8d9af5538781f730fbd8f48f3e75a09ad9cf": {
+      "address": "0x311699A016642564Eaf930786AFd2C026ECdf56e",
+      "txHash": "0xb4e3b9c229eca0f34b46f03b7d1db297205fe1c265b52d3b9244ebf8dde36d53",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)10407",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)9094",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5830",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5380",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)10012",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)9622_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9622_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5380": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5830": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)10012": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)10407": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)9094": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9622_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "ddf175afb99044453a1ad1f35f65ec840c2b80ae01b01c3cc476e84c459993e0": {
+      "address": "0xde1710B16Cef788743C660670f4106f2999a8e5D",
+      "txHash": "0xe70a9bafec701a963b8b7f55dcf9e7f50ae01a88920ed0319cfa8be9195a8361",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)15991",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)13409",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5830",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5380",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)15596",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)13950_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)13950_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5380": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5830": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)15596": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)15991": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)13409": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)13950_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "3febe346a94870f08ea4ba5fc0e74330536ba240f4a4d77e90c0b5c88b262a09": {
+      "address": "0x72741D72D76c950262b7B2fb6dFFB9bb8c1A07c3",
+      "txHash": "0xf81f574f6e44e31cabcaf1cc733a00825c4f94e94e768187ff9dd3af3d7dc4f1",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)10465",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)9139",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)5880",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5430",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)10070",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:31"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:38"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)9680_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:42"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:49"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          },
+          {
+            "label": "nftUnstakeTime",
+            "offset": 0,
+            "slot": "120",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:53"
+          },
+          {
+            "label": "claimableAmount",
+            "offset": 0,
+            "slot": "121",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:54"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)9680_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5430": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)5880": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)10070": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)10465": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)9139": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)9680_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "2c0215297ad33dfedfe9b507fdee64eb1d3a3e40dc2b726d8fe8b95fa46106ee": {
+      "address": "0x8A8d1b3814b62b6197249bAb58C57a955C5b7a65",
+      "txHash": "0xcbcc52956b6c0596bc78203595930f12c13586728abbe728023ed8658ef688bc",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "stToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)15373",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:19"
+          },
+          {
+            "label": "stakeNFTContract",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(StakeNFT)14047",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:20"
+          },
+          {
+            "label": "lpPoolContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcLiquidityProviderPool)6013",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:21"
+          },
+          {
+            "label": "inviTokenStakeContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(BfcInviTokenStake)5466",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:22"
+          },
+          {
+            "label": "bfcLiquidStaking",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IBfcLiquidStaking)14978",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:23"
+          },
+          {
+            "label": "stakingAPR",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:32"
+          },
+          {
+            "label": "decreaseRatio",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:33"
+          },
+          {
+            "label": "increaseRatio",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:34"
+          },
+          {
+            "label": "lpPoolRewardPortion",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:35"
+          },
+          {
+            "label": "inviTokenStakeRewardPortion",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:36"
+          },
+          {
+            "label": "userStakedAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:39"
+          },
+          {
+            "label": "latestStakeBlock",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:40"
+          },
+          {
+            "label": "unstakeRequests",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_struct(UnstakeRequest)14588_storage)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:43"
+          },
+          {
+            "label": "unstakeRequestsFront",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:44"
+          },
+          {
+            "label": "unstakeRequestsRear",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:45"
+          },
+          {
+            "label": "unstakeRequestAmount",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:46"
+          },
+          {
+            "label": "requireTransferAmount",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:47"
+          },
+          {
+            "label": "slippage",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:50"
+          },
+          {
+            "label": "userList",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:51"
+          },
+          {
+            "label": "nftUnstakeTime",
+            "offset": 0,
+            "slot": "120",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:54"
+          },
+          {
+            "label": "claimableAmount",
+            "offset": 0,
+            "slot": "121",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:55"
+          },
+          {
+            "label": "lastStTokenDistributeTime",
+            "offset": 0,
+            "slot": "122",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:56"
+          },
+          {
+            "label": "lastSendUnstakedAmountTime",
+            "offset": 0,
+            "slot": "123",
+            "type": "t_uint256",
+            "contract": "BfcInviCore",
+            "src": "contracts\\Bfc\\BfcInviCore.sol:57"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnstakeRequest)14588_storage)dyn_storage": {
+            "label": "struct UnstakeRequest[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviTokenStake)5466": {
+            "label": "contract BfcInviTokenStake",
+            "numberOfBytes": "20"
+          },
+          "t_contract(BfcLiquidityProviderPool)6013": {
+            "label": "contract BfcLiquidityProviderPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBfcLiquidStaking)14978": {
+            "label": "contract IBfcLiquidStaking",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)15373": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakeNFT)14047": {
+            "label": "contract StakeNFT",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UnstakeRequest)14588_storage": {
+            "label": "struct UnstakeRequest",
+            "members": [
+              {
+                "label": "recipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "fee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "requestType",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "f55334086ef14f92c7b08de7e84c6da54e6c55272a65ad765a07bafdd8ac9096": {
+      "address": "0xDC9C476cc6640a55af493FfA79eABBF58Ed40c25",
+      "txHash": "0xd065497723a833138db28e5e90f5e10a1930e876bc87c8624a8bce8a8e50e6af",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "iLP",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)15373",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:15"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)15373",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:16"
+          },
+          {
+            "label": "inviCoreContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(BfcInviCore)5063",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:17"
+          },
+          {
+            "label": "ILPHolders",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:18"
+          },
+          {
+            "label": "liquidityAllowableRatio",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:21"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:22"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:23"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:24"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:30"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:31"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:32"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:33"
+          },
+          {
+            "label": "totalLentAmount",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:34"
+          },
+          {
+            "label": "totalNativeRewardAmount",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:35"
+          },
+          {
+            "label": "totalInviRewardAmount",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:38"
+          },
+          {
+            "label": "totalInviRewardAmountByAddress",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:39"
+          },
+          {
+            "label": "totalNativeRewardAmountByAddress",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:40"
+          },
+          {
+            "label": "lastNativeRewardDistributeTime",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "BfcLiquidityProviderPool",
+            "src": "contracts\\Bfc\\BfcLiquidityProviderPool.sol:41"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(BfcInviCore)5063": {
+            "label": "contract BfcInviCore",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)15373": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "7fe26ab05936d5d4519efd4f3ff449d9499f77717736e528b8f1706acbf391e6": {
+      "address": "0x4271c98316c4d316eaebab6A0F44a089E5F4F594",
+      "txHash": "0xe64950d94cfef4efd3585614a3608806fbdbb4543ba78d102a3e304b5e5c72cb",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)15373",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:15"
+          },
+          {
+            "label": "inviCoreAddress",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:16"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:19"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:20"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:21"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:22"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:25"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:26"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:27"
+          },
+          {
+            "label": "addressList",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:30"
+          },
+          {
+            "label": "totalAddressNumber",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:31"
+          },
+          {
+            "label": "lastNativeRewardDistributeTime",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)15373": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "2a9f64730af8e041c383b8d205b0fb811380f979fd6c1ea3f34a601b3f92be5a": {
+      "address": "0x36B373927f2AC067AE659c2836797B0E7D53D35C",
+      "txHash": "0xa3501cc4c8574842560932b51d0f9eba60fa43358885fab7743afbb45ea87deb",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "inviToken",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20)11057",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:15"
+          },
+          {
+            "label": "inviCoreAddress",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:16"
+          },
+          {
+            "label": "stakedAmount",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:19"
+          },
+          {
+            "label": "nativeRewardAmount",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:20"
+          },
+          {
+            "label": "inviRewardAmount",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:21"
+          },
+          {
+            "label": "totalStakedAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:22"
+          },
+          {
+            "label": "inviRewardInterval",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:25"
+          },
+          {
+            "label": "inviReceiveInterval",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:26"
+          },
+          {
+            "label": "lastInviRewardedTime",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:27"
+          },
+          {
+            "label": "addressList",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:30"
+          },
+          {
+            "label": "totalAddressNumber",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:31"
+          },
+          {
+            "label": "lastNativeRewardDistributeTime",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:34"
+          },
+          {
+            "label": "unstakePeriod",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:35"
+          },
+          {
+            "label": "unstakeRequestTime",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:36"
+          },
+          {
+            "label": "claimableUnstakeAmount",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "BfcInviTokenStake",
+            "src": "contracts\\Bfc\\BfcInviTokenStake.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)11057": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
           },
           "t_uint256": {
             "label": "uint256",

@@ -30,6 +30,10 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
     address[] public addressList;
     uint public totalAddressNumber;
 
+    //------ Upgrades ------//
+    uint public lastNativeRewardDistributeTime;
+
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "msg sender should be invi core");
@@ -104,6 +108,8 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
             console.log("reward: ", rewardAmount);
             nativeRewardAmount[account] += rewardAmount;
         }
+
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     /**
@@ -124,7 +130,7 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @notice user receive reward(native coin) function
      */
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -137,7 +143,7 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @notice user receive reward(inviToken) function
      */
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  

@@ -30,6 +30,12 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     address[] public addressList;
     uint public totalAddressNumber;
 
+    //------ Upgrades ------//
+    uint public lastNativeRewardDistributeTime;
+    uint public unstakePeriod;
+    mapping(address => uint) public unstakeRequestTime;
+    mapping(address => uint) public claimableUnstakeAmount;
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "msg sender should be invi core");
@@ -77,27 +83,58 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
         addAddress(addressList, msg.sender);
         totalAddressNumber = addressList.length;
     }
+   function requestUnstake(uint _unstakeAmount) public {
+        require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
+        require(unstakeRequestTime[msg.sender] == 0, "Already requested unstake");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = block.timestamp;
+
+        // update values
+        stakedAmount[msg.sender] -= _unstakeAmount;
+        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        totalStakedAmount -= _unstakeAmount;
+    }
+
+    function cancelUnstake() public {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "cancel period passed");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = 0;
+
+        // update values
+        stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+        totalStakedAmount += claimableUnstakeAmount[msg.sender];
+    }
 
     // unstake inviToken
-    function unStake(uint _unstakeAmount) public  {
-        // update stake amount
-        require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
-        stakedAmount[msg.sender] -= _unstakeAmount;
-        // update total staked amount
-        totalStakedAmount -= _unstakeAmount;
+    function claimUnstaked() public  {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
 
-        require(inviToken.transfer(msg.sender, _unstakeAmount));
+        // update claimable unstake amount
+        uint claimableAmount = claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+
+        // send invi Token to requester
+        require(inviToken.transfer(msg.sender, claimableAmount));
     }
 
     // distribute native rewards
     function updateNativeReward() external payable onlyInviCore {
-        // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
             console.log("reward: ", rewardAmount);
             nativeRewardAmount[account] += rewardAmount;
         }
+
+          // update last distribute time
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     // distribute invi token rewards (tbd)
@@ -114,7 +151,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // user receive reward(native coin) function
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -124,7 +161,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  

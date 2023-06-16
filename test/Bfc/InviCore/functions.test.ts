@@ -2,11 +2,12 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import { deployAllWithSetting } from "../../deploy";
-import { testAddressBfc } from "../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../currentNetwork";
 import { units } from "../../units";
+import { testAddressMainnetBfc, testAddressTestnetBfc } from "../../../scripts/addresses/testAddresses/address.bfc";
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
+let targetAddress = testAddressTestnetBfc;
 
 describe("Invi Core functions Test", function () {
   let inviTokenContract: Contract;
@@ -18,11 +19,11 @@ describe("Invi Core functions Test", function () {
   this.beforeAll(async function () {
     // for testnet test
     if (network === "BIFROST") {
-      inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
-      inviTokenContract = await ethers.getContractAt("InviToken", testAddressBfc.inviTokenContractAddress);
-      iLPTokenContract = await ethers.getContractAt("ILPToken", testAddressBfc.iLPTokenContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
+      inviCoreContract = await ethers.getContractAt("BfcInviCore", targetAddress.inviCoreContractAddress);
+      inviTokenContract = await ethers.getContractAt("InviToken", targetAddress.inviTokenContractAddress);
+      iLPTokenContract = await ethers.getContractAt("ILPToken", targetAddress.iLPTokenContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", targetAddress.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", targetAddress.lpPoolContractAddress);
     } else {
       ({ inviCoreContract, inviTokenContract, iLPTokenContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
     }

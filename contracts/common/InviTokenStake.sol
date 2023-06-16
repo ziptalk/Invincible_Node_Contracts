@@ -31,6 +31,12 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     address[] public addressList;
     uint public totalAddressNumber;
 
+    //----- Upgrades -----//
+    uint public lastNativeRewardDistributeTime;
+    uint public unstakePeriod;
+    mapping(address => uint) public unstakeRequestTime;
+    mapping(address => uint) public claimableUnstakeAmount;
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "msg sender should be invi core");
@@ -42,13 +48,15 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         __Ownable_init();
         inviToken = IERC20(_inviTokenAddr);
 
-         inviRewardInterval = 1 hours; // testnet : 1 hours
+        inviRewardInterval = 1 hours; // testnet : 1 hours
         // inviRewardInterval = 1 days; // mainnet : 1 days
 
         inviReceiveInterval = 30 hours; // testnet : 30 hours
         // inviReceiveInterval = 90 days; // mainnet : 90 days
 
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
+
+        unstakePeriod = 1 minutes; // testnet : 1 min (for test) mainnet: 7 days
     }
 
     //====== getter functions ======//
@@ -65,9 +73,12 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     function setInviTokenAddress(address _inviTokenAddr) public onlyOwner {
         inviToken = IERC20(_inviTokenAddr);
     }
-   
-    //====== service functions ======//
+    
+    function setUnstakePeriod(uint _unstakePeriod) external onlyOwner {
+        unstakePeriod = _unstakePeriod;
+    }
 
+    //====== service functions ======//
     // stake inviToken
     function stake(uint _stakeAmount) public  {
         require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
@@ -81,15 +92,45 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalAddressNumber = addressList.length;
     }
 
-    // unstake inviToken
-    function unStake(uint _unstakeAmount) public  {
-        // update stake amount
+    function requestUnstake(uint _unstakeAmount) public {
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
-        stakedAmount[msg.sender] -= _unstakeAmount;
-        // update total staked amount
-        totalStakedAmount -= _unstakeAmount;
+        require(unstakeRequestTime[msg.sender] == 0, "Already requested unstake");
 
-        require(inviToken.transfer(msg.sender, _unstakeAmount));
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = block.timestamp;
+
+        // update values
+        stakedAmount[msg.sender] -= _unstakeAmount;
+        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        totalStakedAmount -= _unstakeAmount;
+    }
+
+    function cancelUnstake() public {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "cancel period passed");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = 0;
+
+        // update values
+        stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+        totalStakedAmount += claimableUnstakeAmount[msg.sender];
+    }
+
+    // unstake inviToken
+    function claimUnstaked() public  {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
+
+        // update claimable unstake amount
+        uint claimableAmount = claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+
+        // send invi Token to requester
+        require(inviToken.transfer(msg.sender, claimableAmount));
     }
 
     // distribute native rewards
@@ -101,6 +142,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
             console.log("reward: ", rewardAmount);
             nativeRewardAmount[account] += rewardAmount;
         }
+
+        // update last distribute time
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     // distribute invi token rewards (tbd)
@@ -117,7 +161,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // user receive reward(native coin) function
-    function receiveNativeReward() public {
+    function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;  
@@ -127,7 +171,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "Failed to send reward to requester");
     }
 
-    function receiveInviReward() public {
+    function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
         uint reward = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;  
