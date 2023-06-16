@@ -39,6 +39,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint public totalInviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
+
+    //====== Upgrades ======//
+    uint public lastNativeRewardDistributeTime;
     
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -146,6 +149,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             totalNativeRewardAmount += rewardAmount;
             totalInviRewardAmountByAddress[account] += rewardAmount;
         }
+
+        // update last distribute time
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     // distribute invi token 

@@ -30,6 +30,12 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     address[] public addressList;
     uint public totalAddressNumber;
 
+    //------ Upgrades ------//
+    uint public lastNativeRewardDistributeTime;
+    uint public unstakePeriod;
+    mapping(address => uint) public unstakeRequestTime;
+    mapping(address => uint) public claimableUnstakeAmount;
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "msg sender should be invi core");
@@ -77,16 +83,45 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
         addAddress(addressList, msg.sender);
         totalAddressNumber = addressList.length;
     }
+   function requestUnstake(uint _unstakeAmount) public {
+        require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
+        require(unstakeRequestTime[msg.sender] == 0, "Already requested unstake");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = block.timestamp;
+
+        // update values
+        stakedAmount[msg.sender] -= _unstakeAmount;
+        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        totalStakedAmount -= _unstakeAmount;
+    }
+
+    function cancelUnstake() public {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "cancel period passed");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = 0;
+
+        // update values
+        stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+        totalStakedAmount += claimableUnstakeAmount[msg.sender];
+    }
 
     // unstake inviToken
-    function unStake(uint _unstakeAmount) public  {
-        // update stake amount
-        require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
-        stakedAmount[msg.sender] -= _unstakeAmount;
-        // update total staked amount
-        totalStakedAmount -= _unstakeAmount;
+    function claimUnstaked() public  {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
 
-        require(inviToken.transfer(msg.sender, _unstakeAmount));
+        // update claimable unstake amount
+        uint claimableAmount = claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+
+        // send invi Token to requester
+        require(inviToken.transfer(msg.sender, claimableAmount));
     }
 
     // distribute native rewards
@@ -97,6 +132,9 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
             console.log("reward: ", rewardAmount);
             nativeRewardAmount[account] += rewardAmount;
         }
+
+          // update last distribute time
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     // distribute invi token rewards (tbd)

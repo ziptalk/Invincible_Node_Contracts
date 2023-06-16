@@ -38,6 +38,8 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint public totalInviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
+        uint public lastNativeRewardDistributeTime;
+
 
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -136,6 +138,9 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
             totalNativeRewardAmount += rewardAmount;
             totalInviRewardAmountByAddress[account] += rewardAmount;
         }
+
+        lastNativeRewardDistributeTime = block.timestamp;
+
     }
 
     // distribute invi token 

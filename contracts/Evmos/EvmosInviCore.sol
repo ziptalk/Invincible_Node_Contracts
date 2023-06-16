@@ -52,6 +52,8 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
 
 
     //======initializer======//
@@ -290,6 +292,9 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // update lastDistributeTime
+        lastStTokenDistributeTime = block.timestamp;
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -340,6 +345,9 @@ contract EvmosInviCore is Initializable, OwnableUpgradeable {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+        
+        // update lastSendUnstakedTime
+        lastSendUnstakedAmountTime = block.timestamp;
     } 
 
     // claim unstaked amount

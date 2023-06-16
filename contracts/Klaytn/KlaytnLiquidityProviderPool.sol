@@ -36,7 +36,12 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint public totalInviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
-    
+
+    //====== Upgrades ======//
+    uint public lastNativeRewardDistributeTime;
+
+
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == address(inviCoreContract), "msg sender should be invi core");
@@ -140,6 +145,8 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
             totalNativeRewardAmount += rewardAmount;
             totalInviRewardAmountByAddress[account] += rewardAmount;
         }
+
+        lastNativeRewardDistributeTime = block.timestamp;
     }
 
     /**

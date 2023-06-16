@@ -52,6 +52,8 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
 
 
     //======initializer======//
@@ -294,6 +296,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        lastStTokenDistributeTime = block.timestamp;
+
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -352,6 +357,9 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        // update sendUnstakedAmountTime
+        lastSendUnstakedAmountTime = block.timestamp;
     } 
 
     // claim unstaked amount

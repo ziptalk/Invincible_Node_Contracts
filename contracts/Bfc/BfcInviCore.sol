@@ -53,6 +53,8 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
     //------ Upgradable ------//
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _bfcLiquidStakingAddr) initializer public {
@@ -290,6 +292,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // update lastStTokenDistributeTime
+        lastStTokenDistributeTime = block.timestamp;
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -342,6 +347,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        // update lastUnstakeTime
+        lastSendUnstakedAmountTime = block.timestamp;
 
         emit SendUnstakedAmount(count);
     } 

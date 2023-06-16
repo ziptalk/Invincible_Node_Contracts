@@ -49,6 +49,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //------upgrades------//
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
+    uint public lastStTokenDistributeTime;
+    uint public lastSendUnstakedAmountTime;
+
 
     //======initializer======//
     function initialize(address _stTokenAddr) initializer public {
@@ -284,6 +287,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // update stTokenRewardTime
+        lastStTokenDistributeTime = block.timestamp;
+
         emit Unstake(lpReward + inviStakerReward);
     }
 
@@ -326,6 +332,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
+
+        // update last send unstaked amount time
+        lastSendUnstakedAmountTime = block.timestamp;
 
         emit SendUnstakedAmount(count);
 
