@@ -12,10 +12,14 @@ import {
   deployAllWithSetting,
 } from "../../../deploy";
 import { provideLiquidity, leverageStake } from "../../../utils";
-import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
 import { units } from "../../../units";
+import { testAddressTestnetBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
+import { testAddressMainnetBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
+import { targets } from "../../../../scripts/targets";
 const { expectRevert } = require("@openzeppelin/test-helpers");
+
+const testAddressBfc: any = targets.testNetworkType === "TESTNET" ? testAddressTestnetBfc : testAddressMainnetBfc;
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -32,6 +36,11 @@ describe("Invi core service test", function () {
 
   it("Test stake function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+
+    console.log("deployer: ", deployer.address);
+    console.log("stakeManager: ", stakeManager.address);
+    console.log("LP: ", LP.address);
+    console.log("userA: ", userA.address);
 
     let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);

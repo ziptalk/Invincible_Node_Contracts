@@ -242,11 +242,11 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         lpPoolContract.setTotalLentAmount(lpPoolContract.totalLentAmount() - (stakeInfo.stakedAmount - stakeInfo.principal));
 
         // create unstake request for user 
-        UnstakeRequest memory request = UnstakeRequest(msg.sender, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
+        UnstakeRequest memory request = UnstakeRequest(msg.sender, _nftTokenId, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), lpPoolReward, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18, lpPoolReward, 0, 1);
         // create unstake request for INVI stakers
-        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), inviTokenStakeReward, 0, 2);
+        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), 10**18, inviTokenStakeReward, 0, 2);
 
         // push request to unstakeRequests
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
@@ -261,6 +261,8 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         // create unstake event
         bfcLiquidStaking.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
         
+        // update unstake request amount
+        unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
         // update nft unstake time
         nftUnstakeTime[_nftTokenId] = block.timestamp;
 
@@ -282,9 +284,9 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         bfcLiquidStaking.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
 
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), lpReward, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18, lpReward, 0, 1);
         // create unstake request for INVI stakers
-        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), inviStakerReward, 0, 2);
+        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), 10**18, inviStakerReward, 0, 2);
 
         // update NFT reward
         stakeNFTContract.updateReward(nftReward);
@@ -309,7 +311,7 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         bfcLiquidStaking.createUnstakeRequest(_requestAmount);
 
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), _requestAmount, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18,_requestAmount, 0, 1);
        
         // push request to unstakeRequests
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
@@ -334,6 +336,8 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
             address recipient = unstakeRequests[i].recipient;
             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+            // update unstakeRequestAmount
+            unstakeRequestAmount -= amount;
             // if normal user
             if (requestType == 0) {
                 claimableAmount[recipient] += amount;
@@ -394,9 +398,4 @@ contract BfcInviCore is Initializable, OwnableUpgradeable {
         require(maxProtocolFee >= protocolFee, ERROR_INVALID_STAKE_INFO);
     }
 
-    // create unstake request for testing
-    function createUnstakeRequest(address _recipient, uint _amount, uint _protocolFee, uint _requestType) external onlyOwner {
-        UnstakeRequest memory request = UnstakeRequest(_recipient, _amount, _protocolFee, _requestType);
-        unstakeRequests.push(request);
-    }
 }

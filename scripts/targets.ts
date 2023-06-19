@@ -10,10 +10,13 @@ import { klaytnMainnetLiveAddress, klaytnTestnetLiveAddress } from "./addresses/
 
 export const targets = {
   //========= deploy contract =========//
-  network: "EVMOS",
+  network: "BIFROST",
   networkType: "TESTNET",
 
   // ======== upgrade Addresses ========//
-  upgradingContract: "BfcInviTokenStake",
-  upgradingContractAddress: bfcTestnetLiveAddress.inviTokenStakeContractAddress,
+  upgradingContract: "BfcInviCore",
+  upgradingContractAddress: testAddressTestnetBfc.inviCoreContractAddress,
+
+  // ======== test Addresses ========//
+  testNetworkType: "TESTNET",
 };

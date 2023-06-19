@@ -239,11 +239,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
         lpPoolContract.setTotalLentAmount(lpPoolContract.totalLentAmount() - (stakeInfo.stakedAmount - stakeInfo.principal));
 
         // create unstake request for user 
-        UnstakeRequest memory request = UnstakeRequest(msg.sender, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
+        UnstakeRequest memory request = UnstakeRequest(msg.sender,_nftTokenId, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), lpPoolReward, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, lpPoolReward, 0, 1);
         // create unstake request for INVI stakers
-        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), inviTokenStakeReward, 0, 2);
+        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract),10**18, inviTokenStakeReward, 0, 2);
 
         // push request to unstakeRequests
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
@@ -277,9 +277,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint inviStakerReward = totalReward - nftReward - lpReward;
 
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), lpReward, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, lpReward, 0, 1);
         // create unstake request for INVI stakers
-        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), inviStakerReward, 0, 2);
+        UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract), 10**18,inviStakerReward, 0, 2);
 
         // update NFT reward
         stakeNFTContract.updateReward(nftReward);
@@ -299,7 +299,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     function unstakeLp(uint _requestAmount) external onlyLpPool {
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), _requestAmount, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, _requestAmount, 0, 1);
        
         // push request to unstakeRequests
         unstakeRequests.push(lpRequest);

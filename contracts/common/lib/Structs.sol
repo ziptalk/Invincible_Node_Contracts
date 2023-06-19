@@ -28,6 +28,7 @@ struct ExchangeRatio{
 
 struct UnstakeRequest{
     address recipient;
+    uint nftId;
     uint amount;
     uint fee;
     uint requestType; // 0: user, 1: LP, 2: INVI
