@@ -62,9 +62,15 @@ export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContr
   } else if (network === "KLAYTN") {
     LpPoolContract = await ethers.getContractFactory("KlaytnLiquidityProviderPool");
     lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
+  } else if (network === "EVMOS") {
+    LpPoolContract = await ethers.getContractFactory("EvmosLiquidityProviderPool");
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
   } else {
     LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
     lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
   }
 
   return lpPoolContract;
@@ -81,6 +87,11 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract, 
   } else if (network === "KLAYTN") {
     InviTokenStakeContract = await ethers.getContractFactory("KlaytnInviTokenStake");
     inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
+  } else if (network === "EVMOS") {
+    InviTokenStakeContract = await ethers.getContractFactory("EvmosInviTokenStake");
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
   } else {
     InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
     inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
@@ -99,6 +110,10 @@ export const deployInviCoreContract = async (stTokenContract: String, liquidStak
     await inviCoreContract.deployed();
   } else if (network === "KLAYTN") {
     InviCoreContract = await ethers.getContractFactory("KlaytnInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else if (network === "EVMOS") {
+    InviCoreContract = await ethers.getContractFactory("EvmosInviCore");
     inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
     await inviCoreContract.deployed();
   } else {

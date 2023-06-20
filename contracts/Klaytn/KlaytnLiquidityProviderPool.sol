@@ -143,7 +143,7 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
             // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            totalNativeRewardAmountByAddress[account] += rewardAmount;
         }
 
         lastNativeRewardDistributeTime = block.timestamp;

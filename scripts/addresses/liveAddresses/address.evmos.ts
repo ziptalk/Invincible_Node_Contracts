@@ -1,8 +1,8 @@
 export const evmosTestnetLiveAddress = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
-  evmosLiquidStaking: "0xDdC784d684247bb3dd19EAaD7E36eaEdD1D5D81D",
-  stEvmos: "0xe9ce7E47FE33c0c488d5503D47dA8d535D430102",
+  stEvmos: "0xf22D94F00EA4771Ac24B79a88Defd0Ab02550551",
+  evmosLiquidStaking: "0x25177D26831D452fE40cAEb8011689EFDfA2C865",
 
   inviTokenContractAddress: "0xac32A1dcC98C7aD6855e1649f76c383A05439c51",
   iLPTokenContractAddress: "0x8D7F9a531746dEF5cCc674D969BF0d31000856ae",

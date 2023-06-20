@@ -102,6 +102,7 @@ export const setInit = async (address: any, network: string) => {
   //set lpPoolContract init condition
   if (network === "BIFROST") {
   } else if (network === "KLAYTN") {
+  } else if (network === "EVMOS") {
   } else {
     tx = await lpPoolContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
@@ -115,6 +116,7 @@ export const setInit = async (address: any, network: string) => {
   await tx.wait();
   if (network === "BIFROST") {
   } else if (network === "KLAYTN") {
+  } else if (network === "EVMOS") {
   } else {
     tx = await inviTokenStakeContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
@@ -133,6 +135,7 @@ export const setInit = async (address: any, network: string) => {
   await tx.wait();
   if (network === "BIFROST") {
   } else if (network === "KLAYTN") {
+  } else if (network === "EVMOS") {
   } else {
     tx = await inviCoreContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
     await tx.wait();
