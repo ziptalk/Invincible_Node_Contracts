@@ -10,7 +10,7 @@ import { klaytnMainnetLiveAddress, klaytnTestnetLiveAddress } from "./addresses/
 
 export const targets = {
   //========= deploy contract =========//
-  network: "EVMOS",
+  network: "KLAYTN",
   networkType: "TESTNET",
 
   // ======== upgrade Addresses ========//

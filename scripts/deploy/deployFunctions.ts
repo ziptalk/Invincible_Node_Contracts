@@ -164,16 +164,16 @@ export const deployPriceManager = async (network: string) => {
 export const deployAllContract = async (network: string) => {
   if (network === "BIFROST") {
     if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = bfcTestnetLiveAddress.stBfc;
-      liquidStakingAddress = bfcTestnetLiveAddress.bfcLiquidStaking;
+      stTokenContractAddress = bfcTestnetLiveAddress.stBFCContractAddress;
+      liquidStakingAddress = bfcTestnetLiveAddress.bfcLiquidStakingContractAddress;
     } else {
       // stTokenContractAddress = bfcMainnetLiveAddress.stBfc;
       // liquidStakingAddress = bfcMainnetLiveAddress.bfcLiquidStaking;
     }
   } else if (network === "EVMOS") {
     if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = evmosTestnetLiveAddress.stEvmos;
-      liquidStakingAddress = evmosTestnetLiveAddress.evmosLiquidStaking;
+      stTokenContractAddress = evmosTestnetLiveAddress.stEvmosContractAddress;
+      liquidStakingAddress = evmosTestnetLiveAddress.evmosLiquidStakingContractAddress;
     } else {
       // stTokenContractAddress = evmosAddress.stEvmos;
       // liquidStakingAddress = evmosAddress.evmosLiquidStaking;
