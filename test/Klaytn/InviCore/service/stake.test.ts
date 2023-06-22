@@ -4,9 +4,10 @@ import { ethers, upgrades } from "hardhat";
 import { provideLiquidity, leverageStake } from "../../../utils";
 import { units } from "../../../units";
 import { testAddressTestnetKlaytn, testAddressMainnetKlaytn } from "../../../../scripts/addresses/testAddresses/address.klaytn";
+import { targets } from "../../../../scripts/targets";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
-let targetAddress = testAddressMainnetKlaytn;
+let targetAddress: any = targets.testNetworkType === "TESTNET" ? testAddressTestnetKlaytn : testAddressMainnetKlaytn;
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
@@ -60,9 +61,5 @@ describe("Invi core service test", function () {
     // get contract balance
     const contractBalance = await ethers.provider.getBalance(inviCoreContract.address);
     console.log("contractBalance: ", contractBalance.toString());
-    // expect(userNftBalance).to.equal(parseInt(previousUserNftBalance) + 1);
-    // expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
-    // expect(totalLentAmount).to.equal(BigNumber.from(previousTotalLentAmount).add(lentAmount));
-    // expect(stakeNFTTotalStakedAmount).to.equal(BigNumber.from(previousStakeNFTTotalStakedAmount).add(principal).add(lentAmount));
   });
 });

@@ -111,7 +111,8 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
         console.log("mint success");
     
         // request inviCore
-        inviCoreContract.stakeLp{value: msg.value}();
+        bool result = inviCoreContract.stakeLp{value: msg.value}();
+        require(result, "stakeLp failed");
     }
 
     /**

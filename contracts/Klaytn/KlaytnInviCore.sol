@@ -275,11 +275,13 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
      /**
      * @notice Periodic reward distribution
      */
-    function distributeStTokenReward() external onlyOwner {
+    function distributeStTokenReward() external {
         // get total staked amount
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         // get total rewards
         uint totalReward = stToken.balanceOf(address(this)) - totalStakedAmount;
+        require(totalReward > 0, ERROR_NO_REWARD);
+
         // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
@@ -308,10 +310,11 @@ contract KlaytnInviCore is Initializable, OwnableUpgradeable {
      /**
      * @notice stake from LPPool
      */
-    function stakeLp() external onlyLpPool payable {
+    function stakeLp() external onlyLpPool payable returns (bool) {
         // stake 
         klaytnLiquidStaking.stake{value : msg.value}();
         emit Stake(msg.value);
+        return true;
     }
 
      /**

@@ -270,7 +270,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         // get total rewards
         uint totalReward = stToken.balanceOf(stakeManager) - totalStakedAmount;
-
+        require(totalReward > 0, ERROR_NO_REWARD);
+        
         // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;

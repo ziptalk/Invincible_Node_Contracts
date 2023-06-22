@@ -3,9 +3,12 @@ import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import { provideLiquidity, leverageStake, verifyRequest } from "../../../utils";
 import { units } from "../../../units";
-import { testAddressKlaytn } from "../../../../scripts/addresses/testAddresses/address.klaytn";
+import { testAddressTestnetKlaytn, testAddressMainnetKlaytn } from "../../../../scripts/addresses/testAddresses/address.klaytn";
+import { targets } from "../../../../scripts/targets";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
+
+let targetAddress: any = targets.testNetworkType === "TESTNET" ? testAddressTestnetKlaytn : testAddressMainnetKlaytn;
 
 describe("Invi core service test", function () {
   let stKlayContract: Contract;
@@ -16,10 +19,10 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-    inviCoreContract = await ethers.getContractAt("KlaytnInviCore", testAddressKlaytn.inviCoreContractAddress);
-    inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddressKlaytn.inviTokenStakeContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressKlaytn.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("KlaytnLiquidityProviderPool", testAddressKlaytn.lpPoolContractAddress);
+    inviCoreContract = await ethers.getContractAt("KlaytnInviCore", targetAddress.inviCoreContractAddress);
+    inviTokenStakeContract = await ethers.getContractAt("InviToken", targetAddress.inviTokenStakeContractAddress);
+    stakeNFTContract = await ethers.getContractAt("StakeNFT", targetAddress.stakeNFTContractAddress);
+    lpPoolContract = await ethers.getContractAt("KlaytnLiquidityProviderPool", targetAddress.lpPoolContractAddress);
   });
 
   it("Test repayNFT function", async () => {
@@ -31,20 +34,24 @@ describe("Invi core service test", function () {
     let tx;
 
     //* given
-    const lpAmount = 100000000000;
+    const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
     await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
 
     // get user nft list
     const userNftList = await stakeNFTContract.getNFTOwnership(userA.address);
     console.log("user nft list: ", userNftList);
 
+    // get unstake requests
+    const unstakeRequests = await inviCoreContract.functions.unstakeRequests(6);
+    console.log("unstake requests: ", unstakeRequests.amount / 10 ** 18);
+
     //==================Change This Part==================//
     const targetNft = 0; // repay first nft
     //==================////////////////==================//
 
     //userA stake
-    const principal: BigNumber = BigNumber.from("500000");
-    const leverageRatio = 3 * units.leverageUnit;
+    const principal: BigNumber = ethers.utils.parseEther("0.1");
+    const leverageRatio = 2 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     const lockPeriod = minLockPeriod * 2;
     const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA);
@@ -53,7 +60,7 @@ describe("Invi core service test", function () {
     let nftId = await stakeNFTContract.NFTOwnership(userA.address, targetNft);
     const nftStakeInfo = await stakeNFTContract.getStakeInfo(nftId);
     console.log("nft id: ", nftId);
-    console.log("stake info: ", nftStakeInfo);
+    console.log("stake info: ", nftStakeInfo.principal / 10 ** 18);
 
     // init value
     const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
@@ -73,10 +80,10 @@ describe("Invi core service test", function () {
     const totalLentAmount = await lpPoolContract.totalLentAmount();
     const unstakeRequestLength = await inviCoreContract.functions.getUnstakeRequestsLength();
 
-    console.log("lentAmount: ", lentAmount);
-    console.log("totalUserStakedAmount: ", totalUserStakedAmount);
-    console.log("totalLPStakedAmount: ", totalLPStakedAmount);
-    console.log("totalLentAmount: ", totalLentAmount);
+    console.log("lentAmount: ", lentAmount / 10 ** 18);
+    console.log("totalUserStakedAmount: ", totalUserStakedAmount / 10 ** 18);
+    console.log("totalLPStakedAmount: ", totalLPStakedAmount / 10 ** 18);
+    console.log("totalLentAmount: ", totalLentAmount / 10 ** 18);
     console.log("unstakeRequestLength: ", unstakeRequestLength);
 
     // expect(totalUserStakedAmount).to.equal(BigNumber.from(initTotalUserStakedAmount).sub(principal).sub(lentAmount)); // verify totalUserStakedAmount
