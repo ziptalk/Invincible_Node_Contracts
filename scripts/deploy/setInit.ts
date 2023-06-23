@@ -153,18 +153,18 @@ export const setInit = async (address: any, network: string) => {
 };
 
 //=================== when have nonce error =================== //
-// let address = {
-//   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
-//   stakeManager: "0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE",
-//   inviTokenContractAddress: "0x29cC923d9F974F06a56F5bEAA1f5c21E0CD23d49",
-//   iLPTokenContractAddress: "0x5E60cE2290bfb8843b60B395e3804b6978BCcFE4",
-//   iSPTTokenContractAddress: "0xbD126adD28837FA41a4fff60ddb1f2a279D28cb7",
-//   stakeNFTContractAddress: "0x845dD17988246c951e4DC59b88A6e2c624f342fb",
-//   inviTokenStakeContractAddress: "0xC73cD39Da642a84AD7695CDBb2863551957e8F7D",
-//   lpPoolContractAddress: "0xC73cD39Da642a84AD7695CDBb2863551957e8F7D",
-//   lendingPoolContractAddress: "0x2Eb3540D302669A3b7Ce98926c08C89Ec5e0FE60",
-//   inviSwapPoolContractAddress: "0xE07fd4EC873b9aE0699d6344D0a05092AbaF9dC3",
-//   inviCoreContractAddress: "0x9ee674dFADB6aC4cdD64ae7b03224C011E7111b3",
-//   priceManagerContractAddress: "0x0b2Fa4BCe83B8d6ff67c3102d1B0509f3226bD5b",
-// };
-// setInit(address, "KLAYTN");
+let address = {
+  stEvmosContractAddress: "0x6c4674c03Ac5f237997C8F2e296b16643649F70C",
+  evmosLiquidStakingContractAddress: "0x3fDDe2E9F36d7222DAdba31D6c26CbC72739aF58",
+  inviTokenContractAddress: "0x8A3eC47e83c15276302c3F0231ba7A9884e38Ee5",
+  iLPTokenContractAddress: "0xF4C764B686d199c79AfEbFCda87059A2e3191595",
+  iSPTTokenContractAddress: "0x5E232427874d60B9ec7c6846b4252D186c136FB4",
+  stakeNFTContractAddress: "0x5296218c691EE60607cA5A7A401B694A508C1961",
+  inviTokenStakeContractAddress: "0x08CEc9deAba64dC7Dcc7926d8FbCa605544156D2",
+  lpPoolContractAddress: "0x1a628444f69E80D92baC9C9493808377092e5773",
+  lendingPoolContractAddress: "0x37Df65b7b5C98b4C700da1372Acd77c0c6c499F2",
+  inviSwapPoolContractAddress: "0x77a05d84CA4d23420e973302d7095997b51f5D36",
+  inviCoreContractAddress: "0x14e45f066687857E26fEa06f5e8551c3A04DB99D",
+  priceManagerContractAddress: "0x565a009690587CFf97C69Ad9b0b52B3Afa8e3e22",
+};
+setInit(address, "EVMOS");

@@ -1,16 +1,16 @@
 export const klaytnMainnetLiveAddress = {
   deployer: "0xe2Cb59A8dcbD7bac0FF2daa1aBE0A63B46a98E05",
   stakelyContractAddress: "0xF80F2b22932fCEC6189b9153aA18662b15CC9C00",
-  inviTokenContractAddress: "0xc92C92D105505727c1D0E4B3b2261Bc731bFa2a7",
-  iLPTokenContractAddress: "0xE058418c4124C42F7C9F02c7051B6D870a804a24",
-  iSPTTokenContractAddress: "0xB860871dfcd5263170003caF77B949ddE0D8AdaD",
-  stakeNFTContractAddress: "0x8A47b1b8339671B7B4c5A2d17DfF4EC0dd39648f",
-  inviTokenStakeContractAddress: "0xEA65F02f53024796FD07e2Af685Bb2D2b00B0d0B",
-  lpPoolContractAddress: "0x27842f27E1431D82e47C86961e33792188e55C1E",
-  lendingPoolContractAddress: "0xFE21bc77402a9EE4210C2fc5477a18CdA7819C82",
-  inviSwapPoolContractAddress: "0xB004CcB6c8ebE89Eb6138326532D9cD47D719E00",
-  inviCoreContractAddress: "0xe368963c9388299731CC852b70B960Ec4B3224E3",
-  priceManagerContractAddress: "0x671331d22587D0A29414a16aB4521912EbAb0041",
+  inviTokenContractAddress: "0x40A41c7ebBDd19459dC259D8Fa95520dF0C56b77",
+  iLPTokenContractAddress: "0x0001211E8e68e7cca7104506d05518f82569AB68",
+  iSPTTokenContractAddress: "0x3382aA9276A5d1C147564146f6f315F508A80BAA",
+  stakeNFTContractAddress: "0x40d61705BcAC78Acc03f33121A4EC0B667169766",
+  inviTokenStakeContractAddress: "0x1123657120436cA37fB3899C7F2cf5443AE939b1",
+  lpPoolContractAddress: "0x7c1A67A2446e7f3196199f298cC195D1cfCffC56",
+  lendingPoolContractAddress: "0x6495581D7E1a7f0f9f5bF8F70d90A1E9d63CEdF6",
+  inviSwapPoolContractAddress: "0xf88a5f2307C09CBc157402c3dE8D221407E379F5",
+  inviCoreContractAddress: "0x02f6Dc75F35E8ea1BD059ba0C7D0f2f9Fd0c1256",
+  priceManagerContractAddress: "0x578B7372644e16F56bDD945649C1d0d54eaDa5d1",
 };
 
 export const klaytnTestnetLiveAddress = {

@@ -16,4 +16,17 @@ export const evmosTestnetLiveAddress = {
   priceManagerContractAddress: "0xf360F6147eA4AFe5c086566B8025F171CC97104A",
 };
 
-export const evmosMainnetLiveAddress = {};
+export const evmosMainnetLiveAddress = {
+  stEvmosContractAddress: "0x6c4674c03Ac5f237997C8F2e296b16643649F70C",
+  evmosLiquidStakingContractAddress: "0x3fDDe2E9F36d7222DAdba31D6c26CbC72739aF58",
+  inviTokenContractAddress: "0x8A3eC47e83c15276302c3F0231ba7A9884e38Ee5",
+  iLPTokenContractAddress: "0xF4C764B686d199c79AfEbFCda87059A2e3191595",
+  iSPTTokenContractAddress: "0x5E232427874d60B9ec7c6846b4252D186c136FB4",
+  stakeNFTContractAddress: "0x5296218c691EE60607cA5A7A401B694A508C1961",
+  inviTokenStakeContractAddress: "0x08CEc9deAba64dC7Dcc7926d8FbCa605544156D2",
+  lpPoolContractAddress: "0x1a628444f69E80D92baC9C9493808377092e5773",
+  lendingPoolContractAddress: "0x37Df65b7b5C98b4C700da1372Acd77c0c6c499F2",
+  inviSwapPoolContractAddress: "0x77a05d84CA4d23420e973302d7095997b51f5D36",
+  inviCoreContractAddress: "0x14e45f066687857E26fEa06f5e8551c3A04DB99D",
+  priceManagerContractAddress: "0x565a009690587CFf97C69Ad9b0b52B3Afa8e3e22",
+};

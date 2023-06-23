@@ -12,6 +12,7 @@ import { targets } from "../targets";
 //================================================================================================//
 let stTokenContractAddress: String = "0x0";
 let liquidStakingAddress: String = "0x0";
+
 //================================================================================================//
 //================================================================================================//
 
@@ -175,8 +176,8 @@ export const deployAllContract = async (network: string) => {
       stTokenContractAddress = evmosTestnetLiveAddress.stEvmosContractAddress;
       liquidStakingAddress = evmosTestnetLiveAddress.evmosLiquidStakingContractAddress;
     } else {
-      // stTokenContractAddress = evmosAddress.stEvmos;
-      // liquidStakingAddress = evmosAddress.evmosLiquidStaking;
+      stTokenContractAddress = evmosMainnetLiveAddress.stEvmosContractAddress;
+      liquidStakingAddress = evmosMainnetLiveAddress.evmosLiquidStakingContractAddress;
     }
   } else if (network === "KLAYTN") {
     if (targets.networkType === "TESTNET") {
@@ -184,12 +185,15 @@ export const deployAllContract = async (network: string) => {
       liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
     } else {
       stTokenContractAddress = klaytnMainnetLiveAddress.stakelyContractAddress;
-      liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+      liquidStakingAddress = klaytnMainnetLiveAddress.stakelyContractAddress;
     }
   } else {
     // stTokenContractAddress = klaytnAddress.stakelyContractAddress;
     // liquidStakingAddress = klaytnAddress.stakelyContractAddress;
   }
+
+  console.log("stTokenContractAddress: ", stTokenContractAddress);
+  console.log("liquidStakingAddress: ", liquidStakingAddress);
 
   // ==================== token contract ==================== //
   // deploy inviToken contract
