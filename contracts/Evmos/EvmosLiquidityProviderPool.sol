@@ -139,7 +139,7 @@ contract EvmosLiquidityProviderPool is Initializable, OwnableUpgradeable {
             // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            totalNativeRewardAmountByAddress[account] += rewardAmount;
         
         }
 

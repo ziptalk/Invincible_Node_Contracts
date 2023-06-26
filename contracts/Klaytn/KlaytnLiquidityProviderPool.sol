@@ -111,7 +111,8 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
         console.log("mint success");
     
         // request inviCore
-        inviCoreContract.stakeLp{value: msg.value}();
+        bool result = inviCoreContract.stakeLp{value: msg.value}();
+        require(result, "stakeLp failed");
     }
 
     /**
@@ -143,7 +144,7 @@ contract KlaytnLiquidityProviderPool is Initializable, OwnableUpgradeable {
             // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            totalNativeRewardAmountByAddress[account] += rewardAmount;
         }
 
         lastNativeRewardDistributeTime = block.timestamp;

@@ -32,6 +32,9 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
 
     //------ Upgrades ------//
     uint public lastNativeRewardDistributeTime;
+    uint public unstakePeriod;
+    mapping(address => uint) public unstakeRequestTime;
+    mapping(address => uint) public claimableUnstakeAmount;
 
 
     //====== modifiers ======//
@@ -84,18 +87,59 @@ contract KlaytnInviTokenStake is Initializable, OwnableUpgradeable {
         totalAddressNumber = addressList.length;
     }
 
-    /**
-     * @notice unstake inviToken
-     */
-    function unStake(uint _unstakeAmount) public  {
-        // update stake amount
+     function requestUnstake(uint _unstakeAmount) public {
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
-        stakedAmount[msg.sender] -= _unstakeAmount;
-        // update total staked amount
-        totalStakedAmount -= _unstakeAmount;
+        require(unstakeRequestTime[msg.sender] == 0, "Already requested unstake");
 
-        require(inviToken.transfer(msg.sender, _unstakeAmount));
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = block.timestamp;
+
+        // update values
+        stakedAmount[msg.sender] -= _unstakeAmount;
+        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        totalStakedAmount -= _unstakeAmount;
     }
+
+     function cancelUnstake() public {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "cancel period passed");
+
+        // update unstake request time
+        unstakeRequestTime[msg.sender] = 0;
+
+        // update values
+        stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+        totalStakedAmount += claimableUnstakeAmount[msg.sender];
+    }
+
+    // unstake inviToken
+    function claimUnstaked() public  {
+        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
+        require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
+
+        // update claimable unstake amount
+        uint claimableAmount = claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+
+        // send invi Token to requester
+        require(inviToken.transfer(msg.sender, claimableAmount));
+    }
+
+    // /**
+    //  * @notice unstake inviToken
+    //  */
+    // function unStake(uint _unstakeAmount) public  {
+    //     // update stake amount
+    //     require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
+    //     stakedAmount[msg.sender] -= _unstakeAmount;
+    //     // update total staked amount
+    //     totalStakedAmount -= _unstakeAmount;
+
+    //     require(inviToken.transfer(msg.sender, _unstakeAmount));
+    // }
 
     /**
      * @notice distribute native coin rewards

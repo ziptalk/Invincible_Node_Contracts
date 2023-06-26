@@ -1,14 +1,23 @@
 import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
+import { targets } from "../targets";
+
+// deploy SwapManager contract
+export const deployPriceManager = async (network: string) => {
+  const PriceManagerContract = await ethers.getContractFactory("PriceManager");
+  const priceManagerContract = await upgrades.deployProxy(PriceManagerContract, [], { initializer: "initialize" });
+  await priceManagerContract.deployed();
+
+  return priceManagerContract;
+};
 
 async function main() {
-  const PriceManager = await ethers.getContractFactory("PriceManager");
-  const priceManager = await upgrades.deployProxy(PriceManager, [], {
-    initializer: "initialize",
-  });
+  const temp: string = hre.network.name;
+  console.log(temp);
 
-  await priceManager.deployed();
-  console.log("deployed swap manager address: ", priceManager.address);
+  const network: string = targets.network;
+  const priceManagerContract = await deployPriceManager(network);
+  console.log("deployed priceManager contract: ", priceManagerContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

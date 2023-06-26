@@ -45,3 +45,6 @@ string constant ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED = "distribute interval not
 
 // claim error
 string constant ERROR_NO_CLAIMABLE_AMOUNT = "no claimable amount";
+
+// reward error
+string constant ERROR_NO_REWARD = "no reward available";

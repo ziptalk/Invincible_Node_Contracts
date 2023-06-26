@@ -38,7 +38,7 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint public totalInviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
-        uint public lastNativeRewardDistributeTime;
+    uint public lastNativeRewardDistributeTime;
 
 
     //====== modifiers ======//
@@ -136,7 +136,7 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
             // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            totalNativeRewardAmountByAddress[account] += rewardAmount;
         }
 
         lastNativeRewardDistributeTime = block.timestamp;

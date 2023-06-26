@@ -5,7 +5,7 @@ import { units } from "./units";
 
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };
 
-export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: number, nonce: number) => {
+export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: BigNumber, nonce: number) => {
   let tx = await lpPoolContract.connect(user).stake({ value: amount, nonce: nonce });
   await tx.wait();
 };

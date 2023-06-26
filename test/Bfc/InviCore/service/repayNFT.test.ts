@@ -2,13 +2,17 @@ import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import { provideLiquidity, leverageStake, verifyRequest } from "../../../utils";
-import { testAddressBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
+import { testAddressTestnetBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
+import { testAddressMainnetBfc } from "../../../../scripts/addresses/testAddresses/address.bfc";
 import { currentNetwork } from "../../../currentNetwork";
 import { units } from "../../../units";
+import { targets } from "../../../../scripts/targets";
 
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
+
+const testAddressBfc: any = targets.testNetworkType === "TESTNET" ? testAddressTestnetBfc : testAddressMainnetBfc;
 
 describe("Invi core service test", function () {
   let stKlayContract: Contract;
@@ -42,7 +46,7 @@ describe("Invi core service test", function () {
     console.log("user nft list: ", userNftList);
 
     //==================Change This Part==================//
-    const targetNft = 2; // repay first nft
+    const targetNft = 0; // repay first nft
     //==================////////////////==================//
 
     //userA stake

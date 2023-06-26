@@ -2,16 +2,20 @@ import { Contract, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 // addresses
-import { evmosMainnetLiveAddress, evmosTestnetLiveAddress } from "../addresses/liveAddresses/address.evmos";
-import { bfcMainnetLiveAddress, bfcTestnetLiveAddress } from "../addresses/liveAddresses/address.bfc";
-import { klaytnMainnetLiveAddress, klaytnTestnetLiveAddress } from "../addresses/liveAddresses/address.klaytn";
 import { targets } from "../targets";
+import { evmosTestAddress } from "../addresses/testAddresses/address.evmos";
+import { evmosLiveAddress } from "../addresses/liveAddresses/address.evmos";
+import { klaytnTestAddress } from "../addresses/testAddresses/address.klaytn";
+import { klaytnLiveAddress } from "../addresses/liveAddresses/address.klaytn";
+import { bfcTestAddress } from "../addresses/testAddresses/address.bfc";
+import { bfcLiveAddress } from "../addresses/liveAddresses/address.bfc";
 
 //================================================================================================//
 //====================================== Change this part ========================================//
 //================================================================================================//
 let stTokenContractAddress: String = "0x0";
 let liquidStakingAddress: String = "0x0";
+
 //================================================================================================//
 //================================================================================================//
 
@@ -62,9 +66,15 @@ export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContr
   } else if (network === "KLAYTN") {
     LpPoolContract = await ethers.getContractFactory("KlaytnLiquidityProviderPool");
     lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
+  } else if (network === "EVMOS") {
+    LpPoolContract = await ethers.getContractFactory("EvmosLiquidityProviderPool");
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
   } else {
     LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
     lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    await lpPoolContract.deployed();
   }
 
   return lpPoolContract;
@@ -81,6 +91,11 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract, 
   } else if (network === "KLAYTN") {
     InviTokenStakeContract = await ethers.getContractFactory("KlaytnInviTokenStake");
     inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
+  } else if (network === "EVMOS") {
+    InviTokenStakeContract = await ethers.getContractFactory("EvmosInviTokenStake");
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    await inviTokenStakeContract.deployed();
   } else {
     InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
     inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
@@ -99,6 +114,10 @@ export const deployInviCoreContract = async (stTokenContract: String, liquidStak
     await inviCoreContract.deployed();
   } else if (network === "KLAYTN") {
     InviCoreContract = await ethers.getContractFactory("KlaytnInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else if (network === "EVMOS") {
+    InviCoreContract = await ethers.getContractFactory("EvmosInviCore");
     inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
     await inviCoreContract.deployed();
   } else {
@@ -149,32 +168,35 @@ export const deployPriceManager = async (network: string) => {
 export const deployAllContract = async (network: string) => {
   if (network === "BIFROST") {
     if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = bfcTestnetLiveAddress.stBfc;
-      liquidStakingAddress = bfcTestnetLiveAddress.bfcLiquidStaking;
+      stTokenContractAddress = bfcLiveAddress.testnet.stBFCContractAddress;
+      liquidStakingAddress = bfcLiveAddress.testnet.bfcLiquidStakingContractAddress;
     } else {
-      // stTokenContractAddress = bfcMainnetLiveAddress.stBfc;
-      // liquidStakingAddress = bfcMainnetLiveAddress.bfcLiquidStaking;
+      stTokenContractAddress = bfcLiveAddress.mainnet.stBFCContractAddress;
+      liquidStakingAddress = bfcLiveAddress.mainnet.bfcLiquidStakingContractAddress;
     }
   } else if (network === "EVMOS") {
     if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = evmosTestnetLiveAddress.stEvmos;
-      liquidStakingAddress = evmosTestnetLiveAddress.evmosLiquidStaking;
+      stTokenContractAddress = evmosLiveAddress.testnet.stEvmosContractAddress;
+      liquidStakingAddress = evmosLiveAddress.testnet.evmosLiquidStakingContractAddress;
     } else {
-      // stTokenContractAddress = evmosAddress.stEvmos;
-      // liquidStakingAddress = evmosAddress.evmosLiquidStaking;
+      stTokenContractAddress = evmosLiveAddress.mainnet.stEvmosContractAddress;
+      liquidStakingAddress = evmosLiveAddress.mainnet.evmosLiquidStakingContractAddress;
     }
   } else if (network === "KLAYTN") {
     if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
-      liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+      stTokenContractAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
+      liquidStakingAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
     } else {
-      stTokenContractAddress = klaytnMainnetLiveAddress.stakelyContractAddress;
-      liquidStakingAddress = klaytnTestnetLiveAddress.stakelyContractAddress;
+      stTokenContractAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
+      liquidStakingAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
     }
   } else {
-    // stTokenContractAddress = klaytnAddress.stakelyContractAddress;
-    // liquidStakingAddress = klaytnAddress.stakelyContractAddress;
+    // report error
+    console.log("invalid network type error");
   }
+
+  console.log("stTokenContractAddress: ", stTokenContractAddress);
+  console.log("liquidStakingAddress: ", liquidStakingAddress);
 
   // ==================== token contract ==================== //
   // deploy inviToken contract

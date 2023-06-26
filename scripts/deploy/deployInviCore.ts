@@ -1,36 +1,72 @@
 import hre from "hardhat";
 import { ethers, upgrades } from "hardhat";
-import address from "./address.json";
+import { targets } from "../targets";
+import { bfcLiveAddress } from "../addresses/liveAddresses/address.bfc";
+import { evmosLiveAddress } from "../addresses/liveAddresses/address.evmos";
+import { klaytnLiveAddress } from "../addresses/liveAddresses/address.klaytn";
 
+// deploy inviCore contract
+export const deployInviCoreContract = async (stTokenContract: String, liquidStakingAddress: String, network: String) => {
+  let InviCoreContract;
+  let inviCoreContract;
+  if (network === "BIFROST") {
+    InviCoreContract = await ethers.getContractFactory("BfcInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else if (network === "KLAYTN") {
+    InviCoreContract = await ethers.getContractFactory("KlaytnInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else if (network === "EVMOS") {
+    InviCoreContract = await ethers.getContractFactory("EvmosInviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  } else {
+    InviCoreContract = await ethers.getContractFactory("InviCore");
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract], { initializer: "initialize" });
+    await inviCoreContract.deployed();
+  }
+
+  return inviCoreContract;
+};
+
+let stTokenContractAddress: string;
+let liquidStakingAddress: string;
 async function main() {
-  // deploy contract
-  const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [address.stakelyContractAddress], {
-    initializer: "initialize",
-  });
+  const network: string = targets.network;
 
-  await inviCoreContract.deployed();
-  console.log("deployed InviCore address: ", inviCoreContract.address);
-
-  // set init condition
-  const [deployer] = await ethers.getSigners();
-  let nonce = await ethers.provider.getTransactionCount(deployer.address);
-
-  const stakeManager = address.stakeManager;
-  const stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
-  const inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
-  const lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
-
-  const tx1 = await inviCoreContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address, { nonce: nonce++ });
-  await tx1.wait();
-  const tx2 = await inviCoreContract.connect(deployer).setStakeManager(stakeManager, { nonce: nonce++ });
-  await tx2.wait();
-  const tx3 = await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address, { nonce: nonce++ });
-  await tx3.wait();
-  const tx4 = await inviCoreContract.connect(deployer).setInviTokenStakeContract(inviTokenStakeContract.address, { nonce: nonce++ });
-  await tx4.wait();
-
-  console.log("inviCore init condition set");
+  if (network === "BIFROST") {
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = bfcLiveAddress.testnet.stBFCContractAddress;
+      liquidStakingAddress = bfcLiveAddress.testnet.bfcLiquidStakingContractAddress;
+    } else {
+      stTokenContractAddress = bfcLiveAddress.mainnet.stBFCContractAddress;
+      liquidStakingAddress = bfcLiveAddress.mainnet.bfcLiquidStakingContractAddress;
+    }
+  } else if (network === "EVMOS") {
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = evmosLiveAddress.testnet.stEvmosContractAddress;
+      liquidStakingAddress = evmosLiveAddress.testnet.evmosLiquidStakingContractAddress;
+    } else {
+      stTokenContractAddress = evmosLiveAddress.mainnet.stEvmosContractAddress;
+      liquidStakingAddress = evmosLiveAddress.mainnet.evmosLiquidStakingContractAddress;
+    }
+  } else if (network === "KLAYTN") {
+    if (targets.networkType === "TESTNET") {
+      stTokenContractAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
+      liquidStakingAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
+    } else {
+      stTokenContractAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
+      liquidStakingAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
+    }
+  } else {
+    // report error
+    console.log("invalid network type error");
+  }
+  console.log("stTokenContractAddress: ", stTokenContractAddress);
+  console.log("liquidStakingAddress: ", liquidStakingAddress);
+  const inviCoreContract = await deployInviCoreContract(stTokenContractAddress, liquidStakingAddress, network);
+  console.log("deployed inviCore contract: ", inviCoreContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

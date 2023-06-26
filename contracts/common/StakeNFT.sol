@@ -57,7 +57,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
     
     //====== getter functions ======//
-
     function getRewardAmount(uint _tokenId) public view returns (uint) {
         return rewardAmount[_tokenId];
     }
@@ -66,7 +65,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return NFTOwnership[_user];
     }
 
-        // return the stakeInfo by nftTokenId
+    // return the stakeInfo by nftTokenId
     function getStakeInfo(uint _nftTokenId) public view returns (StakeInfo memory){
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         require(stakeInfo.user != address(0), "stakeInfo does not exist");
