@@ -26,51 +26,26 @@ export const setInit = async (address: any, network: string) => {
   let nonce = await ethers.provider.getTransactionCount(deployer.address);
   let tx;
   console.log("base Nonce : ", nonce, " network : ", network);
+  iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
+  inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
+  iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
+  stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
+  lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
+  inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
+  priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
 
   if (network === "BIFROST") {
-    iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-    iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
     inviTokenStakeContract = await ethers.getContractAt("BfcInviTokenStake", address.inviTokenStakeContractAddress);
     lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", address.lpPoolContractAddress);
-    lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
-    inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
     inviCoreContract = await ethers.getContractAt("BfcInviCore", address.inviCoreContractAddress);
-    priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
   } else if (network === "KLAYTN") {
-    iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-    iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
     inviTokenStakeContract = await ethers.getContractAt("KlaytnInviTokenStake", address.inviTokenStakeContractAddress);
     lpPoolContract = await ethers.getContractAt("KlaytnLiquidityProviderPool", address.lpPoolContractAddress);
-    lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
-    inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
     inviCoreContract = await ethers.getContractAt("KlaytnInviCore", address.inviCoreContractAddress);
-    priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
   } else if (network === "EVMOS") {
-    iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-    iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
-    inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
-    lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
-    inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
-    inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
-    priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
-  } else {
-    iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-    iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
-    inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
-    lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
-    inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
-    inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
-    priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
+    inviTokenStakeContract = await ethers.getContractAt("EvmosInviTokenStake", address.inviTokenStakeContractAddress);
+    lpPoolContract = await ethers.getContractAt("EvmosLiquidityProviderPool", address.lpPoolContractAddress);
+    inviCoreContract = await ethers.getContractAt("EvmosInviCore", address.inviCoreContractAddress);
   }
 
   // set iLP init condition
@@ -153,18 +128,18 @@ export const setInit = async (address: any, network: string) => {
 };
 
 //=================== when have nonce error =================== //
-let address = {
-  stEvmosContractAddress: "0x6c4674c03Ac5f237997C8F2e296b16643649F70C",
-  evmosLiquidStakingContractAddress: "0x3fDDe2E9F36d7222DAdba31D6c26CbC72739aF58",
-  inviTokenContractAddress: "0x8A3eC47e83c15276302c3F0231ba7A9884e38Ee5",
-  iLPTokenContractAddress: "0xF4C764B686d199c79AfEbFCda87059A2e3191595",
-  iSPTTokenContractAddress: "0x5E232427874d60B9ec7c6846b4252D186c136FB4",
-  stakeNFTContractAddress: "0x5296218c691EE60607cA5A7A401B694A508C1961",
-  inviTokenStakeContractAddress: "0x08CEc9deAba64dC7Dcc7926d8FbCa605544156D2",
-  lpPoolContractAddress: "0x1a628444f69E80D92baC9C9493808377092e5773",
-  lendingPoolContractAddress: "0x37Df65b7b5C98b4C700da1372Acd77c0c6c499F2",
-  inviSwapPoolContractAddress: "0x77a05d84CA4d23420e973302d7095997b51f5D36",
-  inviCoreContractAddress: "0x14e45f066687857E26fEa06f5e8551c3A04DB99D",
-  priceManagerContractAddress: "0x565a009690587CFf97C69Ad9b0b52B3Afa8e3e22",
-};
-setInit(address, "EVMOS");
+// let address = {
+//   stEvmosContractAddress: "0x71B413a8F80E6b2d8060919526F16717D4D77AFB",
+//   evmosLiquidStakingContractAddress: "0x95f1e2B3573F8Cad4e3Ec0b4cf184E0BC7B36B2e",
+//   inviTokenContractAddress: "0x77a05d84CA4d23420e973302d7095997b51f5D36",
+//   iLPTokenContractAddress: "0x14e45f066687857E26fEa06f5e8551c3A04DB99D",
+//   iSPTTokenContractAddress: "0x565a009690587CFf97C69Ad9b0b52B3Afa8e3e22",
+//   stakeNFTContractAddress: "0xF383BC617CB07c82fa4Cb0703f3bea4bE784eBB6",
+//   inviTokenStakeContractAddress: "0x6a49C71628a02200Fa983e3fC518916E65Edc0fb",
+//   lpPoolContractAddress: "0xDa5422E5994524Bb75Bd0A2fbB8128A40B999123",
+//   lendingPoolContractAddress: "0x34eFfc4B0093eF4Bd6432381fbcCd37aec963D37",
+//   inviSwapPoolContractAddress: "0x1159373bE5B1Af44645bcF3FaaA2aC988B5dF4AD",
+//   inviCoreContractAddress: "0x1b8558105539cAF3C28B4f5753de813DCA6201bC",
+//   priceManagerContractAddress: "0x688d7d4daA6d94E2dB6E15549Cc76e0eb374BD8F",
+// };
+// setInit(address, "BIFROST");
