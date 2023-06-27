@@ -16,4 +16,5 @@ interface IInviSwapPool {
     // Service Functions
     function swapInviToNative(uint _amountIn, uint _amountOutMin) external;
     function swapNativeToInvi(uint _amountOutMin) external payable;
+    function withdrawFees() external;
 }
