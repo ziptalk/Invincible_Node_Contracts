@@ -12,7 +12,7 @@ import "../common/lib/Logics.sol";
 import "../common/lib/Unit.sol";
 import "./KlaytnLiquidityProviderPool.sol";
 import "./KlaytnInviTokenStake.sol"; 
-import "../interfaces/IStKlay.sol";
+import "../interfaces/external/IStKlay.sol";
 
 contract KlaytnInviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
