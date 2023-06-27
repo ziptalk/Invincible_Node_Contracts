@@ -144,7 +144,7 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token 
-    function distributeInviTokenReward() external onlyOwner{
+    function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
         ILPHolders = iLP.getILPHolders();

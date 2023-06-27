@@ -122,7 +122,7 @@ export const deployInviCoreContract = async (stTokenContract: String, liquidStak
     await inviCoreContract.deployed();
   } else {
     InviCoreContract = await ethers.getContractFactory("InviCore");
-    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract], { initializer: "initialize" });
+    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress], { initializer: "initialize" });
     await inviCoreContract.deployed();
   }
 
@@ -166,30 +166,24 @@ export const deployPriceManager = async (network: string) => {
 
 // deploy all contract
 export const deployAllContract = async (network: string) => {
-  if (network === "BIFROST") {
-    if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = bfcLiveAddress.testnet.stBFCContractAddress;
-      liquidStakingAddress = bfcLiveAddress.testnet.bfcLiquidStakingContractAddress;
-    } else {
-      stTokenContractAddress = bfcLiveAddress.mainnet.stBFCContractAddress;
-      liquidStakingAddress = bfcLiveAddress.mainnet.bfcLiquidStakingContractAddress;
-    }
-  } else if (network === "EVMOS") {
-    if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = evmosLiveAddress.testnet.stEvmosContractAddress;
-      liquidStakingAddress = evmosLiveAddress.testnet.evmosLiquidStakingContractAddress;
-    } else {
-      stTokenContractAddress = evmosLiveAddress.mainnet.stEvmosContractAddress;
-      liquidStakingAddress = evmosLiveAddress.mainnet.evmosLiquidStakingContractAddress;
-    }
-  } else if (network === "KLAYTN") {
-    if (targets.networkType === "TESTNET") {
-      stTokenContractAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
-      liquidStakingAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
-    } else {
-      stTokenContractAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
-      liquidStakingAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
-    }
+  if (network === "bifrost_testnet") {
+    stTokenContractAddress = bfcLiveAddress.testnet.stBFCContractAddress;
+    liquidStakingAddress = bfcLiveAddress.testnet.bfcLiquidStakingContractAddress;
+  } else if (network === "bifrost_mainnet") {
+    stTokenContractAddress = bfcLiveAddress.mainnet.stBFCContractAddress;
+    liquidStakingAddress = bfcLiveAddress.mainnet.bfcLiquidStakingContractAddress;
+  } else if (network === "evmos_testnet") {
+    stTokenContractAddress = evmosLiveAddress.testnet.stEvmosContractAddress;
+    liquidStakingAddress = evmosLiveAddress.testnet.evmosLiquidStakingContractAddress;
+  } else if (network === "evmos_mainnet") {
+    stTokenContractAddress = evmosLiveAddress.mainnet.stEvmosContractAddress;
+    liquidStakingAddress = evmosLiveAddress.mainnet.evmosLiquidStakingContractAddress;
+  } else if (network === "klaytn_testnet") {
+    stTokenContractAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
+    liquidStakingAddress = klaytnLiveAddress.testnet.stakelyContractAddress;
+  } else if (network === "klaytn_mainnet") {
+    stTokenContractAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
+    liquidStakingAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
   } else {
     // report error
     console.log("invalid network type error");

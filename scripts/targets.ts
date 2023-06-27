@@ -14,8 +14,8 @@ export const targets = {
   networkType: "MAINNET",
 
   // ======== upgrade Addresses ========//
-  upgradingContract: "KlaytnLiquidityProviderPool",
-  upgradingContractAddress: klaytnTestAddress.testnet.lpPoolContractAddress,
+  upgradingContract: "InviCore",
+  upgradingContractAddress: bfcTestAddress.testnet.inviCoreContractAddress,
 
   // ======== test Addresses ========//
   testNetworkType: "MAINNET",

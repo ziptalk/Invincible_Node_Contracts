@@ -46,6 +46,10 @@ export const setInit = async (address: any, network: string) => {
     inviTokenStakeContract = await ethers.getContractAt("EvmosInviTokenStake", address.inviTokenStakeContractAddress);
     lpPoolContract = await ethers.getContractAt("EvmosLiquidityProviderPool", address.lpPoolContractAddress);
     inviCoreContract = await ethers.getContractAt("EvmosInviCore", address.inviCoreContractAddress);
+  } else {
+    inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", address.inviTokenStakeContractAddress);
+    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", address.lpPoolContractAddress);
+    inviCoreContract = await ethers.getContractAt("InviCore", address.inviCoreContractAddress);
   }
 
   // set iLP init condition
@@ -75,13 +79,6 @@ export const setInit = async (address: any, network: string) => {
   console.log("stakeNFT init condition set at " + nonce + "");
 
   //set lpPoolContract init condition
-  if (network === "BIFROST") {
-  } else if (network === "KLAYTN") {
-  } else if (network === "EVMOS") {
-  } else {
-    tx = await lpPoolContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
-    await tx.wait();
-  }
   tx = await lpPoolContract.connect(deployer).setInviCoreContract(inviCoreContract.address, { nonce: nonce++ });
   await tx.wait();
   console.log("lpPoolContract init condition set at " + nonce + "");
@@ -89,13 +86,6 @@ export const setInit = async (address: any, network: string) => {
   //set inviTokenStake init condition
   tx = await inviTokenStakeContract.connect(deployer).setInviCoreAddress(inviCoreContract.address, { nonce: nonce++ });
   await tx.wait();
-  if (network === "BIFROST") {
-  } else if (network === "KLAYTN") {
-  } else if (network === "EVMOS") {
-  } else {
-    tx = await inviTokenStakeContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
-    await tx.wait();
-  }
   console.log("inviTokenStake init condition set at " + nonce + "");
 
   //set lendingPool init condition
@@ -108,13 +98,7 @@ export const setInit = async (address: any, network: string) => {
   // set InviCore contract
   tx = await inviCoreContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address, { nonce: nonce++ });
   await tx.wait();
-  if (network === "BIFROST") {
-  } else if (network === "KLAYTN") {
-  } else if (network === "EVMOS") {
-  } else {
-    tx = await inviCoreContract.connect(deployer).setStakeManager(address.stakeManager, { nonce: nonce++ });
-    await tx.wait();
-  }
+
   tx = await inviCoreContract.connect(deployer).setLpPoolContract(lpPoolContract.address, { nonce: nonce++ });
   await tx.wait();
   tx = await inviCoreContract.connect(deployer).setInviTokenStakeContract(inviTokenStakeContract.address, { nonce: nonce++ });

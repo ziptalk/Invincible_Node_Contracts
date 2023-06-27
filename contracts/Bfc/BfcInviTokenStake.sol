@@ -35,6 +35,8 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     uint public unstakePeriod;
     mapping(address => uint) public unstakeRequestTime;
     mapping(address => uint) public claimableUnstakeAmount;
+    uint public totalClaimableInviAmount;
+
 
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -54,6 +56,8 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
         // inviReceiveInterval = 90 days; // mainnet : 90 days
 
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
+
+        unstakePeriod = 1 minutes; // testnet : 1 min (for test) mainnet: 7 days
     }
 
     //====== getter functions ======//
@@ -138,7 +142,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token rewards (tbd)
-    function updateInviTokenReward() external onlyOwner{
+    function updateInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
         for (uint256 i = 0; i < addressList.length; i++) {

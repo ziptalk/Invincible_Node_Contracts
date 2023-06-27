@@ -13,7 +13,6 @@ import "hardhat/console.sol";
 contract InviTokenStake is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public inviToken;
-    address public stakeManager;
     address public inviCoreAddress;
 
     //------stake status------//
@@ -22,20 +21,24 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     mapping(address => uint) public inviRewardAmount;
     uint public totalStakedAmount;
 
-    //------ratio------//
+    //------Unstake------//
+    mapping(address => uint) public unstakeRequestTime;
+    mapping(address => uint) public claimableUnstakeAmount;
+    uint public totalClaimableInviAmount;
+    uint public unstakePeriod;
+
+    //------Rewards------//
     uint public inviRewardInterval;
     uint public inviReceiveInterval;
     uint public lastInviRewardedTime;
+    uint public lastNativeRewardDistributeTime;
+    uint public totalInviRewardAmount;
+    mapping (address => uint) totalInviRewardAmountByAddress;
 
     //------addresses status------//
     address[] public addressList;
     uint public totalAddressNumber;
-
-    //----- Upgrades -----//
-    uint public lastNativeRewardDistributeTime;
-    uint public unstakePeriod;
-    mapping(address => uint) public unstakeRequestTime;
-    mapping(address => uint) public claimableUnstakeAmount;
+   
 
     //====== modifiers ======//
     modifier onlyInviCore {
@@ -62,10 +65,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
     
     //====== setter functions ======//
-    function setStakeManager(address _stakeManager) external onlyOwner {
-        stakeManager = _stakeManager;
-    }
-
     function setInviCoreAddress(address _inviCoreAddr) public onlyOwner {
         inviCoreAddress = _inviCoreAddr;
     }
@@ -140,6 +139,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
             address account = addressList[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
             console.log("reward: ", rewardAmount);
+
+            // update rewards
             nativeRewardAmount[account] += rewardAmount;
         }
 
@@ -148,13 +149,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token rewards (tbd)
-    function updateInviTokenReward() external onlyOwner{
+    function updateInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
+        require(totalInviToken - totalClaimableInviAmount > 1000000, ERROR_INSUFFICIENT_BALANCE);
+
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
-            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+            uint rewardAmount = ((totalInviToken - totalClaimableInviAmount) * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+            
+            // update rewards
             inviRewardAmount[account] += rewardAmount;
+            totalInviRewardAmount += rewardAmount;
+            totalClaimableInviAmount += rewardAmount;
+            totalInviRewardAmountByAddress[account] += rewardAmount;
         }
 
         lastInviRewardedTime = block.timestamp;
@@ -163,21 +171,26 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     // user receive reward(native coin) function
     function claimNativeReward() public {
         require(nativeRewardAmount[msg.sender] != 0, "no rewards available for this user");
-        uint reward = nativeRewardAmount[msg.sender];
+        uint rewardAmount = nativeRewardAmount[msg.sender];
+
+        // update reward amount
         nativeRewardAmount[msg.sender] = 0;  
-        
+
         // send reward to requester
-        (bool sent, ) = msg.sender.call{value: reward}("");
+        (bool sent, ) = msg.sender.call{value: rewardAmount}("");
         require(sent, "Failed to send reward to requester");
     }
 
     function claimInviReward() public {
         require(inviRewardAmount[msg.sender] != 0, "no rewards available for this user");
-        uint reward = inviRewardAmount[msg.sender];
+        uint rewardAmount = inviRewardAmount[msg.sender];
+
+        // update reward amount
         inviRewardAmount[msg.sender] = 0;  
-        
+        totalClaimableInviAmount -= rewardAmount;
+
         // send reward to requester
-        require(inviToken.transfer(msg.sender, reward), "Failed to send reward to requester");
+        require(inviToken.transfer(msg.sender, rewardAmount), "Failed to send reward to requester");
     }
     
     //====== utils functions ======//

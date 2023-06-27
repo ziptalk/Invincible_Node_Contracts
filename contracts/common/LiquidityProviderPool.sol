@@ -4,17 +4,16 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/external/IERC20.sol";
-import "./lib/AddressUtils.sol";
-import "./lib/Logics.sol";
-import "./lib/Unit.sol";
-import "./lib/ErrorMessages.sol";
+import "../common/lib/AddressUtils.sol";
+import "../common/lib/Logics.sol";
+import "../common/lib/Unit.sol";
+import "../common/lib/ErrorMessages.sol";
 import "./InviCore.sol";
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public iLP;
     IERC20 public inviToken;
-    address public stakeManager; 
     InviCore public inviCoreContract;
     address[] public ILPHolders;
 
@@ -31,18 +30,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public stakedAmount;
     mapping(address => uint) public nativeRewardAmount;
     mapping(address => uint) public inviRewardAmount;
-    uint public totalStakedAmount;
-    uint public totalLentAmount;
-
-    //------constants------//
-    uint public totalNativeRewardAmount;
-    uint public totalInviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
 
-    //====== Upgrades ======//
+    uint public totalStakedAmount;
+    uint public totalLentAmount;
+    uint public totalNativeRewardAmount;
+    uint public totalInviRewardAmount;
     uint public lastNativeRewardDistributeTime;
-    
+    uint public totalClaimableInviAmount;
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == address(inviCoreContract), "msg sender should be invi core");
@@ -79,11 +76,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== setter functions ======//
-
-    function setStakeManager(address _stakeManager) external onlyOwner {
-        stakeManager = _stakeManager;
-    }
-   
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
         inviCoreContract = InviCore(_inviCore);
     }
@@ -114,13 +106,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         iLP.mintToken(msg.sender, msg.value);
 
         console.log("mint success");
-        
-        // send coin to LP manager
-        (bool sent, ) = stakeManager.call{value: msg.value}("");
-        require(sent, ERROR_FAIL_SEND);
-
+    
         // request inviCore
-        inviCoreContract.stakeLp(msg.value);
+        inviCoreContract.stakeLp{value: msg.value}();
     }
 
     function unstake(uint _amount) public {
@@ -143,30 +131,31 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         for (uint256 i = 0; i < ILPHolders.length; i++) {
             address account = ILPHolders[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-           
-             // update reward amount
+
+            // update reward amount
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            totalNativeRewardAmountByAddress[account] += rewardAmount;
         }
 
-        // update last distribute time
         lastNativeRewardDistributeTime = block.timestamp;
+
     }
 
     // distribute invi token 
-    function distributeInviTokenReward() external onlyOwner{
+    function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
+        require(totalInviToken - totalClaimableInviAmount > 1000000, ERROR_INSUFFICIENT_BALANCE);
         ILPHolders = iLP.getILPHolders();
         for (uint256 i = 0; i < ILPHolders.length; i++) {
-            //TODO : ILP Holder staking 양에 비례하게 invi token reward 분배
             address account = ILPHolders[i];
-            uint rewardAmount = (totalInviToken * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
-              
+            uint rewardAmount = ((totalInviToken - totalClaimableInviAmount) * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+           
             // update rewards
             inviRewardAmount[account] += rewardAmount;
             totalInviRewardAmount += rewardAmount;
+            totalClaimableInviAmount += rewardAmount;
             totalInviRewardAmountByAddress[account] += rewardAmount;
         }
 
@@ -177,8 +166,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(inviRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
         uint rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
+        totalClaimableInviAmount -= rewardAmount;
         uint inviSlippage = 1000;
-
         // send invi token to account
         require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
     }
@@ -187,13 +176,12 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(nativeRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
         uint rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
-        uint nativeSlippage = 1000;
-       
-         // send native coin to account
-        (bool sent, ) = msg.sender.call{value: rewardAmount - nativeSlippage}("");
+
+        // send native coin to account
+        (bool sent, ) = msg.sender.call{value: rewardAmount}("");
         require(sent, ERROR_FAIL_SEND);
     }
 
     //====== utils functions ======//
-
+ 
 }

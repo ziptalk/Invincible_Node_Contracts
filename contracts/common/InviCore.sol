@@ -12,6 +12,7 @@ import "./LiquidityProviderPool.sol";
 import "./InviTokenStake.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
+import "../interfaces/external/ILiquidStaking.sol";
 
 contract InviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
@@ -19,7 +20,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
-    address public stakeManager;
+    ILiquidStaking public liquidStakingContract;
 
     //------events------//
     event Stake(uint indexed amount);
@@ -36,27 +37,30 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //------stake related------//
     mapping(address => uint) public userStakedAmount;
+    uint public latestStakeBlock;
 
     //------unstake related------//
     UnstakeRequest[] public unstakeRequests;
     uint public unstakeRequestsFront;
     uint public unstakeRequestsRear;
+    uint public unstakeRequestAmount;
+    uint public requireTransferAmount;
+    mapping (uint => uint) public nftUnstakeTime;
+    mapping (address => uint) public claimableAmount;
+
 
     //------other variable------//
     uint public slippage;
     address[] public userList;
-
-    //------upgrades------//
-    mapping (uint => uint) public nftUnstakeTime;
-    mapping (address => uint) public claimableAmount;
     uint public lastStTokenDistributeTime;
     uint public lastSendUnstakedAmountTime;
 
 
     //======initializer======//
-    function initialize(address _stTokenAddr) initializer public {
+    function initialize(address _stTokenAddr, address _liquidStakingAddr) initializer public {
         __Ownable_init();
         stToken = IERC20(_stTokenAddr);
+        liquidStakingContract = ILiquidStaking(_liquidStakingAddr);
 
         slippage = 5 * SLIPPAGE_UNIT;
         decreaseRatio = 10 * REWARD_ERROR_UNIT;
@@ -65,23 +69,16 @@ contract InviCore is Initializable, OwnableUpgradeable {
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
         
+        latestStakeBlock = block.number;
     }
 
     //====== modifier functions ======//
-    modifier onlySTM {
-        require(msg.sender == stakeManager, ERROR_NOT_OWNER);
-        _;
-    }
     modifier onlyLpPool {
         require(msg.sender == address(lpPoolContract), ERROR_NOT_OWNER);
         _;
     }
 
     //====== setter address & contract functions ======//
-    function setStakeManager(address _stakeManager) external onlyOwner {
-        stakeManager = _stakeManager;
-    }
-
     function setStakeNFTContract(address _stakeNFTAddr) external onlyOwner {
         stakeNFTContract = StakeNFT(_stakeNFTAddr);
     }
@@ -178,6 +175,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         slippage = _slippage;
     }
 
+     function setLatestStakeBlock (uint _latestStakeBlock) external onlyOwner {
+        latestStakeBlock = _latestStakeBlock;
+    }
+
     // set reward portion
     function _setRewardPortion(uint _lpPoolRewardPortion, uint _inviTokenStakeRewardPortion) external onlyOwner {
         require (_lpPoolRewardPortion + _inviTokenStakeRewardPortion == REWARD_PORTION_TOTAL_UNIT, ERROR_SET_REWARD_PORTION);
@@ -192,22 +193,24 @@ contract InviCore is Initializable, OwnableUpgradeable {
     
 
     // stake native coin
-    function stake(StakeInfo memory _stakeInfo, uint _slippage) external payable{
+    function stake(uint _principal, uint _leverageRatio, uint _lockPeriod,uint _slippage) external payable{
+         // get stakeInfo
+        StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
+
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, msg.value);
 
+        // stake using bfcLiquidStaking
+        liquidStakingContract.stake{value : _stakeInfo.principal}();
+
         // mint StakeNFT Token by stake info
-       stakeNFTContract.mintNFT(_stakeInfo);
+        stakeNFTContract.mintNFT(_stakeInfo);
 
         //update stakeAmount info
         uint lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
         uint totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
         userList.push(msg.sender);
-
-        // send principal to STM
-        (bool sent, ) = stakeManager.call{value : _stakeInfo.principal }("");
-        require(sent, ERROR_FAIL_SEND);
 
         emit Stake(_stakeInfo.principal);
     }
@@ -250,14 +253,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
-        // transfer nft from msg.sender to inviCore
-        stakeNFTContract.transferFrom(msg.sender, address(this), _nftTokenId); 
-
         // burn NFT & delete stakeInfo
         stakeNFTContract.deleteStakeInfo(_nftTokenId);
+        stakeNFTContract.deleteNFTOwnership(msg.sender, _nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
 
         // create unstake event
+        liquidStakingContract.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
 
         // update nftUnstakeTime
         nftUnstakeTime[_nftTokenId] = block.timestamp;
@@ -269,13 +271,16 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // get total staked amount
         uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
         // get total rewards
-        uint totalReward = stToken.balanceOf(stakeManager) - totalStakedAmount;
+        uint totalReward = stToken.balanceOf(address(this)) - totalStakedAmount;
         require(totalReward > 0, ERROR_NO_REWARD);
         
         // check rewards 
         uint nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;
+
+        // request unstake to bfcLiquidStaking
+        liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
 
         // create unstake request for LPs
         UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, lpReward, 0, 1);
@@ -294,22 +299,27 @@ contract InviCore is Initializable, OwnableUpgradeable {
         emit Unstake(lpReward + inviStakerReward);
     }
 
-    function stakeLp(uint _requestAmount) external onlyLpPool {
-        emit Stake(_requestAmount);
+    function stakeLp() external onlyLpPool payable {
+        // stake 
+        liquidStakingContract.stake{value : msg.value}();
+        emit Stake(msg.value);
     }
 
-    function unstakeLp(uint _requestAmount) external onlyLpPool {
+   function unstakeLp(uint _requestAmount) external onlyLpPool {
+        // create unstake request
+        liquidStakingContract.createUnstakeRequest(_requestAmount);
+
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, _requestAmount, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18,_requestAmount, 0, 1);
        
         // push request to unstakeRequests
-        unstakeRequests.push(lpRequest);
+        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
 
         emit Unstake(_requestAmount);
     }
 
     // send unstaked amount to unstakeRequest applicants
-    function sendUnstakedAmount() external payable onlySTM{
+    function sendUnstakedAmount() external {
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
         uint count = 0;
@@ -322,14 +332,20 @@ contract InviCore is Initializable, OwnableUpgradeable {
             uint requestType = unstakeRequests[i].requestType;
             uint amount = unstakeRequests[i].amount;
             address recipient = unstakeRequests[i].recipient;
-            // remove first element of unstakeRequests
+             // remove first element of unstakeRequests
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
-            
+            // update unstakeRequestAmount
+            unstakeRequestAmount -= amount;
+            // if normal user
             if (requestType == 0) {
                 claimableAmount[recipient] += amount;
-            } else if (requestType == 1) {
+            } 
+            // if lp pool
+            else if (requestType == 1) {
                 lpPoolContract.distributeNativeReward{value : amount }();
-            } else if (requestType == 2) {
+            } 
+            // if invi token stake
+            else if (requestType == 2) {
                 inviTokenStakeContract.updateNativeReward{value : amount }();
             }
         }
@@ -372,9 +388,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // verify lentAmount
         uint lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * LEVERAGE_UNIT) / LEVERAGE_UNIT;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), ERROR_TOO_MUCH_LENT);
-
-        // verify min/max reward
-        //uint amount = _stakeInfo.principal * _stakeInfo.leverageRatio / LEVERAGE_UNIT;
 
         // verify protocol fee
         uint minProtocolFee = _stakeInfo.protocolFee * (100 * SLIPPAGE_UNIT- _slippage) / (SLIPPAGE_UNIT* 100);
