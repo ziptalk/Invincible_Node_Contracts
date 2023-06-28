@@ -63,6 +63,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     //====== getter functions ======//
+    function getUnstakeTime(address _addr) public view returns (uint) {
+        require(unstakeRequestTime[_addr] != 0, "No unstake request");
+        return unstakeRequestTime[_addr] + unstakePeriod;
+    }
     
     //====== setter functions ======//
     function setInviCoreAddress(address _inviCoreAddr) public onlyOwner {

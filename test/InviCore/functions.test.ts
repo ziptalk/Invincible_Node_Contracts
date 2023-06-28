@@ -45,31 +45,6 @@ describe("Invi core functions test", function () {
     expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
   });
 
-  it("Test getStakeInfo function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
-
-    // lp stake coin
-    const lpAmount = 1000000;
-    console.log("network: ", network);
-    console.log("lp address: ", LP.address);
-
-    console.log(await lpPoolContract.owner());
-    console.log(await lpPoolContract.inviCoreContract());
-    await lpPoolContract.connect(LP).stake({ value: lpAmount });
-    console.log("lp stake completes");
-
-    const principal = 1000;
-    const leverageRatio = 2 * units.leverageUnit;
-    const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
-    const lockPeriod = minLockPeriod * 2;
-    const stakeInfo = await inviCoreContract.connect(userA).getStakeInfo(userA.address, principal, leverageRatio, lockPeriod);
-
-    //verify stake info
-    expect(stakeInfo.user).to.equal(userA.address);
-    expect(stakeInfo.principal).to.equal(principal);
-    expect(stakeInfo.leverageRatio).to.equal(leverageRatio);
-  });
-
   it("Test getExpectedReward function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 

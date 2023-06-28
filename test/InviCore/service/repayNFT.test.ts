@@ -8,6 +8,7 @@ import { getTestAddress } from "../../getTestAddress";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
+console.log("current Network: ", network);
 const testAddresses: any = getTestAddress(network);
 
 describe("Invi core service test", function () {
@@ -34,7 +35,7 @@ describe("Invi core service test", function () {
     let tx;
 
     //* given
-    const lpAmount: BigNumber = BigNumber.from("100000000000");
+    const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
     await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
 
     // get user nft list
@@ -42,12 +43,12 @@ describe("Invi core service test", function () {
     console.log("user nft list: ", userNftList);
 
     //==================Change This Part==================//
-    const targetNft = 3; // repay first nft
+    const targetNft = 0; // repay first nft
     //==================////////////////==================//
 
     //userA stake
-    const principal: BigNumber = BigNumber.from("500000");
-    const leverageRatio = 3 * units.leverageUnit;
+    const principal: BigNumber = ethers.utils.parseEther("0.01");
+    const leverageRatio = 1 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     const lockPeriod = minLockPeriod * 2;
     const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA);

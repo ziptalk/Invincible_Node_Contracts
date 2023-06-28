@@ -3,6 +3,12 @@ pragma solidity ^0.8;
 
 interface IBfcInviTokenStake {
     /**
+     * @notice get unstake end time of address
+     * @param  _address The address of the staker
+     */
+    function getUnstakeTime(address _address) external view returns (uint);
+
+    /**
      * @notice Sets the address of the InviCore contract
      * @param _inviCoreAddr The address of the InviCore contract
      */

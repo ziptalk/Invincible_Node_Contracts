@@ -14,6 +14,15 @@ import "./lib/Logics.sol";
 import "./lib/Unit.sol";
 import "../interfaces/external/ILiquidStaking.sol";
 
+/*
+network Ids
+- bifrost: 0
+- evmos: 1
+- klaytn: 2
+
+
+*/
+
 contract InviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public stToken;
@@ -21,6 +30,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
     ILiquidStaking public liquidStakingContract;
+    uint8 public networkId;
 
     //------events------//
     event Stake(uint indexed amount);
@@ -57,7 +67,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
 
     //======initializer======//
-    function initialize(address _stTokenAddr, address _liquidStakingAddr) initializer public {
+    function initialize(address _stTokenAddr, address _liquidStakingAddr, uint8 _networkId) initializer public {
         __Ownable_init();
         stToken = IERC20(_stTokenAddr);
         liquidStakingContract = ILiquidStaking(_liquidStakingAddr);
@@ -70,6 +80,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
         
         latestStakeBlock = block.number;
+        networkId = _networkId;
     }
 
     //====== modifier functions ======//
@@ -250,8 +261,12 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // push request to unstakeRequests
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
-        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
-        unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
+        if (lpPoolReward != 0) {
+            unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
+        }
+        if (inviTokenStakeReward != 0) {
+            unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
+        }
 
         // burn NFT & delete stakeInfo
         stakeNFTContract.deleteStakeInfo(_nftTokenId);
@@ -259,7 +274,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stakeNFTContract.burnNFT(_nftTokenId);  
 
         // create unstake event
-        liquidStakingContract.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+        if (networkId == 0 || networkId == 1) {
+            liquidStakingContract.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+        } else if (networkId == 2) {
+            liquidStakingContract.unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+        }
+
+        // update unstake request amount
+        unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
 
         // update nftUnstakeTime
         nftUnstakeTime[_nftTokenId] = block.timestamp;
@@ -279,8 +301,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;
 
-        // request unstake to bfcLiquidStaking
+        // request unstake to LiquidStakingContract
         liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
+
+         // create unstake event
+        if (networkId == 0 || networkId == 1) {
+            liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
+        } else if (networkId == 2) {
+            liquidStakingContract.unstake(nftReward + lpReward + inviStakerReward);
+        }
 
         // create unstake request for LPs
         UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),10**18, lpReward, 0, 1);
@@ -306,8 +335,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
    function unstakeLp(uint _requestAmount) external onlyLpPool {
-        // create unstake request
-        liquidStakingContract.createUnstakeRequest(_requestAmount);
+        // create unstake event
+        if (networkId == 0 || networkId == 1) {
+            liquidStakingContract.createUnstakeRequest(_requestAmount);
+        } else if (networkId == 2) {
+            liquidStakingContract.unstake(_requestAmount);
+        }
+
+        
 
         // create unstake request for LPs
         UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18,_requestAmount, 0, 1);
@@ -320,6 +355,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // send unstaked amount to unstakeRequest applicants
     function sendUnstakedAmount() external {
+         // claim first
+        if (networkId == 0 || networkId == 1) {
+            liquidStakingContract.claim();
+        } else if (networkId == 2) {
+            liquidStakingContract.claim(address(this));
+        }
+
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
         uint count = 0;

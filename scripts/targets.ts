@@ -15,7 +15,7 @@ export const targets = {
 
   // ======== upgrade Addresses ========//
   upgradingContract: "InviCore",
-  upgradingContractAddress: bfcTestAddress.testnet.inviCoreContractAddress,
+  upgradingContractAddress: klaytnTestAddress.testnet.inviCoreContractAddress,
 
   // ======== test Addresses ========//
   testNetworkType: "MAINNET",

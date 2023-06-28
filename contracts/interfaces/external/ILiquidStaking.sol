@@ -5,7 +5,6 @@ interface ILiquidStaking {
     function stake() external payable;
     function spreadRewards() external;
     function createUnstakeRequest(uint256 _amount) external;
-    function unstake() external;
     function claimUnstakedAmount() external;
     function setClaimableState() external;
     function claim() external;
