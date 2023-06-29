@@ -4,11 +4,14 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/external/IERC20.sol";
-import "../common/lib/AddressUtils.sol";
-import "../common/lib/Logics.sol";
-import "../common/lib/Unit.sol";
-import "../common/lib/ErrorMessages.sol";
+import "./lib/AddressUtils.sol";
+import "./lib/Logics.sol";
+import "./lib/Unit.sol";
+import "./lib/ErrorMessages.sol";
 import "./InviCore.sol";
+import "./lib/Structs.sol";
+import "./lib/ArrayUtils.sol";
+
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
@@ -32,6 +35,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public inviRewardAmount;
     mapping (address => uint) public totalInviRewardAmountByAddress;
     mapping (address => uint) public totalNativeRewardAmountByAddress;
+
+    //------Unstake------//
+    mapping(address => uint) public claimableUnstakeAmount;
+    mapping(address => uint) public unstakeRequestAmount;
+    UnstakeRequestLP[] public unstakeRequests;
+    uint public unstakeRequestsRear;
+    uint public unstakeRequestsFront;
+    uint public lastSendUnstakedAmountTime;
 
     uint public totalStakedAmount;
     uint public totalLentAmount;
@@ -122,6 +133,39 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         // request inviCore
         inviCoreContract.unstakeLp(_amount);
+
+        // create unstake request
+        UnstakeRequestLP memory unstakeRequest = UnstakeRequestLP({
+            recipient: msg.sender,
+            amount: _amount,
+            requestTime: block.timestamp
+        });
+        // update unstake request
+        unstakeRequestsRear =  enqueueUnstakeRequests(unstakeRequests, unstakeRequest, unstakeRequestsRear);
+    }
+
+    function sendUnstakedAmount() external {
+        // require contract balance to be above totalNativeRewardAmount
+        require(address(this).balance >= totalNativeRewardAmount, ERROR_INSUFFICIENT_BALANCE);
+
+        // require unstake request to be exist
+        require(unstakeRequestsFront != unstakeRequestsRear, "No unstake requests");
+
+        uint front = unstakeRequestsFront;
+        uint rear = unstakeRequestsRear;
+        for (uint i=front; i< rear; i++) {
+            if (unstakeRequests[i].amount > address(this).balance - totalNativeRewardAmount) {
+                break;
+            }
+
+            // remove unstake request
+            unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+
+            // update claimable amount
+            claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
+        }
+
+        lastSendUnstakedAmountTime = block.timestamp;
 
     }
     

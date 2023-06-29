@@ -203,12 +203,19 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @dev Updates the reward amount for all NFTs based on the total reward.
      * @param _totalReward The total reward amount.
      */
-    function updateReward(uint _totalReward) external onlyInviCore{
+    function updateReward(uint _totalReward) external onlyInviCore returns(uint){
+        // rewards that belongs to LP
+        uint lpReward = 0;
         for (uint256 i = 0; i < nftTokenIds.length; i++) {
-            
-            uint nftId = nftTokenIds[i];
-            rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+            // if NFT pass the lock period, the reward will be added to LP
+            if (stakeInfos[nftTokenIds[i]].lockEnd < block.timestamp) {
+                lpReward += _totalReward * stakeInfos[nftTokenIds[i]].stakedAmount / totalStakedAmount;
+            } else {
+                 uint nftId = nftTokenIds[i];
+                rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+            }
         }
+        return lpReward;
     }
 
     //====== utils functions ======//

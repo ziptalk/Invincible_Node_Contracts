@@ -20,6 +20,7 @@ function popValueFromUintArray(uint[] storage _arr, uint _value) {
     _arr.pop();
 }
 
+//======= Unstake Request =======//
 function enqueueUnstakeRequests(UnstakeRequest[] storage _arr, UnstakeRequest memory _value, uint _rear) returns (uint) {
     _arr.push(_value);
     return _rear+1;
@@ -29,6 +30,17 @@ function dequeueUnstakeRequests(UnstakeRequest[] storage _arr, uint _front, uint
     delete _arr[_front];
     return _front+1;
 }
+function enqueueUnstakeRequests(UnstakeRequestLP[] storage _arr, UnstakeRequestLP memory _value, uint _rear) returns (uint) {
+    _arr.push(_value);
+    return _rear+1;
+}
+function dequeueUnstakeRequests(UnstakeRequestLP[] storage _arr, uint _front, uint _rear) returns (uint) {
+    require(_front < _rear, "Queue is empty");
+    delete _arr[_front];
+    return _front+1;
+}
+
+
 function getIndex(uint[] memory _arr, uint _value) pure  returns (uint) {
     for (uint i = 0 ; i < _arr.length; i++) {
         if (_arr[i] == _value) {

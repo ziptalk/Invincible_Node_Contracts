@@ -24,6 +24,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //------Unstake------//
     mapping(address => uint) public unstakeRequestTime;
     mapping(address => uint) public claimableUnstakeAmount;
+    mapping(address => uint) public unstakeRequestAmount;
     uint public totalClaimableInviAmount;
     uint public unstakePeriod;
 
@@ -67,6 +68,14 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(unstakeRequestTime[_addr] != 0, "No unstake request");
         return unstakeRequestTime[_addr] + unstakePeriod;
     }
+
+    function getClaimableAmount(address _addr) public view returns (uint) {
+        if (block.timestamp >= getUnstakeTime(_addr)) {
+            return unstakeRequestAmount[_addr] + claimableUnstakeAmount[_addr];
+        } else {
+            return claimableUnstakeAmount[_addr];
+        }
+    }
     
     //====== setter functions ======//
     function setInviCoreAddress(address _inviCoreAddr) public onlyOwner {
@@ -96,15 +105,17 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     function requestUnstake(uint _unstakeAmount) public {
+        require(unstakeRequestTime[msg.sender] + unstakePeriod < block.timestamp, "Already requested unstake");
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
-        require(unstakeRequestTime[msg.sender] == 0, "Already requested unstake");
-
+        
+        // update claimable unstake amount
+        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
         // update unstake request time
         unstakeRequestTime[msg.sender] = block.timestamp;
 
         // update values
         stakedAmount[msg.sender] -= _unstakeAmount;
-        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        unstakeRequestAmount[msg.sender] += _unstakeAmount;
         totalStakedAmount -= _unstakeAmount;
     }
 
@@ -118,18 +129,27 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
         // update values
         stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
-        claimableUnstakeAmount[msg.sender] = 0;
+        unstakeRequestAmount[msg.sender] = 0;
         totalStakedAmount += claimableUnstakeAmount[msg.sender];
     }
 
     // unstake inviToken
     function claimUnstaked() public  {
         require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
-        require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
         require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
+        uint claimableAmount;
+        // if unstake period not passed
+        if (block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender]) {
+            // claim only claimable unstake amount
+           claimableAmount = claimableUnstakeAmount[msg.sender];
+        } else {
+            // claim both
+            claimableAmount = unstakeRequestAmount[msg.sender] + claimableUnstakeAmount[msg.sender];
+            // update unstake request time
+            unstakeRequestAmount[msg.sender] = 0;
+        }
 
         // update claimable unstake amount
-        uint claimableAmount = claimableUnstakeAmount[msg.sender];
         claimableUnstakeAmount[msg.sender] = 0;
 
         // send invi Token to requester
