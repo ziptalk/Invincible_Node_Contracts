@@ -77,7 +77,7 @@ contract BfcInviTokenStake is Initializable, OwnableUpgradeable {
 
     // stake inviToken
     function stake(uint _stakeAmount) public  {
-        require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
+        require(inviToken.transferToken(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
 
         // update stake amount
         stakedAmount[msg.sender] += _stakeAmount;

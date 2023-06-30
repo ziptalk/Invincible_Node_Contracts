@@ -113,7 +113,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         LendInfo memory lendInfo = lendInfos[_nftId];
         require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
         require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
-        inviToken.transferFrom(msg.sender, address(this), lendInfo.lentAmount);
+        inviToken.transferToken(msg.sender, address(this), lendInfo.lentAmount);
         totalLentAmount -= lendInfo.lentAmount;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
         deleteLendInfo(_nftId);

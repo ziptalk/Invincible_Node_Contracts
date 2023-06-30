@@ -93,7 +93,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== service functions ======//
     // stake inviToken
     function stake(uint _stakeAmount) public  {
-        require(inviToken.transferFrom(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
+        require(inviToken.transferToken(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
 
         // update stake amount
         stakedAmount[msg.sender] += _stakeAmount;
@@ -109,18 +109,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(stakedAmount[msg.sender] >= _unstakeAmount, "Unstake Amount cannot be bigger than stake amount");
         
         // update claimable unstake amount
-        claimableUnstakeAmount[msg.sender] += _unstakeAmount;
+        claimableUnstakeAmount[msg.sender] += unstakeRequestAmount[msg.sender];
+    
+
         // update unstake request time
         unstakeRequestTime[msg.sender] = block.timestamp;
 
         // update values
         stakedAmount[msg.sender] -= _unstakeAmount;
-        unstakeRequestAmount[msg.sender] += _unstakeAmount;
+        unstakeRequestAmount[msg.sender] = _unstakeAmount;
         totalStakedAmount -= _unstakeAmount;
     }
 
     function cancelUnstake() public {
-        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
+        require(unstakeRequestAmount[msg.sender] >= 0, "no request unstake amount");
         require(unstakeRequestTime[msg.sender] != 0, "No unstake request");
         require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "cancel period passed");
 
@@ -128,15 +130,14 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         unstakeRequestTime[msg.sender] = 0;
 
         // update values
-        stakedAmount[msg.sender] += claimableUnstakeAmount[msg.sender];
+        stakedAmount[msg.sender] += unstakeRequestAmount[msg.sender];
         unstakeRequestAmount[msg.sender] = 0;
-        totalStakedAmount += claimableUnstakeAmount[msg.sender];
+        totalStakedAmount += unstakeRequestAmount[msg.sender];
     }
 
     // unstake inviToken
     function claimUnstaked() public  {
-        require(claimableUnstakeAmount[msg.sender] >= 0, "no claimable unstake amount");
-        require(block.timestamp >= unstakePeriod + unstakeRequestTime[msg.sender], "unstake period not passed");
+        require(getClaimableAmount(msg.sender) > 0, "no claimable unstake amount");
         uint claimableAmount;
         // if unstake period not passed
         if (block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender]) {

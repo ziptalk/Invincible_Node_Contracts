@@ -309,9 +309,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint inviStakerReward = totalReward - nftReward - lpReward;
 
-        // request unstake to LiquidStakingContract
-        liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
-
          // create unstake event
         if (networkId == 0 || networkId == 1) {
             liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);

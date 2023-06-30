@@ -17,6 +17,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     address public lendingPoolAddress;
     address public inviTokenStakeAddress;
     address public lpPoolAddress;
+    address public inviSwapPoolAddress;
 
     //------ Variables ------//
     uint public regularMintAmount;
@@ -45,6 +46,12 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _;
     }
 
+    modifier onlyAllowedContractsToTransfer {
+        require(msg.sender == inviTokenStakeAddress || msg.sender == lendingPoolAddress || msg.sender == inviSwapPoolAddress, "Ownable: caller is not the owner");
+        _;
+    }
+
+
     //====== getter functions =======//
 
     //====== setter functions ======//
@@ -58,6 +65,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
     function setInviTokenStakeAddress(address _inviTokenStakeAddr) onlyOwner external {
         inviTokenStakeAddress = _inviTokenStakeAddr;
+    }
+    function setInviSwapPoolAddress(address _inviSwapPoolAddr) onlyOwner external {
+        inviSwapPoolAddress = _inviSwapPoolAddr;
     }
     function setMintAmount(uint _amount) onlyOwner external {
         require(block.timestamp > lastMintAmountChange + mintAmountChangeInterval, "minting amount can be changed once in 10 days");
@@ -87,7 +97,12 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     function sendInvi(address _receiver, uint _amount) external onlyOwner {
-        transfer(_receiver, _amount);
+        _transfer(address(this), _receiver, _amount);
+    }
+
+    function transferToken(address _sender, address _receiver, uint _amount) external onlyAllowedContractsToTransfer returns (bool) {
+        _transfer(_sender, _receiver, _amount);
+        return true;
     }
 
     // only lendingPool can burn token as needed

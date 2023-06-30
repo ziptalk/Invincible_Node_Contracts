@@ -180,7 +180,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         uint fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
         require(amountOut < totalLiquidityNative, "not enough reserves");
         require(amountOut - fees >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
-        require(inviToken.transferFrom(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transferToken(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
         totalLiquidityInvi += _amountIn;
         totalLiquidityNative -= amountOut - fees;
         totalRewardNative += fees;
@@ -223,7 +223,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         lpLiquidity[msg.sender] += msg.value * expectedInvi;
 
         // transfer tokens from sender
-        require(inviToken.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transferToken(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
         addAddress(lpList, msg.sender);
 
         // mint token
