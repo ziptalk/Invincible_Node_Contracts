@@ -9,7 +9,7 @@ export const getTestAddress = (network: string) => {
     return bfcTestAddress.mainnet;
   } else if (network === "klaytn_testnet") {
     return klaytnTestAddress.testnet;
-  } else if (network === "klaytn_testnet") {
+  } else if (network === "klaytn_mainnet") {
     return klaytnTestAddress.mainnet;
   } else if (network === "evmos_testnet") {
     return evmosTestAddress.testnet;

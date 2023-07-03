@@ -201,35 +201,45 @@ export const deployAllContract = async (network: string) => {
   // ==================== token contract ==================== //
   // deploy inviToken contract
   const inviTokenContract = await deployInviToken();
+  await inviTokenContract.deployed();
   console.log("deployed inviToken contract: ", inviTokenContract.address);
   // deploy ILPToken contract
   const iLPTokenContract = await deployILPToken();
+  await iLPTokenContract.deployed();
   console.log("deployed iLPToken contract: ", iLPTokenContract.address);
   // deploy ISPTToken contract
   const iSPTTokenContract = await deployISPTToken();
+  await iSPTTokenContract.deployed();
   console.log("deployed iSPTToken contract: ", iSPTTokenContract.address);
 
   // ==================== service contract ==================== //
   // deploy stakeNFT contract
   const stakeNFTContract = await deployStakeNFT();
+  await stakeNFTContract.deployed();
   console.log("deployed stakeNFT contract: ", stakeNFTContract.address);
   // deploy inviTokenStake Contract
   const inviTokenStakeContract = await deployInviTokenStakeContract(inviTokenContract, network);
+  await inviTokenStakeContract.deployed();
   console.log("deployed inviTokenStake contract: ", inviTokenStakeContract.address);
   // deploy liquidity pool contract
   const lpPoolContract = await deployLpPoolContract(iLPTokenContract, inviTokenContract, network);
+  await lpPoolContract.deployed();
   console.log("deployed lpPool contract: ", lpPoolContract.address);
   // deploy LendingPool contract
   const lendingPoolContract = await deployLendingPoolContract(inviTokenContract);
+  await lendingPoolContract.deployed();
   console.log("deployed lendingPool contract: ", lendingPoolContract.address);
   // deploy InviSwapPool contract
   const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
+  await inviSwapPoolContract.deployed();
   console.log("deployed inviSwapPool contract: ", inviSwapPoolContract.address);
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(stTokenContractAddress, liquidStakingAddress, network, networkId);
+  await inviCoreContract.deployed();
   console.log("deployed inviCore contract: ", inviCoreContract.address);
   // deploy swapManager contract
   const priceManagerContract = await deployPriceManager(network);
+  await priceManagerContract.deployed();
   console.log("deployed priceManager contract: ", priceManagerContract.address);
 
   return {

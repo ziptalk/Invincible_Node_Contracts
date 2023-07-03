@@ -58,7 +58,7 @@ describe("InviToken service test", function () {
       await regularMint.wait();
       console.log("regular mint success");
     } catch (e) {
-      console.log(e);
+      console.log("regular Mint failed", e);
     }
 
     //* then

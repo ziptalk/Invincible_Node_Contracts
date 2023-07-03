@@ -3,13 +3,13 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
-import { units } from "../units";
 import { getTestAddress } from "../getTestAddress";
+import { leverageStake } from "../utils";
+import { units } from "../units";
 
 describe("LpPool service test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
-  let lpPoolContract: Contract;
 
   const network: string = hre.network.name;
   const testAddresses: any = getTestAddress(network);
@@ -19,7 +19,6 @@ describe("LpPool service test", function () {
 
     inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
     stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
   });
 
   it("Test functions", async () => {
@@ -34,21 +33,35 @@ describe("LpPool service test", function () {
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let tx;
-
     console.log("nonce lp: ", nonceLP);
 
     //* given
+    // stake
+    const principal: BigNumber = ethers.utils.parseEther("0.00001");
+    const leverageRatio = 3 * units.leverageUnit;
+    const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
+    console.log("minLockPeriod: ", minLockPeriod);
+    const lockPeriod = minLockPeriod * 2;
+    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+    console.log("StakeInfo: ", stakeInfo.toString());
 
-    //* when
     // get total staked amount
-    const totalStakedAmount = await lpPoolContract.connect(LP).totalStakedAmount();
+    const totalStakedAmount = await stakeNFTContract.connect(LP).totalStakedAmount();
     console.log("totalStakedAmount: ", totalStakedAmount.toString());
-    // get stake amount
-    const stakedAmount = await lpPoolContract.connect(LP).stakedAmount(LP.address);
-    console.log("stakedAmount: ", stakedAmount.toString());
-    // get rewardAmount
-    const rewardAmount = await lpPoolContract.connect(LP).getRewardAmount();
+
+    // getAllStakeInfoOfUser
+    const allStakeInfoOfUser = await stakeNFTContract.connect(userA).getAllStakeInfoOfUser(userA.address);
+    console.log("allStakeInfoOfUser: ", allStakeInfoOfUser.toString());
+
+    // get NFT Ownership
+    const nftOwnership = await stakeNFTContract.connect(LP).getNFTOwnership(deployer.address);
+    console.log("nftOwnership: ", nftOwnership.toString());
+
+    // get reward amount
+    const rewardAmount = await stakeNFTContract.connect(userA).getRewardAmount(nftOwnership[0].toString());
     console.log("rewardAmount: ", rewardAmount.toString());
+    //* when
+
     //* then
   });
 });

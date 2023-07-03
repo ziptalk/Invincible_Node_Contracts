@@ -166,7 +166,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         }
 
         lastSendUnstakedAmountTime = block.timestamp;
+    }
 
+    function claimUnstaked() external {
+        require(claimableUnstakeAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+
+        uint amount = claimableUnstakeAmount[msg.sender];
+        claimableUnstakeAmount[msg.sender] = 0;
+
+        (bool send, ) = msg.sender.call{value: amount}("");
+        require(send, "Transfer failed");
     }
     
     // distribute native coin
