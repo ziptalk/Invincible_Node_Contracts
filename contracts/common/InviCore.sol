@@ -55,6 +55,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint public requireTransferAmount;
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
+    uint public totalClaimableAmount;
 
 
     //------other variable------//
@@ -328,6 +329,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
+        // create unstake event
+        if (networkId == 0 || networkId == 1) {
+            liquidStakingContract.createUnstakeRequest( lpReward + leftRewards + inviStakerReward);
+        } else if (networkId == 2) {
+            liquidStakingContract.unstake(lpReward + leftRewards + inviStakerReward);
+        }
+
         // update stTokenRewardTime
         lastStTokenDistributeTime = block.timestamp;
 
@@ -369,8 +377,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
         uint count = 0;
+        require(address(this).balance > totalClaimableAmount, "Not enough amount");
         for (uint i = front ; i <  rear; i++) {
-            if (unstakeRequests[i].amount > address(this).balance) {
+            if (unstakeRequests[i].amount > address(this).balance - totalClaimableAmount) {
                 break;
             }
             count++;
@@ -385,6 +394,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             // if normal user
             if (requestType == 0) {
                 claimableAmount[recipient] += amount;
+                totalClaimableAmount += amount;
             } 
             // if lp pool
             else if (requestType == 1) {
@@ -392,7 +402,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             } 
             // if invi token stake
             else if (requestType == 2) {
-                inviTokenStakeContract.updateNativeReward{value : amount }();
+                inviTokenStakeContract.distributeNativeReward{value : amount }();
             }
         }
 
@@ -407,6 +417,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function claimUnstaked() external {
         require(claimableAmount[msg.sender] > 0, ERROR_NO_CLAIMABLE_AMOUNT);
         uint amount = claimableAmount[msg.sender];
+        totalClaimableAmount -= amount;
         claimableAmount[msg.sender] = 0;
         (bool sent, ) = msg.sender.call{value : amount }("");
         require(sent, ERROR_FAIL_SEND);
