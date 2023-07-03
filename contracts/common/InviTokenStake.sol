@@ -158,7 +158,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute native rewards
-    function updateNativeReward() external payable onlyInviCore {
+    function distributeNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
         for (uint256 i = 0; i < addressList.length; i++) {
             address account = addressList[i];
@@ -174,7 +174,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token rewards (tbd)
-    function updateInviTokenReward() external {
+    function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
         require(totalInviToken - totalClaimableInviAmount > 1000000, ERROR_INSUFFICIENT_BALANCE);
