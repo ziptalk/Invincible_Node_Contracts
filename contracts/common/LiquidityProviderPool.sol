@@ -144,6 +144,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         unstakeRequestsRear =  enqueueUnstakeRequests(unstakeRequests, unstakeRequest, unstakeRequestsRear);
     }
 
+    function receiveUnstaked() external payable onlyInviCore {}
+
     function sendUnstakedAmount() external {
         // require contract balance to be above totalNativeRewardAmount
         require(address(this).balance >= totalNativeRewardAmount, ERROR_INSUFFICIENT_BALANCE);

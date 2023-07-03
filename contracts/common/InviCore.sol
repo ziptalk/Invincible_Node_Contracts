@@ -55,7 +55,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint public requireTransferAmount;
     mapping (uint => uint) public nftUnstakeTime;
     mapping (address => uint) public claimableAmount;
-    uint public totalClaimableAmount;
 
 
     //------other variable------//
@@ -63,7 +62,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     address[] public userList;
     uint public lastStTokenDistributeTime;
     uint public lastSendUnstakedAmountTime;
-
+     uint public totalClaimableAmount;
 
     //======initializer======//
     function initialize(address _stTokenAddr, address _liquidStakingAddr, uint8 _networkId) initializer public {
@@ -357,7 +356,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         }
 
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18,_requestAmount, 0, 1);
+        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 10**18,_requestAmount, 0, 3);
        
         // push request to unstakeRequests
         unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
@@ -403,6 +402,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
             // if invi token stake
             else if (requestType == 2) {
                 inviTokenStakeContract.distributeNativeReward{value : amount }();
+            }
+            // if lp pool unstake 
+            else if (requestType == 3) {
+                lpPoolContract.receiveUnstaked{ value: amount};
             }
         }
 
