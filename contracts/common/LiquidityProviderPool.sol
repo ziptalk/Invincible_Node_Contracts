@@ -51,6 +51,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint public lastNativeRewardDistributeTime;
     uint public totalClaimableInviAmount;
 
+    uint public unstakedAmount;
+
     //====== modifiers ======//
     modifier onlyInviCore {
         require(msg.sender == address(inviCoreContract), "msg sender should be invi core");
@@ -115,8 +117,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         // mint and tranfer ILP to sender
         iLP.mintToken(msg.sender, msg.value);
-
-        console.log("mint success");
     
         // request inviCore
         inviCoreContract.stakeLp{value: msg.value}();
@@ -124,6 +124,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     function unstake(uint _amount) public {
         require(stakedAmount[msg.sender] >= _amount, ERROR_INSUFFICIENT_BALANCE);
+        require(totalStakedAmount - totalLentAmount >= _amount, ERROR_INSUFFICIENT_BALANCE);
         // update stake amount
         stakedAmount[msg.sender] -= _amount;
         totalStakedAmount -= _amount;
@@ -144,7 +145,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         unstakeRequestsRear =  enqueueUnstakeRequests(unstakeRequests, unstakeRequest, unstakeRequestsRear);
     }
 
-    function receiveUnstaked() external payable onlyInviCore {}
+    function receiveUnstaked() external payable onlyInviCore {
+        unstakedAmount += msg.value;
+    }
 
     function sendUnstakedAmount() external {
         // require contract balance to be above totalNativeRewardAmount
@@ -156,15 +159,17 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
         for (uint i=front; i< rear; i++) {
-            if (unstakeRequests[i].amount > address(this).balance - totalNativeRewardAmount) {
+            if (unstakeRequests[i].amount > unstakedAmount) {
                 break;
             }
+            // update claimable amount
+            claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
 
             // remove unstake request
             unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
 
-            // update claimable amount
-            claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
+            // update unstaked amount
+            unstakedAmount -= unstakeRequests[i].amount;
         }
 
         lastSendUnstakedAmountTime = block.timestamp;
@@ -216,7 +221,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         lastInviRewardedTime = block.timestamp;
     }
-
+ 
     function claimInviReward() external {
         require(inviRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
         uint rewardAmount = inviRewardAmount[msg.sender];

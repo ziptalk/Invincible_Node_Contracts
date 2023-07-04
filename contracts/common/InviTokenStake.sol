@@ -37,8 +37,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     mapping (address => uint) totalInviRewardAmountByAddress;
 
     //------addresses status------//
-    address[] public addressList;
+    //address[] public addressList;
     uint public totalAddressNumber;
+    mapping(uint => address) public addressList;
    
 
     //====== modifiers ======//
@@ -61,6 +62,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
 
         unstakePeriod = 1 minutes; // testnet : 1 min (for test) mainnet: 7 days
+
+        totalAddressNumber = 0;
     }
 
     //====== getter functions ======//
@@ -78,11 +81,11 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
     
     //====== setter functions ======//
-    function setInviCoreAddress(address _inviCoreAddr) public onlyOwner {
+    function setInviCoreAddress(address _inviCoreAddr) external onlyOwner {
         inviCoreAddress = _inviCoreAddr;
     }
 
-    function setInviTokenAddress(address _inviTokenAddr) public onlyOwner {
+    function setInviTokenAddress(address _inviTokenAddr) external onlyOwner {
         inviToken = IERC20(_inviTokenAddr);
     }
     
@@ -94,14 +97,15 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     // stake inviToken
     function stake(uint _stakeAmount) public  {
         require(inviToken.transferToken(msg.sender, address(this), _stakeAmount), "Failed to transfer inviToken to contract");
+        require(_stakeAmount > 0, "Stake amount should be bigger than 0");
 
         // update stake amount
         stakedAmount[msg.sender] += _stakeAmount;
         totalStakedAmount += _stakeAmount;
 
         // add address to address list if new address
-        addAddress(addressList, msg.sender);
-        totalAddressNumber = addressList.length;
+        addressList[totalAddressNumber] = msg.sender;
+        totalAddressNumber++;
     }
 
     function requestUnstake(uint _unstakeAmount) public {
@@ -160,11 +164,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     // distribute native rewards
     function distributeNativeReward() external payable onlyInviCore {
         // require(msg.sender == STAKE_MANAGER, "Sent from Wrong Address");
-        for (uint256 i = 0; i < addressList.length; i++) {
+        for (uint256 i = 0; i < totalAddressNumber; i++) {
             address account = addressList[i];
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
-            console.log("reward: ", rewardAmount);
-
+        
             // update rewards
             nativeRewardAmount[account] += rewardAmount;
         }
@@ -179,7 +182,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         uint totalInviToken = inviToken.balanceOf(address(this));
         require(totalInviToken - totalClaimableInviAmount > 1000000, ERROR_INSUFFICIENT_BALANCE);
 
-        for (uint256 i = 0; i < addressList.length; i++) {
+        for (uint256 i = 0; i < totalAddressNumber; i++) {
             address account = addressList[i];
             uint rewardAmount = ((totalInviToken - totalClaimableInviAmount) * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
             
