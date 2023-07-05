@@ -8,8 +8,8 @@ import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
 import "hardhat/console.sol";
 
-string constant INVI_TOKEN_FULL_NAME = "Invi Token";
-string constant INVI_TOKEN_NAME = "INVI";
+string constant INVI_TOKEN_FULL_NAME = "Invi Test Token";
+string constant INVI_TOKEN_NAME = "INVITEST";
 
 contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 

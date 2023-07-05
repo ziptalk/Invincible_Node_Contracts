@@ -27,8 +27,10 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     mapping(address => uint) public lpLiquidity;
     mapping(address => uint) public lpRewardNative;
     mapping(address => uint) public lpRewardInvi;
-    address[] public lpList;
+    //address[] public lpList;
+    mapping(uint => address) public lpList;
 
+    uint public lpCount;
     uint public totalLiquidityNative;
     uint public totalLiquidityInvi;
     uint public totalRewardNative;
@@ -51,6 +53,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         isptToken = IERC20(_isptAddr);
         inviFees = 3;
         nativeFees = 3;
+        lpCount = 0;
         totalLiquidityNative = 1;
         totalLiquidityInvi = 1;
         totalRewardInvi = 1;
@@ -224,7 +227,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
 
         // transfer tokens from sender
         require(inviToken.transferToken(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
-        addAddress(lpList, msg.sender);
+        lpList[lpCount++] = msg.sender;
+        //addAddress(lpList, msg.sender);
 
         // mint token
         isptToken.mintToken(msg.sender, sqrt(msg.value * expectedInvi));
@@ -304,7 +308,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amount The amount of rewards to distribute.
      */
     function splitRewards(uint _type, uint _amount) private {
-        for (uint i = 0 ; i < lpList.length; i++) {
+        for (uint i = 0 ; i < lpCount; i++) {
             address lp = lpList[i];
             uint lpAmount = lpLiquidity[lp];
             uint totalLpAmount = totalLiquidityNative * totalLiquidityInvi;

@@ -39,7 +39,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Unstake------//
     mapping(address => uint) public claimableUnstakeAmount;
     mapping(address => uint) public unstakeRequestAmount;
-    UnstakeRequestLP[] public unstakeRequests;
+    //UnstakeRequestLP[] public unstakeRequests;
+    mapping(uint => UnstakeRequestLP) public unstakeRequests;
     uint public unstakeRequestsRear;
     uint public unstakeRequestsFront;
     uint public lastSendUnstakedAmountTime;
@@ -73,6 +74,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         // inviReceiveInterval = 90 days; // mainnet : 90 days
 
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
+
+        unstakeRequestsFront = 0;
+        unstakeRequestsRear = 0;
     }
 
     //====== getter functions ======//
@@ -123,8 +127,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     function unstake(uint _amount) public {
-        require(stakedAmount[msg.sender] >= _amount, ERROR_INSUFFICIENT_BALANCE);
-        require(totalStakedAmount - totalLentAmount >= _amount, ERROR_INSUFFICIENT_BALANCE);
+        require(stakedAmount[msg.sender] >= _amount && totalStakedAmount - totalLentAmount >= _amount && _amount > 0, "Improper request amount");
         // update stake amount
         stakedAmount[msg.sender] -= _amount;
         totalStakedAmount -= _amount;
@@ -142,7 +145,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             requestTime: block.timestamp
         });
         // update unstake request
-        unstakeRequestsRear =  enqueueUnstakeRequests(unstakeRequests, unstakeRequest, unstakeRequestsRear);
+        unstakeRequests[unstakeRequestsRear++] = unstakeRequest;
+        // unstakeRequestsRear =  enqueueUnstakeRequests(unstakeRequests, unstakeRequest, unstakeRequestsRear);
     }
 
     function receiveUnstaked() external payable onlyInviCore {
@@ -166,7 +170,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
 
             // remove unstake request
-            unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
+            delete unstakeRequests[unstakeRequestsFront++];
+            //unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
 
             // update unstaked amount
             unstakedAmount -= unstakeRequests[i].amount;

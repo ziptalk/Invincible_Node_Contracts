@@ -60,11 +60,11 @@ describe("Invi core service test", function () {
     const inviCoreContractBalance = await ethers.provider.getBalance(inviCoreContract.address);
     console.log("inviCoreContractBalance: ", inviCoreContractBalance.toString());
     const unstakeRequestAmount = await inviCoreContract.unstakeRequestAmount();
-    console.log("unstakeRequestAMount: ", unstakeRequestAmount.toString());
+    console.log("unstakeRequestAmount: ", unstakeRequestAmount.toString());
 
     // get all unstake requests
     const unstakeRequests: UnstakeRequest[] = [];
-    for (let i = 0; i < beforeUnstakeRequestsLength; i++) {
+    for (let i = unstakeRequestFront.toString(); i < unstakeRequestRear.toString(); i++) {
       const unstakeRequest = await inviCoreContract.unstakeRequests(i);
       unstakeRequests.push(unstakeRequest.toString());
     }

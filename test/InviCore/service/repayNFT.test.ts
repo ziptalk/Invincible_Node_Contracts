@@ -57,7 +57,7 @@ describe("Invi core service test", function () {
     let nftId = await stakeNFTContract.NFTOwnership(userA.address, targetNft);
     const nftStakeInfo = await stakeNFTContract.getStakeInfo(nftId);
     console.log("nft id: ", nftId);
-    console.log("stake info: ", nftStakeInfo.toString());
+    console.log("target stake info: ", nftStakeInfo.toString());
 
     // init value
     const initTotalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
@@ -73,7 +73,7 @@ describe("Invi core service test", function () {
     );
 
     //* when
-    const repay = await inviCoreContract.connect(userA).repayNFT(nftId, { nonce: ++nonceUserA });
+    const repay = await inviCoreContract.connect(userA).repayNFT(nftId);
     await repay.wait();
     console.log("repay", repay);
 
