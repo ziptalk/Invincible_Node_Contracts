@@ -11,14 +11,14 @@ import "./lib/ErrorMessages.sol";
 import "./InviCore.sol";
 import "./lib/Structs.sol";
 import "./lib/ArrayUtils.sol";
+import "./tokens/ILPToken.sol";
 
 
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
-    IERC20 public iLP;
+    ILPToken public iLP;
     IERC20 public inviToken;
     InviCore public inviCoreContract;
-    address[] public ILPHolders;
 
     //------ratio------//
     uint public liquidityAllowableRatio;
@@ -63,7 +63,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //====== initializer ======//
     function initialize(address iLPAddr, address inviTokenAddr) public initializer {
         __Ownable_init();
-        iLP = IERC20(iLPAddr);
+        iLP = ILPToken(iLPAddr);
         inviToken = IERC20(inviTokenAddr);
         liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
 
@@ -192,9 +192,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     
     // distribute native coin
     function distributeNativeReward() external payable onlyInviCore{
-        ILPHolders = iLP.getILPHolders();
-        for (uint256 i = 0; i < ILPHolders.length; i++) {
-            address account = ILPHolders[i];
+        for (uint256 i = 0; i < iLP.totalILPHoldersCount(); i++) {
+            address account = iLP.ILPHolders(i);
             uint rewardAmount = (msg.value * stakedAmount[account] / totalStakedAmount);
 
             // update reward amount
@@ -204,18 +203,17 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         }
 
         lastNativeRewardDistributeTime = block.timestamp;
-
     }
 
     // distribute invi token 
     function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
-        require(totalInviToken - totalClaimableInviAmount > 1000000, ERROR_INSUFFICIENT_BALANCE);
-        ILPHolders = iLP.getILPHolders();
-        for (uint256 i = 0; i < ILPHolders.length; i++) {
-            address account = ILPHolders[i];
-            uint rewardAmount = ((totalInviToken - totalClaimableInviAmount) * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
+        require(totalInviToken - totalClaimableInviAmount > 1000000, "Insufficient invi token to distribute");
+        uint totalRewards = totalInviToken - totalClaimableInviAmount;
+        for (uint256 i = 0; i < iLP.totalILPHoldersCount(); i++) {
+           address account = iLP.ILPHolders(i);
+            uint rewardAmount = (totalRewards * stakedAmount[account] / (totalStakedAmount * (inviReceiveInterval / inviRewardInterval)));
            
             // update rewards
             inviRewardAmount[account] += rewardAmount;

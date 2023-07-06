@@ -401,7 +401,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
         uint count = 0;
-        require(address(this).balance > totalClaimableAmount, "Not enough amount");
+        require(address(this).balance >= totalClaimableAmount, "Not enough amount");
         for (uint i = front ; i <  rear; i++) {
             if (unstakeRequests[i].amount > address(this).balance - totalClaimableAmount) {
                 break;

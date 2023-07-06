@@ -42,7 +42,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     mapping(uint => address) public addressList;
    
 
-    //====== modifiers ======//
+    //====== modifiers ======// 
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "msg sender should be invi core");
         _;

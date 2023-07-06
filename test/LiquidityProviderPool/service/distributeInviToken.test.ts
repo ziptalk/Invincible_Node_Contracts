@@ -39,6 +39,9 @@ describe("LpPool service test", function () {
     //* given
     const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
+    const totalClaimableInviAmount = await lpPoolContract.totalClaimableInviAmount();
+    console.log("previousTotalStakedAmount", previousTotalStakedAmount.toString());
+    console.log("totalClaimableInviAmount", totalClaimableInviAmount.toString());
 
     //* when
     try {
