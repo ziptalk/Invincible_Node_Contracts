@@ -24,5 +24,10 @@ describe("LpPool service test", function () {
 
     const balanceOfInviCore = await stTokenContract.balanceOf(inviCoreContract.address);
     console.log("balanceOfInviCore: ", (balanceOfInviCore / 10 ** 18).toString());
+
+    const stakedAmount = await inviCoreContract.getTotalStakedAmount();
+    console.log("stakedAmount: ", (stakedAmount / 10 ** 18).toString());
+
+    expect(balanceOfInviCore).to.be.above(stakedAmount);
   });
 });

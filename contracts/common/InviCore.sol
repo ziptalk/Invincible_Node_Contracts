@@ -245,13 +245,12 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // get lent amount
         uint lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
-        // set total lent amount
         lpPoolContract.setTotalLentAmount(lpPoolContract.totalLentAmount() - lentAmount);
 
         // get user reward amount including protocol fee
         uint rewardAmount = stakeNFTContract.rewardAmount(_nftTokenId);
         // get user reward without protocol fee
-        uint userReward = rewardAmount * (PROTOCOL_FEE_UNIT* 100 - stakeInfo.protocolFee) / (PROTOCOL_FEE_UNIT * 100);
+        uint userReward = rewardAmount * (PROTOCOL_FEE_UNIT * 100 - stakeInfo.protocolFee) / (PROTOCOL_FEE_UNIT * 100);
         // get stakers'(INVI staker, LPs) reward
         uint stakersReward = rewardAmount - userReward;
         // split reward to LPs and INVI stakers
@@ -260,14 +259,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // set stakeAmount info
         stakeNFTContract.setTotalStakedAmount(stakeNFTContract.totalStakedAmount() - stakeInfo.stakedAmount);
-        if (stakeInfo.stakedAmount > stakeInfo.principal) {
-            lpPoolContract.setTotalStakedAmount(lpPoolContract.totalStakedAmount() + (stakeInfo.stakedAmount - stakeInfo.principal));
-            if (lpPoolContract.totalLentAmount() > stakeInfo.stakedAmount - stakeInfo.principal) {
-                lpPoolContract.setTotalLentAmount(lpPoolContract.totalLentAmount() - (stakeInfo.stakedAmount - stakeInfo.principal));
-            } else {
-                lpPoolContract.setTotalLentAmount(0);
-            }
-        }
 
         // create unstake request for user 
         UnstakeRequest memory request = UnstakeRequest(msg.sender,_nftTokenId, stakeInfo.principal + userReward, stakeInfo.protocolFee, 0);
@@ -314,7 +305,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     // periodic reward distribution, update
     function distributeStTokenReward() external {
         // get total staked amount
-        uint totalStakedAmount = stakeNFTContract.totalStakedAmount() + lpPoolContract.totalStakedAmount() - lpPoolContract.totalLentAmount();
+        uint totalStakedAmount = getTotalStakedAmount();
         require(stToken.balanceOf(address(this)) > totalStakedAmount , ERROR_NO_REWARD);
         // get total rewards
         uint totalReward = stToken.balanceOf(address(this)) - totalStakedAmount;
