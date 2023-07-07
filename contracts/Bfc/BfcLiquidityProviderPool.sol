@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../interfaces/IERC20.sol";
+import "../interfaces/external/IERC20.sol";
 import "../common/lib/AddressUtils.sol";
 import "../common/lib/Logics.sol";
 import "../common/lib/Unit.sol";
@@ -144,7 +144,7 @@ contract BfcLiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     // distribute invi token 
-    function distributeInviTokenReward() external onlyOwner{
+    function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint totalInviToken = inviToken.balanceOf(address(this));
         ILPHolders = iLP.getILPHolders();

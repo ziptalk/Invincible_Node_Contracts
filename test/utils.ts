@@ -20,7 +20,7 @@ export const leverageStake = async (
 ) => {
   const stakeInfo = await inviCoreContract.connect(user).getStakeInfo(await user.getAddress(), principal, leverageRatio, lockPeriod, { nonce: nonce });
   const slippage = 3 * units.slippageUnit;
-  console.log("stakeInfo: ", stakeInfo);
+  console.log("stakeInfo: ", stakeInfo.toString());
   let tx = await inviCoreContract.connect(user).stake(principal, leverageRatio, lockPeriod, slippage, { value: principal, nonce: nonce });
   await tx.wait();
   return stakeInfo;

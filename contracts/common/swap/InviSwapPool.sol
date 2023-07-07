@@ -1,17 +1,21 @@
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "hardhat/console.sol";
 import "../PriceManager.sol";
-import "../../interfaces/IERC20.sol";
+import "../../interfaces/external/IERC20.sol";
 import "../lib/Unit.sol";
 import "../lib/ErrorMessages.sol";
 import "../lib/AddressUtils.sol";
 import "../lib/Math.sol";
 
-contract InviSwapPool is Initializable, OwnableUpgradeable{
+/**
+ * @title InviSwapPool
+ * @dev The InviSwapPool contract facilitates swapping and liquidity provision between the InviToken and the native token (e.g., ETH).
+ */
+contract InviSwapPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public isptToken;
     IERC20 public inviToken;
@@ -21,10 +25,12 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
 
     //------Variables------//
     mapping(address => uint) public lpLiquidity;
-    mapping (address => uint) public lpRewardNative;
-    mapping (address => uint) public lpRewardInvi;
-    address[] public lpList;
+    mapping(address => uint) public lpRewardNative;
+    mapping(address => uint) public lpRewardInvi;
+    //address[] public lpList;
+    mapping(uint => address) public lpList;
 
+    uint public lpCount;
     uint public totalLiquidityNative;
     uint public totalLiquidityInvi;
     uint public totalRewardNative;
@@ -37,11 +43,17 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     uint public nativePrice;
 
     //======initializer======//
-     function initialize(address _inviAddr, address _isptAddr) initializer public {
+    /**
+     * @dev Initializes the InviSwapPool contract.
+     * @param _inviAddr The address of the InviToken contract.
+     * @param _isptAddr The address of the ISPT (InviSwapPool Token) contract.
+     */
+    function initialize(address _inviAddr, address _isptAddr) initializer public {
         inviToken = IERC20(_inviAddr);
         isptToken = IERC20(_isptAddr);
         inviFees = 3;
         nativeFees = 3;
+        lpCount = 0;
         totalLiquidityNative = 1;
         totalLiquidityInvi = 1;
         totalRewardInvi = 1;
@@ -51,38 +63,35 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     //======modifier======//
-    // modifier setPrice {
-    //    setInviPrice();
-    //    setNativePrice();
-    //     _;
-    // }
 
     //======getter functions======//
+
+    /**
+     * @dev Calculates the amount of InviTokens that will be received for a given amount of native token.
+     * @param _amountIn The amount of native token.
+     * @return The amount of InviTokens that will be received.
+     */
     function getInviToNativeOutAmount(uint _amountIn) public view returns (uint) {
         uint currentNativePrice = priceManager.getNativePrice();
         uint currentInviPrice = priceManager.getInviPrice();
-        // get amount out
         uint amountOut = _amountIn * currentInviPrice / currentNativePrice;
-        // get slippage
         uint slippage = amountOut * amountOut / totalLiquidityNative;
-      
         return amountOut - slippage; 
     }
+
+    /**
+     * @dev Calculates the amount of native token that will be received for a given amount of InviTokens.
+     * @param _amountIn The amount of InviTokens.
+     * @return The amount of native token that will be received.
+     */
     function getNativeToInviOutAmount(uint _amountIn) public view returns (uint) {
         uint currentNativePrice = priceManager.getNativePrice();
         uint currentInviPrice = priceManager.getInviPrice();
-         // get amount out
         uint amountOut = _amountIn * currentNativePrice / currentInviPrice;
-        // get slippage
         uint slippage = amountOut * amountOut / totalLiquidityInvi;
-
-        console.log("amountOut: ", amountOut);
-        console.log("slippage: ", slippage);
- 
-        return  amountOut - slippage;
+        return amountOut - slippage;
     }
 
-    // upgrades
     function getNativeToInviOutMaxInput() public view returns (uint) {
         uint currentNativePrice = priceManager.getNativePrice();
         uint currentInviPrice = priceManager.getInviPrice();
@@ -120,15 +129,31 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
     }
 
     //======setter functions======//
+
+    /**
+     * @dev Sets the address of the PriceManager contract.
+     * @param _priceManager The address of the PriceManager contract.
+     */
     function setPriceManager(address _priceManager) public onlyOwner {
         priceManager = PriceManager(_priceManager);
     }
+
+    /**
+     * @dev Sets the fees in InviTokens for swaps from native token to InviToken.
+     * @param _fees The fees in InviTokens.
+     */
     function setInviFees(uint _fees) public onlyOwner {
         inviFees = _fees;
     }
+
+    /**
+     * @dev Sets the fees in native token for swaps from InviToken to native token.
+     * @param _fees The fees in native token.
+     */
     function setNativeFees(uint _fees) public onlyOwner {
         nativeFees = _fees;
     }
+
     function setInviPrice() internal {
         // uncomment later
         inviPrice = priceManager.getInviPrice();
@@ -136,68 +161,56 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         // for test
         // inviPrice = 1 * 10 ** 18;
     }
+
     function setNativePrice() internal {
         // 0: mainnet 1: testnet. uncomment later
         nativePrice = priceManager.getNativePrice();
         // for test
         // NativePrice = 2 * 10 ** 18; 
     }
+    //...
 
     //======service functions======//
-    // set price before swap
+
+    /**
+     * @dev Swaps InviTokens for native token.
+     * @param _amountIn The amount of InviTokens to swap.
+     * @param _amountOutMin The minimum amount of native token expected to receive.
+     */
     function swapInviToNative(uint _amountIn, uint _amountOutMin) public {
         require(_amountIn < getInviToNativeOutMaxInput(), "exceeds max input amount");
-        // calculate amount of tokens to be transferred
         uint amountOut = getInviToNativeOutAmount(_amountIn);
-        
         uint fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
-
         require(amountOut < totalLiquidityNative, "not enough reserves");
         require(amountOut - fees >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
-
-        // transfer tokens from sender
-        require(inviToken.transferFrom(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
-
+        require(inviToken.transferToken(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
         totalLiquidityInvi += _amountIn;
-        totalLiquidityNative -= amountOut-fees;
+        totalLiquidityNative -= amountOut - fees;
         totalRewardNative += fees;
-        console.log("fees: ", fees);
-
         splitRewards(0, fees);
-
-        // transfer Native to the sender
         (bool success, ) = msg.sender.call{value: amountOut - fees}("");
         require(success, ERROR_FAIL_SEND);
     }
 
-    // set price before swap
+    /**
+     * @dev Swaps native token for InviTokens.
+     * @param _amountOutMin The minimum amount of InviTokens expected to receive.
+     */
     function swapNativeToInvi(uint _amountOutMin) public payable {
         require(msg.value < getNativeToInviOutMaxInput(), "exceeds max input amount");
         require(msg.value > 0, ERROR_SWAP_ZERO);
-
-        // calculate amount of tokens to be transferred
         uint256 amountOut = getNativeToInviOutAmount(msg.value);
         uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
         require(amountOut < totalLiquidityInvi, ERROR_NOT_ENOUGH_LIQUIDITY);
         require(amountOut - fees >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
-        //console.log("amountOut: ", amountOut);
-
-        // console.log("total liquidity invi: ", totalLiquidityInvi);
-        // console.log("slippage: ", slippage);
-        // console.log("fees: ", fees);
-
         totalLiquidityNative += msg.value;
         totalLiquidityInvi -= amountOut - fees;
         totalRewardInvi += fees;
-        console.log("fees: ", fees);
-
         splitRewards(1, fees);
-
-        // transfer tokens from sender
         require(inviToken.transfer(msg.sender, amountOut - fees), ERROR_FAIL_SEND_ERC20);
     }
 
-    // slippage unit is 0.1%
+      // slippage unit is 0.1%
     function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable {
        
         uint expectedInvi = getAddLiquidityInvi(msg.value);
@@ -213,8 +226,9 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         lpLiquidity[msg.sender] += msg.value * expectedInvi;
 
         // transfer tokens from sender
-        require(inviToken.transferFrom(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
-        addAddress(lpList, msg.sender);
+        require(inviToken.transferToken(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
+        lpList[lpCount++] = msg.sender;
+        //addAddress(lpList, msg.sender);
 
         // mint token
         isptToken.mintToken(msg.sender, sqrt(msg.value * expectedInvi));
@@ -285,10 +299,16 @@ contract InviSwapPool is Initializable, OwnableUpgradeable{
         }
     }
 
+
     //======utils functions======//
 
+    /**
+     * @dev Distributes the rewards to liquidity providers.
+     * @param _type The type of reward (0 for native token, 1 for InviToken).
+     * @param _amount The amount of rewards to distribute.
+     */
     function splitRewards(uint _type, uint _amount) private {
-        for (uint i = 0 ; i < lpList.length; i++) {
+        for (uint i = 0 ; i < lpCount; i++) {
             address lp = lpList[i];
             uint lpAmount = lpLiquidity[lp];
             uint totalLpAmount = totalLiquidityNative * totalLiquidityInvi;

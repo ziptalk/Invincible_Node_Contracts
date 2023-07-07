@@ -12,7 +12,7 @@ import "./EvmosLiquidityProviderPool.sol";
 import "./EvmosInviTokenStake.sol";
 import "../common/lib/Logics.sol";
 import "../common/lib/Unit.sol";
-import "../interfaces/IEvmosLiquidStaking.sol";
+import "../interfaces/external/IEvmosLiquidStaking.sol";
 
 contract EvmosInviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//

@@ -13,18 +13,22 @@ string constant ILP_TOKEN_NAME = "ILP";
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     // track ILP Holder list
-    address[] public ILPHolders;
+    //address[] public ILPHolders;
+    uint public totalILPHoldersCount;
+    mapping(uint => address) public ILPHolders;
 
     //====== initializer ======//
     function initialize() initializer public {
         __ERC20_init(ILP_TOKEN_FULL_NAME, ILP_TOKEN_NAME);
         __Ownable_init();
+
+        totalILPHoldersCount = 0;
     }
 
     //====== getter functions ======//
-    function getILPHolders() external view returns (address[] memory){
-        return ILPHolders;
-    }
+    // function getILPHolders() external view returns (address[] memory){
+    //     return ILPHolders;
+    // }
 
     //======setter functions ======//
 
@@ -32,8 +36,9 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function mintToken(address _account, uint _amount) onlyOwner external {
         _mint(_account, _amount);
         
-         // update ILPHolderList
-        addAddress(ILPHolders, _account);
+        ILPHolders[totalILPHoldersCount++] = _account;
+        //  // update ILPHolderList
+        // addAddress(ILPHolders, _account);
     }
 
     function burnToken(address _account, uint _amount) onlyOwner external  {
@@ -45,8 +50,9 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _transfer(_owner, to, amount);
 
         // update ILPHolderList 
-        addAddress(ILPHolders, to);
+        ILPHolders[totalILPHoldersCount++] = to;
 
+        // addAddress(ILPHolders, to);
         return true;
     }
 
@@ -56,7 +62,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _transfer(from, to, amount);
 
         // update ILPHolderList
-        addAddress(ILPHolders, to);
+        ILPHolders[totalILPHoldersCount++] = to;
         return true;
     }
 }

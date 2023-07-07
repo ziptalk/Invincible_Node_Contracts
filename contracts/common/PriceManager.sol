@@ -1,86 +1,68 @@
- // SPDX-License-Identifier: MIT
-pragma solidity ^0.8;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "hardhat/console.sol";
-import "../interfaces/IERC20.sol";
-import "../interfaces/IConcentratedLiquidityPool.sol";
+import "../interfaces/external/IERC20.sol";
+import "../interfaces/external/IConcentratedLiquidityPool.sol";
 import "./lib/Unit.sol";
 import "./lib/ErrorMessages.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Math.sol";
 
-address constant PANGEA_SWAP_ADDRESS = 0xbF2873B030e8Cf45daeA9dac20BAf20205B75ACE;
-// testnet 0xbF2873B030e8Cf45daeA9dac20BAf20205B75ACE
-// mainnet 0xeEE272973cf2cA4c5EBf946e601272a3215412a0
-
+/**
+ * @title PriceManager
+ * @dev The PriceManager contract manages the prices of InviToken and the native token (e.g., ETH).
+ */
 contract PriceManager is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IConcentratedLiquidityPool pangeaSwapPool;
 
-    //------events------//
-
     //------Variables------//
-
     uint public inviPrice;
     uint public nativePrice;
 
     //======initializer======//
-
-     function initialize() initializer public {
-        //pangeaSwapPool = IConcentratedLiquidityPool(PANGEA_SWAP_ADDRESS);
+    /**
+     * @dev Initializes the PriceManager contract.
+     */
+    function initialize() initializer public {
         inviPrice = 10**18;
         nativePrice = 10**18;
         __Ownable_init();
     }
 
-    //======modifier======//
-
     //======getter functions======//
-
+    /**
+     * @dev Returns the current price of InviToken.
+     * @return The price of InviToken.
+     */
     function getInviPrice() public view returns (uint) {
         return inviPrice;
     }
    
+    /**
+     * @dev Returns the current price of the native token.
+     * @return The price of the native token.
+     */
     function getNativePrice() public view returns (uint) {
         return nativePrice;
     }
 
     //======setter functions======//
-
+    /**
+     * @dev Sets the price of InviToken.
+     * @param _price The new price of InviToken.
+     */
     function setInviPrice(uint _price) public onlyOwner {
         inviPrice = _price;
     }
    
+    /**
+     * @dev Sets the price of the native token.
+     * @param _price The new price of the native token.
+     */
     function setNativePrice(uint _price) public onlyOwner {
         nativePrice = _price;
     }
-
-    //======service functions======//
-    // function fetchKlayPrice(uint _option) public view returns (uint) {
-    //     // uncomment later
-    //     // (uint160 klay, int24 tick) = pangeaSwapPool.getPriceAndNearestTicks();
-    //     // console.log("klay", klay);
-
-    //     uint parseKlay;
-    //     if (_option == 0) {
-    //         // parse klay in mainnet
-    //         // parseKlay = (klay / 2 ** 96) ** 2;
-    //     } 
-    //     else {
-    //         // parse klay in testnet 
-    //         parseKlay = klayPrice;
-    //     }
-
-    //     return parseKlay;
-    // }
-
-    // function fetchInviPrice() public view returns (uint) {
-    //     return inviPrice;
-    // }
-    
-    //======utils functions======//
-
-    
 }

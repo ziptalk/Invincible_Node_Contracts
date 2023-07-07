@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { deployAllWithSetting } from "../../deploy";
 import { currentNetwork } from "../../currentNetwork";
 import { units } from "../../units";
-import { testAddressMainnetBfc, testAddressTestnetBfc } from "../../../scripts/addresses/testAddresses/address.bfc";
+import { bfcTestAddress } from "../../../scripts/addresses/testAddresses/address.bfc";
 
 let network = currentNetwork; // BIFROST, KLAYTN, EVMOS
 let targetAddress = testAddressTestnetBfc;

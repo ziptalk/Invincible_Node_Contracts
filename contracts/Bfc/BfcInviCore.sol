@@ -12,7 +12,7 @@ import "./BfcLiquidityProviderPool.sol";
 import "./BfcInviTokenStake.sol";
 import "../common/lib/Logics.sol";
 import "../common/lib/Unit.sol";
-import "../interfaces/IBfcLiquidStaking.sol";
+import "../interfaces/external/IBfcLiquidStaking.sol";
 
 contract BfcInviCore is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//

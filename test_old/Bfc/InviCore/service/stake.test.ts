@@ -21,9 +21,9 @@ describe("Invi core service test", function () {
   this.beforeAll(async function () {
     // for testnet test
 
-    inviCoreContract = await ethers.getContractAt("BfcInviCore", testAddressBfc.inviCoreContractAddress);
+    inviCoreContract = await ethers.getContractAt("InviCore", testAddressBfc.inviCoreContractAddress);
     stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddressBfc.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("BfcLiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
+    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddressBfc.lpPoolContractAddress);
   });
 
   it("Test stake function", async () => {
@@ -42,7 +42,7 @@ describe("Invi core service test", function () {
     console.log("nonce lp: ", nonceLP);
 
     //* given
-    const lpAmount: BigNumber = ethers.utils.parseEther("0.001");
+    const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
     const previousUserNftBalance = await stakeNFTContract.balanceOf(userA.address);
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
     const previousTotalLentAmount = await lpPoolContract.totalLentAmount();
