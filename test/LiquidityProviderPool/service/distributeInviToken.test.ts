@@ -48,12 +48,14 @@ describe("LpPool service test", function () {
       const distributeInviToken = await lpPoolContract.connect(LP).distributeInviTokenReward();
       await distributeInviToken.wait();
     } catch (error) {
+      console.log("distribute invi token error");
       console.log(error);
     }
     try {
       const claimInviToken = await lpPoolContract.connect(LP).claimInviReward();
       await claimInviToken.wait();
     } catch (error) {
+      console.log("claim invi reward error");
       console.log(error);
     }
     //* then

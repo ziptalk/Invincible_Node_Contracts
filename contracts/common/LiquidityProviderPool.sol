@@ -169,19 +169,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             // update claimable amount
             claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
 
+              // update unstaked amount
+            unstakedAmount -= unstakeRequests[i].amount;
+
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
             //unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
 
-            // update unstaked amount
-            unstakedAmount -= unstakeRequests[i].amount;
         }
 
         lastSendUnstakedAmountTime = block.timestamp;
     }
 
     function claimUnstaked() external {
-        require(claimableUnstakeAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+        require(claimableUnstakeAmount[msg.sender] > 0 && claimableUnstakeAmount[msg.sender] >= address(this).balance, ERROR_INSUFFICIENT_BALANCE);
 
         uint amount = claimableUnstakeAmount[msg.sender];
         claimableUnstakeAmount[msg.sender] = 0;
@@ -226,7 +227,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
  
     function claimInviReward() external {
-        require(inviRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+        require(inviRewardAmount[msg.sender] > 0 && inviRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
         uint rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;
@@ -236,7 +237,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     function claimNativeReward() external {
-        require(nativeRewardAmount[msg.sender] > 0, ERROR_INSUFFICIENT_BALANCE);
+        require(nativeRewardAmount[msg.sender] > 0 && nativeRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
         uint rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
 

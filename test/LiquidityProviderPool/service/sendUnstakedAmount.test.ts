@@ -54,6 +54,10 @@ describe("LpPool service test", function () {
     let lpPoolBalance = await ethers.provider.getBalance(lpPoolContract.address);
     console.log("LP Pool Balance: ", lpPoolBalance.toString());
 
+    // get unstaked amount
+    let unstakedAmount = await lpPoolContract.connect(LP).unstakedAmount();
+    console.log("unstakedAmount: ", unstakedAmount.toString());
+
     //* when
     const sendUnstakedAmount = await lpPoolContract.connect(LP).sendUnstakedAmount();
     await sendUnstakedAmount.wait();
