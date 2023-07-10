@@ -9,6 +9,7 @@ import "./lib/Structs.sol";
 import "./lib/ArrayUtils.sol";
 import "hardhat/console.sol";
 import "./LendingPool.sol";
+import "./lib/Unit.sol";
 
 /**
  * @title StakeNFT
@@ -316,7 +317,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 stakeInfo.lockPeriod = passedLockPeriod + leftLockPeriod * stakeInfo.stakedAmount / _stakedAmount;
 
                 // update leverageRatio
-                stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount / uint128(stakeInfo.principal));
+                stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount / uint128(stakeInfo.principal)) * LEVERAGE_UNIT;
             }
         }
         totalStakedAmount -= _lackAmount;
