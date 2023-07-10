@@ -15,26 +15,29 @@ import "./LendingPool.sol";
  * @dev The StakeNFT contract enables users to stake and manage Non-Fungible Tokens (NFTs).
  */
 contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    // using Counters for Counters.Counter;
+    // Counters.Counter private _tokenIds;
 
     //------Contracts and Addresses------//
 
     address public inviCoreAddress;
     address public lendingPoolAddress;
+    address public lpPoolAddress;
 
     //------mappings------//
 
     // show which address have which NFT
-    mapping (address => uint[]) public NFTOwnership;
-    mapping (uint => uint) public rewardAmount;
+    mapping (address => uint32[]) public NFTOwnership;
+    mapping (uint32 => uint128) public rewardAmount;
     // store all stakeInfos
-    mapping (uint => StakeInfo) public stakeInfos;
+    mapping (uint32 => StakeInfo) public stakeInfos;
+    mapping (uint32 => uint32) public originalLeverage;
 
     //------public Variables------//
 
-    uint public totalStakedAmount;
-    uint[] public nftTokenIds;
+    uint128 public totalStakedAmount;
+    uint32[] public nftTokenIds;
+    uint32 private _tokenIds;
 
     //------private Variables------//
 
@@ -43,7 +46,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
     //------Upgrades------//
 
-    uint public dummyId;
+    uint128 public dummyId;
     
     //====== initializer ======//
 
@@ -55,6 +58,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         __Ownable_init();
 
         dummyId = 10 **18;
+        _tokenIds = 0;
     }
 
     //====== modifiers ======//
@@ -68,6 +72,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         require(msg.sender == address(lendingPoolAddress), "msg sender should be lending pool");
         _;
     }
+
+    modifier onlyLpPool {
+        require(msg.sender == address(lpPoolAddress), "msg sender should be lp pool");
+        _;
+    }
     
     //====== getter functions ======//
 
@@ -76,7 +85,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _tokenId The ID of the NFT token.
      * @return The reward amount.
      */
-    function getRewardAmount(uint _tokenId) public view returns (uint) {
+    function getRewardAmount(uint32 _tokenId) public view returns (uint) {
         return rewardAmount[_tokenId];
     }
 
@@ -85,7 +94,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _user The address of the user.
      * @return An array of NFT token IDs.
      */
-    function getNFTOwnership(address _user) public view returns (uint[] memory) {
+    function getNFTOwnership(address _user) public view returns (uint32[] memory) {
         return NFTOwnership[_user];
     }
 
@@ -94,7 +103,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _nftTokenId The ID of the NFT token.
      * @return The stake information.
      */
-    function getStakeInfo(uint _nftTokenId) public view returns (StakeInfo memory){
+    function getStakeInfo(uint32 _nftTokenId) public view returns (StakeInfo memory){
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         require(stakeInfo.user != address(0), "stakeInfo does not exist");
         return stakeInfos[_nftTokenId];
@@ -106,7 +115,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @return An array of stake information.
      */
     function getAllStakeInfoOfUser(address _user) public view returns (StakeInfo[] memory) {
-        uint[] memory _nftTokenIds = NFTOwnership[_user];
+        uint32[] memory _nftTokenIds = NFTOwnership[_user];
         StakeInfo[] memory stakeInfosOfUser = new StakeInfo[](_nftTokenIds.length);
         for (uint i = 0; i < _nftTokenIds.length; i++) {
             stakeInfosOfUser[i] = stakeInfos[_nftTokenIds[i]];
@@ -133,10 +142,18 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
+     * @dev Sets the address of the LpPool contract.
+     * @param _LpPool The address of the LpPool contract.
+     */
+    function setLpPoolAddress(address _LpPool) public onlyOwner {
+        lpPoolAddress = _LpPool;
+    }
+
+    /**
      * @dev Sets the total staked amount.
      * @param _totalStakedAmount The total staked amount.
      */
-    function setTotalStakedAmount(uint _totalStakedAmount) public onlyInviCore {
+    function setTotalStakedAmount(uint128 _totalStakedAmount) public onlyInviCore {
         totalStakedAmount = _totalStakedAmount;
     }
 
@@ -145,7 +162,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _tokenId The ID of the NFT token.
      * @param _isLent The lending status of the NFT.
      */
-    function setNFTIsLent(uint _tokenId, bool _isLent) public onlyLendingPool {
+    function setNFTIsLent(uint32 _tokenId, bool _isLent) public onlyLendingPool {
         stakeInfos[_tokenId].isLent = _isLent;
     }
 
@@ -156,13 +173,14 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _stakeInfo The stake information for the NFT.
      * @return The ID of the minted NFT.
      */
-    function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint) {
-        uint newTokenId = _tokenIds.current();
+    function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint32) {
+        uint32 newTokenId = _tokenIds;
         _mint(_stakeInfo.user, newTokenId);
 
         _stakeInfo.lockStart = block.timestamp;
         _stakeInfo.lockEnd =  _stakeInfo.lockStart + _stakeInfo.lockPeriod;
         stakeInfos[newTokenId] = _stakeInfo;
+        originalLeverage[newTokenId] = _stakeInfo.leverageRatio;
 
         // update info
         NFTOwnership[_stakeInfo.user].push(newTokenId);
@@ -170,7 +188,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         rewardAmount[newTokenId] = 0;
         totalStakedAmount += _stakeInfo.stakedAmount;
        
-        _tokenIds.increment();
+        _tokenIds++;
         return newTokenId;
     }
 
@@ -193,8 +211,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         require(_isApprovedOrOwner(from, tokenId), "ERC721: caller is not token owner or approved");
 
         // switch token ownership
-        popValueFromUintArray(NFTOwnership[from], tokenId);
-        NFTOwnership[to].push(tokenId);
+        //popValueFromUintArray(NFTOwnership[from], tokenId);
+        uint32 _tokenId = uint32(tokenId);
+        NFTOwnership[to].push(_tokenId);
+        stakeInfos[_tokenId].user = to;
 
         _transfer(from, to, tokenId);
     }
@@ -203,15 +223,15 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @dev Updates the reward amount for all NFTs based on the total reward.
      * @param _totalReward The total reward amount.
      */
-    function updateReward(uint _totalReward) external onlyInviCore returns(uint){
+    function updateReward(uint128 _totalReward) external onlyInviCore returns(uint128){
         // rewards that belongs to LP
-        uint lpReward = 0;
+        uint128 lpReward = 0;
         for (uint256 i = 0; i < nftTokenIds.length; i++) {
             // if NFT pass the lock period, the reward will be added to LP
             if (stakeInfos[nftTokenIds[i]].lockEnd < block.timestamp) {
                 lpReward += _totalReward * stakeInfos[nftTokenIds[i]].stakedAmount / totalStakedAmount;
             } else {
-                 uint nftId = nftTokenIds[i];
+                 uint32 nftId = nftTokenIds[i];
                 rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
             }
         }
@@ -245,7 +265,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _nftTokenId The ID of the NFT token.
      * @return A boolean indicating whether the NFT is unlocked or not.
      */
-    function isUnlock(uint _nftTokenId) public view returns (bool) {
+    function isUnlock(uint32 _nftTokenId) public view returns (bool) {
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         return stakeInfo.lockEnd < block.timestamp;
     }
@@ -254,7 +274,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @dev Deletes the stake information associated with a given NFT token ID.
      * @param _nftTokenId The ID of the NFT token.
      */
-    function deleteStakeInfo(uint _nftTokenId) public onlyInviCore {
+    function deleteStakeInfo(uint32 _nftTokenId) public onlyInviCore {
         stakeInfos[_nftTokenId].user = address(0);
     }
 
@@ -263,11 +283,42 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _nftOwner The address of the NFT owner.
      * @param _nftTokenId The ID of the NFT token.
      */
-    function deleteNFTOwnership(address _nftOwner, uint _nftTokenId) public onlyInviCore {
+    function deleteNFTOwnership(address _nftOwner, uint32 _nftTokenId) public onlyInviCore {
         // get the index of nftTokenId
         uint _nftTokenIndex = getIndex(NFTOwnership[_nftOwner], _nftTokenId);
         // set the nftTokenId to dummyId
         NFTOwnership[_nftOwner][_nftTokenIndex] = NFTOwnership[_nftOwner][NFTOwnership[_nftOwner].length - 1];
         NFTOwnership[_nftOwner].pop();    
+    }
+
+    /**
+     * @dev Gets the index of a given value in an array.
+     * @param _lackAmount The array to be searched.
+     */
+    function resolveLiquidityIssue(uint128 _lackAmount, uint128 _totalLentAmount) external onlyLpPool {
+        for (uint i = 0 ; i < nftTokenIds.length; i++) {
+            uint32 nftId = nftTokenIds[i];
+            StakeInfo storage stakeInfo = stakeInfos[nftId];
+            uint128 _stakedAmount = stakeInfo.stakedAmount; // previous staked amount
+            // if still locked
+            if (stakeInfos[nftId].lockEnd > block.timestamp) {
+                uint128 _lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
+                uint128 _decreaseAmount = _lackAmount * _lentAmount / _totalLentAmount;
+                // update stakedAmount
+                stakeInfo.stakedAmount -= _decreaseAmount;
+
+                // update lockTime
+                uint256 passedLockPeriod = block.timestamp - stakeInfo.lockStart;
+                uint256 leftLockPeriod = stakeInfo.lockEnd - block.timestamp;
+                // lock end decrease (updated stakedAmount / previous stakedAmount)
+                stakeInfo.lockEnd = block.timestamp + leftLockPeriod * stakeInfo.stakedAmount / _stakedAmount ;
+                // lock Period decrease (updated stakedAmount / previous stakedAmount)
+                stakeInfo.lockPeriod = passedLockPeriod + leftLockPeriod * stakeInfo.stakedAmount / _stakedAmount;
+
+                // update leverageRatio
+                stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount / uint128(stakeInfo.principal));
+            }
+        }
+        totalStakedAmount -= _lackAmount;
     }
 }

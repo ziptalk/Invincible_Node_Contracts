@@ -20,11 +20,11 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     address public inviSwapPoolAddress;
 
     //------ Variables ------//
-    uint public regularMintAmount;
-    uint public mintInterval; 
-    uint public lastMinted;
-    uint public mintAmountChangeInterval;
-    uint public lastMintAmountChange;
+    uint128 public regularMintAmount;
+    uint256 public mintInterval; 
+    uint256 public lastMinted;
+    uint256 public mintAmountChangeInterval;
+    uint256 public lastMintAmountChange;
 
     //====== initializer ======//
     function initialize() initializer public {
@@ -69,7 +69,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function setInviSwapPoolAddress(address _inviSwapPoolAddr) onlyOwner external {
         inviSwapPoolAddress = _inviSwapPoolAddr;
     }
-    function setMintAmount(uint _amount) onlyOwner external {
+    function setMintAmount(uint128 _amount) onlyOwner external {
         require(block.timestamp > lastMintAmountChange + mintAmountChangeInterval, "minting amount can be changed once in 10 days");
         regularMintAmount = _amount;
     }
@@ -79,7 +79,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function regularMinting() external onlyOwner {
         require(block.timestamp > lastMinted + mintInterval, ERROR_MINTING_INTERVAL_NOT_REACHED);
       
-        uint mintAmount = regularMintAmount * INVI_UNIT;
+        uint128 mintAmount = regularMintAmount * INVI_UNIT;
         
         // mint token
         _mint(address(this), mintAmount);
@@ -96,24 +96,24 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _transfer(address(this), lpPoolAddress, mintAmount * 15 / 100);
     }
 
-    function sendInvi(address _receiver, uint _amount) external onlyOwner {
+    function sendInvi(address _receiver, uint128 _amount) external onlyOwner {
         _transfer(address(this), _receiver, _amount);
     }
 
-    function transferToken(address _sender, address _receiver, uint _amount) external onlyAllowedContractsToTransfer returns (bool) {
+    function transferToken(address _sender, address _receiver, uint128 _amount) external onlyAllowedContractsToTransfer returns (bool) {
         _transfer(_sender, _receiver, _amount);
         return true;
     }
 
     // only lendingPool can burn token as needed
     // function mintLentToken(address _account, uint _amount) onlyLendingPool external {_mint(_account, _amount);}
-    function burnLentToken(address _account, uint _amount) onlyLendingPool external  {
+    function burnLentToken(address _account, uint128 _amount) onlyLendingPool external  {
         _burn(_account, _amount);
     } 
 
     // for test purposes
-    function mintToken(address _account, uint _amount) onlyOwner external {_mint(_account, _amount);}
-    function burnToken(address _account, uint _amount) onlyOwner external  {_burn(_account, _amount);}
+    function mintToken(address _account, uint128 _amount) onlyOwner external {_mint(_account, _amount);}
+    function burnToken(address _account, uint128 _amount) onlyOwner external  {_burn(_account, _amount);}
     // for test purposes
 
     

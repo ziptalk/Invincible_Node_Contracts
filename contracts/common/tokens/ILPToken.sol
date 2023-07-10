@@ -14,8 +14,8 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     // track ILP Holder list
     //address[] public ILPHolders;
-    uint public totalILPHoldersCount;
-    mapping(uint => address) public ILPHolders;
+    uint128 public totalILPHoldersCount;
+    mapping(uint128 => address) public ILPHolders;
 
     //====== initializer ======//
     function initialize() initializer public {
@@ -33,7 +33,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //======setter functions ======//
 
     //====== service functions ======//
-    function mintToken(address _account, uint _amount) onlyOwner external {
+    function mintToken(address _account, uint128 _amount) onlyOwner external {
         _mint(_account, _amount);
         
         ILPHolders[totalILPHoldersCount++] = _account;
@@ -41,7 +41,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         // addAddress(ILPHolders, _account);
     }
 
-    function burnToken(address _account, uint _amount) onlyOwner external  {
+    function burnToken(address _account, uint128 _amount) onlyOwner external  {
         _burn(_account, _amount);
     }
 

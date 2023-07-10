@@ -50,6 +50,7 @@ describe("LpPool service test", function () {
 
     let totalStakedAmount = await lpPoolContract.connect(userA).totalStakedAmount();
     let totalLentAmount = await lpPoolContract.connect(userA).totalLentAmount();
+    console.log("totalStakedAmount: ", totalStakedAmount.toString());
 
     expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
   });
