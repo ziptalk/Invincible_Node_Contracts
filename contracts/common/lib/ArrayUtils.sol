@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import "./Structs.sol";
 
-function popValueFromUintArray(uint[] storage _arr, uint _value) {
+function popValueFromUintArray(uint32[] storage _arr, uint _value) {
     uint index = _arr.length;
     // find value
     for (uint i = 0 ; i < _arr.length; i++) {

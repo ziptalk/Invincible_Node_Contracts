@@ -71,7 +71,7 @@ describe("LpPool service test", function () {
     // get total lent amount
     const totalLentAmount = await lpPoolContract.totalLentAmount();
     const totalStakedAmount = await lpPoolContract.totalStakedAmount();
-    console.log("totalLentAmount: ", totalLentAmount.toString());
+    console.log("totalLentAmount  : ", totalLentAmount.toString());
     console.log("totalStakedAmount: ", totalStakedAmount.toString());
 
     //* when
@@ -84,10 +84,10 @@ describe("LpPool service test", function () {
 
     //* then
     // get latest stakeInfo
-    const nftOwnershipOfUserA = await stakeNFTContract.functions.NFTOwnership(userA.address, 0);
-    console.log("nftOwnershipOfUserA: ", nftOwnershipOfUserA.toString());
+    const latestTokenId = await stakeNFTContract.functions._tokenIds();
+    console.log("latestTokenId: ", latestTokenId - 1);
     // get stake Info of userA
-    const stakeInfoAfterUnstake = await stakeNFTContract.functions.getStakeInfo(nftOwnershipOfUserA[nftOwnershipOfUserA.length - 1]);
+    const stakeInfoAfterUnstake = await stakeNFTContract.functions.getStakeInfo(latestTokenId - 1);
     console.log("stakeInfoAfterUnstake: ", stakeInfoAfterUnstake.toString());
   });
 });

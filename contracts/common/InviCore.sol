@@ -44,8 +44,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint32 public inviTokenStakeRewardPortion;
 
     //------stake related------//
-    mapping(address => uint) public userStakedAmount;
-    uint256 public latestStakeBlock;
 
     //------unstake related------//
     //UnstakeRequest[] public unstakeRequests;
@@ -54,13 +52,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint32 public unstakeRequestsFront;
     uint32 public unstakeRequestsRear;
     uint128 public unstakeRequestAmount;
-    uint128 public requireTransferAmount;
-    mapping (uint32 => uint256) public nftUnstakeTime;
     mapping (address => uint128) public claimableAmount;
 
 
     //------other variable------// 
-    address[] public userList;
     uint32 public slippage;
     uint256 public lastStTokenDistributeTime;
     uint256 public lastSendUnstakedAmountTime;
@@ -80,7 +75,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
         
-        latestStakeBlock = block.number;
         networkId = _networkId;
 
         unstakeRequestsFront = 0;
@@ -113,7 +107,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     // get stake info by principal & leverageRatio variables
-    function getStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) public view returns(StakeInfo memory)  {
+    function createStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) public view returns(StakeInfo memory)  {
         
         uint256 lockPeriod = getLockPeriod(_leverageRatio);
         // if lock period is less than minimum lock period, set lock period to minimum lock period
@@ -125,7 +119,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         
         uint128 protocolFee = getProtocolFee(lentAmount, _leverageRatio);
         uint256 lockStart = block.timestamp;
-        uint256 lockEnd = block.timestamp + lockPeriod;
+        uint256 lockEnd = lockStart + lockPeriod;
         uint128 stakedAmount = getStakedAmount(_principal, _leverageRatio);
 
         StakeInfo memory stakeInfo = StakeInfo(_account,_leverageRatio,_leverageRatio, protocolFee, _principal, stakedAmount, lockPeriod, lockStart, lockEnd, false);
@@ -194,10 +188,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         slippage = _slippage;
     }
 
-     function setLatestStakeBlock (uint256 _latestStakeBlock) external onlyOwner {
-        latestStakeBlock = _latestStakeBlock;
-    }
-
     // set reward portion
     function _setRewardPortion(uint32 _lpPoolRewardPortion, uint32 _inviTokenStakeRewardPortion) external onlyOwner {
         require (_lpPoolRewardPortion + _inviTokenStakeRewardPortion == REWARD_PORTION_TOTAL_UNIT, ERROR_SET_REWARD_PORTION);
@@ -206,15 +196,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
-    fallback() payable external {}
-    receive() payable external {}
-    
-
     // stake native coin
     function stake(uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod,uint32 _slippage) external payable returns (uint) {
          // get stakeInfo
-        StakeInfo memory _stakeInfo = getStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
+        StakeInfo memory _stakeInfo = createStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
 
         // verify given stakeInfo
         _verifyStakeInfo(_stakeInfo, _slippage, msg.sender, uint128(msg.value));
@@ -229,7 +214,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
         uint128 totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
-        userList.push(msg.sender);
 
         emit Stake(_stakeInfo.principal);
         return nftId;
@@ -298,8 +282,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // update unstake request amount
         unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
 
-        // update nftUnstakeTime
-        nftUnstakeTime[_nftTokenId] = block.timestamp;
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
@@ -319,14 +301,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
          // create unstake event
         if (networkId == 0 || networkId == 1) {
-            liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward);
+            liquidStakingContract.createUnstakeRequest(nftReward + lpReward + inviStakerReward); // for other chains
         } else if (networkId == 2) {
-            liquidStakingContract.unstake(nftReward + lpReward + inviStakerReward);
+            liquidStakingContract.unstake(nftReward + lpReward + inviStakerReward); // for klaytn
         }
 
         // update NFT reward
         uint128 leftRewards =  stakeNFTContract.updateReward(nftReward);
 
+        // create unstake request for lps and invi stakers
         if (lpReward + leftRewards > 0) {
            // create unstake request for LPs
             UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),1,0, 0, lpReward + leftRewards);
@@ -339,10 +322,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
             //unstakeRequestsRear++;
             unstakeRequests[unstakeRequestsRear++] = inviStakerRequest;
         }
-      
-        
-        //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, lpRequest, unstakeRequestsRear);
-        //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, inviStakerRequest, unstakeRequestsRear);
 
         // create unstake event
         if (networkId == 0 || networkId == 1) {
@@ -382,7 +361,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     // send unstaked amount to unstakeRequest applicants
-    function sendUnstakedAmount() external {
+    function claimAndSplitUnstakedAmount() external {
          // claim first
         if (networkId == 0 || networkId == 1) {
             liquidStakingContract.claim();
