@@ -6,6 +6,7 @@ import hre from "hardhat";
 import { units } from "../../units";
 import { leverageStake, provideLiquidity } from "../../utils";
 import { getTestAddress } from "../../getTestAddress";
+import { deployAllWithSetting } from "../../deploy";
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -17,7 +18,9 @@ describe("Invi core service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-
+    if (!network) {
+      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
+    }
     inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
     stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
     lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);

@@ -16,11 +16,16 @@ describe("LpPool service test", function () {
   const testAddresses: any = getTestAddress(network);
 
   this.beforeAll(async function () {
-    // for testnet test
-
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    if (!network) {
+      inviCoreContract = await ethers.deployContract("InviCore");
+      stakeNFTContract = await ethers.deployContract("StakeNFT");
+      lpPoolContract = await ethers.deployContract("LiquidityProviderPool");
+    } else {
+      // for testnet test
+      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    }
   });
 
   it("Test stake function", async () => {

@@ -51,7 +51,7 @@ describe("LpPool service test", function () {
   // });
 
   it("Test resolve liquidity issue", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
 
@@ -83,8 +83,11 @@ describe("LpPool service test", function () {
     console.log("unstaked");
 
     //* then
+    // get latest stakeInfo
+    const nftOwnershipOfUserA = await stakeNFTContract.functions.NFTOwnership(userA.address, 0);
+    console.log("nftOwnershipOfUserA: ", nftOwnershipOfUserA.toString());
     // get stake Info of userA
-    const stakeInfoAfterUnstake = await stakeNFTContract.functions.getStakeInfo(0);
+    const stakeInfoAfterUnstake = await stakeNFTContract.functions.getStakeInfo(nftOwnershipOfUserA[nftOwnershipOfUserA.length - 1]);
     console.log("stakeInfoAfterUnstake: ", stakeInfoAfterUnstake.toString());
   });
 });

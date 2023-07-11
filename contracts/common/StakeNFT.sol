@@ -311,11 +311,16 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 // update lockTime
                 uint256 passedLockPeriod = block.timestamp - stakeInfo.lockStart;
                 uint256 leftLockPeriod = stakeInfo.lockEnd - block.timestamp;
+                require(stakeInfo.stakedAmount >= stakeInfo.principal, "invalid values");
+                if (_lentAmount > 0) {
                 // lock end decrease (updated stakedAmount / previous stakedAmount)
-                stakeInfo.lockEnd = block.timestamp + leftLockPeriod * stakeInfo.stakedAmount / _stakedAmount ;
+                stakeInfo.lockEnd = block.timestamp + leftLockPeriod * (stakeInfo.stakedAmount - stakeInfo.principal) / _lentAmount ;
                 // lock Period decrease (updated stakedAmount / previous stakedAmount)
-                stakeInfo.lockPeriod = passedLockPeriod + leftLockPeriod * stakeInfo.stakedAmount / _stakedAmount;
-
+                stakeInfo.lockPeriod = passedLockPeriod + leftLockPeriod * (stakeInfo.stakedAmount - stakeInfo.principal) / _lentAmount;
+                } else { // if no lent amount
+                    stakeInfo.lockEnd = block.timestamp;
+                    stakeInfo.lockPeriod = passedLockPeriod;
+                }
                 // update leverageRatio
                 stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount / uint128(stakeInfo.principal)) * LEVERAGE_UNIT;
             }
