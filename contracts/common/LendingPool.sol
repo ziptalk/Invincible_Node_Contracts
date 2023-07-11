@@ -22,8 +22,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     StakeNFT public stakeNFTContract;
     PriceManager public priceManager;
 
-    uint public maxLendRatio;
-    uint public totalLentAmount;
+    uint32 public maxLendRatio;
+    uint128 public totalLentAmount;
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
@@ -44,10 +44,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _slippage The slippage value.
      * @return lendInfo The lend information.
      */
-    function createLendInfo(uint _nftId, uint _slippage) public view returns (LendInfo memory) {
+    function createLendInfo(uint32 _nftId, uint32 _slippage) public view returns (LendInfo memory) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint lendAmount = getLendAmount(stakeInfo.principal);
-        uint minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
+        uint128 lendAmount = getLendAmount(stakeInfo.principal);
+        uint128 minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
         LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, minLendAmount, 0);
         return lendInfo;
     }
@@ -84,7 +84,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the maximum lend ratio.
      * @param _maxLendRatio The maximum lend ratio value.
      */
-    function setMaxLendRatio(uint _maxLendRatio) public onlyOwner {
+    function setMaxLendRatio(uint32 _maxLendRatio) public onlyOwner {
         maxLendRatio = _maxLendRatio;
     }
 
@@ -95,7 +95,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _lendInfo The lend information.
      */
     function lend(LendInfo memory _lendInfo) public {
-        uint lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
+        uint128 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
         _lendInfo.lentAmount = lendAmount;
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
@@ -126,24 +126,24 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
-    function getLendAmount(uint _amount) private view returns (uint) {
-        uint nativePrice = priceManager.getNativePrice();
-        uint inviPrice = priceManager.getInviPrice();
-        uint totalInviSupply = inviToken.balanceOf(address(this));
-        uint maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+    function getLendAmount(uint128 _amount) private view returns (uint128) {
+        uint128 nativePrice = priceManager.getNativePrice();
+        uint128 inviPrice = priceManager.getInviPrice();
+        uint128 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
+        uint128 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
         return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
     }
 
     /**
      * @dev Verifies the lend information provided by the user.
      * @param _lendInfo The lend information.
-     * @param _msgSender The address of the message sender.
+     * @param _user The address of the message sender.
      * @return lendAmount The verified lend amount.
      */
-    function _verifyLendInfo(LendInfo memory _lendInfo, address _msgSender) private view returns (uint) {
-        require(_lendInfo.user == _msgSender, ERROR_INVALID_LEND_INFO);
+    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint128) {
+        require(_lendInfo.user == _user, ERROR_INVALID_LEND_INFO);
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
-        uint lendAmount = getLendAmount(_lendInfo.principal);
+        uint128 lendAmount = getLendAmount(_lendInfo.principal);
         require(_lendInfo.minLendAmount <= lendAmount, ERROR_INVALID_LEND_INFO);
         return lendAmount;
     }

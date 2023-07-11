@@ -41,8 +41,8 @@ function dequeueUnstakeRequests(UnstakeRequestLP[] storage _arr, uint _front, ui
 }
 
 
-function getIndex(uint[] memory _arr, uint _value) pure  returns (uint) {
-    for (uint i = 0 ; i < _arr.length; i++) {
+function getIndex(uint32[] memory _arr, uint32 _value) pure  returns (uint) {
+    for (uint32 i = 0 ; i < _arr.length; i++) {
         if (_arr[i] == _value) {
             return i;
         }

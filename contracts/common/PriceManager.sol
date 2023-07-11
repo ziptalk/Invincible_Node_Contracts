@@ -15,12 +15,9 @@ import "./lib/Math.sol";
  * @dev The PriceManager contract manages the prices of InviToken and the native token (e.g., ETH).
  */
 contract PriceManager is Initializable, OwnableUpgradeable {
-    //------Contracts and Addresses------//
-    IConcentratedLiquidityPool pangeaSwapPool;
-
     //------Variables------//
-    uint public inviPrice;
-    uint public nativePrice;
+    uint128 public inviPrice;
+    uint128 public nativePrice;
 
     //======initializer======//
     /**
@@ -37,7 +34,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @dev Returns the current price of InviToken.
      * @return The price of InviToken.
      */
-    function getInviPrice() public view returns (uint) {
+    function getInviPrice() public view returns (uint128) {
         return inviPrice;
     }
    
@@ -45,7 +42,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @dev Returns the current price of the native token.
      * @return The price of the native token.
      */
-    function getNativePrice() public view returns (uint) {
+    function getNativePrice() public view returns (uint128) {
         return nativePrice;
     }
 
@@ -54,7 +51,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @dev Sets the price of InviToken.
      * @param _price The new price of InviToken.
      */
-    function setInviPrice(uint _price) public onlyOwner {
+    function setInviPrice(uint128 _price) public onlyOwner {
         inviPrice = _price;
     }
    
@@ -62,7 +59,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @dev Sets the price of the native token.
      * @param _price The new price of the native token.
      */
-    function setNativePrice(uint _price) public onlyOwner {
+    function setNativePrice(uint128 _price) public onlyOwner {
         nativePrice = _price;
     }
 }
