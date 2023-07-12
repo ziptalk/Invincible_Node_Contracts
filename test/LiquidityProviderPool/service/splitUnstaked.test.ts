@@ -59,9 +59,9 @@ describe("LpPool service test", function () {
     console.log("unstakedAmount: ", unstakedAmount.toString());
 
     //* when
-    const sendUnstakedAmount = await lpPoolContract.connect(LP).sendUnstakedAmount();
-    await sendUnstakedAmount.wait();
-    console.log("sent unstaked amount");
+    const splitUnstakedAmount = await lpPoolContract.connect(LP).splitUnstakedAmount();
+    await splitUnstakedAmount.wait();
+    console.log("splitted unstaked amount");
 
     //* then
     // let unstakeRequestFront = await lpPoolContract.connect(LP).unstakeRequestsFront();

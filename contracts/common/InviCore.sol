@@ -310,7 +310,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stakeNFTContract.setTotalStakedAmount(stakeNFTContract.totalStakedAmount() - stakeInfo.stakedAmount);
 
         // create unstake request for user 
-        UnstakeRequest memory request = UnstakeRequest(msg.sender, _nftTokenId, 0, stakeInfo.protocolFee, stakeInfo.principal + userReward);
+        UnstakeRequest memory request = UnstakeRequest(msg.sender, 0, _nftTokenId, stakeInfo.protocolFee, stakeInfo.principal + userReward);
 
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
@@ -480,7 +480,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             }
             // if lp pool unstake 
             else if (requestType == 3) {
-                lpPoolContract.receiveUnstaked{ value: amount}();
+                lpPoolContract.receiveUnstaked{ value: amount }();
             }
         }
 

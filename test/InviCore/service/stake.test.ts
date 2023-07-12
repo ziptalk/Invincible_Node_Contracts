@@ -27,33 +27,26 @@ describe("Invi core service test", function () {
   });
 
   it("Test stake function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
-
-    console.log("deployer: ", deployer.address);
-    console.log("stakeManager: ", stakeManager.address);
-    console.log("LP: ", LP.address);
-    console.log("userA: ", userA.address);
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let tx;
 
-    console.log("nonce lp: ", nonceLP);
-
     //* given
     const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
     const previousUserNftBalance = await stakeNFTContract.balanceOf(userA.address);
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
+    console.log("previous total staked amount: ", previousTotalStakedAmount.toString());
     const previousTotalLentAmount = await lpPoolContract.totalLentAmount();
     const previousStakeNFTTotalStakedAmount = await stakeNFTContract.totalStakedAmount();
     await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
-
     console.log("provided liquidity");
 
     //* when
     const principal: BigNumber = ethers.utils.parseEther("0.00001");
-    const leverageRatio = 3 * units.leverageUnit;
+    const leverageRatio = 2 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     console.log("minLockPeriod: ", minLockPeriod);
     const lockPeriod = minLockPeriod * 2;

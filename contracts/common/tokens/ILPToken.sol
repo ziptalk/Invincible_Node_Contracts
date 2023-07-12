@@ -12,8 +12,7 @@ string constant ILP_TOKEN_NAME = "ILP";
 
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
-    // track ILP Holder list
-    //address[] public ILPHolders;
+    address public lpPoolAddress;
     uint128 public totalILPHoldersCount;
     mapping(uint128 => address) public ILPHolders;
 
@@ -25,23 +24,26 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         totalILPHoldersCount = 0;
     }
 
+    modifier onlyLPPool {
+        require(msg.sender == lpPoolAddress, "ILP: not lpPool contract");
+        _;
+    }
+
     //====== getter functions ======//
-    // function getILPHolders() external view returns (address[] memory){
-    //     return ILPHolders;
-    // }
 
     //======setter functions ======//
+    function setLpPoolAddress(address _lpPoolAddress) onlyOwner external {
+        lpPoolAddress = _lpPoolAddress;
+    }
 
     //====== service functions ======//
-    function mintToken(address _account, uint128 _amount) onlyOwner external {
+    function mintToken(address _account, uint128 _amount) onlyLPPool external {
         _mint(_account, _amount);
         
         ILPHolders[totalILPHoldersCount++] = _account;
-        //  // update ILPHolderList
-        // addAddress(ILPHolders, _account);
     }
 
-    function burnToken(address _account, uint128 _amount) onlyOwner external  {
+    function burnToken(address _account, uint128 _amount) onlyLPPool external  {
         _burn(_account, _amount);
     }
 

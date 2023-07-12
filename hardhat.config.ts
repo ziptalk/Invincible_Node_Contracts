@@ -39,11 +39,11 @@ const config: HardhatUserConfig = {
     },
     evmos_testnet: {
       url: process.env.EVMOS_TESTNET_URL,
-      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+      accounts: [OWNER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
     klaytn_testnet: {
       url: process.env.KLAYTN_TESTNET_URL,
-      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+      accounts: [OWNER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
     kava_testnet: {
       url: process.env.KAVA_TESTNET_URL,
@@ -59,7 +59,7 @@ const config: HardhatUserConfig = {
     },
     bifrost_testnet: {
       url: process.env.BIFROST_TESTNET_URL,
-      accounts: [OWNER_KEY, STAKE_MANAGER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+      accounts: [OWNER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
 
     // mainnets
