@@ -24,21 +24,19 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     InviCore public inviCoreContract;
     StakeNFT public stakeNFT;
 
-   
-    
     //------ mappings ------//
     mapping(address => uint128) public stakedAmount;
     mapping(address => uint128) public nativeRewardAmount;
     mapping(address => uint128) public inviRewardAmount;
-    mapping (address => uint128) public totalInviRewardAmountByAddress;
-    mapping (address => uint128) public totalNativeRewardAmountByAddress;
+    mapping(address => uint128) public totalInviRewardAmountByAddress;
+    mapping(address => uint128) public totalNativeRewardAmountByAddress;
     mapping(address => uint128) public claimableUnstakeAmount;
     mapping(address => uint128) public unstakeRequestAmount;
     mapping(uint => UnstakeRequestLP) public unstakeRequests;
 
-    //------ratio------//
+    //------variables------//
     uint32 public liquidityAllowableRatio;
-    //------Unstake------//
+    
     uint32 public unstakeRequestsRear;
     uint32 public unstakeRequestsFront;
 
@@ -64,7 +62,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         _;
     }
 
-     //====== initializer ======//
+    //====== initializer ======//
     /**
      * @dev initialize the contract
      * @param _iLPAddr ilpToken address
@@ -155,7 +153,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
     /**
      * @dev Stake Native Coin to the LP Pool.
      */

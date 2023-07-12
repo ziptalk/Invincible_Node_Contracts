@@ -25,30 +25,22 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     address public lendingPoolAddress;
     address public lpPoolAddress;
 
-    //------mappings------//
-
-    // show which address have which NFT
-    mapping (address => uint32[]) public NFTOwnership;
-    mapping (uint32 => uint128) public rewardAmount;
-    // store all stakeInfos
-    mapping (uint32 => StakeInfo) public stakeInfos;
+    
    
-    //------public Variables------//
-
+    //------Variables------//
     uint128 public totalStakedAmount;
+    //------mappings------//
     mapping (uint32 => uint32) public nftTokenIds;
-    uint32 public _tokenIds;
+    mapping (address => uint32[]) public NFTOwnership; // show which address have which NFT
+    mapping (uint32 => uint128) public rewardAmount;
+    mapping (uint32 => StakeInfo) public stakeInfos; // store all stakeInfos
 
     //------private Variables------//
-
     string private _name;
     string private _symbol;
-
-    //------Upgrades------//
-    uint128 public dummyId;
+    uint32 public _tokenIds;
     
     //====== initializer ======//
-
     /**
      * @dev Initializes the StakeNFT contract.
      */
@@ -56,8 +48,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
 
-        dummyId = 10 **18;
-        _tokenIds = 0;
+        _tokenIds = 1;
     }
 
     //====== modifiers ======//
@@ -290,7 +281,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function deleteNFTOwnership(address _nftOwner, uint32 _nftTokenId) public onlyInviCore {
         // get the index of nftTokenId
         uint _nftTokenIndex = getIndex(NFTOwnership[_nftOwner], _nftTokenId);
-        // set the nftTokenId to dummyId
         NFTOwnership[_nftOwner][_nftTokenIndex] = NFTOwnership[_nftOwner][NFTOwnership[_nftOwner].length - 1];
         NFTOwnership[_nftOwner].pop();    
     }

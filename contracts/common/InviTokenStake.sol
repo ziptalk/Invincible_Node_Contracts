@@ -112,7 +112,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         // update claimable unstake amount
         claimableUnstakeAmount[msg.sender] += unstakeRequestAmount[msg.sender];
     
-
         // update unstake request time
         unstakeRequestTime[msg.sender] = block.timestamp;
 
