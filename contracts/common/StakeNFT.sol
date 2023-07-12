@@ -25,30 +25,22 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     address public lendingPoolAddress;
     address public lpPoolAddress;
 
-    //------mappings------//
-
-    // show which address have which NFT
-    mapping (address => uint32[]) public NFTOwnership;
-    mapping (uint32 => uint128) public rewardAmount;
-    // store all stakeInfos
-    mapping (uint32 => StakeInfo) public stakeInfos;
+    
    
-    //------public Variables------//
-
+    //------Variables------//
     uint128 public totalStakedAmount;
+    //------mappings------//
     mapping (uint32 => uint32) public nftTokenIds;
-    uint32 public _tokenIds;
+    mapping (address => uint32[]) public NFTOwnership; // show which address have which NFT
+    mapping (uint32 => uint128) public rewardAmount;
+    mapping (uint32 => StakeInfo) public stakeInfos; // store all stakeInfos
 
     //------private Variables------//
-
     string private _name;
     string private _symbol;
-
-    //------Upgrades------//
-    uint128 public dummyId;
+    uint32 public _tokenIds;
     
     //====== initializer ======//
-
     /**
      * @dev Initializes the StakeNFT contract.
      */
@@ -56,24 +48,23 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
 
-        dummyId = 10 **18;
-        _tokenIds = 0;
+        _tokenIds = 1;
     }
 
     //====== modifiers ======//
 
     modifier onlyInviCore {
-        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "StakeNFT: msg sender should be invi core");
         _;
     }
 
     modifier onlyLendingPool {
-        require(msg.sender == address(lendingPoolAddress), "msg sender should be lending pool");
+        require(msg.sender == address(lendingPoolAddress), "StakeNFT: msg sender should be lending pool");
         _;
     }
 
     modifier onlyLpPool {
-        require(msg.sender == address(lpPoolAddress), "msg sender should be lp pool");
+        require(msg.sender == address(lpPoolAddress), "StakeNFT: msg sender should be lp pool");
         _;
     }
     
@@ -104,7 +95,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function getStakeInfo(uint32 _nftTokenId) public view returns (StakeInfo memory){
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
-        require(stakeInfo.user != address(0), "stakeInfo does not exist");
+        require(stakeInfo.user != address(0), "StakeNFT: stakeInfo does not exist");
         return stakeInfos[_nftTokenId];
     }
 
@@ -166,7 +157,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
     /**
      * @dev Mints a new NFT and associates it with the provided stake information.
      * @param _stakeInfo The stake information for the NFT.
@@ -174,8 +164,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint32) {
         uint32 newTokenId = _tokenIds;
-        _mint(_stakeInfo.user, newTokenId);
-
+        _safeMint(_stakeInfo.user, newTokenId);
         stakeInfos[newTokenId] = _stakeInfo;
 
         // update info
@@ -292,7 +281,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function deleteNFTOwnership(address _nftOwner, uint32 _nftTokenId) public onlyInviCore {
         // get the index of nftTokenId
         uint _nftTokenIndex = getIndex(NFTOwnership[_nftOwner], _nftTokenId);
-        // set the nftTokenId to dummyId
         NFTOwnership[_nftOwner][_nftTokenIndex] = NFTOwnership[_nftOwner][NFTOwnership[_nftOwner].length - 1];
         NFTOwnership[_nftOwner].pop();    
     }
@@ -317,7 +305,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
                 // update lockTime
                 uint256 leftLockPeriod = stakeInfo.lockEnd - block.timestamp;
-                require(stakeInfo.stakedAmount >= stakeInfo.principal, "invalid values");
+                require(stakeInfo.stakedAmount >= stakeInfo.principal, "StakeNFT: invalid values");
 
                 // if lent some amount
                 if (_lentAmount > 0) {

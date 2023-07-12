@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../interfaces/external/IERC20.sol";
 import "../interfaces/external/IConcentratedLiquidityPool.sol";
 import "./lib/Unit.sol";
-import "./lib/ErrorMessages.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Math.sol";
 
