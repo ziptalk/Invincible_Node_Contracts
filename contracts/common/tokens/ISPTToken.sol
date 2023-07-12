@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../lib/Unit.sol";
-import "../lib/ErrorMessages.sol";
 
 string constant ISPT_TOKEN_FULL_NAME = "Invi Swap Pool Token";
 string constant ISPT_TOKEN_NAME = "ISPT";
@@ -16,8 +15,6 @@ contract ISPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     address public inviSwapPool;
 
     //------ Variables ------//
-  
-
 
     //====== initializer ======//
     function initialize() initializer public {
@@ -25,10 +22,9 @@ contract ISPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         __Ownable_init();
     }
 
-
     //====== modifiers ======//
     modifier onlyInviSwapPool {
-        require(msg.sender == inviSwapPool, "msg sender should be invi klay swap pool");
+        require(msg.sender == inviSwapPool, "ISPT: msg sender should be invi swap pool");
         _;
     }
     //====== setter functions ======//
@@ -37,8 +33,6 @@ contract ISPTToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
-
     function mintToken(address _account, uint _amount) onlyInviSwapPool external {
         _mint(_account, _amount);
     }

@@ -63,17 +63,17 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //====== modifiers ======//
 
     modifier onlyInviCore {
-        require(msg.sender == inviCoreAddress, "msg sender should be invi core");
+        require(msg.sender == inviCoreAddress, "StakeNFT: msg sender should be invi core");
         _;
     }
 
     modifier onlyLendingPool {
-        require(msg.sender == address(lendingPoolAddress), "msg sender should be lending pool");
+        require(msg.sender == address(lendingPoolAddress), "StakeNFT: msg sender should be lending pool");
         _;
     }
 
     modifier onlyLpPool {
-        require(msg.sender == address(lpPoolAddress), "msg sender should be lp pool");
+        require(msg.sender == address(lpPoolAddress), "StakeNFT: msg sender should be lp pool");
         _;
     }
     
@@ -104,7 +104,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function getStakeInfo(uint32 _nftTokenId) public view returns (StakeInfo memory){
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
-        require(stakeInfo.user != address(0), "stakeInfo does not exist");
+        require(stakeInfo.user != address(0), "StakeNFT: stakeInfo does not exist");
         return stakeInfos[_nftTokenId];
     }
 
@@ -166,7 +166,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
     /**
      * @dev Mints a new NFT and associates it with the provided stake information.
      * @param _stakeInfo The stake information for the NFT.
@@ -174,8 +173,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function mintNFT(StakeInfo memory _stakeInfo) public onlyInviCore returns (uint32) {
         uint32 newTokenId = _tokenIds;
-        _mint(_stakeInfo.user, newTokenId);
-
+        _safeMint(_stakeInfo.user, newTokenId);
         stakeInfos[newTokenId] = _stakeInfo;
 
         // update info
@@ -317,7 +315,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
                 // update lockTime
                 uint256 leftLockPeriod = stakeInfo.lockEnd - block.timestamp;
-                require(stakeInfo.stakedAmount >= stakeInfo.principal, "invalid values");
+                require(stakeInfo.stakedAmount >= stakeInfo.principal, "StakeNFT: invalid values");
 
                 // if lent some amount
                 if (_lentAmount > 0) {

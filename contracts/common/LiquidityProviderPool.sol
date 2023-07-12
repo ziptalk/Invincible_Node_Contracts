@@ -7,7 +7,6 @@ import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
-import "./lib/ErrorMessages.sol";
 import "./InviCore.sol";
 import "./StakeNFT.sol";
 import "./lib/Structs.sol";
@@ -25,24 +24,21 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     InviCore public inviCoreContract;
     StakeNFT public stakeNFT;
 
-    //------ratio------//
-    uint public liquidityAllowableRatio;
-
-    //------events------//
-    event Stake(uint amount);
+   
     
-    //------lp status------//
+    //------ mappings ------//
     mapping(address => uint128) public stakedAmount;
     mapping(address => uint128) public nativeRewardAmount;
     mapping(address => uint128) public inviRewardAmount;
     mapping (address => uint128) public totalInviRewardAmountByAddress;
     mapping (address => uint128) public totalNativeRewardAmountByAddress;
-
-    //------Unstake------//
     mapping(address => uint128) public claimableUnstakeAmount;
     mapping(address => uint128) public unstakeRequestAmount;
-    //UnstakeRequestLP[] public unstakeRequests;
     mapping(uint => UnstakeRequestLP) public unstakeRequests;
+
+    //------ratio------//
+    uint32 public liquidityAllowableRatio;
+    //------Unstake------//
     uint32 public unstakeRequestsRear;
     uint32 public unstakeRequestsFront;
 
@@ -57,14 +53,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint256 public inviRewardInterval;
     uint256 public inviReceiveInterval;
     uint256 public lastInviRewardedTime;
-    uint256 public lastSendUnstakedAmountTime;
+    uint256 public lastSplitUnstakedAmountTime;
 
-
-
+    //------events------//
+    event Stake(uint amount);
 
     //====== modifiers ======//
     modifier onlyInviCore {
-        require(msg.sender == address(inviCoreContract), "msg sender should be invi core");
+        require(msg.sender == address(inviCoreContract), "LpPool: msg sender should be invi core");
         _;
     }
 
@@ -113,7 +109,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Get the maximum amount that can be lent based on the allowable ratio.
      * @return The maximum lent amount.
      */
-    function getMaxLentAmount() public view returns (uint) {
+    function getMaxLentAmount() public view returns (uint128) {
         return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
     }
 
@@ -138,7 +134,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Set the liquidity allowable ratio.
      * @param _liquidityAllowableRatio The new liquidity allowable ratio.
      */
-    function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {
+    function setLiquidityAllowableRatio(uint32 _liquidityAllowableRatio) public onlyOwner {
         liquidityAllowableRatio = _liquidityAllowableRatio;
     }
 
@@ -181,7 +177,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @param _amount The amount to unstake.
      */
     function unstake(uint128 _amount) external {
-        require(stakedAmount[msg.sender] >= _amount &&  _amount > 0, "Improper request amount");
+        require(stakedAmount[msg.sender] >= _amount &&  _amount > 0, "LpPool: Improper request amount");
         
         // update stake amount
         stakedAmount[msg.sender] -= _amount;
@@ -223,12 +219,12 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     /**
      * @dev Send the unstaked amount to the unstake request recipients.
      */
-    function sendUnstakedAmount() external {
+    function splitUnstakedAmount() external {
         // require contract balance to be above totalNativeRewardAmount
-        require(address(this).balance >= totalNativeRewardAmount, ERROR_INSUFFICIENT_BALANCE);
+        require(address(this).balance >= totalNativeRewardAmount, "LpPool: Insufficient contract balance");
 
         // require unstake request to be exist
-        require(unstakeRequestsFront != unstakeRequestsRear, "No unstake requests");
+        require(unstakeRequestsFront != unstakeRequestsRear, "LpPool: No unstake requests");
 
         uint front = unstakeRequestsFront;
         uint rear = unstakeRequestsRear;
@@ -248,14 +244,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         }
 
-        lastSendUnstakedAmountTime = block.timestamp;
+        lastSplitUnstakedAmountTime = block.timestamp;
     }
 
     /**
      * @dev Claim the claimable unstaked amount.
      */
     function claimUnstaked() external {
-        require(claimableUnstakeAmount[msg.sender] > 0 && claimableUnstakeAmount[msg.sender] >= address(this).balance, ERROR_INSUFFICIENT_BALANCE);
+        require(claimableUnstakeAmount[msg.sender] >= address(this).balance, "LpPool: Insufficient claimable amount");
 
         uint amount = claimableUnstakeAmount[msg.sender];
         claimableUnstakeAmount[msg.sender] = 0;
@@ -285,9 +281,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Distribute INVI token rewards to LP holders.
      */
     function distributeInviTokenReward() external {
-        require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
+        require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, "LpPool: Invi reward interval not passed");
         uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
-        require(totalInviToken - totalClaimableInviAmount > 1000000, "Insufficient invi token to distribute");
+        require(totalInviToken - totalClaimableInviAmount > 1000000, "LpPool: Insufficient invi token to distribute");
         uint128 totalRewards = totalInviToken - totalClaimableInviAmount;
         for (uint32 i = 0; i < iLP.totalILPHoldersCount(); i++) {
             address account = iLP.ILPHolders(i);
@@ -308,26 +304,26 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Claim the INVI token rewards.
      */
     function claimInviReward() external {
-        require(inviRewardAmount[msg.sender] > 0 && inviRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
+        require(inviRewardAmount[msg.sender] > address(this).balance, "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;
         uint32 inviSlippage = 1000;
         // send invi token to account
-        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
+        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), "LpPool: Transfer failed");
     }
 
     /**
      * @dev Claim the native coin rewards.
      */
     function claimNativeReward() external {
-        require(nativeRewardAmount[msg.sender] > 0 && nativeRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
+        require(nativeRewardAmount[msg.sender] > address(this).balance, "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
 
         // send native coin to account
         (bool sent, ) = msg.sender.call{value: rewardAmount}("");
-        require(sent, ERROR_FAIL_SEND);
+        require(sent, "LpPool: Transfer failed");
     }
 
     

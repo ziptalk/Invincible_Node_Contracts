@@ -6,11 +6,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./StakeNFT.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/Structs.sol";
-import "./lib/ErrorMessages.sol";
 import "./lib/Unit.sol";
 import "./tokens/InviToken.sol";
 import "hardhat/console.sol";
-import "./lib/ErrorMessages.sol";
 import "./PriceManager.sol";
 
 /**
@@ -58,7 +56,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @return lendInfo The lend information.
      */
     function getLendInfo(uint _nftId) public view returns (LendInfo memory) {
-        require(lendInfos[_nftId].user != address(0), ERROR_NOT_FOUND_LEND_INFO);
+        require(lendInfos[_nftId].user != address(0), "LendingPool: nft id not found");
         return lendInfos[_nftId];
     }
 
@@ -109,10 +107,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _nftId The ID of the NFT.
      */
     function repay(uint _nftId) public {
-        require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, ERROR_NOT_NFT_OWNER);
+        require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
-        require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
-        require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), ERROR_INSUFFICIENT_BALANCE);
+        require(lendInfo.user != address(0), "LendingPool: nft id not found");
+        require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), "LendingPool: insufficient balance");
         inviToken.transferToken(msg.sender, address(this), lendInfo.lentAmount);
         totalLentAmount -= lendInfo.lentAmount;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
@@ -141,10 +139,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @return lendAmount The verified lend amount.
      */
     function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint128) {
-        require(_lendInfo.user == _user, ERROR_INVALID_LEND_INFO);
-        require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), ERROR_INVALID_LEND_INFO);
+        require(_lendInfo.user == _user, "LendingPool: invalid user");
+        require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), "LendingPool: not owner of NFT");
         uint128 lendAmount = getLendAmount(_lendInfo.principal);
-        require(_lendInfo.minLendAmount <= lendAmount, ERROR_INVALID_LEND_INFO);
+        require(_lendInfo.minLendAmount <= lendAmount, "LendingPool: invalid min lend amount");
         return lendAmount;
     }
 
@@ -154,7 +152,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      */
     function deleteLendInfo(uint _nftId) private {
         LendInfo memory lendInfo = lendInfos[_nftId];
-        require(lendInfo.user != address(0), ERROR_NOT_FOUND_LEND_INFO);
+        require(lendInfo.user != address(0), "LendingPool: nft id not found");
         delete lendInfos[_nftId];
     }
 }

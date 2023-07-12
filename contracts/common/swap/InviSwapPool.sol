@@ -7,7 +7,6 @@ import "hardhat/console.sol";
 import "../PriceManager.sol";
 import "../../interfaces/external/IERC20.sol";
 import "../lib/Unit.sol";
-import "../lib/ErrorMessages.sol";
 import "../lib/AddressUtils.sol";
 import "../lib/Math.sol";
 
@@ -178,18 +177,18 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountOutMin The minimum amount of native token expected to receive.
      */
     function swapInviToNative(uint _amountIn, uint _amountOutMin) public {
-        require(_amountIn < getInviToNativeOutMaxInput(), "exceeds max input amount");
+        require(_amountIn < getInviToNativeOutMaxInput(), "InviSwapPool: exceeds max input amount");
         uint amountOut = getInviToNativeOutAmount(_amountIn);
         uint fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
         require(amountOut < totalLiquidityNative, "not enough reserves");
-        require(amountOut - fees >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
-        require(inviToken.transferToken(msg.sender, address(this), _amountIn), ERROR_FAIL_SEND_ERC20);
+        require(amountOut - fees >= _amountOutMin, "InviSwapPool: less than min amount");
+        require(inviToken.transferToken(msg.sender, address(this), _amountIn), "InviSwapPool: transfer failed");
         totalLiquidityInvi += _amountIn;
         totalLiquidityNative -= amountOut - fees;
         totalRewardNative += fees;
         splitRewards(0, fees);
         (bool success, ) = msg.sender.call{value: amountOut - fees}("");
-        require(success, ERROR_FAIL_SEND);
+        require(success, "InviSwapPool: transfer failed");
     }
 
     /**
@@ -198,16 +197,16 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      */
     function swapNativeToInvi(uint _amountOutMin) public payable {
         require(msg.value < getNativeToInviOutMaxInput(), "exceeds max input amount");
-        require(msg.value > 0, ERROR_SWAP_ZERO);
+        require(msg.value > 0, "InviSwapPool: zero amount");
         uint256 amountOut = getNativeToInviOutAmount(msg.value);
         uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
-        require(amountOut < totalLiquidityInvi, ERROR_NOT_ENOUGH_LIQUIDITY);
-        require(amountOut - fees >= _amountOutMin, ERROR_SWAP_SLIPPAGE);
+        require(amountOut < totalLiquidityInvi, "InviSwapPool: not enough reserves");
+        require(amountOut - fees >= _amountOutMin, "InviSwapPool: less than min amount");
         totalLiquidityNative += msg.value;
         totalLiquidityInvi -= amountOut - fees;
         totalRewardInvi += fees;
         splitRewards(1, fees);
-        require(inviToken.transfer(msg.sender, amountOut - fees), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transfer(msg.sender, amountOut - fees), "InviSwapPool: transfer failed");
     }
 
       // slippage unit is 0.1%
@@ -217,7 +216,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         // require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
         uint expectedAmountInInviMin = _expectedAmountInInvi * (100*SLIPPAGE_UNIT - _slippage) / (100*SLIPPAGE_UNIT);
         uint expectedAmountInInviMax = _expectedAmountInInvi * (100*SLIPPAGE_UNIT + _slippage)  / (100*SLIPPAGE_UNIT);
-        require(expectedInvi >= expectedAmountInInviMin && expectedInvi <= expectedAmountInInviMax , ERROR_ADD_LIQUIDITY_SLIPPAGE);
+        require(expectedInvi >= expectedAmountInInviMin && expectedInvi <= expectedAmountInInviMax , "InviSwapPool: exceeds max input amount");
 
         // update liquidity
         totalLiquidityNative += msg.value;
@@ -226,7 +225,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         lpLiquidity[msg.sender] += msg.value * expectedInvi;
 
         // transfer tokens from sender
-        require(inviToken.transferToken(msg.sender, address(this), expectedInvi), ERROR_FAIL_SEND_ERC20);
+        require(inviToken.transferToken(msg.sender, address(this), expectedInvi), "InviSwapPool: transfer failed");
         lpList[lpCount++] = msg.sender;
         //addAddress(lpList, msg.sender);
 
@@ -235,7 +234,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     }
 
     function removeLiquidity(uint _liquidityTokensAmount, uint _expectedInviAmount, uint _expectedNativeAmount, uint _slippage) public {
-        require(lpLiquidity[msg.sender] > 0 , ERROR_ZERO_LIQUIDITY);
+        require(lpLiquidity[msg.sender] > 0 , "InviSwapPool: no liquidity");
  
         // burn liquidity Tokens from sender
         isptToken.burnToken(msg.sender, _liquidityTokensAmount);
@@ -254,16 +253,16 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         console.log("expectedInviAmountMax: ", expectedInviAmountMax);
         console.log("actualNativeAmount: ", nativeAmount);
         console.log("actualinviAmount: ", inviAmount);
-        require(nativeAmount >= expectedNativeAmountMin && nativeAmount <= expectedNativeAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
-        require(inviAmount >= expectedInviAmountMin && inviAmount <= expectedInviAmountMax, ERROR_REMOVE_LIQUIDITY_SLIPPAGE);
+        require(nativeAmount >= expectedNativeAmountMin && nativeAmount <= expectedNativeAmountMax, "InviSwapPool: exceeds max input amount");
+        require(inviAmount >= expectedInviAmountMin && inviAmount <= expectedInviAmountMax, "InviSwapPool: exceeds max input amount");
 
         // // Calculate rewards for the user
         // uint NativeReward = lpRewardNative[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
         // uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
 
         // Check that the contract has sufficient Native and Invi tokens to withdraw
-        require(address(this).balance >= nativeAmount , ERROR_INSUFFICIENT_BALANCE);
-        require(inviToken.balanceOf(address(this)) >= inviAmount, ERROR_INSUFFICIENT_BALANCE);
+        require(address(this).balance >= nativeAmount , "InviSwapPool: insufficient balance");
+        require(inviToken.balanceOf(address(this)) >= inviAmount, "InviSwapPool: insufficient balance");
 
         // Update the contract's total liquidity and the user's liquidity holdings and rewards
         totalLiquidityNative -= nativeAmount;
@@ -277,31 +276,28 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
 
          // Transfer the Native and Invi tokens to the user
         (bool NativeSuccess, ) = msg.sender.call{value: nativeAmount}("");
-        require(NativeSuccess, ERROR_FAIL_SEND);
-        require(inviToken.transfer(msg.sender, inviAmount), ERROR_FAIL_SEND_ERC20);
+        require(NativeSuccess, "InviSwapPool: Native transfer failed");
+        require(inviToken.transfer(msg.sender, inviAmount), "InviSwapPool: Invi transfer failed");
     }
 
     function withdrawFees() public {
-        require(lpRewardInvi[msg.sender] > 0 || lpRewardNative[msg.sender] > 0, ERROR_ZERO_FEES);
+        require(lpRewardInvi[msg.sender] > 0 || lpRewardNative[msg.sender] > 0, "InviSwapPool: no fees");
         uint inviReward = lpRewardInvi[msg.sender];
         uint nativeReward = lpRewardNative[msg.sender];
         if (inviReward > 0 ) {
             totalRewardInvi -= inviReward;
             lpRewardInvi[msg.sender] = 0;
-            require(inviToken.transfer(msg.sender, inviReward), ERROR_FAIL_SEND_ERC20);
+            require(inviToken.transfer(msg.sender, inviReward), "InviSwapPool: Invi transfer failed");
 
         }
         if (nativeReward > 0) {
             totalRewardNative -= nativeReward;
             lpRewardNative[msg.sender] = 0;
             (bool NativeSuccess, ) = msg.sender.call{value: nativeReward}("");
-            require(NativeSuccess, ERROR_FAIL_SEND);
+            require(NativeSuccess, "InviSwapPool: Native transfer failed");
         }
     }
-
-
     //======utils functions======//
-
     /**
      * @dev Distributes the rewards to liquidity providers.
      * @param _type The type of reward (0 for native token, 1 for InviToken).
