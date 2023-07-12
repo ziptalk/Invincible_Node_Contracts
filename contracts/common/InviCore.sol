@@ -247,8 +247,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // create unstake request for user 
         UnstakeRequest memory request = UnstakeRequest(msg.sender, _nftTokenId, 0, stakeInfo.protocolFee, stakeInfo.principal + userReward);
-       
-       
 
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
@@ -293,7 +291,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // get total rewards
         uint128 totalReward = uint128(stToken.balanceOf(address(this))) - totalStakedAmount;
        
-        
         // check rewards 
         uint128 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
         uint128 lpReward = (totalReward - nftReward) * lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
