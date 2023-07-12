@@ -14,7 +14,10 @@ import "./lib/Structs.sol";
 import "./lib/ArrayUtils.sol";
 import "./tokens/ILPToken.sol";
 
-
+/**
+ * @title LiquidityProviderPool
+ * @dev A contract for managing a liquidity provider pool.
+ */
 contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     ILPToken public iLP;
@@ -65,11 +68,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         _;
     }
 
-    //====== initializer ======//
-    function initialize(address iLPAddr, address inviTokenAddr) public initializer {
+     //====== initializer ======//
+    /**
+     * @dev initialize the contract
+     * @param _iLPAddr ilpToken address
+     * @param _inviTokenAddr inviToken address
+     */
+    function initialize(address _iLPAddr, address _inviTokenAddr) public initializer {
         __Ownable_init();
-        iLP = ILPToken(iLPAddr);
-        inviToken = IERC20(inviTokenAddr);
+        iLP = ILPToken(_iLPAddr);
+        inviToken = IERC20(_inviTokenAddr);
         liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
 
         inviRewardInterval = 1 hours; // testnet : 1 hours
@@ -85,45 +93,77 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     //====== getter functions ======//
+    /**
+     * @dev Get the reward amount for the caller's address.
+     * @return The amount of native reward and INVI reward.
+     */
     function getRewardAmount() public view returns (uint, uint) {
         return (nativeRewardAmount[msg.sender], inviRewardAmount[msg.sender]);
     }
 
+    /**
+     * @dev Get the total liquidity available in the pool.
+     * @return The total liquidity amount.
+     */
     function getTotalLiquidity() public view returns (uint128) {
         return (totalStakedAmount - totalLentAmount);
     }
 
+     /**
+     * @dev Get the maximum amount that can be lent based on the allowable ratio.
+     * @return The maximum lent amount.
+     */
     function getMaxLentAmount() public view returns (uint) {
         return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
     }
 
     //====== setter functions ======//
+     /**
+     * @dev Set the InviCore contract address.
+     * @param _inviCore The address of the InviCore contract.
+     */
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
         inviCoreContract = InviCore(_inviCore);
     }
 
+    /**
+     * @dev Set the StakeNFT contract address.
+     * @param _stakeNFT The address of the StakeNFT contract.
+     */
     function setStakeNFTContract(address _stakeNFT) external onlyOwner {
         stakeNFT = StakeNFT(_stakeNFT);
     }
 
+    /**
+     * @dev Set the liquidity allowable ratio.
+     * @param _liquidityAllowableRatio The new liquidity allowable ratio.
+     */
     function setLiquidityAllowableRatio(uint _liquidityAllowableRatio) public onlyOwner {
         liquidityAllowableRatio = _liquidityAllowableRatio;
     }
 
-    // set total lended amount by invi core
+    /**
+     * @dev Set the total lent amount by the InviCore contract.
+     * @param _totalLentAmount The new total lent amount.
+     */
     function setTotalLentAmount(uint128 _totalLentAmount) public onlyInviCore {
         totalLentAmount = _totalLentAmount;
     }
 
-    // set total staked amount by invi core
+     /**
+     * @dev Set the total staked amount by the InviCore contract.
+     * @param _totalStakedAmount The new total staked amount.
+     */
     function setTotalStakedAmount(uint128 _totalStakedAmount) public onlyInviCore {
         totalStakedAmount = _totalStakedAmount;
     }
 
     //====== service functions ======//
 
-    // stake Native Coin to LP Pool
-    function stake() public payable {
+    /**
+     * @dev Stake Native Coin to the LP Pool.
+     */
+    function stake() external payable {
         uint128 stakeAmount = uint128(msg.value);
         // update stake amount
         stakedAmount[msg.sender] += stakeAmount;
@@ -136,7 +176,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         inviCoreContract.stakeLp{value: stakeAmount}();
     }
 
-    function unstake(uint128 _amount) public {
+     /**
+     * @dev Unstake from the LP Pool.
+     * @param _amount The amount to unstake.
+     */
+    function unstake(uint128 _amount) external {
         require(stakedAmount[msg.sender] >= _amount &&  _amount > 0, "Improper request amount");
         
         // update stake amount
@@ -169,10 +213,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         unstakeRequests[unstakeRequestsRear++] = unstakeRequest;
     }
 
+    /**
+     * @dev Receive unstaked amount from the InviCore contract.
+     */
     function receiveUnstaked() external payable onlyInviCore {
         unstakedAmount += uint128(msg.value);
     }
 
+    /**
+     * @dev Send the unstaked amount to the unstake request recipients.
+     */
     function sendUnstakedAmount() external {
         // require contract balance to be above totalNativeRewardAmount
         require(address(this).balance >= totalNativeRewardAmount, ERROR_INSUFFICIENT_BALANCE);
@@ -201,6 +251,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         lastSendUnstakedAmountTime = block.timestamp;
     }
 
+    /**
+     * @dev Claim the claimable unstaked amount.
+     */
     function claimUnstaked() external {
         require(claimableUnstakeAmount[msg.sender] > 0 && claimableUnstakeAmount[msg.sender] >= address(this).balance, ERROR_INSUFFICIENT_BALANCE);
 
@@ -211,7 +264,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(send, "Transfer failed");
     }
     
-    // distribute native coin
+    /**
+     * @dev Distribute native rewards to LP holders.
+     */
     function distributeNativeReward() external payable onlyInviCore{
         for (uint32 i = 0; i < iLP.totalILPHoldersCount(); i++) {
             address account = iLP.ILPHolders(i);
@@ -226,7 +281,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         lastNativeRewardDistributeTime = block.timestamp;
     }
 
-    // distribute invi token 
+    /**
+     * @dev Distribute INVI token rewards to LP holders.
+     */
     function distributeInviTokenReward() external {
         require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, ERROR_DISTRIBUTE_INTERVAL_NOT_REACHED);
         uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
@@ -246,7 +303,10 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         lastInviRewardedTime = block.timestamp;
     }
- 
+    
+    /**
+     * @dev Claim the INVI token rewards.
+     */
     function claimInviReward() external {
         require(inviRewardAmount[msg.sender] > 0 && inviRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
         uint128 rewardAmount = inviRewardAmount[msg.sender];
@@ -257,6 +317,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), ERROR_FAIL_SEND);
     }
 
+    /**
+     * @dev Claim the native coin rewards.
+     */
     function claimNativeReward() external {
         require(nativeRewardAmount[msg.sender] > 0 && nativeRewardAmount[msg.sender] > address(this).balance, ERROR_INSUFFICIENT_BALANCE);
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
@@ -267,6 +330,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(sent, ERROR_FAIL_SEND);
     }
 
+    
     //====== utils functions ======//
  
 }
