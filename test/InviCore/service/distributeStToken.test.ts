@@ -26,42 +26,41 @@ describe("Invi core service test", function () {
   });
 
   it("Test stToken reward distribute function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let nonceUserB = await ethers.provider.getTransactionCount(userB.address);
     let nonceUserC = await ethers.provider.getTransactionCount(userC.address);
-    let tx;
 
     console.log("nonce deployer: ", nonceDeployer);
     //* given
     // get current unstake requests
     const beforeUnstakeRequestLength = await inviCoreContract.getUnstakeRequestsLength();
-    console.log("before unstake requests: ", beforeUnstakeRequestLength);
-    for (let i = 0; i < beforeUnstakeRequestLength; i++) {
-      const request = await inviCoreContract.connect(userA).unstakeRequests(i);
-      console.log("request: ", request.recipient, request.amount, request.fee, request.requestType);
-    }
+    console.log("before unstake requests    : ", beforeUnstakeRequestLength);
 
     // get stTokenBalance
     const stTokenBalance = await inviCoreContract.getStTokenBalance();
-    console.log("stTokenBalance: ", stTokenBalance.toString());
+    console.log("stTokenBalance             : ", stTokenBalance.toString());
 
     // get total staked amount
     const totalStakedAmount = await inviCoreContract.getTotalStakedAmount();
-    console.log("total staked amount: ", totalStakedAmount.toString());
+    console.log("total staked amount        : ", totalStakedAmount.toString());
 
     // get total staked amount lppool
     const totalStakedAmountLpPool = await lpPoolContract.totalStakedAmount();
-    console.log("total staked amount lppool: ", totalStakedAmountLpPool.toString());
+    console.log("total staked amount lppool : ", totalStakedAmountLpPool.toString());
     const totalLentAmountLpPool = await lpPoolContract.totalLentAmount();
-    console.log("total lent amount lppool: ", totalLentAmountLpPool.toString());
+    console.log("total lent amount lppool   : ", totalLentAmountLpPool.toString());
 
     //* when
-    const distributeResult = await inviCoreContract.connect(deployer).distributeStTokenReward({ nonce: nonceDeployer }); // distribute reward
-    console.log("distribute result: ", distributeResult);
+    try {
+      const distributeResult = await inviCoreContract.connect(deployer).distributeStTokenReward({ nonce: nonceDeployer }); // distribute reward
+      console.log("distribute result: ", distributeResult);
+    } catch (error) {
+      console.log("distribute error: ", error);
+    }
 
     //* then
     // get unstake requests

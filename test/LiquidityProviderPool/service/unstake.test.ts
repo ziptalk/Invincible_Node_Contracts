@@ -23,32 +23,32 @@ describe("LpPool service test", function () {
     lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
   });
 
-  // it("Test unstake function", async () => {
-  //   const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+  it("Test unstake function", async () => {
+    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
-  //   //* given
-  //   const stakedAmount: BigNumber = await lpPoolContract.connect(LP).stakedAmount(LP.address);
-  //   const unstakeAmount: BigNumber = stakedAmount.div(2);
-  //   const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
+    //* given
+    const stakedAmount: BigNumber = await lpPoolContract.connect(LP).stakedAmount(LP.address);
+    const unstakeAmount: BigNumber = stakedAmount.div(2);
+    const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
 
-  //   //* when
-  //   const unstake = await lpPoolContract.connect(LP).unstake(unstakeAmount);
-  //   await unstake.wait();
-  //   console.log("unstaked");
+    //* when
+    const unstake = await lpPoolContract.connect(LP).unstake(unstakeAmount);
+    await unstake.wait();
+    console.log("unstaked");
 
-  //   //* then
-  //   let unstakeRequestFront = await lpPoolContract.connect(LP).unstakeRequestsFront();
-  //   console.log("unstakeRequestFront: ", unstakeRequestFront);
-  //   let unstakeRequestRear = await lpPoolContract.connect(LP).unstakeRequestsRear();
-  //   console.log("unstakeRequestRear: ", unstakeRequestRear);
-  //   for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
-  //     let unstakeRequests = await lpPoolContract.connect(LP).unstakeRequests(i);
-  //     console.log("unstakeRequests: ", unstakeRequests.toString());
-  //   }
-  //   let totalStakedAmount = await lpPoolContract.connect(LP).totalStakedAmount();
+    //* then
+    let unstakeRequestFront = await lpPoolContract.connect(LP).unstakeRequestsFront();
+    console.log("unstakeRequestFront: ", unstakeRequestFront);
+    let unstakeRequestRear = await lpPoolContract.connect(LP).unstakeRequestsRear();
+    console.log("unstakeRequestRear : ", unstakeRequestRear);
+    for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
+      let unstakeRequests = await lpPoolContract.connect(LP).unstakeRequests(i);
+      console.log("unstakeRequests  : ", unstakeRequests.toString());
+    }
+    let totalStakedAmount = await lpPoolContract.connect(LP).totalStakedAmount();
 
-  //   expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).sub(unstakeAmount));
-  // });
+    expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).sub(unstakeAmount));
+  });
 
   it("Test resolve liquidity issue", async () => {
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
@@ -77,7 +77,7 @@ describe("LpPool service test", function () {
     //* when
     // step 3: unstake LP
     const totalLpAmount = await lpPoolContract.connect(LP).stakedAmount(LP.address);
-    console.log("total lp amount: ", totalLpAmount.toString());
+    console.log("total lp amount  : ", totalLpAmount.toString());
     const unstake = await lpPoolContract.connect(LP).unstake(totalLpAmount);
     await unstake.wait();
     console.log("unstaked");

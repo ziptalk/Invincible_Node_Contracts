@@ -139,7 +139,7 @@ interface IBfcInviCore {
     /**
      * @notice Sends the unstaked amount to the unstake request applicants
      */
-    function sendUnstakedAmount() external;
+    function claimAndSplitUnstakedAmount() external;
 
     /**
      * @notice Claims the unstaked amount for the caller
