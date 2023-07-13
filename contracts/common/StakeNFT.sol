@@ -140,14 +140,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Sets the total staked amount.
-     * @param _totalStakedAmount The total staked amount.
-     */
-    function setTotalStakedAmount(uint128 _totalStakedAmount) public onlyInviCore {
-        totalStakedAmount = _totalStakedAmount;
-    }
-
-    /**
      * @dev Sets the lending status of an NFT.
      * @param _tokenId The ID of the NFT token.
      * @param _isLent The lending status of the NFT.
@@ -182,6 +174,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _nftTokenId The ID of the NFT token to be burned.
      */
     function burnNFT(uint32 _nftTokenId) public onlyInviCore  {
+        totalStakedAmount -= stakeInfos[_nftTokenId].stakedAmount;
         delete stakeInfos[_nftTokenId];
         delete nftTokenIds[_nftTokenId];
          _burn(_nftTokenId);
@@ -214,15 +207,15 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         // rewards that belongs to LP
         uint128 lpReward = 0;
         for (uint32 i = 0; i < _tokenIds;) {
+            uint32 nftId = nftTokenIds[i];
             // if tokenIds not available, skip
-            if (nftTokenIds[i] == 0) {
+            if (nftId == 0) {
                 continue;
             }
             // if NFT pass the lock period, the reward will be added to LP
-            if (stakeInfos[nftTokenIds[_tokenIds]].lockEnd < block.timestamp) {
-                lpReward += _totalReward * stakeInfos[nftTokenIds[i]].stakedAmount / totalStakedAmount;
+            if (stakeInfos[nftId].lockEnd < block.timestamp) {
+                lpReward += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
             } else { // otherwise, the reward will be added to the NFT
-                uint32 nftId = nftTokenIds[i];
                 rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
             }
 

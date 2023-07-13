@@ -223,22 +223,21 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         // require unstake request to be exist
         require(unstakeRequestsFront != unstakeRequestsRear, "LpPool: No unstake requests");
 
-        uint front = unstakeRequestsFront;
-        uint rear = unstakeRequestsRear;
-        for (uint i=front; i< rear; i++) {
-            if (unstakeRequests[i].amount > unstakedAmount) {
+        uint32 front = unstakeRequestsFront;
+        uint32 rear = unstakeRequestsRear;
+        for (uint32 i=front; i< rear; i++) {
+            UnstakeRequestLP storage request = unstakeRequests[i];
+            if (request.amount > unstakedAmount) {
                 break;
             }
             // update claimable amount
-            claimableUnstakeAmount[unstakeRequests[i].recipient] += unstakeRequests[i].amount;
+            claimableUnstakeAmount[request.recipient] += request.amount;
 
-              // update unstaked amount
-            unstakedAmount -= unstakeRequests[i].amount;
+            // update unstaked amount
+            unstakedAmount -= request.amount;
 
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
-            //unstakeRequestsFront = dequeueUnstakeRequests(unstakeRequests, unstakeRequestsFront, unstakeRequestsRear);
-
         }
 
         lastSplitUnstakedAmountTime = block.timestamp;
@@ -248,9 +247,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Claim the claimable unstaked amount.
      */
     function claimUnstaked() external {
-        require(claimableUnstakeAmount[msg.sender] >= address(this).balance, "LpPool: Insufficient claimable amount");
-
-        uint amount = claimableUnstakeAmount[msg.sender];
+        require(address(this).balance >= claimableUnstakeAmount[msg.sender], "LpPool: Insufficient claimable amount");
+        require(claimableUnstakeAmount[msg.sender] > 0, "LpPool: No claimable amount");
+        uint128 amount = claimableUnstakeAmount[msg.sender];
         claimableUnstakeAmount[msg.sender] = 0;
 
         (bool send, ) = msg.sender.call{value: amount}("");
@@ -278,7 +277,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Distribute INVI token rewards to LP holders.
      */
     function distributeInviTokenReward() external {
-        require(block.timestamp - lastInviRewardedTime >= inviRewardInterval, "LpPool: Invi reward interval not passed");
+        require(block.timestamp  >= inviRewardInterval + lastInviRewardedTime, "LpPool: Invi reward interval not passed");
         uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
         require(totalInviToken - totalClaimableInviAmount > 1000000, "LpPool: Insufficient invi token to distribute");
         uint128 totalRewards = totalInviToken - totalClaimableInviAmount;
