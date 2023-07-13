@@ -301,10 +301,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // get user reward amount including protocol fee
         uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftTokenId);
-        // get stakers'(INVI staker, LPs) reward
-        uint128 stakersReward = (rewardAmount + stakeInfo.principal) * (PROTOCOL_FEE_UNIT * 100 - stakeInfo.protocolFee) / (PROTOCOL_FEE_UNIT * 100);
         // get user reward without protocol fee
-        uint128 userReward = rewardAmount - stakersReward;
+        uint128 userReward = rewardAmount * (PROTOCOL_FEE_UNIT * 100 - stakeInfo.protocolFee) / (PROTOCOL_FEE_UNIT * 100);
+        // get stakers'(INVI staker, LPs) reward
+        uint128 stakersReward = rewardAmount - userReward;
         // split reward to LPs and INVI stakers
         uint128 lpPoolReward = stakersReward *  lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint128 inviTokenStakeReward = stakersReward * inviTokenStakeRewardPortion / REWARD_PORTION_TOTAL_UNIT;

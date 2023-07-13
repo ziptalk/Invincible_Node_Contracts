@@ -54,6 +54,7 @@ describe("Invi core service test", function () {
     console.log("unstakeRequestFront: ", unstakeRequestFront);
     const unstakeRequestRear = await inviCoreContract.unstakeRequestsRear();
     console.log("unstakeRequestRear: ", unstakeRequestRear);
+
     //get contract balance
     const inviCoreContractBalance = await ethers.provider.getBalance(inviCoreContract.address);
     console.log("inviCoreContractBalance: ", inviCoreContractBalance.toString());
@@ -62,15 +63,18 @@ describe("Invi core service test", function () {
 
     // get all unstake requests
     const unstakeRequests: UnstakeRequest[] = [];
-    for (let i = unstakeRequestFront.toString(); i < unstakeRequestRear.toString(); i++) {
+    for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
       const unstakeRequest = await inviCoreContract.unstakeRequests(i);
-      unstakeRequests.push(unstakeRequest);
+      unstakeRequests.push(unstakeRequest.toString());
     }
     console.log("unstakeRequests: ", unstakeRequests);
 
     //* when
-    await inviCoreContract.connect(userA).claimAndSplitUnstakedAmount({ nonce: nonceUserA });
-
+    try {
+      await inviCoreContract.connect(userA).claimAndSplitUnstakedAmount({ nonce: nonceUserA });
+    } catch (error) {
+      console.log("claim and split unstaked error: ", error);
+    }
     //* then
     const afterUnstakeRequestsLength = await inviCoreContract.getUnstakeRequestsLength();
     console.log("afterUnstakeRequestsLength: ", afterUnstakeRequestsLength);

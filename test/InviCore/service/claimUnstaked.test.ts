@@ -37,10 +37,12 @@ describe("Invi core service test", function () {
     //* given
 
     // init value
+    const inviCoreBalance = await ethers.provider.getBalance(inviCoreContract.address);
+    console.log("inviCoreBalance:      ", inviCoreBalance.toString());
     const totalClaimableAmount: BigNumber = await inviCoreContract.functions.totalClaimableAmount();
     console.log("totalClaimableAmount: ", totalClaimableAmount.toString());
     const claimableAmount: BigNumber = await inviCoreContract.functions.claimableAmount(userA.address);
-    console.log("claimableAmount: ", claimableAmount.toString());
+    console.log("claimableAmount:      ", claimableAmount.toString());
 
     //* when
     if (claimableAmount > BigNumber.from("0")) {

@@ -51,7 +51,7 @@ describe("Invi core service test", function () {
     console.log("minLockPeriod: ", minLockPeriod);
     const lockPeriod = minLockPeriod * 2;
     const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
-    console.log("StakeInfo: ", stakeInfo);
+    console.log("StakeInfo: ", stakeInfo.toString());
 
     //* then
     const stakedAmount: BigNumber = stakeInfo.stakedAmount;

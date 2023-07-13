@@ -22,10 +22,10 @@ describe("LpPool service test", function () {
   });
 
   it("Test distributeInviToken function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     console.log("deployer: ", deployer.address);
-    console.log("stakeManager: ", stakeManager.address);
+
     console.log("LP: ", LP.address);
     console.log("userA: ", userA.address);
 

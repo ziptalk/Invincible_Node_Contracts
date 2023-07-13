@@ -21,7 +21,7 @@ describe("InviToken service test", function () {
   let tx: any;
 
   this.beforeAll(async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     nonceLP = await ethers.provider.getTransactionCount(LP.address);
@@ -36,21 +36,23 @@ describe("InviToken service test", function () {
   });
 
   it("Test regularMint function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     // contract addresses
     console.log("lpPoolContract.address: ", lpPoolContract.address);
     //* given
     const lastMinted = await inviTokenContract.functions.lastMinted();
-    console.log("lastMinted: ", lastMinted.toString());
+    console.log("lastMinted       : ", lastMinted.toString());
     const owner = await inviTokenContract.functions.owner();
-    console.log("owner: ", owner);
+    console.log("owner            : ", owner);
     const mintInterval = await inviTokenContract.functions.mintInterval();
-    console.log("mintInterval: ", mintInterval.toString());
+    console.log("mintInterval     : ", mintInterval.toString());
     const nextMinting = parseInt(lastMinted) + parseInt(mintInterval);
-    console.log("nextMinting: ", nextMinting.toString());
+    console.log("nextMinting      : ", nextMinting.toString());
     const currentTimestamp = await ethers.provider.getBlock("latest").then((block) => block.timestamp);
-    console.log("currentTimestamp: ", currentTimestamp.toString());
+    console.log("currentTimestamp : ", currentTimestamp.toString());
+    const lpPoolContractInviBalance = await inviTokenContract.functions.balanceOf(lpPoolContract.address);
+    console.log("lpPoolContractInviBalance: ", lpPoolContractInviBalance.toString());
 
     // //* when
     try {

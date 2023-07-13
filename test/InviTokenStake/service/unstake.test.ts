@@ -43,7 +43,7 @@ describe("InviTokenStake service test", function () {
   });
 
   it("Test stake function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     // contract addresses
 

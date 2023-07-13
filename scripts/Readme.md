@@ -23,3 +23,25 @@ npx hardhat run scripts/upgrade/upgradeContract.ts --network <network_name>_test
 # mainnet
 npx hardhat run scripts/upgrade/upgradeContract.ts --network <network_name>_mainnet
 ```
+
+# 4. Things to consider before deploying
+
+```
+# LiquidityProviderPool
+inviRewardInterval
+inviReceivRewrard
+
+# InviTokenStake
+inviRewardInterval
+inviReceivRewrard
+unstakePeriod
+
+# Logics
+lockPeriod
+
+# InviToken
+mintInterval
+
+
+
+```

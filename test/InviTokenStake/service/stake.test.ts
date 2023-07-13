@@ -28,7 +28,7 @@ describe("InviTokenStake service test", function () {
   let tx: any;
 
   this.beforeAll(async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     nonceLP = await ethers.provider.getTransactionCount(LP.address);
