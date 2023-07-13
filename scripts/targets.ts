@@ -14,8 +14,8 @@ export const targets = {
   networkType: "MAINNET",
 
   // ======== upgrade Addresses ========//
-  upgradingContract: "InviCore",
-  upgradingContractAddress: klaytnTestAddress.testnet.inviCoreContractAddress,
+  upgradingContract: "InviToken",
+  upgradingContractAddress: klaytnTestAddress.testnet.inviTokenContractAddress,
 
   // ======== test Addresses ========//
   testNetworkType: "MAINNET",
