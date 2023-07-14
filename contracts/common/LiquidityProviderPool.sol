@@ -62,6 +62,11 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         _;
     }
 
+    modifier onlyILPToken {
+        require(msg.sender == address(iLP), "LpPool: msg sender should be iLP");
+        _;
+    }
+
     //====== initializer ======//
     /**
      * @dev initialize the contract
@@ -111,6 +116,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
     }
 
+    /**
+     * @dev Get the total unstaked amount.
+     * @return The total unstaked amount.
+     */
+    function getStakedAmount(address _addr) public view returns (uint128) {
+        return stakedAmount[_addr];
+    }
+
     //====== setter functions ======//
      /**
      * @dev Set the InviCore contract address.
@@ -150,6 +163,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function setTotalStakedAmount(uint128 _totalStakedAmount) public onlyInviCore {
         totalStakedAmount = _totalStakedAmount;
+    }
+
+    /**
+     * @dev Set the total unstaked amount by the InviCore contract.
+     * @param _amount The new total unstaked amount.
+     */
+    function setStakedAmount(address _target, uint128 _amount) public onlyILPToken {
+        stakedAmount[_target] = _amount;
     }
 
     //====== service functions ======//

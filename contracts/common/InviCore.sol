@@ -355,15 +355,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 totalStakedAmount = getTotalStakedAmount();
         require(stToken.balanceOf(address(this)) > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
-        uint128 totalReward = uint128(stToken.balanceOf(address(this))) - totalStakedAmount - totalNFTRewards;
+        uint256 totalReward = stToken.balanceOf(address(this)) - totalStakedAmount - totalNFTRewards;
        
         // check rewards 
-        uint128 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
+        uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
 
         // update NFT reward
-        uint128 leftRewards =  stakeNFTContract.updateReward(nftReward);
-        totalNFTRewards = nftReward - leftRewards;
-        uint128 lpReward = totalReward - nftReward + leftRewards;
+        uint128 leftRewards =  stakeNFTContract.updateReward(uint128(nftReward));
+        totalNFTRewards = uint128(nftReward) - leftRewards;
+        uint128 lpReward = uint128(totalReward) - uint128(nftReward) + leftRewards;
 
         // create unstake request for lps and invi stakers
         if (lpReward > 0) {
