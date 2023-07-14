@@ -62,22 +62,22 @@ const config: HardhatUserConfig = {
       accounts: [OWNER_KEY, LP_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
     },
 
-    // mainnets
-    klaytn_mainnet: {
-      url: process.env.KLAYTN_MAINNET_URL,
-      accounts: [MAINNET_OWNER_KEY, STAKE_MANAGER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
-    },
-    bifrost_mainnet: {
-      url: process.env.BIFROST_MAINNET_URL,
-      accounts: [MAINNET_OWNER_KEY, STAKE_MANAGER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
-    },
-    evmos_mainnet: {
-      url: process.env.EVMOS_MAINNET_URL,
-      accounts: [MAINNET_OWNER_KEY, STAKE_MANAGER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
-      // initialBaseFeePerGas: gasPrice,
-      // gasPrice: gasPrice,
-      // gas: gasPrice,
-    },
+    // // mainnets
+    // klaytn_mainnet: {
+    //   url: process.env.KLAYTN_MAINNET_URL,
+    //   accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+    // },
+    // bifrost_mainnet: {
+    //   url: process.env.BIFROST_MAINNET_URL,
+    //   accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+    // },
+    // evmos_mainnet: {
+    //   url: process.env.EVMOS_MAINNET_URL,
+    //   accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+    // initialBaseFeePerGas: gasPrice,
+    // gasPrice: gasPrice,
+    // gas: gasPrice,
+    //},
   },
 };
 
