@@ -175,18 +175,20 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     function distributeInviTokenReward() external {
         require(block.timestamp >= inviRewardInterval + lastInviRewardedTime, "InviTokenStake: Not enough time passed");
         uint128 totalInviToken = uint128(inviToken.balanceOf(address(this)));
-        require(totalInviToken - totalClaimableInviAmount > 1000000, "InviTokenStake: Not enough invi token to distribute");
+        require(totalInviToken > 1000000 + totalClaimableInviAmount + totalStakedAmount, "InviTokenStake: Not enough invi token to distribute");
 
-        uint128 intervalVar =uint128(inviReceiveInterval) / uint128(inviRewardInterval);
+        uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
+        uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount- totalStakedAmount) / intervalVar;
         for (uint128 i = 0; i < totalAddressNumber; i++) {
             address account = addressList[i];
-            uint128 rewardAmount = ((totalInviToken - totalClaimableInviAmount) * stakedAmount[account] / (totalStakedAmount * intervalVar));
-            
+            if (stakedAmount[account] == 0) continue;
+            uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount;
+        
             // update rewards
-            inviRewardAmount[account] += rewardAmount;
-            totalInviRewardAmount += rewardAmount;
-            totalClaimableInviAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            inviRewardAmount[account] += uint128(rewardAmount);
+            totalInviRewardAmount += uint128(rewardAmount);
+            totalClaimableInviAmount += uint128(rewardAmount);
+            totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
         }
 
         lastInviRewardedTime = block.timestamp;

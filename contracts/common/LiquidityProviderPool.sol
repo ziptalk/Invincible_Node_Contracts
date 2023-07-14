@@ -279,18 +279,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function distributeInviTokenReward() external {
         require(block.timestamp  >= inviRewardInterval + lastInviRewardedTime, "LpPool: Invi reward interval not passed");
         uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
-        require(totalInviToken - totalClaimableInviAmount > 1000000, "LpPool: Insufficient invi token to distribute");
-        uint128 totalRewards = totalInviToken - totalClaimableInviAmount;
-        for (uint32 i = 0; i < iLP.totalILPHoldersCount(); i++) {
+        require(totalInviToken  > 1000000 + totalClaimableInviAmount, "LpPool: Insufficient invi token to distribute");
+        uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
+        uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount) / intervalVar;
+        uint128 holderNumber = iLP.totalILPHoldersCount();
+        for (uint128 i = 0; i < holderNumber; i++) {
             address account = iLP.ILPHolders(i);
-            uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
-            uint128 rewardAmount = (totalRewards * stakedAmount[account] / (totalStakedAmount * intervalVar));
+            if (stakedAmount[account] == 0) continue;
+            uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount ;
            
             // update rewards
-            inviRewardAmount[account] += rewardAmount;
-            totalInviRewardAmount += rewardAmount;
-            totalClaimableInviAmount += rewardAmount;
-            totalInviRewardAmountByAddress[account] += rewardAmount;
+            inviRewardAmount[account] += uint128(rewardAmount);
+            totalInviRewardAmount += uint128(rewardAmount);
+            totalClaimableInviAmount += uint128(rewardAmount);
+            totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
         }
 
         lastInviRewardedTime = block.timestamp;
