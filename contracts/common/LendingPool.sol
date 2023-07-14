@@ -44,8 +44,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      */
     function createLendInfo(uint32 _nftId, uint32 _slippage) public view returns (LendInfo memory) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint128 lendAmount = getLendAmount(stakeInfo.principal);
-        uint128 minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
+        uint256 lendAmount = getLendAmount(stakeInfo.principal);
+        uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
         LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, minLendAmount, 0);
         return lendInfo;
     }
@@ -93,8 +93,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _lendInfo The lend information.
      */
     function lend(LendInfo memory _lendInfo) public {
-        uint128 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
-        _lendInfo.lentAmount = lendAmount;
+        uint256 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
+        _lendInfo.lentAmount = uint128(lendAmount);
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
@@ -124,11 +124,11 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
-    function getLendAmount(uint128 _amount) private view returns (uint128) {
+    function getLendAmount(uint128 _amount) private view returns (uint256) {
         uint128 nativePrice = priceManager.getNativePrice();
         uint128 inviPrice = priceManager.getInviPrice();
-        uint128 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
-        uint128 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
+        uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
         return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
     }
 
@@ -138,10 +138,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _user The address of the message sender.
      * @return lendAmount The verified lend amount.
      */
-    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint128) {
+    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint256) {
         require(_lendInfo.user == _user, "LendingPool: invalid user");
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), "LendingPool: not owner of NFT");
-        uint128 lendAmount = getLendAmount(_lendInfo.principal);
+        uint256 lendAmount = getLendAmount(_lendInfo.principal);
         require(_lendInfo.minLendAmount <= lendAmount, "LendingPool: invalid min lend amount");
         return lendAmount;
     }

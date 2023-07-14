@@ -29,11 +29,11 @@ npx hardhat run scripts/upgrade/upgradeContract.ts --network <network_name>_main
 ```
 # LiquidityProviderPool
 inviRewardInterval
-inviReceivRewrard
+inviReceiveReward
 
 # InviTokenStake
 inviRewardInterval
-inviReceivRewrard
+inviReceiveReward
 unstakePeriod
 
 # Logics
@@ -41,7 +41,5 @@ lockPeriod
 
 # InviToken
 mintInterval
-
-
 
 ```

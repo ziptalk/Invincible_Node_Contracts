@@ -58,7 +58,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
         lastInviRewardedTime = block.timestamp - inviRewardInterval;
 
-        unstakePeriod = 1 minutes; // testnet : 1 min (for test) mainnet: 7 days
+        unstakePeriod = 7 days; // testnet : 1 min (for test) mainnet: 7 days
 
         totalAddressNumber = 0;
     }
