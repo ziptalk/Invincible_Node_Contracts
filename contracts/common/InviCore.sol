@@ -24,7 +24,7 @@ network Ids
  * @title InviCore Contract
  * @dev Main contract for InviToken's staking system
  */
-contract InviCore is Initializable, OwnableUpgradeable {
+contract InviCore is Initializable, OwnableUpgradeable, ReentrancyGuard {
     //------Contracts / Addresses / Networks ------//
     IERC20 public stToken;
     StakeNFT public stakeNFTContract;
@@ -261,7 +261,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @param _feeSlippage The slippage for the protocol fee.
      * @return nftId The ID of the minted NFT.
      */
-    function stake(uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod,uint32 _feeSlippage) external payable returns (uint) {
+    function stake(uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod,uint32 _feeSlippage) external payable nonReentrant returns (uint) {
          // get stakeInfo
         StakeInfo memory _stakeInfo = createStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
 
@@ -287,7 +287,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @dev return NFT and request unstake for user
      * @param _nftTokenId The ID of the NFT to unstake.
      */
-    function repayNFT(uint32 _nftTokenId) external {
+    function repayNFT(uint32 _nftTokenId) external nonReentrant {
         // verify NFT
         require(stakeNFTContract.isOwner(_nftTokenId, msg.sender), "InviCore: not owner of NFT");
         require(stakeNFTContract.isUnlock(_nftTokenId), "InviCore: NFT is locked");
@@ -349,7 +349,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev distribute reward to stakers / lps / inviStakers
      */
-    function distributeStTokenReward() external {
+    function distributeStTokenReward() external nonReentrant {
         require(stTokenDistributePeriod + lastStTokenDistributeTime < block.timestamp, "InviCore: reward distribution period not passed");
         // get total staked amount
         uint128 totalStakedAmount = getTotalStakedAmount();
@@ -389,7 +389,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev stake function for only lp pool
      */
-    function stakeLp() external onlyLpPool payable {
+    function stakeLp() external onlyLpPool payable nonReentrant {
         // stake 
         liquidStakingContract.stake{value : msg.value}();
         emit Stake(uint128(msg.value));
@@ -398,7 +398,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev unstake function for only lp pool
      */
-   function unstakeLp(uint128 _requestAmount) external onlyLpPool {
+   function unstakeLp(uint128 _requestAmount) external onlyLpPool nonReentrant{
         // create unstake event
         if (networkId == 0 || networkId == 1) {
             liquidStakingContract.createUnstakeRequest(_requestAmount);
@@ -419,7 +419,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev claim and split unstaked amount
      */
-    function claimAndSplitUnstakedAmount() external {
+    function claimAndSplitUnstakedAmount() external nonReentrant {
          // claim first
         if (networkId == 0 || networkId == 1) {
             liquidStakingContract.claim();
@@ -479,7 +479,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev claim unstaked amount for user
      */
-    function claimUnstaked() external {
+    function claimUnstaked() external nonReentrant {
         require(claimableAmount[msg.sender] > 0, "InviCore: No claimable amount");
         uint128 amount = claimableAmount[msg.sender];
         totalClaimableAmount -= amount;
@@ -524,6 +524,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(maxProtocolFee >= protocolFee, "InviCore: Invalid protocol fee");
     }
 
+    // remove it later
     receive () external payable {}
 
     fallback () external payable {}

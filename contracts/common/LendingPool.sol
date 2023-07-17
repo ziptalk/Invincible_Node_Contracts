@@ -3,6 +3,7 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./StakeNFT.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/Structs.sol";
@@ -15,7 +16,7 @@ import "./PriceManager.sol";
  * @title LendingPool
  * @dev The LendingPool contract allows users to lend inviTokens by staking NFTs.
  */
-contract LendingPool is Initializable, OwnableUpgradeable {
+contract LendingPool is Initializable, OwnableUpgradeable, ReentrancyGuard {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
     PriceManager public priceManager;
@@ -42,7 +43,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _slippage The slippage value.
      * @return lendInfo The lend information.
      */
-    function createLendInfo(uint32 _nftId, uint32 _slippage) public view returns (LendInfo memory) {
+    function createLendInfo(uint32 _nftId, uint32 _slippage) external view returns (LendInfo memory) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
         uint256 lendAmount = getLendAmount(stakeInfo.principal);
         uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
@@ -66,7 +67,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the StakeNFT contract address.
      * @param _stakeNFTContract The address of the StakeNFT contract.
      */
-    function setStakeNFTContract(address _stakeNFTContract) public onlyOwner {
+    function setStakeNFTContract(address _stakeNFTContract) external onlyOwner {
         stakeNFTContract = StakeNFT(_stakeNFTContract);
     }
 
@@ -74,7 +75,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the PriceManager contract address.
      * @param _priceManager The address of the PriceManager contract.
      */
-    function setPriceManager(address _priceManager) public onlyOwner {
+    function setPriceManager(address _priceManager) external onlyOwner {
         priceManager = PriceManager(_priceManager);
     }
 
@@ -82,7 +83,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the maximum lend ratio.
      * @param _maxLendRatio The maximum lend ratio value.
      */
-    function setMaxLendRatio(uint32 _maxLendRatio) public onlyOwner {
+    function setMaxLendRatio(uint32 _maxLendRatio) external onlyOwner {
         maxLendRatio = _maxLendRatio;
     }
 
@@ -92,7 +93,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Allows users to lend inviTokens by staking NFTs.
      * @param _lendInfo The lend information.
      */
-    function lend(LendInfo memory _lendInfo) public {
+    function lend(LendInfo memory _lendInfo) external nonReentrant {
         uint256 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
         _lendInfo.lentAmount = uint128(lendAmount);
         totalLentAmount += _lendInfo.lentAmount;
@@ -106,7 +107,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Allows users to repay the lent inviTokens by unstaking NFTs.
      * @param _nftId The ID of the NFT.
      */
-    function repay(uint _nftId) public {
+    function repay(uint _nftId) external nonReentrant {
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
         require(lendInfo.user != address(0), "LendingPool: nft id not found");

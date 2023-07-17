@@ -20,13 +20,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // Counters.Counter private _tokenIds;
 
     //------Contracts and Addresses------//
-
     address public inviCoreAddress;
     address public lendingPoolAddress;
     address public lpPoolAddress;
 
-    
-   
     //------Variables------//
     uint128 public totalStakedAmount;
     //------mappings------//

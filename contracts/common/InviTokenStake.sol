@@ -3,12 +3,13 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "hardhat/console.sol";
 
-contract InviTokenStake is Initializable, OwnableUpgradeable {
+contract InviTokenStake is Initializable, OwnableUpgradeable, ReentrancyGuard {
     //------Contracts and Addresses------//
     IERC20 public inviToken;
     address public inviCoreAddress;
@@ -100,7 +101,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //====== service functions ======//
     // stake inviToken
-    function stake(uint128 _stakeAmount) external  {
+    function stake(uint128 _stakeAmount) external nonReentrant {
         require(inviToken.transferToken(msg.sender, address(this), _stakeAmount), "InviTokenStake: Failed to transfer inviToken to contract");
         require(_stakeAmount > 0, "InviTokenStake: Stake amount should be bigger than 0");
 
@@ -113,7 +114,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalAddressNumber++;
     }
 
-    function requestUnstake(uint128 _unstakeAmount) external {
+    function requestUnstake(uint128 _unstakeAmount) external nonReentrant {
         require(unstakeRequestTime[msg.sender] + unstakePeriod < block.timestamp, "InviTokenStake: Already requested unstake");
         require(stakedAmount[msg.sender] >= _unstakeAmount, "InviTokenStake: Unstake Amount cannot be bigger than stake amount");
         
@@ -129,7 +130,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalStakedAmount -= _unstakeAmount;
     }
 
-    function cancelUnstake() external {
+    function cancelUnstake() external nonReentrant {
         require(unstakeRequestAmount[msg.sender] >= 0 && unstakeRequestTime[msg.sender] != 0, "InviTokenStake: unstake amount none");
         require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "InviTokenStake: cancel period passed");
 
@@ -143,7 +144,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     // unstake inviToken
-    function claimUnstaked() external  {
+    function claimUnstaked() external nonReentrant {
         require(getClaimableAmount(msg.sender) > 0, "InviTokenStake: no claimable unstake amount");
         uint128 claimableAmount;
         // if unstake period not passed
@@ -184,7 +185,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @dev distribute invi token rewards. Require interval time passed
      */
-    function distributeInviTokenReward() external {
+    function distributeInviTokenReward() external nonReentrant {
         require(block.timestamp >= inviRewardInterval + lastInviRewardedTime, "InviTokenStake: Not enough time passed");
         uint128 totalInviToken = uint128(inviToken.balanceOf(address(this)));
         require(totalInviToken > 1000000 + totalClaimableInviAmount + totalStakedAmount, "InviTokenStake: Not enough invi token to distribute");
@@ -209,7 +210,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
      /**
      * @dev Claim the native coin rewards.
      */
-    function claimNativeReward() external {
+    function claimNativeReward() external nonReentrant {
         require(nativeRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");
         require(address(this).balance > nativeRewardAmount[msg.sender], "InviTokenStake: Insufficient claimable amount");
 
@@ -227,7 +228,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     /**
      * @dev Claim the INVI token rewards.
      */
-    function claimInviReward() external {
+    function claimInviReward() external nonReentrant {
         require(inviRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");
         require(inviToken.balanceOf(address(this)) > inviRewardAmount[msg.sender], "InviTokenStake: Insufficient claimable amount");
         uint128 rewardAmount = inviRewardAmount[msg.sender];
