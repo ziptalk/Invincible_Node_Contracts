@@ -323,7 +323,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Claim the INVI token rewards.
      */
     function claimInviReward() external {
-        require(inviRewardAmount[msg.sender] > address(this).balance, "LpPool: Insufficient claimable amount");
+        require(address(this).balance > inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;
@@ -336,7 +336,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Claim the native coin rewards.
      */
     function claimNativeReward() external {
-        require(nativeRewardAmount[msg.sender] > address(this).balance, "LpPool: Insufficient claimable amount");
+        require(address(this).balance > nativeRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
 
