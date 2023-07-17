@@ -64,11 +64,19 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     //====== getter functions ======//
+    /**
+     * @dev get unstake complete time of address
+     * @param _addr target address
+     */
     function getUnstakeTime(address _addr) public view returns (uint) {
         require(unstakeRequestTime[_addr] != 0, "InviTokenStake: No unstake request");
         return unstakeRequestTime[_addr] + unstakePeriod;
     }
 
+    /**
+     * @dev get claimable unstake amount of address
+     * @param _addr target address
+     */
     function getClaimableAmount(address _addr) public view returns (uint) {
         if (block.timestamp >= getUnstakeTime(_addr)) {
             return unstakeRequestAmount[_addr] + claimableUnstakeAmount[_addr];
@@ -156,7 +164,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(inviToken.transfer(msg.sender, claimableAmount));
     }
 
-    // distribute native rewards
+    /**
+     * @dev distribute native token rewards by InviCore
+     */
     function distributeNativeReward() external payable onlyInviCore {
         uint128 receivedReward = uint128(msg.value);
         for (uint128 i = 0; i < totalAddressNumber; i++) {
@@ -171,7 +181,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         lastNativeRewardDistributeTime = block.timestamp;
     }
 
-    // distribute invi token rewards (tbd)
+    /**
+     * @dev distribute invi token rewards. Require interval time passed
+     */
     function distributeInviTokenReward() external {
         require(block.timestamp >= inviRewardInterval + lastInviRewardedTime, "InviTokenStake: Not enough time passed");
         uint128 totalInviToken = uint128(inviToken.balanceOf(address(this)));
@@ -194,9 +206,13 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         lastInviRewardedTime = block.timestamp;
     }
 
-    // user receive reward(native coin) function
+     /**
+     * @dev Claim the native coin rewards.
+     */
     function claimNativeReward() external {
-        require(nativeRewardAmount[msg.sender] != 0, "InviTokenStake: no rewards available for this user");
+        require(nativeRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");
+        require(address(this).balance > nativeRewardAmount[msg.sender], "InviTokenStake: Insufficient claimable amount");
+
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
 
         // update reward amount
@@ -207,8 +223,13 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         require(sent, "InviTokenStake: Failed to send reward to requester");
     }
 
+    
+    /**
+     * @dev Claim the INVI token rewards.
+     */
     function claimInviReward() external {
-        require(inviRewardAmount[msg.sender] != 0, "InviTokenStake: no rewards available for this user");
+        require(inviRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");
+        require(inviToken.balanceOf(address(this)) > inviRewardAmount[msg.sender], "InviTokenStake: Insufficient claimable amount");
         uint128 rewardAmount = inviRewardAmount[msg.sender];
 
         // update reward amount
