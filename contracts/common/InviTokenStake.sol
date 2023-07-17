@@ -3,13 +3,12 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
 import "hardhat/console.sol";
 
-contract InviTokenStake is Initializable, OwnableUpgradeable, ReentrancyGuard {
+contract InviTokenStake is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     IERC20 public inviToken;
     address public inviCoreAddress;
@@ -39,8 +38,14 @@ contract InviTokenStake is Initializable, OwnableUpgradeable, ReentrancyGuard {
     uint128 public totalAddressNumber;
     mapping(uint128 => address) public addressList;
    
-
+    bool private _locked;
     //====== modifiers ======// 
+    modifier nonReentrant() {
+        require(!_locked, "Reentrant call detected");
+        _locked = true;
+        _;
+        _locked = false;
+    }
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "InviTokenStake: msg sender should be invi core");
         _;
@@ -62,6 +67,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable, ReentrancyGuard {
         unstakePeriod = 7 days; // testnet : 1 min (for test) mainnet: 7 days
 
         totalAddressNumber = 0;
+        _locked = false;
     }
 
     //====== getter functions ======//

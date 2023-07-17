@@ -3,7 +3,6 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./StakeNFT.sol";
 import "./lib/Structs.sol";
 import "hardhat/console.sol";
@@ -24,7 +23,7 @@ network Ids
  * @title InviCore Contract
  * @dev Main contract for InviToken's staking system
  */
-contract InviCore is Initializable, OwnableUpgradeable, ReentrancyGuard {
+contract InviCore is Initializable, OwnableUpgradeable {
     //------Contracts / Addresses / Networks ------//
     IERC20 public stToken;
     StakeNFT public stakeNFTContract;
@@ -49,6 +48,7 @@ contract InviCore is Initializable, OwnableUpgradeable, ReentrancyGuard {
     uint256 public lastStTokenDistributeTime;
     uint256 public lastClaimAndSplitUnstakedAmountTime;
     uint256 public stTokenDistributePeriod;
+    
     //------Mappings------//
     mapping (uint32 => UnstakeRequest) public unstakeRequests;
     mapping (address => uint128) public claimableAmount;
@@ -56,6 +56,14 @@ contract InviCore is Initializable, OwnableUpgradeable, ReentrancyGuard {
     //------events------//
     event Stake(uint128 indexed amount);
     event Unstake(uint128 indexed amount);
+    
+    bool private _locked;
+    modifier nonReentrant() {
+        require(!_locked, "Reentrant call detected");
+        _locked = true;
+        _;
+        _locked = false;
+    }
     
     //======initializer======//
     /**
@@ -79,6 +87,8 @@ contract InviCore is Initializable, OwnableUpgradeable, ReentrancyGuard {
         unstakeRequestsFront = 0;
         unstakeRequestsRear = 0;
         stTokenDistributePeriod = 1 minutes; // test: 1min / main: 1hour
+
+        _locked = false;
     }
 
     //====== modifier functions ======//

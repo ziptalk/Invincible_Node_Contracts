@@ -3,7 +3,6 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
 import "./lib/Logics.sol";
@@ -18,7 +17,7 @@ import "./tokens/ILPToken.sol";
  * @title LiquidityProviderPool
  * @dev A contract for managing a liquidity provider pool.
  */
-contract LiquidityProviderPool is Initializable, OwnableUpgradeable, ReentrancyGuard {
+contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     ILPToken public iLP;
     IERC20 public inviToken;
@@ -58,7 +57,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable, ReentrancyG
     //------events------//
     event Stake(uint amount);
 
-    //====== modifiers ======//
+    bool private _locked;
+    //====== modifiers ======// 
+    modifier nonReentrant() {
+        require(!_locked, "Reentrant call detected");
+        _locked = true;
+        _;
+        _locked = false;
+    }
     modifier onlyInviCore {
         require(msg.sender == address(inviCoreContract), "LpPool: msg sender should be invi core");
         _;
@@ -91,6 +97,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable, ReentrancyG
 
         unstakeRequestsFront = 0;
         unstakeRequestsRear = 0;
+
+        _locked = false;
     }
 
     //====== getter functions ======//

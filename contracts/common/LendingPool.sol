@@ -3,7 +3,6 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./StakeNFT.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/Structs.sol";
@@ -16,7 +15,7 @@ import "./PriceManager.sol";
  * @title LendingPool
  * @dev The LendingPool contract allows users to lend inviTokens by staking NFTs.
  */
-contract LendingPool is Initializable, OwnableUpgradeable, ReentrancyGuard {
+contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
     PriceManager public priceManager;
@@ -26,11 +25,21 @@ contract LendingPool is Initializable, OwnableUpgradeable, ReentrancyGuard {
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
+    bool private _locked;
+    //====== modifiers ======// 
+    modifier nonReentrant() {
+        require(!_locked, "Reentrant call detected");
+        _locked = true;
+        _;
+        _locked = false;
+    }
+
     //======initializer======//
     function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(inviTokenAddr);
         maxLendRatio = 95 * LEND_RATIO_UNIT / 100; // 95%
+        _locked = false;
     }
 
     //====== modifiers ======//
@@ -125,12 +134,16 @@ contract LendingPool is Initializable, OwnableUpgradeable, ReentrancyGuard {
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
-    function getLendAmount(uint128 _amount) private view returns (uint256) {
-        uint128 nativePrice = priceManager.getNativePrice();
-        uint128 inviPrice = priceManager.getInviPrice();
-        uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
-        uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
-        return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
+    function getLendAmount(uint128 _amount) public view returns (uint256) {
+        //===== Old version =====//
+        // uint128 nativePrice = priceManager.getNativePrice();
+        // uint128 inviPrice = priceManager.getInviPrice();
+        // uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
+        // uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
+
+        //===== New version =====//
+        return _amount * maxLendRatio / LEND_RATIO_UNIT;
     }
 
     /**
