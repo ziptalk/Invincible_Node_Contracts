@@ -206,7 +206,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function updateReward(uint128 _totalReward) external onlyInviCore returns(uint128){
         // rewards that belongs to LP
         uint128 lpReward = 0;
-        for (uint32 i = 0; i < _tokenIds;) {
+        for (uint32 i = 0; i < _tokenIds; i++) {
             uint32 nftId = nftTokenIds[i];
             // if tokenIds not available, skip
             if (nftId == 0) {
@@ -217,10 +217,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 lpReward += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
             } else { // otherwise, the reward will be added to the NFT
                 rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
-            }
-
-            unchecked { // save gas
-                 i++;
             }
         }
         return lpReward;
