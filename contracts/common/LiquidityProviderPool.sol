@@ -52,6 +52,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint256 public inviReceiveInterval;
     uint256 public lastInviRewardedTime;
     uint256 public lastSplitUnstakedAmountTime;
+    uint256 public totalUnstakeRequestAmount;
 
     //------events------//
     event Stake(uint amount);
@@ -225,6 +226,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         });
         // update unstake request
         unstakeRequests[unstakeRequestsRear++] = unstakeRequest;
+        totalUnstakeRequestAmount += _amount;
     }
 
     /**
@@ -256,6 +258,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
             // update unstaked amount
             unstakedAmount -= request.amount;
+
+            // update total unstake request amount
+            totalUnstakeRequestAmount -= request.amount;
 
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
@@ -320,22 +325,10 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
     
     /**
-     * @dev Claim the INVI token rewards.
-     */
-    function claimInviReward() external {
-        require(address(this).balance > inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
-        uint128 rewardAmount = inviRewardAmount[msg.sender];
-        inviRewardAmount[msg.sender] = 0;
-        totalClaimableInviAmount -= rewardAmount;
-        uint32 inviSlippage = 1000;
-        // send invi token to account
-        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), "LpPool: Transfer failed");
-    }
-
-    /**
      * @dev Claim the native coin rewards.
      */
     function claimNativeReward() external {
+        require(nativeRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
         require(address(this).balance > nativeRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
@@ -344,6 +337,21 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         (bool sent, ) = msg.sender.call{value: rewardAmount}("");
         require(sent, "LpPool: Transfer failed");
     }
+
+    /**
+     * @dev Claim the INVI token rewards.
+     */
+    function claimInviReward() external {
+        require(inviRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
+        require(inviToken.balanceOf(address(this)) > inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
+        uint128 rewardAmount = inviRewardAmount[msg.sender];
+        inviRewardAmount[msg.sender] = 0;
+        totalClaimableInviAmount -= rewardAmount;
+        uint32 inviSlippage = 1000;
+        // send invi token to account
+        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), "LpPool: Transfer failed");
+    }
+
 
     
     //====== utils functions ======//

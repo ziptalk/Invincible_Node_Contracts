@@ -11,8 +11,9 @@ function LockPeriod(uint32 _leverageRatio) pure returns (uint256) {
     uint32 c = 10; // coefficient
     uint32 e = 3; // exponent
     uint32 const = 50; // constant
-    // uint testnetConstant = 24 * 60;
-    uint32 onlyForTestConstant = 24 * 60 * 600;
+    // uint testnetConstant = 24 * 60 * 600;
+    uint32 onlyForTestConstant = 200;
+
     
     // apply testnetConstant for only testnet
     return (c * uint128(_leverageRatio) ** e / uint128(LEVERAGE_UNIT) ** e + const) * day / onlyForTestConstant;
