@@ -51,17 +51,21 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      function transfer(address to, uint256 amount) public override returns (bool) {
         address _owner = _msgSender();
         _transfer(_owner, to, amount);
-
-        // if duplicated ILP holder, return false
+        
+        bool exist = false;
+        // if duplicated ILP holder
         for (uint128 i = 0; i < totalILPHoldersCount; i++) {
             if (ILPHolders[i] == to) {
-
-                lpPoolContract.setStakedAmount(msg.sender, lpPoolContract.getStakedAmount(msg.sender) - uint128(amount));
-                return false;
+                exist = true;
             }
         }
         // else update ILPHolderList 
-        ILPHolders[totalILPHoldersCount++] = to;
+        if (!exist) {
+            ILPHolders[totalILPHoldersCount++] = to;
+        }
+        require(lpPoolContract.getStakedAmount(_owner) >= amount, "ILP: insufficient staked amount");
+        lpPoolContract.setStakedAmount(msg.sender, lpPoolContract.getStakedAmount(msg.sender) - uint128(amount));
+        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint128(amount));
         return true;
     }
 
@@ -69,9 +73,21 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         address spender = _msgSender();
         _spendAllowance(from, spender, amount);
         _transfer(from, to, amount);
-
-        // update ILPHolderList
-        ILPHolders[totalILPHoldersCount++] = to;
+        
+        bool exist = false;
+        // if duplicated ILP holder
+        for (uint128 i = 0; i < totalILPHoldersCount; i++) {
+            if (ILPHolders[i] == to) {
+                exist = true;
+            }
+        }
+        // else update ILPHolderList 
+        if (!exist) {
+            ILPHolders[totalILPHoldersCount++] = to;
+        }
+        require(lpPoolContract.getStakedAmount(from) >= amount, "ILP: insufficient staked amount");
+        lpPoolContract.setStakedAmount(from, lpPoolContract.getStakedAmount(from) - uint128(amount));
+        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint128(amount));
         return true;
     }
 }
