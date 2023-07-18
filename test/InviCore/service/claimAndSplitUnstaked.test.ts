@@ -59,7 +59,7 @@ describe("Invi core service test", function () {
     const inviCoreContractBalance = await ethers.provider.getBalance(inviCoreContract.address);
     console.log("inviCoreContractBalance: ", inviCoreContractBalance.toString());
     const unstakeRequestAmount = await inviCoreContract.unstakeRequestAmount();
-    console.log("unstakeRequestAmount: ", unstakeRequestAmount.toString());
+    console.log("unstakeRequestAmount   : ", unstakeRequestAmount.toString());
 
     // get all unstake requests
     const unstakeRequests: UnstakeRequest[] = [];
@@ -71,7 +71,8 @@ describe("Invi core service test", function () {
 
     //* when
     try {
-      await inviCoreContract.connect(userA).claimAndSplitUnstakedAmount({ nonce: nonceUserA });
+      tx = await inviCoreContract.connect(userA).claimAndSplitUnstakedAmount({ nonce: nonceUserA });
+      await tx.wait();
     } catch (error) {
       console.log("claim and split unstaked error: ", error);
     }
