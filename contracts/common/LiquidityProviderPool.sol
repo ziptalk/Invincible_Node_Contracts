@@ -173,14 +173,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         totalLentAmount = _totalLentAmount;
     }
 
-     /**
-     * @dev Set the total staked amount by the InviCore contract.
-     * @param _totalStakedAmount The new total staked amount.
-     */
-    function setTotalStakedAmount(uint128 _totalStakedAmount) external onlyInviCore {
-        totalStakedAmount = _totalStakedAmount;
-    }
-
     /**
      * @dev Set the total unstaked amount by the InviCore contract.
      * @param _amount The new total unstaked amount.

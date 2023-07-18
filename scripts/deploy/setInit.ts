@@ -177,5 +177,5 @@ export const setInit = async (address: any, network: string) => {
 };
 
 //=================== when have error =================== //
-let address = klaytnTestAddress.testnet;
-setInit(address, "default");
+// let address = klaytnTestAddress.testnet;
+// setInit(address, "default");
