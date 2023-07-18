@@ -185,7 +185,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function transferFrom(address from, address to, uint256 tokenId) public override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(from, tokenId), "ERC721: caller is not token owner or approved");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: caller is not token owner or approved");
 
         // switch token ownership
         popValueFromUintArray(NFTOwnership[from], tokenId);

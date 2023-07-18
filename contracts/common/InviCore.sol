@@ -155,7 +155,18 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stakedAmount >= _principal, "InviCore: invalid staked amount");
         uint128 protocolFee = getProtocolFee(lentAmount, _leverageRatio); // get protocol fee
 
-        StakeInfo memory stakeInfo = StakeInfo(_account,_leverageRatio,_leverageRatio, protocolFee, _principal, stakedAmount, lockPeriod, lockStart, lockEnd, false);
+        StakeInfo memory stakeInfo = StakeInfo({
+            user: _account,
+            lockPeriod: lockPeriod, 
+            lockStart: lockStart, 
+            lockEnd: lockEnd, 
+            protocolFee: protocolFee, 
+            principal: _principal, 
+            stakedAmount: stakedAmount, 
+            originalLeverageRatio: _leverageRatio,
+            leverageRatio: _leverageRatio, 
+            isLent: false
+        });
         
         return stakeInfo;
     }
@@ -321,7 +332,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // update totalNFTReward
         totalNFTRewards -= userReward;
         // create unstake request for user (principal + reward)
-        UnstakeRequest memory request = UnstakeRequest(msg.sender, 0, _nftTokenId, stakeInfo.protocolFee, stakeInfo.principal + userReward);
+        UnstakeRequest memory request = UnstakeRequest({
+            recipient: msg.sender,
+            fee: stakeInfo.protocolFee, 
+            amount: stakeInfo.principal + userReward, 
+            requestType: 0, 
+            nftId: _nftTokenId
+        });
 
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
@@ -329,12 +346,24 @@ contract InviCore is Initializable, OwnableUpgradeable {
         //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
         if (lpPoolReward != 0) {
             // create unstake request for LPs
-            UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),1, 0, 0, lpPoolReward);
+            UnstakeRequest memory lpRequest = UnstakeRequest({
+                recipient: address(lpPoolContract),
+                fee: 0, 
+                amount: lpPoolReward, 
+                requestType: 1, 
+                nftId: 0 
+            });
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
         }
         if (inviTokenStakeReward != 0) {
             // create unstake request for INVI stakers
-            UnstakeRequest memory inviStakerRequest = UnstakeRequest(address(inviTokenStakeContract),2,0, 0, inviTokenStakeReward);
+            UnstakeRequest memory inviStakerRequest = UnstakeRequest({
+                recipient: address(inviTokenStakeContract),
+                fee: 0, 
+                amount: inviTokenStakeReward, 
+                requestType: 2,
+                nftId: 0
+            });
             unstakeRequests[unstakeRequestsRear++] = inviStakerRequest;
         }
 
@@ -378,21 +407,27 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // create unstake request for lps and invi stakers
         if (lpReward > 0) {
            // create unstake request for LPs
-            UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract),1,0, 0, lpReward);
+            UnstakeRequest memory lpRequest = UnstakeRequest({
+                recipient: address(lpPoolContract),
+                fee: 0, 
+                amount: lpReward, 
+                requestType: 1,
+                nftId: 0
+            });
             // push request to unstakeRequests
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
+
+             // create unstake event
+            if (networkId == 0 || networkId == 1) {
+                liquidStakingContract.createUnstakeRequest(lpReward);
+            } else if (networkId == 2) {
+                liquidStakingContract.unstake(lpReward);
+            }
         }
 
-        // create unstake event
-        if (networkId == 0 || networkId == 1) {
-            liquidStakingContract.createUnstakeRequest( lpReward + leftRewards);
-        } else if (networkId == 2) {
-            liquidStakingContract.unstake(lpReward + leftRewards);
-        }
 
         // update stTokenRewardTime
         lastStTokenDistributeTime = block.timestamp;
-
         emit Unstake(lpReward + leftRewards);
     }
 
@@ -417,7 +452,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         }
 
         // create unstake request for LPs
-        UnstakeRequest memory lpRequest = UnstakeRequest(address(lpPoolContract), 3,0,0, _requestAmount);
+        UnstakeRequest memory lpRequest = UnstakeRequest({
+            recipient: address(lpPoolContract),
+            fee: 0, 
+            amount: _requestAmount, 
+            requestType: 3,
+            nftId: 0
+        });
        
         // push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = lpRequest;
@@ -430,7 +471,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @dev claim and split unstaked amount
      */
     function claimAndSplitUnstakedAmount() external nonReentrant {
-         // claim first
+        // claim first
         if (networkId == 0 || networkId == 1) {
             liquidStakingContract.claim();
         } else if (networkId == 2) {
@@ -441,7 +482,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint32 rear = unstakeRequestsRear;
         uint32 count = 0;
         require(address(this).balance >= totalClaimableAmount , "InviCore: Not enough amount");
-        for (uint32 i = front ; i <  rear; i++) {
+        for (uint32 i = front; i < rear;) {
             UnstakeRequest memory request = unstakeRequests[i];
             if (request.amount > address(this).balance - totalClaimableAmount) {
                 break;
@@ -480,6 +521,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
             else if (requestType == 3) {
                 lpPoolContract.receiveUnstaked{ value: amount }();
             }
+
+            unchecked {i++;}
         }
 
         // update last send unstaked amount time

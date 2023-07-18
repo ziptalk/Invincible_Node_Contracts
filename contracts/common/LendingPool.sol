@@ -56,7 +56,13 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
         uint256 lendAmount = getLendAmount(stakeInfo.principal);
         uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
-        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, minLendAmount, 0);
+        LendInfo memory lendInfo = LendInfo({
+            user: stakeInfo.user, 
+            nftId: _nftId, 
+            principal: stakeInfo.principal, 
+            minLendAmount: minLendAmount, 
+            lentAmount: 0
+        });
         return lendInfo;
     }
 
@@ -143,7 +149,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
 
         //===== New version =====//
-        return _amount * maxLendRatio / LEND_RATIO_UNIT;
+        uint256 currentInviSupply = inviToken.balanceOf(address(this));
+        uint256 lendAmount = _amount * currentInviSupply * maxLendRatio / (LEND_RATIO_UNIT * (currentInviSupply + totalLentAmount));
+        return lendAmount;
     }
 
     /**

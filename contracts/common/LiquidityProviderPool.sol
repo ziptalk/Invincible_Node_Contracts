@@ -118,12 +118,18 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         return (totalStakedAmount - totalLentAmount);
     }
 
+    function getTotalStakedAmount() public view returns (uint128) {
+        return totalStakedAmount;
+    }
+
      /**
      * @dev Get the maximum amount that can be lent based on the allowable ratio.
      * @return The maximum lent amount.
      */
     function getMaxLentAmount() public view returns (uint128) {
-        return (getTotalLiquidity() * liquidityAllowableRatio) / (100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
+        uint256 totalLiquidity = getTotalLiquidity();
+        uint256 result = (totalLiquidity**2 * liquidityAllowableRatio) / (totalStakedAmount * 100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
+        return uint128(result);
     }
 
     /**
@@ -257,7 +263,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         uint32 front = unstakeRequestsFront;
         uint32 rear = unstakeRequestsRear;
-        for (uint32 i=front; i< rear; i++) {
+        for (uint32 i=front; i< rear;) {
             UnstakeRequestLP storage request = unstakeRequests[i];
             if (request.amount > unstakedAmount) {
                 break;
@@ -273,6 +279,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
+
+            unchecked {i++;}
         }
 
         lastSplitUnstakedAmountTime = block.timestamp;
@@ -285,7 +293,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(address(this).balance >= claimableUnstakeAmount[msg.sender], "LpPool: Insufficient claimable amount");
         require(claimableUnstakeAmount[msg.sender] > 0, "LpPool: No claimable amount");
         uint128 amount = claimableUnstakeAmount[msg.sender];
+        // update values
         claimableUnstakeAmount[msg.sender] = 0;
+        totalNativeRewardAmount -= amount;
 
         (bool send, ) = msg.sender.call{value: amount}("");
         require(send, "Transfer failed");
