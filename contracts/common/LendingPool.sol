@@ -75,6 +75,35 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         require(lendInfos[_nftId].user != address(0), "LendingPool: nft id not found");
         return lendInfos[_nftId];
     }
+    
+    /**
+     * @dev gets current lend ratio
+     * @return current lend ratio
+     */
+    function getLendRatio() public view returns (uint256) {
+        uint256 currentInviSupply = inviToken.balanceOf(address(this));
+        return currentInviSupply * maxLendRatio / (currentInviSupply + totalLentAmount);
+    }
+
+    /**
+     * @dev Calculates and returns the lent amount based on the principal value of the NFT.
+     * @param _amount The principal value of the NFT.
+     * @return The lent amount.
+     */
+    function getLendAmount(uint128 _amount) public view returns (uint256) {
+        //===== Old version =====//
+        // uint128 nativePrice = priceManager.getNativePrice();
+        // uint128 inviPrice = priceManager.getInviPrice();
+        // uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
+        // uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
+
+        //===== New version =====//
+        uint256 lendRatio = getLendRatio();
+        uint256 lendAmount = _amount * lendRatio / LEND_RATIO_UNIT;
+        return lendAmount;
+    }
+
 
     //====== setter functions ======//
 
@@ -134,26 +163,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //===== utils functions ======//
-
-    /**
-     * @dev Calculates and returns the lent amount based on the principal value of the NFT.
-     * @param _amount The principal value of the NFT.
-     * @return The lent amount.
-     */
-    function getLendAmount(uint128 _amount) public view returns (uint256) {
-        //===== Old version =====//
-        // uint128 nativePrice = priceManager.getNativePrice();
-        // uint128 inviPrice = priceManager.getInviPrice();
-        // uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
-        // uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
-        // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
-
-        //===== New version =====//
-        uint256 currentInviSupply = inviToken.balanceOf(address(this));
-        uint256 lendAmount = _amount * currentInviSupply * maxLendRatio / (LEND_RATIO_UNIT * (currentInviSupply + totalLentAmount));
-        return lendAmount;
-    }
-
     /**
      * @dev Verifies the lend information provided by the user.
      * @param _lendInfo The lend information.

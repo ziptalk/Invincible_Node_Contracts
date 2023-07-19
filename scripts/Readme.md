@@ -27,14 +27,19 @@ npx hardhat run scripts/upgrade/upgradeContract.ts --network <network_name>_main
 # 4. Things to consider before deploying
 
 ```
+# InviCore
+minStakeAmount
+
 # LiquidityProviderPool
 inviRewardInterval
 inviReceiveReward
+minStakeAmount
 
 # InviTokenStake
 inviRewardInterval
 inviReceiveReward
 unstakePeriod
+minStakeAmount
 
 # Logics
 lockPeriod

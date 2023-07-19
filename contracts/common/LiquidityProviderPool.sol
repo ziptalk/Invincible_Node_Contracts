@@ -41,6 +41,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint32 public unstakeRequestsFront;
 
     uint128 public unstakedAmount;
+    uint128 public minStakeAmount;
     uint128 public totalStakedAmount;
     uint128 public totalLentAmount;
     uint128 public totalNativeRewardAmount;
@@ -97,6 +98,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         unstakeRequestsFront = 0;
         unstakeRequestsRear = 0;
+        minStakeAmount = 10**16; // 0.01
 
         _locked = false;
     }
@@ -181,11 +183,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         stakedAmount[_target] = _amount;
     }
 
+    /**
+     * @dev Set the minimum stake amount
+     * @param _minStakeAmount The new minimum stake amount.
+     */
+    function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
+        minStakeAmount = _minStakeAmount;
+    }
+
     //====== service functions ======//
     /**
      * @dev Stake Native Coin to the LP Pool.
      */
     function stake() external payable nonReentrant {
+        require(msg.value >= minStakeAmount, "LpPool: amount should be greater than minStakeAmount");
         uint128 stakeAmount = uint128(msg.value);
         // update stake amount
         stakedAmount[msg.sender] += stakeAmount;

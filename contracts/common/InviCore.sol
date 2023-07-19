@@ -30,7 +30,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
     ILiquidStaking public liquidStakingContract;
-    uint32 public networkId;
+    uint32 private _networkId;
 
     //------reward related------//
     uint32 public lpPoolRewardPortion;
@@ -38,6 +38,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint128 public totalNFTRewards;
     //------stake related------//
     uint32 public stakingAPR;
+    uint128 public minStakeAmount;
     //------unstake related------//
     uint32 public unstakeRequestsFront;
     uint32 public unstakeRequestsRear;
@@ -70,9 +71,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @dev Initializes the contract.
      * @param _stTokenAddr The address of the ST token contract.
      * @param _liquidStakingAddr The address of the Liquid Staking contract.
-     * @param _networkId The network ID.
+     * @param _network The network ID.
      */
-    function initialize(address _stTokenAddr, address _liquidStakingAddr, uint8 _networkId) initializer public {
+    function initialize(address _stTokenAddr, address _liquidStakingAddr, uint8 _network) initializer public {
         __Ownable_init();
         stToken = IERC20(_stTokenAddr);
         liquidStakingContract = ILiquidStaking(_liquidStakingAddr);
@@ -82,13 +83,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
         
-        networkId = _networkId;
+        _networkId = _network;
 
         unstakeRequestsFront = 0;
         unstakeRequestsRear = 0;
         stTokenDistributePeriod = 1 minutes; // test: 1min / main: 1hour
 
         _locked = false;
+        minStakeAmount = 10**16;
     }
 
     //====== modifier functions ======//
@@ -273,6 +275,14 @@ contract InviCore is Initializable, OwnableUpgradeable {
         inviTokenStakeRewardPortion = _inviTokenStakeRewardPortion;
     }
 
+     /**
+     * @dev Set the minimum stake amount
+     * @param _minStakeAmount The new minimum stake amount.
+     */
+    function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
+        minStakeAmount = _minStakeAmount;
+    }
+
     //====== service functions ======//
     /**
      * @dev Stakes native coins by minting an NFT and staking the principal amount.
@@ -283,6 +293,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @return nftId The ID of the minted NFT.
      */
     function stake(uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod,uint32 _feeSlippage) external payable nonReentrant returns (uint) {
+        require(msg.value >= minStakeAmount, "InviCore: amount is less than minimum stake amount");
          // get stakeInfo
         StakeInfo memory _stakeInfo = createStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
 
@@ -373,9 +384,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stakeNFTContract.burnNFT(_nftTokenId);  
 
         // create unstake event
-        if (networkId == 0 || networkId == 1) {
+        if (_networkId == 0 || _networkId == 1) {
             liquidStakingContract.createUnstakeRequest(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
-        } else if (networkId == 2) {
+        } else if (_networkId == 2) {
             liquidStakingContract.unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
         }
 
@@ -396,12 +407,12 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // get total rewards
         uint256 totalReward = stToken.balanceOf(address(this)) - totalStakedAmount - totalNFTRewards;
        
-        // check rewards 
+        // check nft rewards 
         uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
 
         // update NFT reward
         uint128 leftRewards =  stakeNFTContract.updateReward(uint128(nftReward));
-        totalNFTRewards = uint128(nftReward) - leftRewards;
+        totalNFTRewards += uint128(nftReward) - leftRewards;
         uint128 lpReward = uint128(totalReward) - uint128(nftReward) + leftRewards;
 
         // create unstake request for lps and invi stakers
@@ -418,9 +429,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
 
              // create unstake event
-            if (networkId == 0 || networkId == 1) {
+            if (_networkId == 0 || _networkId == 1) {
                 liquidStakingContract.createUnstakeRequest(lpReward);
-            } else if (networkId == 2) {
+            } else if (_networkId == 2) {
                 liquidStakingContract.unstake(lpReward);
             }
         }
@@ -445,9 +456,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
      */
    function unstakeLp(uint128 _requestAmount) external onlyLpPool nonReentrant{
         // create unstake event
-        if (networkId == 0 || networkId == 1) {
+        if (_networkId == 0 || _networkId == 1) {
             liquidStakingContract.createUnstakeRequest(_requestAmount);
-        } else if (networkId == 2) {
+        } else if (_networkId == 2) {
             liquidStakingContract.unstake(_requestAmount);
         }
 
@@ -472,9 +483,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
      */
     function claimAndSplitUnstakedAmount() external nonReentrant {
         // claim first
-        if (networkId == 0 || networkId == 1) {
+        if (_networkId == 0 || _networkId == 1) {
             liquidStakingContract.claim();
-        } else if (networkId == 2) {
+        } else if (_networkId == 2) {
             liquidStakingContract.claim(address(this));
         }
 

@@ -60,6 +60,8 @@ describe("Invi core service test", function () {
     console.log("inviCoreContractBalance: ", inviCoreContractBalance.toString());
     const unstakeRequestAmount = await inviCoreContract.unstakeRequestAmount();
     console.log("unstakeRequestAmount   : ", unstakeRequestAmount.toString());
+    const totalClaimableAmount = await inviCoreContract.totalClaimableAmount();
+    console.log("totalClaimableAmount   : ", totalClaimableAmount.toString());
 
     // get all unstake requests
     const unstakeRequests: UnstakeRequest[] = [];
