@@ -18,6 +18,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     mapping(address => uint128) public nativeRewardAmount;
     mapping(address => uint128) public inviRewardAmount;
     uint128 public totalStakedAmount;
+    uint128 public minStakeAmount;
+
 
     //------Unstake------//
     mapping(address => uint256) public unstakeRequestTime;
@@ -39,6 +41,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     mapping(uint128 => address) public addressList;
    
     bool private _locked;
+
+    //====== upgrades ======//
     //====== modifiers ======// 
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
@@ -68,6 +72,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
         totalAddressNumber = 0;
         _locked = false;
+
+        minStakeAmount = 10**16;
     }
 
     //====== getter functions ======//
@@ -93,21 +99,42 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
     
     //====== setter functions ======//
+    
     function setInviCoreAddress(address _inviCoreAddr) external onlyOwner {
         inviCoreAddress = _inviCoreAddr;
     }
 
+    /**
+     * @dev Set inviToken address
+     * @param _inviTokenAddr The new inviToken address.
+     */
     function setInviTokenAddress(address _inviTokenAddr) external onlyOwner {
         inviToken = IERC20(_inviTokenAddr);
     }
     
+    /**
+     * @dev Set unstake period
+     * @param _unstakePeriod The new unstake period.
+     */
     function setUnstakePeriod(uint256 _unstakePeriod) external onlyOwner {
         unstakePeriod = _unstakePeriod;
     }
 
+     /**
+     * @dev Set the minimum stake amount
+     * @param _minStakeAmount The new minimum stake amount.
+     */
+    function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
+        minStakeAmount = _minStakeAmount;
+    }
+
     //====== service functions ======//
-    // stake inviToken
+    /**
+     * @dev stake inviToken
+     * @param _stakeAmount 
+     */
     function stake(uint128 _stakeAmount) external nonReentrant {
+        require(_stakeAmount >= minStakeAmount, "InviTokenStake: stake amount should be bigger than min stake amount");
         require(inviToken.transferToken(msg.sender, address(this), _stakeAmount), "InviTokenStake: Failed to transfer inviToken to contract");
         require(_stakeAmount > 0, "InviTokenStake: Stake amount should be bigger than 0");
 
@@ -120,6 +147,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalAddressNumber++;
     }
 
+    /**
+     * @dev request unstake
+     * @param _unstakeAmount unstake amount
+     */
     function requestUnstake(uint128 _unstakeAmount) external nonReentrant {
         require(unstakeRequestTime[msg.sender] + unstakePeriod < block.timestamp, "InviTokenStake: Already requested unstake");
         require(stakedAmount[msg.sender] >= _unstakeAmount, "InviTokenStake: Unstake Amount cannot be bigger than stake amount");
@@ -136,6 +167,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalStakedAmount -= _unstakeAmount;
     }
 
+    /**
+     * @dev cancel unstake request
+     */
     function cancelUnstake() external nonReentrant {
         require(unstakeRequestAmount[msg.sender] >= 0 && unstakeRequestTime[msg.sender] != 0, "InviTokenStake: unstake amount none");
         require(block.timestamp < unstakePeriod + unstakeRequestTime[msg.sender], "InviTokenStake: cancel period passed");
@@ -149,7 +183,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         totalStakedAmount += unstakeRequestAmount[msg.sender];
     }
 
-    // unstake inviToken
+    /**
+     * @dev claim unstaked inviToken
+     */
     function claimUnstaked() external nonReentrant {
         require(getClaimableAmount(msg.sender) > 0, "InviTokenStake: no claimable unstake amount");
         uint128 claimableAmount;
@@ -213,7 +249,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         lastInviRewardedTime = block.timestamp;
     }
 
-     /**
+    /**
      * @dev Claim the native coin rewards.
      */
     function claimNativeReward() external nonReentrant {
