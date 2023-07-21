@@ -165,17 +165,17 @@ export const setInit = async (address: any, network: string) => {
     }
   };
 
-  await ilpInit();
-  await inviTokenInit();
-  await isptTokenInit();
+  // await ilpInit();
+  // await inviTokenInit();
+  // await isptTokenInit();
   await stakeNFTInit();
-  await lpPoolInit();
-  await inviTokenStakeInit();
-  await lendingPoolInit();
-  await inviCoreInit();
-  await inviSwapPoolInit();
+  // await lpPoolInit();
+  // await inviTokenStakeInit();
+  // await lendingPoolInit();
+  // await inviCoreInit();
+  // await inviSwapPoolInit();
 };
 
 //=================== when have error =================== //
-// let address = klaytnTestAddress.testnet;
-// setInit(address, "default");
+let address = klaytnTestAddress.testnet;
+setInit(address, "default");

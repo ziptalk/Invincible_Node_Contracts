@@ -131,7 +131,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     //====== service functions ======//
     /**
      * @dev stake inviToken
-     * @param _stakeAmount 
+     * @param _stakeAmount stake amount
      */
     function stake(uint128 _stakeAmount) external nonReentrant {
         require(_stakeAmount >= minStakeAmount, "InviTokenStake: stake amount should be bigger than min stake amount");

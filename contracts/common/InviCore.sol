@@ -83,7 +83,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         lpPoolRewardPortion = 700;
         inviTokenStakeRewardPortion = REWARD_PORTION_TOTAL_UNIT - lpPoolRewardPortion;
         
-        _networkId = _network;
+        _networkId = _network; // cannot change
 
         unstakeRequestsFront = 0;
         unstakeRequestsRear = 0;
@@ -355,7 +355,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequests[unstakeRequestsRear++] = request;
         
         //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
-        if (lpPoolReward != 0) {
+        if (lpPoolReward > 0) {
             // create unstake request for LPs
             UnstakeRequest memory lpRequest = UnstakeRequest({
                 recipient: address(lpPoolContract),
@@ -366,7 +366,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             });
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
         }
-        if (inviTokenStakeReward != 0) {
+        if (inviTokenStakeReward > 0) {
             // create unstake request for INVI stakers
             UnstakeRequest memory inviStakerRequest = UnstakeRequest({
                 recipient: address(inviTokenStakeContract),
@@ -403,9 +403,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stTokenDistributePeriod + lastStTokenDistributeTime < block.timestamp, "InviCore: reward distribution period not passed");
         // get total staked amount
         uint128 totalStakedAmount = getTotalStakedAmount();
-        require(stToken.balanceOf(address(this)) > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
+        uint256 stTokenBalance = stToken.balanceOf(address(this));
+        require(stTokenBalance > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
-        uint256 totalReward = stToken.balanceOf(address(this)) - totalStakedAmount - totalNFTRewards;
+        uint256 totalReward = stTokenBalance - totalStakedAmount - totalNFTRewards;
        
         // check nft rewards 
         uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
