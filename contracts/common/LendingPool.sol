@@ -25,6 +25,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
+    bool private setStakeNFT;
+    bool private setPriceManager;
     bool private _locked;
     //====== modifiers ======// 
     modifier nonReentrant() {
@@ -44,6 +46,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         inviToken = InviToken(_inviTokenAddr);
         maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
+
+        setStakeNFT = false;
+        setPriceManager = false;
     }
 
     //====== modifiers ======//
@@ -112,19 +117,25 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     //====== setter functions ======//
 
     /**
-     * @dev Sets the StakeNFT contract address.
+     * @notice Sets the StakeNFT contract address.
+     * @dev can be set only once
      * @param _stakeNFTContract The address of the StakeNFT contract.
      */
     function setStakeNFTContract(address _stakeNFTContract) external onlyOwner {
+        require(setStakeNFT == false, "LendingPool: stakeNFT contract already set");
         stakeNFTContract = StakeNFT(_stakeNFTContract);
+        setStakeNFT = true;
     }
 
     /**
-     * @dev Sets the PriceManager contract address.
+     * @notice Sets the PriceManager contract address.
+     * @dev can be set only once
      * @param _priceManager The address of the PriceManager contract.
      */
-    function setPriceManager(address _priceManager) external onlyOwner {
+    function setPriceManagerAddress(address _priceManager) external onlyOwner {
+        require(setPriceManager == false, "LendingPool: priceManager contract already set");
         priceManager = PriceManager(_priceManager);
+        setPriceManager = true;
     }
 
     /**
