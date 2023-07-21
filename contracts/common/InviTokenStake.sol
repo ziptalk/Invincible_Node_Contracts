@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/Logics.sol";
 import "hardhat/console.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
@@ -30,7 +29,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //------Rewards------//
     uint256 public inviRewardInterval;
-    uint256 public inviReceiveInterval;
+    uint256 public inviReceiveInterval; 
     uint256 public lastInviRewardedTime;
     uint256 public lastNativeRewardDistributeTime;
     uint128 public totalInviRewardAmount;
@@ -234,16 +233,19 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
         uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
         uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount- totalStakedAmount) / intervalVar;
-        for (uint128 i = 0; i < totalAddressNumber; i++) {
+        for (uint128 i = 0; i < totalAddressNumber;) {
             address account = addressList[i];
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount;
-        
+            uint128 reward = uint128(rewardAmount);
+
             // update rewards
-            inviRewardAmount[account] += uint128(rewardAmount);
-            totalInviRewardAmount += uint128(rewardAmount);
-            totalClaimableInviAmount += uint128(rewardAmount);
-            totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
+            inviRewardAmount[account] += reward;
+            totalInviRewardAmount += reward;
+            totalClaimableInviAmount += reward;
+            totalInviRewardAmountByAddress[account] += reward;
+
+            unchecked {i++;}
         }
 
         lastInviRewardedTime = block.timestamp;

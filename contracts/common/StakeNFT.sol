@@ -104,7 +104,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function getAllStakeInfoOfUser(address _user) public view returns (StakeInfo[] memory) {
         uint32[] memory _nftTokenIds = NFTOwnership[_user];
         StakeInfo[] memory stakeInfosOfUser = new StakeInfo[](_nftTokenIds.length);
-        for (uint i = 0; i < _nftTokenIds.length; i++) {
+        for (uint32 i = 0; i < _nftTokenIds.length; i++) {
             stakeInfosOfUser[i] = stakeInfos[_nftTokenIds[i]];
         }
         return stakeInfosOfUser;
@@ -297,7 +297,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 if (_lentAmount > 0) {
                     // lock end decrease (updated lentAmount / previous lentAmount)
                     stakeInfo.lockEnd = block.timestamp + leftLockPeriod * (stakeInfo.stakedAmount - stakeInfo.principal) / _lentAmount ;
-                    // set minimum lock period
+                    // set minimum lock period 
                     if (stakeInfo.lockEnd - stakeInfo.lockStart < 50 days ) {
                         stakeInfo.lockEnd = stakeInfo.lockStart + 50 days;
                     }
@@ -305,7 +305,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                     stakeInfo.lockPeriod = stakeInfo.lockEnd - stakeInfo.lockStart;
                 }
                 // update leverageRatio
-                stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal)) ;
+                uint128 leverageRatio = stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal);
+                stakeInfo.leverageRatio = uint32(leverageRatio);
             }
         }
         totalStakedAmount -= _lackAmount;

@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/Logics.sol";
 import "./lib/Unit.sol";
 import "./InviCore.sol";
 import "./StakeNFT.sol";
@@ -308,7 +307,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Distribute native rewards to LP holders.
      */
     function distributeNativeReward() external payable onlyInviCore {
-        for (uint32 i = 0; i < iLP.totalILPHoldersCount(); i++) {
+        uint128 totalILPHoldersCount = iLP.totalILPHoldersCount();
+        for (uint128 i = 0; i < totalILPHoldersCount;) {
             address account = iLP.ILPHolders(i);
             uint128 rewardAmount = (uint128(msg.value) * stakedAmount[account] / totalStakedAmount);
 
@@ -316,6 +316,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             nativeRewardAmount[account] += rewardAmount;
             totalNativeRewardAmount += rewardAmount;
             totalNativeRewardAmountByAddress[account] += rewardAmount;
+
+            unchecked {i++;}
         }
 
         lastNativeRewardDistributeTime = block.timestamp;
@@ -331,7 +333,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
         uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount) / intervalVar;
         uint128 holderNumber = iLP.totalILPHoldersCount();
-        for (uint128 i = 0; i < holderNumber; i++) {
+        for (uint128 i = 0; i < holderNumber;) {
             address account = iLP.ILPHolders(i);
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount ;
@@ -341,6 +343,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             totalInviRewardAmount += uint128(rewardAmount);
             totalClaimableInviAmount += uint128(rewardAmount);
             totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
+
+            unchecked {i++;}
         }
 
         lastInviRewardedTime = block.timestamp;

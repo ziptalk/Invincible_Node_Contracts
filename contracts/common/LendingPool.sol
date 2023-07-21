@@ -35,9 +35,13 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //======initializer======//
-    function initialize(address inviTokenAddr) initializer public {
+    /**
+     * @dev Initializes the contract.
+     * @param _inviTokenAddr The address of the InviToken contract.
+     */
+    function initialize(address _inviTokenAddr) initializer public {
         __Ownable_init();
-        inviToken = InviToken(inviTokenAddr);
+        inviToken = InviToken(_inviTokenAddr);
         maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
     }

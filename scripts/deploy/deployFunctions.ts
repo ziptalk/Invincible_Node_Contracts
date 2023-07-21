@@ -197,6 +197,7 @@ export const deployAllContract = async (network: string) => {
 
   console.log("stTokenContractAddress: ", stTokenContractAddress);
   console.log("liquidStakingAddress: ", liquidStakingAddress);
+  // ==================== libraries ==================== //
 
   // ==================== token contract ==================== //
   // deploy inviToken contract

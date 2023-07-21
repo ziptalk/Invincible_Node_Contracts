@@ -437,7 +437,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
             }
         }
 
-
         // update stTokenRewardTime
         lastStTokenDistributeTime = block.timestamp;
         emit Unstake(lpReward + leftRewards);
@@ -446,7 +445,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     /**
      * @dev stake function for only lp pool
      */
-    function stakeLp() external onlyLpPool payable nonReentrant {
+    function stakeLp() external payable onlyLpPool nonReentrant {
         // stake 
         liquidStakingContract.stake{value : msg.value}();
         emit Stake(uint128(msg.value));
@@ -493,19 +492,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint32 front = unstakeRequestsFront;
         uint32 rear = unstakeRequestsRear;
         uint32 count = 0;
-        require(address(this).balance >= totalClaimableAmount , "InviCore: Not enough amount");
+        uint256 balance = address(this).balance;
+        require(balance >= totalClaimableAmount , "InviCore: Not enough amount");
         for (uint32 i = front; i < rear;) {
             UnstakeRequest memory request = unstakeRequests[i];
-            if (request.amount > address(this).balance - totalClaimableAmount) {
+            if (request.amount > balance - totalClaimableAmount) {
                 break;
             }
             count++;
             
-            // delete if have error in unstake request
-            if (request.recipient == 0x0000000000000000000000000000000000000000) {
-                delete unstakeRequests[unstakeRequestsFront++];
-                continue;
-            }
             // check request type (0: user, 1: LP, 2: INVI staker)
             uint32 requestType = request.requestType;
             uint128 amount = request.amount;
@@ -539,7 +534,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update last send unstaked amount time
         lastClaimAndSplitUnstakedAmountTime = block.timestamp;
-    } 
+    }
 
     /**
      * @dev claim unstaked amount for user
