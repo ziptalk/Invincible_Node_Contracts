@@ -27,7 +27,7 @@ describe("Invi core service test", function () {
   });
 
   it("Test repayNFT function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);

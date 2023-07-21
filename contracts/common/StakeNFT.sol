@@ -20,13 +20,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // Counters.Counter private _tokenIds;
 
     //------Contracts and Addresses------//
-
     address public inviCoreAddress;
     address public lendingPoolAddress;
     address public lpPoolAddress;
 
-    
-   
     //------Variables------//
     uint128 public totalStakedAmount;
     //------mappings------//
@@ -188,7 +185,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function transferFrom(address from, address to, uint256 tokenId) public override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(from, tokenId), "ERC721: caller is not token owner or approved");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: caller is not token owner or approved");
 
         // switch token ownership
         popValueFromUintArray(NFTOwnership[from], tokenId);
@@ -206,7 +203,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function updateReward(uint128 _totalReward) external onlyInviCore returns(uint128){
         // rewards that belongs to LP
         uint128 lpReward = 0;
-        for (uint32 i = 0; i < _tokenIds;) {
+        for (uint32 i = 0; i < _tokenIds; i++) {
             uint32 nftId = nftTokenIds[i];
             // if tokenIds not available, skip
             if (nftId == 0) {
@@ -217,10 +214,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 lpReward += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
             } else { // otherwise, the reward will be added to the NFT
                 rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
-            }
-
-            unchecked { // save gas
-                 i++;
             }
         }
         return lpReward;

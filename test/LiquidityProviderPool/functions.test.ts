@@ -46,6 +46,9 @@ describe("LpPool service test", function () {
     // get stake amount
     const stakedAmount = await lpPoolContract.connect(LP).stakedAmount(LP.address);
     console.log("stakedAmount: ", stakedAmount.toString());
+    // get max lent amount
+    const maxLentAmount = await lpPoolContract.connect(LP).getMaxLentAmount();
+    console.log("maxLentAmount: ", maxLentAmount.toString());
     // get rewardAmount
     const rewardAmount = await lpPoolContract.connect(LP).getRewardAmount();
     console.log("rewardAmount: ", rewardAmount.toString());

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
+
 interface IERC20 {
     function totalSupply() external view returns (uint256);
     function balanceOf(address account) external view returns (uint256);
@@ -15,7 +18,7 @@ interface IERC20 {
         address recipient,
         uint256 amount
     ) external returns (bool);
-    function transferToken(address _sender, address _receiver, uint _amount) external returns (bool);
+    function transferToken(address _sender, address _receiver, uint128 _amount) external returns (bool);
     function mintToken(address account, uint256 amount) external;
     function burnToken(address account, uint256 amount) external;
     function getILPHolders() external view returns (address[] memory);

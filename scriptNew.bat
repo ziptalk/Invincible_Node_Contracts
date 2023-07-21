@@ -16,7 +16,8 @@ for %%A in (
 "test/LiquidityProviderPool/service/claimRewards.test.ts,0"
 "test/InviCore/service/distributeStToken.test.ts,0"
 "test/InviToken/service/regularMint.test.ts,0"
-"test/LendingPool/service/lend.test.ts,0"
+"test/LendingPool/service/lend.test.ts,0",
+"test/LendingPool/service/repay.test.ts,0",
 "test/InviTokenStake/service/stake.test.ts,0"
 "test/InviTokenStake/service/unstake.test.ts,0"
 ) do (

@@ -11,6 +11,7 @@ describe("LpPool service test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
+  let ilpTokenContract: Contract;
 
   const network: string = hre.network.name;
   const testAddresses: any = getTestAddress(network);
@@ -25,14 +26,14 @@ describe("LpPool service test", function () {
       inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
       stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
       lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+      ilpTokenContract = await ethers.getContractAt("ILPToken", testAddresses.iLPTokenContractAddress);
     }
   });
 
   it("Test stake function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     console.log("deployer: ", deployer.address);
-    console.log("stakeManager: ", stakeManager.address);
     console.log("LP: ", LP.address);
     console.log("userA: ", userA.address);
 
@@ -48,15 +49,20 @@ describe("LpPool service test", function () {
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
 
     //* when
-    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
-    console.log("provided liquidity");
-
+    try {
+      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+      console.log("provided liquidity");
+    } catch (e) {
+      console.log("provideLiquidity failed at " + nonceLP, e);
+    }
     //* then
 
     let totalStakedAmount = await lpPoolContract.connect(userA).totalStakedAmount();
     let totalLentAmount = await lpPoolContract.connect(userA).totalLentAmount();
     console.log("totalStakedAmount: ", totalStakedAmount.toString());
 
+    let ilpBalance = await ilpTokenContract.balanceOf(LP.address);
+    console.log("ilpBalance:        ", ilpBalance.toString());
     expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
   });
 });

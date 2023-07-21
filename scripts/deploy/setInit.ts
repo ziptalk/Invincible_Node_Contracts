@@ -59,7 +59,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("iLP init condition set at " + nonce);
     } catch (e) {
-      console.log("iLP init condition set failed at " + nonce);
+      console.log("(error)iLP init condition set failed at " + nonce);
     }
   };
   const inviTokenInit = async () => {
@@ -73,7 +73,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviToken init condition set at " + nonce);
     } catch (e) {
-      console.log("inviToken init condition set failed at " + nonce);
+      console.log("(error)inviToken init condition set failed at " + nonce);
     }
   };
 
@@ -84,7 +84,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("iSPTToken init condition set at " + nonce + "");
     } catch (e) {
-      console.log("iSPTToken init condition set failed at " + nonce);
+      console.log("(error)iSPTToken init condition set failed at " + nonce);
     }
   };
 
@@ -99,7 +99,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("stakeNFT init condition set at " + nonce + "");
     } catch (e) {
-      console.log("stakeNFT init condition set failed at " + nonce);
+      console.log("(error)stakeNFT init condition set failed at " + nonce);
     }
   };
 
@@ -111,7 +111,7 @@ export const setInit = async (address: any, network: string) => {
       tx = await lpPoolContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address, { nonce: nonce++ });
       console.log("lpPoolContract init condition set at " + nonce + "");
     } catch (e) {
-      console.log("lpPoolContract init condition set failed at " + nonce);
+      console.log("(error)lpPoolContract init condition set failed at " + nonce);
     }
   };
 
@@ -122,7 +122,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviTokenStake init condition set at " + nonce + "");
     } catch (e) {
-      console.log("inviTokenStake init condition set failed at " + nonce);
+      console.log("(error)inviTokenStake init condition set failed at " + nonce);
     }
   };
 
@@ -135,7 +135,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("lendingPool init condition set at " + nonce + "");
     } catch (e) {
-      console.log("lendingPool init condition set failed at " + nonce);
+      console.log("(error)lendingPool init condition set failed at " + nonce);
     }
   };
 
@@ -150,7 +150,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviCore init condition set at " + nonce + "");
     } catch (e) {
-      console.log("inviCore init condition set failed at " + nonce);
+      console.log("(error)inviCore init condition set failed at " + nonce);
     }
   };
 
@@ -161,21 +161,21 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviSwapPool init condition set at " + nonce + "");
     } catch (e) {
-      console.log("inviSwapPool init condition set failed at " + nonce);
+      console.log("(error)inviSwapPool init condition set failed at " + nonce);
     }
   };
 
-  await ilpInit();
-  await inviTokenInit();
-  await isptTokenInit();
+  // await ilpInit();
+  // await inviTokenInit();
+  // await isptTokenInit();
   await stakeNFTInit();
-  await lpPoolInit();
-  await inviTokenStakeInit();
-  await lendingPoolInit();
-  await inviCoreInit();
-  await inviSwapPoolInit();
+  // await lpPoolInit();
+  // await inviTokenStakeInit();
+  // await lendingPoolInit();
+  // await inviCoreInit();
+  // await inviSwapPoolInit();
 };
 
 //=================== when have error =================== //
-// let address = klaytnTestAddress.testnet;
-// setInit(address, "default");
+let address = klaytnTestAddress.testnet;
+setInit(address, "default");

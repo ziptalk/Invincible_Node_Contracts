@@ -32,13 +32,12 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         /////////////////////////////////////////////////////////////
         ///// Set this part /////////////////////////////////////////
         /////////////////////////////////////////////////////////////
-        lastMinted = block.timestamp - mintInterval;      ///////////
-        regularMintAmount = 100000000; // 100 million     ///////////
-        mintInterval = 1 hours; // testnet: 1 hour,  mainnet: 10 days       
-        /////////////////////////////////////////////////////////////
-
+        regularMintAmount = 100000000; // 100 million    
+        mintInterval = 10 hours; // testnet: 10 hour,  mainnet: 10 days       
+        lastMinted = block.timestamp - mintInterval;     
         mintAmountChangeInterval = 10 days; // 10 days
         lastMintAmountChange = block.timestamp - mintAmountChangeInterval;
+        /////////////////////////////////////////////////////////////
     }
 
     //====== modifier ======//

@@ -105,10 +105,10 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     }
 
 
-    function getAddLiquidityInvi(uint _amountIn) public view returns (uint) {
-        uint currentNativePrice = priceManager.getNativePrice();
-        uint currentInviPrice = priceManager.getInviPrice();
-        return _amountIn * currentNativePrice / currentInviPrice;
+    function getAddLiquidityInvi(uint _amountIn) public view returns (uint128) {
+        uint128 currentNativePrice = priceManager.getNativePrice();
+        uint128 currentInviPrice = priceManager.getInviPrice();
+        return uint128(_amountIn * currentNativePrice / currentInviPrice);
     }
     function getAddLiquidityNative(uint _amountIn) public view returns (uint) {
         uint currentNativePrice = priceManager.getNativePrice();
@@ -176,7 +176,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of InviTokens to swap.
      * @param _amountOutMin The minimum amount of native token expected to receive.
      */
-    function swapInviToNative(uint _amountIn, uint _amountOutMin) public {
+    function swapInviToNative(uint128 _amountIn, uint _amountOutMin) public {
         require(_amountIn < getInviToNativeOutMaxInput(), "InviSwapPool: exceeds max input amount");
         uint amountOut = getInviToNativeOutAmount(_amountIn);
         uint fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
@@ -212,7 +212,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
       // slippage unit is 0.1%
     function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable {
        
-        uint expectedInvi = getAddLiquidityInvi(msg.value);
+        uint128 expectedInvi = getAddLiquidityInvi(msg.value);
         // require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
         uint expectedAmountInInviMin = _expectedAmountInInvi * (100*SLIPPAGE_UNIT - _slippage) / (100*SLIPPAGE_UNIT);
         uint expectedAmountInInviMax = _expectedAmountInInvi * (100*SLIPPAGE_UNIT + _slippage)  / (100*SLIPPAGE_UNIT);

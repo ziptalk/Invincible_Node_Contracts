@@ -16,7 +16,6 @@ describe("LpPool service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-
     inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
     inviTokenStakeContract = await ethers.getContractAt("InviTokenStake", testAddresses.inviTokenStakeContractAddress);
   });
@@ -25,38 +24,30 @@ describe("LpPool service test", function () {
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     console.log("deployer: ", deployer.address);
-
     console.log("LP: ", LP.address);
     console.log("userA: ", userA.address);
 
-    let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
-    let nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    let tx;
-
-    console.log("nonce lp: ", nonceLP);
-
     //* given
-    const stakeAmount: BigNumber = ethers.utils.parseEther("0.01");
-    const previousTotalStakedAmount = await inviTokenStakeContract.totalStakedAmount();
-    const stake = await inviTokenStakeContract.connect(LP).stake(stakeAmount, { nonce: nonceLP++ });
-    await stake.wait();
+    const currentTotalClaimableInviAmount = await inviTokenStakeContract.totalClaimableInviAmount();
+    console.log("currentTotalClaimableInviAmount", currentTotalClaimableInviAmount.toString());
+    const currentTotalInviToken = await inviTokenContract.balanceOf(inviTokenStakeContract.address);
+    console.log("currentTotalInviToken", currentTotalInviToken.toString());
 
     //* when
     try {
-      const distributeInviToken = await inviTokenStakeContract.connect(LP).distributeInviTokenReward();
+      const distributeInviToken = await inviTokenStakeContract.connect(userA).distributeInviTokenReward();
       await distributeInviToken.wait();
     } catch (error) {
       console.log(error);
     }
     try {
-      const claimInviToken = await inviTokenStakeContract.connect(LP).claimInviReward();
+      const claimInviToken = await inviTokenStakeContract.connect(userA).claimInviReward();
       await claimInviToken.wait();
     } catch (error) {
       console.log(error);
     }
     //* then
-    let inviTokenBalanceLP = await inviTokenContract.balanceOf(LP.address);
+    let inviTokenBalanceLP = await inviTokenContract.balanceOf(userA.address);
     console.log("inviTokenBalanceLP", inviTokenBalanceLP.toString());
     let inviTokenBalanceLPPool = await inviTokenContract.balanceOf(inviTokenStakeContract.address);
     console.log("inviTokenBalanceLPPool", inviTokenBalanceLPPool.toString());

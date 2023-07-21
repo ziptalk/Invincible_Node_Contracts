@@ -25,11 +25,21 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
+    bool private _locked;
+    //====== modifiers ======// 
+    modifier nonReentrant() {
+        require(!_locked, "Reentrant call detected");
+        _locked = true;
+        _;
+        _locked = false;
+    }
+
     //======initializer======//
     function initialize(address inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(inviTokenAddr);
-        maxLendRatio = 95 * LEND_RATIO_UNIT / 100; // 95%
+        maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
+        _locked = false;
     }
 
     //====== modifiers ======//
@@ -42,11 +52,17 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _slippage The slippage value.
      * @return lendInfo The lend information.
      */
-    function createLendInfo(uint32 _nftId, uint32 _slippage) public view returns (LendInfo memory) {
+    function createLendInfo(uint32 _nftId, uint32 _slippage) external view returns (LendInfo memory) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint128 lendAmount = getLendAmount(stakeInfo.principal);
-        uint128 minLendAmount = lendAmount * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
-        LendInfo memory lendInfo = LendInfo(stakeInfo.user, _nftId, stakeInfo.principal, minLendAmount, 0);
+        uint256 lendAmount = getLendAmount(stakeInfo.principal);
+        uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
+        LendInfo memory lendInfo = LendInfo({
+            user: stakeInfo.user, 
+            nftId: _nftId, 
+            principal: stakeInfo.principal, 
+            minLendAmount: minLendAmount, 
+            lentAmount: 0
+        });
         return lendInfo;
     }
 
@@ -59,6 +75,35 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         require(lendInfos[_nftId].user != address(0), "LendingPool: nft id not found");
         return lendInfos[_nftId];
     }
+    
+    /**
+     * @dev gets current lend ratio
+     * @return current lend ratio
+     */
+    function getLendRatio() public view returns (uint256) {
+        uint256 currentInviSupply = inviToken.balanceOf(address(this));
+        return currentInviSupply * maxLendRatio / (currentInviSupply + totalLentAmount);
+    }
+
+    /**
+     * @dev Calculates and returns the lent amount based on the principal value of the NFT.
+     * @param _amount The principal value of the NFT.
+     * @return The lent amount.
+     */
+    function getLendAmount(uint128 _amount) public view returns (uint256) {
+        //===== Old version =====//
+        // uint128 nativePrice = priceManager.getNativePrice();
+        // uint128 inviPrice = priceManager.getInviPrice();
+        // uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
+        // uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
+        // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
+
+        //===== New version =====//
+        uint256 lendRatio = getLendRatio();
+        uint256 lendAmount = _amount * lendRatio / LEND_RATIO_UNIT;
+        return lendAmount;
+    }
+
 
     //====== setter functions ======//
 
@@ -66,7 +111,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the StakeNFT contract address.
      * @param _stakeNFTContract The address of the StakeNFT contract.
      */
-    function setStakeNFTContract(address _stakeNFTContract) public onlyOwner {
+    function setStakeNFTContract(address _stakeNFTContract) external onlyOwner {
         stakeNFTContract = StakeNFT(_stakeNFTContract);
     }
 
@@ -74,7 +119,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the PriceManager contract address.
      * @param _priceManager The address of the PriceManager contract.
      */
-    function setPriceManager(address _priceManager) public onlyOwner {
+    function setPriceManager(address _priceManager) external onlyOwner {
         priceManager = PriceManager(_priceManager);
     }
 
@@ -82,7 +127,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Sets the maximum lend ratio.
      * @param _maxLendRatio The maximum lend ratio value.
      */
-    function setMaxLendRatio(uint32 _maxLendRatio) public onlyOwner {
+    function setMaxLendRatio(uint32 _maxLendRatio) external onlyOwner {
         maxLendRatio = _maxLendRatio;
     }
 
@@ -92,9 +137,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Allows users to lend inviTokens by staking NFTs.
      * @param _lendInfo The lend information.
      */
-    function lend(LendInfo memory _lendInfo) public {
-        uint128 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
-        _lendInfo.lentAmount = lendAmount;
+    function lend(LendInfo memory _lendInfo) external nonReentrant {
+        uint256 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
+        _lendInfo.lentAmount = uint128(lendAmount);
         totalLentAmount += _lendInfo.lentAmount;
         lendInfos[_lendInfo.nftId] = _lendInfo;
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
@@ -106,7 +151,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Allows users to repay the lent inviTokens by unstaking NFTs.
      * @param _nftId The ID of the NFT.
      */
-    function repay(uint _nftId) public {
+    function repay(uint _nftId) external nonReentrant {
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
         require(lendInfo.user != address(0), "LendingPool: nft id not found");
@@ -118,30 +163,16 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //===== utils functions ======//
-
-    /**
-     * @dev Calculates and returns the lent amount based on the principal value of the NFT.
-     * @param _amount The principal value of the NFT.
-     * @return The lent amount.
-     */
-    function getLendAmount(uint128 _amount) private view returns (uint128) {
-        uint128 nativePrice = priceManager.getNativePrice();
-        uint128 inviPrice = priceManager.getInviPrice();
-        uint128 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
-        uint128 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
-        return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
-    }
-
     /**
      * @dev Verifies the lend information provided by the user.
      * @param _lendInfo The lend information.
      * @param _user The address of the message sender.
      * @return lendAmount The verified lend amount.
      */
-    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint128) {
+    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint256) {
         require(_lendInfo.user == _user, "LendingPool: invalid user");
         require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), "LendingPool: not owner of NFT");
-        uint128 lendAmount = getLendAmount(_lendInfo.principal);
+        uint256 lendAmount = getLendAmount(_lendInfo.principal);
         require(_lendInfo.minLendAmount <= lendAmount, "LendingPool: invalid min lend amount");
         return lendAmount;
     }
