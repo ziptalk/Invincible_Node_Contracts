@@ -49,17 +49,14 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     //====== modifiers ======//
-
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "StakeNFT: msg sender should be invi core");
         _;
     }
-
     modifier onlyLendingPool {
         require(msg.sender == address(lendingPoolAddress), "StakeNFT: msg sender should be lending pool");
         _;
     }
-
     modifier onlyLpPool {
         require(msg.sender == address(lpPoolAddress), "StakeNFT: msg sender should be lp pool");
         _;
@@ -252,7 +249,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Deletes the stake information associated with a given NFT token ID.
+     * @notice Deletes the stake information associated with a given NFT token ID.
+     * @dev This function is only callable by the InviCore contract.
      * @param _nftTokenId The ID of the NFT token.
      */
     function deleteStakeInfo(uint32 _nftTokenId) public onlyInviCore {
@@ -260,7 +258,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Deletes the ownership of an NFT from a specific address.
+     * @notice Deletes the ownership of an NFT from a specific address.
+     * @dev This function is only callable by the InviCore contract.
      * @param _nftOwner The address of the NFT owner.
      * @param _nftTokenId The ID of the NFT token.
      */
@@ -272,8 +271,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Gets the index of a given value in an array.
-     * @param _lackAmount The array to be searched.
+     * @notice Resolves issue when liquidity pool is not enough (lentAmount > total remaining liquidity)
+     * @dev This function is only callable by the LPPool contract.
+     * @param _lackAmount lack liquidity amount
+     * @param _totalLentAmount total lent amount of all NFTs
      */
     function resolveLiquidityIssue(uint128 _lackAmount, uint128 _totalLentAmount) external onlyLpPool {
         for (uint32 i = 0 ; i < _tokenIds; i++) {

@@ -30,7 +30,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
 
     //======getter functions======//
     /**
-     * @dev Returns the current price of InviToken.
+     * @notice Returns the current price of InviToken.
      * @return The price of InviToken.
      */
     function getInviPrice() public view returns (uint128) {
@@ -38,7 +38,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
     }
    
     /**
-     * @dev Returns the current price of the native token.
+     * @notice Returns the current price of the native token.
      * @return The price of the native token.
      */
     function getNativePrice() public view returns (uint128) {
@@ -47,7 +47,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
 
     //======setter functions======//
     /**
-     * @dev Sets the price of InviToken.
+     * @notice Sets the price of InviToken.
      * @param _price The new price of InviToken.
      */
     function setInviPrice(uint128 _price) public onlyOwner {
@@ -55,7 +55,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
     }
    
     /**
-     * @dev Sets the price of the native token.
+     * @notice Sets the price of the native token.
      * @param _price The new price of the native token.
      */
     function setNativePrice(uint128 _price) public onlyOwner {

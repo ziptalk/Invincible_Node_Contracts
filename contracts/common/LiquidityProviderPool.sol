@@ -104,7 +104,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     /**
-     * @dev Get the reward amount for the caller's address.
+     * @notice Get the reward amount for the caller's address.
      * @return The amount of native reward and INVI reward.
      */
     function getRewardAmount() public view returns (uint, uint) {
@@ -112,7 +112,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Get the total liquidity available in the pool.
+     * @notice Get the total liquidity available in the pool.
      * @return The total liquidity amount.
      */
     function getTotalLiquidity() public view returns (uint128) {
@@ -124,7 +124,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      /**
-     * @dev Get the maximum amount that can be lent based on the allowable ratio.
+     * @notice Get the maximum amount that can be lent based on the allowable ratio.
      * @return The maximum lent amount.
      */
     function getMaxLentAmount() public view returns (uint128) {
@@ -134,7 +134,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Get the total unstaked amount.
+     * @notice Get the total unstaked amount.
      * @return The total unstaked amount.
      */
     function getStakedAmount(address _addr) public view returns (uint128) {
@@ -143,7 +143,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //====== setter functions ======//
      /**
-     * @dev Set the InviCore contract address.
+     * @notice Set the InviCore contract address.
+     * @dev This function is called by the owner.
      * @param _inviCore The address of the InviCore contract.
      */
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
@@ -151,7 +152,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Set the StakeNFT contract address.
+     * @notice Set the StakeNFT contract address.
+     * @dev This function is called by the owner.
      * @param _stakeNFT The address of the StakeNFT contract.
      */
     function setStakeNFTContract(address _stakeNFT) external onlyOwner {
@@ -159,7 +161,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Set the liquidity allowable ratio.
+     * @notice Set the liquidity allowable ratio.
+     * @dev This function is called by the owner.
      * @param _liquidityAllowableRatio The new liquidity allowable ratio.
      */
     function setLiquidityAllowableRatio(uint32 _liquidityAllowableRatio) external onlyOwner {
@@ -167,7 +170,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Set the total lent amount by the InviCore contract.
+     * @notice Set the total lent amount by the InviCore contract.
+     * @dev This function is called by the InviCore contract.
      * @param _totalLentAmount The new total lent amount.
      */
     function setTotalLentAmount(uint128 _totalLentAmount) external onlyInviCore {
@@ -175,7 +179,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Set the total unstaked amount by the InviCore contract.
+     * @notice Set the total unstaked amount by the InviCore contract.
+     * @dev This function is called by the ILP Token contract.
      * @param _amount The new total unstaked amount.
      */
     function setStakedAmount(address _target, uint128 _amount) external onlyILPToken {
@@ -183,7 +188,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Set the minimum stake amount
+     * @notice Set the minimum stake amount
+     * @dev This function is called by the owner.
      * @param _minStakeAmount The new minimum stake amount.
      */
     function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
@@ -192,7 +198,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
     //====== service functions ======//
     /**
-     * @dev Stake Native Coin to the LP Pool.
+     * @notice Stake Native Coin to the LP Pool.
+     * @dev Prevents reentrancy attack
      */
     function stake() external payable nonReentrant {
         require(msg.value >= minStakeAmount, "LpPool: amount should be greater than minStakeAmount");
@@ -209,7 +216,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
      /**
-     * @dev Unstake from the LP Pool.
+     * @notice Unstake from the LP Pool.
+     * @dev Prevents reentrancy attack
      * @param _amount The amount to unstake.
      */
     function unstake(uint128 _amount) external nonReentrant {
@@ -247,14 +255,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Receive unstaked amount from the InviCore contract.
+     * @notice Receive unstaked amount from the InviCore contract.
+     * @dev This function is called by the InviCore contract.
      */
     function receiveUnstaked() external payable onlyInviCore {
         unstakedAmount += uint128(msg.value);
     }
 
     /**
-     * @dev Send the unstaked amount to the unstake request recipients.
+     * @notice Send the unstaked amount to the unstake request recipients.
+     * @dev Prevents reentrancy attack
      */
     function splitUnstakedAmount() external nonReentrant {
         // require contract balance to be above totalNativeRewardAmount
@@ -289,7 +299,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Claim the claimable unstaked amount.
+     * @notice Claim the claimable unstaked amount.
+     * @dev Prevents reentrancy attack
      */
     function claimUnstaked() external nonReentrant {
         require(address(this).balance >= claimableUnstakeAmount[msg.sender], "LpPool: Insufficient claimable amount");
@@ -304,7 +315,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
     
     /**
-     * @dev Distribute native rewards to LP holders.
+     * @notice Distribute native rewards to LP holders.
+     * @dev This function is called by the InviCore contract.
      */
     function distributeNativeReward() external payable onlyInviCore {
         uint128 totalILPHoldersCount = iLP.totalILPHoldersCount();
@@ -324,7 +336,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Distribute INVI token rewards to LP holders.
+     * @notice Distribute INVI token rewards to LP holders.
+     * @dev Prevents reentrancy attack
      */
     function distributeInviTokenReward() external nonReentrant {
         require(block.timestamp  >= inviRewardInterval + lastInviRewardedTime, "LpPool: Invi reward interval not passed");
@@ -351,7 +364,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
     
     /**
-     * @dev Claim the native coin rewards.
+     * @notice Claim the native coin rewards.
+     * @dev Prevents reentrancy attack
      */
     function claimNativeReward() external nonReentrant {
         require(nativeRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
@@ -365,7 +379,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Claim the INVI token rewards.
+     * @notice Claim the INVI token rewards.
+     * @dev Prevents reentrancy attack
      */
     function claimInviReward() external nonReentrant {
         require(inviRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");

@@ -25,8 +25,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
-    bool private setStakeNFT;
-    bool private setPriceManager;
+    bool private _setStakeNFTContract;
+    bool private _setPriceManager;
     bool private _locked;
     //====== modifiers ======// 
     modifier nonReentrant() {
@@ -47,8 +47,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
 
-        setStakeNFT = false;
-        setPriceManager = false;
+        _setStakeNFTContract = false;
+        _setPriceManager = false;
     }
 
     //====== modifiers ======//
@@ -56,7 +56,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     //====== getter functions ======//
 
     /**
-     * @dev Creates and returns the lend information for a given NFT ID.
+     * @notice Creates and returns the lend information for a given NFT ID.
      * @param _nftId The ID of the NFT.
      * @param _slippage The slippage value.
      * @return lendInfo The lend information.
@@ -76,7 +76,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Retrieves the lend information for a given NFT ID.
+     * @notice Retrieves the lend information for a given NFT ID.
      * @param _nftId The ID of the NFT.
      * @return lendInfo The lend information.
      */
@@ -86,7 +86,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
     
     /**
-     * @dev gets current lend ratio
+     * @notice gets current lend ratio
      * @return current lend ratio
      */
     function getLendRatio() public view returns (uint256) {
@@ -95,7 +95,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Calculates and returns the lent amount based on the principal value of the NFT.
+     * @notice Calculates and returns the lent amount based on the principal value of the NFT.
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
@@ -115,41 +115,43 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
 
     //====== setter functions ======//
-
     /**
      * @notice Sets the StakeNFT contract address.
-     * @dev can be set only once
+     * @dev can be set only once by owner
      * @param _stakeNFTContract The address of the StakeNFT contract.
      */
     function setStakeNFTContract(address _stakeNFTContract) external onlyOwner {
-        require(setStakeNFT == false, "LendingPool: stakeNFT contract already set");
+        require(_setStakeNFTContract == false, "LendingPool: stakeNFT contract already set");
         stakeNFTContract = StakeNFT(_stakeNFTContract);
-        setStakeNFT = true;
+        _setStakeNFTContract = true;
     }
 
     /**
      * @notice Sets the PriceManager contract address.
-     * @dev can be set only once
+     * @dev can be set only once by owner
      * @param _priceManager The address of the PriceManager contract.
      */
     function setPriceManagerAddress(address _priceManager) external onlyOwner {
-        require(setPriceManager == false, "LendingPool: priceManager contract already set");
+        require(_setPriceManager == false, "LendingPool: priceManager contract already set");
         priceManager = PriceManager(_priceManager);
-        setPriceManager = true;
+        _setPriceManager = true;
     }
 
     /**
-     * @dev Sets the maximum lend ratio.
+     * @notice Sets the maximum lend ratio.
+     * @dev can be set only by owner
      * @param _maxLendRatio The maximum lend ratio value.
      */
     function setMaxLendRatio(uint32 _maxLendRatio) external onlyOwner {
+        require(_maxLendRatio <= LEND_RATIO_UNIT, "LendingPool: invalid max lend ratio");
         maxLendRatio = _maxLendRatio;
     }
 
     //====== service functions ======//
 
     /**
-     * @dev Allows users to lend inviTokens by staking NFTs.
+     * @notice Allows users to lend inviTokens by staking NFTs.
+     * @dev Prevents reentrancy attacks.
      * @param _lendInfo The lend information.
      */
     function lend(LendInfo memory _lendInfo) external nonReentrant {
@@ -163,7 +165,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Allows users to repay the lent inviTokens by unstaking NFTs.
+     * @notice Allows users to repay the lent inviTokens by unstaking NFTs.
+     * @dev Prevents reentrancy attacks.
      * @param _nftId The ID of the NFT.
      */
     function repay(uint _nftId) external nonReentrant {
@@ -179,7 +182,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     //===== utils functions ======//
     /**
-     * @dev Verifies the lend information provided by the user.
+     * @notice Verifies the lend information provided by the user.
      * @param _lendInfo The lend information.
      * @param _user The address of the message sender.
      * @return lendAmount The verified lend amount.
@@ -193,7 +196,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Deletes the lend information for a given NFT ID.
+     * @notice Deletes the lend information for a given NFT ID.
      * @param _nftId The ID of the NFT.
      */
     function deleteLendInfo(uint _nftId) private {

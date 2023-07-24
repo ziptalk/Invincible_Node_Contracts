@@ -11,7 +11,13 @@ string constant INVI_TOKEN_FULL_NAME = "Invi Test Token";
 string constant INVI_TOKEN_NAME = "INVITEST";
 
 contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
-    //------ contracts ------//
+    //------ Private Variables ------//
+    bool private _setLendingPoolAddress;
+    bool private _setInviTokenStakeAddress;
+    bool private _setLpPoolAddress;
+    bool private _setInviSwapPoolAddress;
+
+    //------ contract addresses ------//
     address public lendingPoolAddress;
     address public inviTokenStakeAddress;
     address public lpPoolAddress;
@@ -25,6 +31,9 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint256 public lastMintAmountChange;
 
     //====== initializer ======//
+    /**
+     * @notice Initializes the contract.
+     */
     function initialize() initializer public {
         __ERC20_init(INVI_TOKEN_FULL_NAME, INVI_TOKEN_NAME);
         __Ownable_init();
@@ -38,6 +47,11 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         mintAmountChangeInterval = 10 days; // 10 days
         lastMintAmountChange = block.timestamp - mintAmountChangeInterval;
         /////////////////////////////////////////////////////////////
+
+        _setLendingPoolAddress = false;
+        _setInviTokenStakeAddress = false;
+        _setLpPoolAddress = false;
+        _setInviSwapPoolAddress = false;
     }
 
     //====== modifier ======//
@@ -53,50 +67,54 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //====== setter functions ======//
     /**
-     * @dev set lendingPoolAddress
+     * @notice set lendingPoolAddress
+     * @dev can be set only once by owner
      * @param _lendingPoolAddr lendingPoolAddress
      */
     function setLendingPoolAddress(address _lendingPoolAddr) onlyOwner external {
+        require(_setLendingPoolAddress == false, "InviToken: lendingPool contract already set");
         lendingPoolAddress = _lendingPoolAddr;
+        _setLendingPoolAddress = true;
     }
 
     /**
-     * @dev set lpPoolAddress
+     * @notice set lpPoolAddress
+     * @dev can be set only once by owner
      * @param _lpPoolAddr lpPoolAddress
      */
     function setLpPoolAddress(address _lpPoolAddr) onlyOwner external {
+        require(_setLpPoolAddress == false, "InviToken: lpPool contract already set");
         lpPoolAddress = _lpPoolAddr;
+        _setLpPoolAddress = true;
     }
 
     /**
-     * @dev set inviTokenStakeAddress
+     * @notice set inviTokenStakeAddress
+     * @dev can be set only once by owner
      * @param _inviTokenStakeAddr inviTokenStakeAddress
      */
     function setInviTokenStakeAddress(address _inviTokenStakeAddr) onlyOwner external {
+        require(_setInviTokenStakeAddress == false, "InviToken: inviTokenStake contract already set");
         inviTokenStakeAddress = _inviTokenStakeAddr;
+        _setInviTokenStakeAddress = true;
     }
 
     /**
-     * @dev set inviSwapPoolAddress
+     * @notice set inviSwapPoolAddress
+     * @dev can be set only once by owner
      * @param _inviSwapPoolAddr inviSwapPoolAddress
      */
     function setInviSwapPoolAddress(address _inviSwapPoolAddr) onlyOwner external {
+        require(_setInviSwapPoolAddress == false, "InviToken: inviSwapPool contract already set");
         inviSwapPoolAddress = _inviSwapPoolAddr;
-    }
-
-    /**
-     * @dev set mint amount
-     * @param _amount mint amount
-     */
-    function setMintAmount(uint128 _amount) onlyOwner external {
-        require(block.timestamp > lastMintAmountChange + mintAmountChangeInterval, "InviToken: mint amount cannot be changed now");
-        regularMintAmount = _amount;
+        _setInviSwapPoolAddress = true;
     }
 
     //====== service functions ======//
     /**
-     * @dev mint token regularly to this and other contracts
+     * @notice mint token regularly to this and other contracts
      * @notice 20% to lendingPool, 15% to inviTokenStake, 15% to lpPool
+     * @dev can be called only by owner
      */
     function regularMinting() external onlyOwner {
         require(block.timestamp > lastMinted + mintInterval, "InviToken: mint interval is not passed");
@@ -119,16 +137,18 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev send invi token to receiver (only owner can call)
+     * @notice send invi token to receiver (only owner can call)
      * @param _receiver receiver address
      * @param _amount transfer amount
+     * @dev can be called only by owner
      */
     function sendInvi(address _receiver, uint128 _amount) external onlyOwner {
         _transfer(address(this), _receiver, _amount);
     }
 
     /**
-     * @dev transfer token used only by allowed contracts
+     * @notice transfer token used only by allowed contracts
+     * @dev can be called only by allowed contracts (inviTokenStake, lendingPool, inviSwapPool)
      * @param _sender sender address
      * @param _receiver receiver address
      * @param _amount transfer amount
@@ -139,7 +159,8 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev burn lent token from lendingPool
+     * @notice burn lent token from lendingPool
+     * @dev can be called only by lendingPool
      * @param _account target address
      * @param _amount burn amount
      */

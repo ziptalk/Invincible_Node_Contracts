@@ -10,17 +10,16 @@ import "../LiquidityProviderPool.sol";
 string constant ILP_TOKEN_FULL_NAME = "Invi Liquidity Provider Token";
 string constant ILP_TOKEN_NAME = "ILP";
 
-
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     LiquidityProviderPool public lpPoolContract;
-    uint128 public totalILPHoldersCount;
     mapping(uint128 => address) public ILPHolders;
-    bool setLpPool;
+    uint128 public totalILPHoldersCount;
+    bool _setLpPoolContract;
 
     //====== modifiers ======//
     /**
-     * @dev Throws if called by any account other than the lpPool contract.
+     * @notice Throws if called by any account other than the lpPool contract.
      */
     modifier onlyLPPool {
         require(msg.sender == address(lpPoolContract), "ILP: not lpPool contract");
@@ -29,14 +28,14 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
     //====== initializer ======//
     /**
-     * @dev Initializes the contract.
+     * @notice Initializes the contract.
      */
     function initialize() initializer public {
         __ERC20_init(ILP_TOKEN_FULL_NAME, ILP_TOKEN_NAME);
         __Ownable_init();
 
         totalILPHoldersCount = 0;
-        setLpPool = false;
+        _setLpPoolContract = false;
     }
 
     //====== getter functions ======//
@@ -44,18 +43,19 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //======setter functions ======//
     /**
      * @notice Sets the lpPool contract address.
-     * @dev can be set only once
+     * @dev can be set only once by owner
      * @param _lpPoolAddress lpPoolAddress
      */
     function setLpPoolAddress(address _lpPoolAddress) onlyOwner external {
-        require(setLpPool == false, "ILP: lpPool contract already set");
+        require(_setLpPoolContract == false, "ILP: lpPool contract already set");
         lpPoolContract = LiquidityProviderPool(_lpPoolAddress);
-        setLpPool = true;
+        _setLpPoolContract = true;
     }
 
     //====== service functions ======//
     /**
      * @notice Mints Token to target account.
+     * @dev can be called only by lpPool contract
      * @param _account target account to mint Token
      * @param _amount amount to mint
      */
