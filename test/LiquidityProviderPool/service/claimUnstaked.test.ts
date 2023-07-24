@@ -48,7 +48,7 @@ describe("LpPool service test", function () {
     }
     // get lp pool balance
     const lpPoolBalance = await ethers.provider.getBalance(lpPoolContract.address);
-    console.log("lpPoolBalance: ", lpPoolBalance.toString());
+    console.log("lpPoolBalance  : ", lpPoolBalance.toString());
 
     // get claimable amount
     const claimableAmount = await lpPoolContract.connect(LP).claimableUnstakeAmount(LP.address);

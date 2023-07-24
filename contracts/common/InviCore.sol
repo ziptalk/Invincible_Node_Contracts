@@ -94,7 +94,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stTokenDistributePeriod = 1 minutes; // test: 1min / main: 1hour
 
         _locked = false;
-        minStakeAmount = 10**16;
+        minStakeAmount = 10**15; // 0.001
     }
 
     //====== modifier functions ======//
@@ -363,20 +363,19 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 lpPoolReward = stakersReward *  lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint128 inviTokenStakeReward = stakersReward * inviTokenStakeRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         // update totalNFTReward
-        totalNFTRewards -= userReward;
+        totalNFTRewards -= rewardAmount;
         // create unstake request for user (principal + reward)
         UnstakeRequest memory request = UnstakeRequest({
             recipient: msg.sender,
             fee: stakeInfo.protocolFee, 
             amount: stakeInfo.principal + userReward, 
             requestType: 0, 
-            nftId: _nftTokenId
+            nftId: _nftTokenId 
         });
 
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
         
-        //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
         if (lpPoolReward > 0) {
             // create unstake request for LPs
             UnstakeRequest memory lpRequest = UnstakeRequest({
@@ -414,7 +413,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update unstake request amount
         unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
-
         emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
@@ -616,6 +614,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // remove it later
     receive () external payable {}
+
 
     fallback () external payable {}
 }

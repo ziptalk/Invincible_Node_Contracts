@@ -131,11 +131,11 @@ export const setInit = async (address: any, network: string) => {
       //set lendingPool init condition
       tx = await lendingPoolContract.connect(deployer).setStakeNFTContract(stakeNFTContract.address, { nonce: nonce++ });
       await tx.wait();
-      tx = await lendingPoolContract.connect(deployer).setPriceManager(priceManagerContract.address, { nonce: nonce++ });
-      await tx.wait();
+      // tx = await lendingPoolContract.connect(deployer).setPriceManager(priceManagerContract.address, { nonce: nonce++ });
+      // await tx.wait();
       console.log("lendingPool init condition set at " + nonce + "");
     } catch (e) {
-      console.log("(error)lendingPool init condition set failed at " + nonce);
+      console.log("(error)lendingPool init condition set failed at " + nonce, e);
     }
   };
 
@@ -150,7 +150,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviCore init condition set at " + nonce + "");
     } catch (e) {
-      console.log("(error)inviCore init condition set failed at " + nonce);
+      console.log("(error)inviCore init condition set failed at " + nonce, e);
     }
   };
 
@@ -161,7 +161,7 @@ export const setInit = async (address: any, network: string) => {
       await tx.wait();
       console.log("inviSwapPool init condition set at " + nonce + "");
     } catch (e) {
-      console.log("(error)inviSwapPool init condition set failed at " + nonce);
+      console.log("(error)inviSwapPool init condition set failed at " + nonce, e);
     }
   };
 
@@ -177,5 +177,5 @@ export const setInit = async (address: any, network: string) => {
 };
 
 //=================== when have error =================== //
-// let address = klaytnTestAddress.testnet;
+// let address = klaytnTestAddress.mainnet;
 // setInit(address, "default");

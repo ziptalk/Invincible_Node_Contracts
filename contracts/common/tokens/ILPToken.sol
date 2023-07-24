@@ -8,7 +8,7 @@ import "../lib/AddressUtils.sol";
 import "../LiquidityProviderPool.sol";
 
 string constant ILP_TOKEN_FULL_NAME = "Invi Liquidity Provider Token";
-string constant ILP_TOKEN_NAME = "ILP";
+string constant ILP_TOKEN_NAME = "ILPTest";
 
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//

@@ -8,14 +8,25 @@ import { bfcLiveAddress } from "./addresses/liveAddresses/address.bfc";
 import { evmosLiveAddress } from "./addresses/liveAddresses/address.evmos";
 import { klaytnLiveAddress } from "./addresses/liveAddresses/address.klaytn";
 
+const contractLists = [
+  "InviCore", // 0
+  "LiquidityProviderPool", // 1
+  "StakeNFT", // 2
+  "InviTokenStake", // 3
+  "LendingPool", // 4
+  "PriceManager", // 5
+  "InviToken", // 6
+  "ILPToken", // 7
+];
+
 export const targets = {
   //========= deploy contract =========//
   network: "BIFROST",
   networkType: "MAINNET",
 
   // ======== upgrade Addresses ========//
-  upgradingContract: "InviTokenStake",
-  upgradingContractAddress: klaytnTestAddress.testnet.inviTokenStakeContractAddress,
+  upgradingContract: contractLists[1],
+  upgradingContractAddress: klaytnTestAddress.testnet.lpPoolContractAddress,
 
   // ======== test Addresses ========//
   testNetworkType: "MAINNET",
