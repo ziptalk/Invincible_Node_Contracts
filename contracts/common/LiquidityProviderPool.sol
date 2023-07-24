@@ -55,7 +55,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint256 public totalUnstakeRequestAmount;
 
     //------events------//
-    event Stake(uint amount);
+    event Stake(address indexed user, uint128 indexed amount);
+    event Unstake(address indexed user, uint128 indexed amount);
 
     bool private _locked;
     //====== modifiers ======// 
@@ -213,6 +214,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     
         // request inviCore
         inviCoreContract.stakeLp{value: stakeAmount}();
+
+        emit Stake(msg.sender, stakeAmount);
     }
 
      /**
@@ -252,6 +255,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         // update unstake request
         unstakeRequests[unstakeRequestsRear++] = unstakeRequest;
         totalUnstakeRequestAmount += _amount;
+
+        emit Unstake (msg.sender, _amount);
     }
 
     /**

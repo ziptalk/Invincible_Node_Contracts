@@ -60,8 +60,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (address => uint128) public claimableAmount;
 
     //------events------//
-    event Stake(uint128 indexed amount);
-    event Unstake(uint128 indexed amount);
+    event Stake(address indexed user, uint128 indexed amount);
+    event Unstake(address indexed user, uint128 indexed amount);
     
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
@@ -332,7 +332,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
 
-        emit Stake(_stakeInfo.principal);
+        emit Stake(msg.sender, _stakeInfo.principal);
         return nftId;
     }
 
@@ -413,7 +413,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update unstake request amount
         unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
-        emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+        emit Unstake(msg.sender, stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
     /**
@@ -460,7 +460,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update stTokenRewardTime
         lastStTokenDistributeTime = block.timestamp;
-        emit Unstake(lpReward + leftRewards);
+        emit Unstake(msg.sender, lpReward + leftRewards);
     }
 
     /**
@@ -471,7 +471,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function stakeLp() external payable onlyLpPool nonReentrant {
         // stake 
         liquidStakingContract.stake{value : msg.value}();
-        emit Stake(uint128(msg.value));
+        emit Stake(msg.sender, uint128(msg.value));
     }
 
     /**
@@ -500,7 +500,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequests[unstakeRequestsRear++] = lpRequest;
         unstakeRequestAmount += _requestAmount;
 
-        emit Unstake(_requestAmount);
+        emit Unstake(msg.sender, _requestAmount);
     }
 
     /**

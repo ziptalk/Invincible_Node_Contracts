@@ -28,6 +28,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
+    event Lend(address indexed user, uint128 indexed principal, uint128 indexed lentAmount);
+    event Repay(address indexed user, uint128 indexed returnAmount);
+
     //====== modifiers ======// 
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
@@ -163,6 +166,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
         nftLentTime[_lendInfo.nftId] = block.timestamp;
         inviToken.transfer(_lendInfo.user, lendAmount);
+
+        emit Lend(_lendInfo.user, _lendInfo.principal, _lendInfo.lentAmount);
     }
 
     /**
@@ -179,6 +184,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         totalLentAmount -= lendInfo.lentAmount;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
         deleteLendInfo(_nftId);
+
+        emit Repay(msg.sender, lendInfo.lentAmount);
     }
 
     //===== utils functions ======//
