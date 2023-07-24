@@ -17,7 +17,6 @@ struct StakeInfo{
 struct LendInfo{
     address user;
     uint128 principal;
-    uint128 minLendAmount;
     uint128 lentAmount;
     uint32 nftId;
 }
