@@ -285,6 +285,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
             // if still locked
             if (stakeInfos[nftId].lockEnd > block.timestamp) {
+                uint256 prevLockPeriod = stakeInfo.lockPeriod;
                 uint128 _lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
                 uint128 _decreaseAmount = _lackAmount * _lentAmount / _totalLentAmount;
                 // update stakedAmount
@@ -304,6 +305,9 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                     }
                     // lock Period decrease 
                     stakeInfo.lockPeriod = stakeInfo.lockEnd - stakeInfo.lockStart;
+                    // update protocol fee
+                    uint256 updatedFee = stakeInfo.protocolFee * stakeInfo.lockPeriod / prevLockPeriod;
+                    stakeInfo.protocolFee = uint32(updatedFee);
                 }
                 // update leverageRatio
                 uint128 leverageRatio = stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal);

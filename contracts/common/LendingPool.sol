@@ -22,12 +22,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     uint32 public maxLendRatio;
     uint128 public totalLentAmount;
-    mapping(uint => LendInfo) public lendInfos;
-    mapping(uint => uint) public nftLentTime;
-
     bool private _setStakeNFTContract;
     bool private _setPriceManager;
     bool private _locked;
+    mapping(uint => LendInfo) public lendInfos;
+    mapping(uint => uint) public nftLentTime;
+
     //====== modifiers ======// 
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
@@ -46,7 +46,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         inviToken = InviToken(_inviTokenAddr);
         maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
-
         _setStakeNFTContract = false;
         _setPriceManager = false;
     }
@@ -54,21 +53,23 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     //====== modifiers ======//
 
     //====== getter functions ======//
-
     /**
      * @notice Creates and returns the lend information for a given NFT ID.
+     * @notice Can lend from the principal and reward amount of the NFT.
      * @param _nftId The ID of the NFT.
      * @param _slippage The slippage value.
      * @return lendInfo The lend information.
      */
     function createLendInfo(uint32 _nftId, uint32 _slippage) external view returns (LendInfo memory) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint256 lendAmount = getLendAmount(stakeInfo.principal);
+        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
+        uint128 principal = stakeInfo.principal + rewardAmount;
+        uint256 lendAmount = getLendAmount(principal); // lend from principal and reward amount
         uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
         LendInfo memory lendInfo = LendInfo({
             user: stakeInfo.user, 
             nftId: _nftId, 
-            principal: stakeInfo.principal, 
+            principal: principal, 
             minLendAmount: minLendAmount, 
             lentAmount: 0
         });
