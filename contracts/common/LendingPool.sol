@@ -57,29 +57,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     /**
-     * @notice Creates and returns the lend information for a given NFT ID.
-     * @notice Can lend from the principal and reward amount of the NFT.
-     * @param _nftId The ID of the NFT.
-     * @param _slippage The slippage value.
-     * @return lendInfo The lend information.
-     */
-    function createLendInfo(uint32 _nftId, uint32 _slippage) external view returns (LendInfo memory) {
-        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
-        uint128 principal = stakeInfo.principal + rewardAmount;
-        uint256 lendAmount = getLendAmount(principal); // lend from principal and reward amount
-        uint128 minLendAmount = uint128(lendAmount) * (100 * SLIPPAGE_UNIT - _slippage) / (100 * SLIPPAGE_UNIT);
-        LendInfo memory lendInfo = LendInfo({
-            user: stakeInfo.user, 
-            nftId: _nftId, 
-            principal: principal, 
-            minLendAmount: minLendAmount, 
-            lentAmount: 0
-        });
-        return lendInfo;
-    }
-
-    /**
      * @notice Retrieves the lend information for a given NFT ID.
      * @param _nftId The ID of the NFT.
      * @return lendInfo The lend information.
@@ -103,7 +80,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
-    function getLendAmount(uint128 _amount) public view returns (uint256) {
+    function getMaxLendAmount(uint128 _amount) public view returns (uint256) {
         //===== Old version =====//
         // uint128 nativePrice = priceManager.getNativePrice();
         // uint128 inviPrice = priceManager.getInviPrice();
@@ -152,22 +129,35 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-
     /**
-     * @notice Allows users to lend inviTokens by staking NFTs.
-     * @dev Prevents reentrancy attacks.
-     * @param _lendInfo The lend information.
+     * @notice lend inviToken by staking NFTs.
+     * @param _nftId target nft
+     * @param _requestAmount amount to lend
      */
-    function lend(LendInfo memory _lendInfo) external nonReentrant {
-        uint256 lendAmount = _verifyLendInfo(_lendInfo, msg.sender);
-        _lendInfo.lentAmount = uint128(lendAmount);
-        totalLentAmount += _lendInfo.lentAmount;
-        lendInfos[_lendInfo.nftId] = _lendInfo;
-        stakeNFTContract.setNFTIsLent(_lendInfo.nftId, true);
-        nftLentTime[_lendInfo.nftId] = block.timestamp;
-        inviToken.transfer(_lendInfo.user, lendAmount);
+    function lend(uint32 _nftId, uint128 _requestAmount) external nonReentrant {
+        require(_requestAmount <= inviToken.balanceOf(address(this)), "LendingPool: insufficient balance");
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
+        require(stakeInfo.user == msg.sender, "LendingPool: invalid user");
+        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
+        uint128 principal = stakeInfo.principal + rewardAmount;
+        uint128 maxLendAmount = uint128(getMaxLendAmount(principal));
+        
+        require(_requestAmount <= maxLendAmount, "LendingPool: invalid request amount");
 
-        emit Lend(_lendInfo.user, _lendInfo.principal, _lendInfo.lentAmount);
+        totalLentAmount += _requestAmount;
+
+        LendInfo memory lendInfo = LendInfo({
+            user: stakeInfo.user, 
+            nftId: _nftId, 
+            principal: principal, 
+            lentAmount: _requestAmount
+        });
+        lendInfos[_nftId] = lendInfo;
+        stakeNFTContract.setNFTIsLent(lendInfo.nftId, true);
+        nftLentTime[_nftId] = block.timestamp;
+        inviToken.transfer(lendInfo.user, _requestAmount);
+
+        emit Lend(lendInfo.user, lendInfo.principal, lendInfo.lentAmount);
     }
 
     /**
@@ -189,20 +179,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     //===== utils functions ======//
-    /**
-     * @notice Verifies the lend information provided by the user.
-     * @param _lendInfo The lend information.
-     * @param _user The address of the message sender.
-     * @return lendAmount The verified lend amount.
-     */
-    function _verifyLendInfo(LendInfo memory _lendInfo, address _user) private view returns (uint256) {
-        require(_lendInfo.user == _user, "LendingPool: invalid user");
-        require(stakeNFTContract.isOwner(_lendInfo.nftId, _lendInfo.user), "LendingPool: not owner of NFT");
-        uint256 lendAmount = getLendAmount(_lendInfo.principal);
-        require(_lendInfo.minLendAmount <= lendAmount, "LendingPool: invalid min lend amount");
-        return lendAmount;
-    }
-
     /**
      * @notice Deletes the lend information for a given NFT ID.
      * @param _nftId The ID of the NFT.
