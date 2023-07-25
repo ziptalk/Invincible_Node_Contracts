@@ -17,11 +17,21 @@ contract StToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     }
 
     //====== service functions ======//
-    function mintToken(address _account, uint _amount) onlyOwner external {
+    function mintToken(address _account, uint _amount) public {
         _mint(_account, _amount);
     }
 
-    function burnToken(address _account, uint _amount) onlyOwner external  {
+    function burnToken(address _account, uint _amount) public {
         _burn(_account, _amount);
+    }
+
+    function stake() external payable  {
+        uint _amount = msg.value;
+        _mint(msg.sender, _amount);
+    }
+
+    function unstake(uint _amount) external {
+        _burn(msg.sender, _amount);
+        payable(msg.sender).transfer(_amount);
     }
 }
