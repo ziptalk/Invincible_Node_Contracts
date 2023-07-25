@@ -399,8 +399,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             unstakeRequests[unstakeRequestsRear++] = inviStakerRequest;
         }
 
-        //burn NFT & delete stakeInfo
-        stakeNFTContract.deleteStakeInfo(_nftTokenId);
+        //burn NFT
         stakeNFTContract.deleteNFTOwnership(msg.sender, _nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
 

@@ -137,7 +137,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function lend(uint32 _nftId, uint128 _requestAmount) external nonReentrant {
         require(_requestAmount <= inviToken.balanceOf(address(this)), "LendingPool: insufficient balance");
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        require(stakeInfo.user == msg.sender, "LendingPool: invalid user");
+        require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint128 principal = stakeInfo.principal + rewardAmount;
         uint128 maxLendAmount = uint128(getMaxLendAmount(principal));
@@ -147,10 +147,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         totalLentAmount += _requestAmount;
 
         LendInfo memory lendInfo = LendInfo({
-            user: stakeInfo.user, 
-            nftId: _nftId, 
+            user: stakeInfo.user,  
             principal: principal, 
-            lentAmount: _requestAmount
+            lentAmount: _requestAmount,
+            nftId: _nftId
         });
         lendInfos[_nftId] = lendInfo;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, true);
@@ -168,14 +168,16 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function repay(uint _nftId) external nonReentrant {
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
+        uint128 repayAmount = lendInfo.lentAmount;
         require(lendInfo.user != address(0), "LendingPool: nft id not found");
-        require(lendInfo.lentAmount <= inviToken.balanceOf(msg.sender), "LendingPool: insufficient balance");
-        inviToken.transferToken(msg.sender, address(this), lendInfo.lentAmount);
-        totalLentAmount -= lendInfo.lentAmount;
-        stakeNFTContract.setNFTIsLent(lendInfo.nftId, false);
-        deleteLendInfo(_nftId);
+        require(repayAmount <= inviToken.balanceOf(msg.sender), "LendingPool: insufficient balance");
+        inviToken.transferToken(msg.sender, address(this), repayAmount);
+        totalLentAmount -= repayAmount; // decrease total lent amount
+        stakeNFTContract.setNFTIsLent(lendInfo.nftId, false); // set isLent to false
+        nftLentTime[_nftId] = 0; // reset time
+        deleteLendInfo(_nftId); // delete lend info
 
-        emit Repay(msg.sender, lendInfo.lentAmount);
+        emit Repay(msg.sender, repayAmount);
     }
 
     //===== utils functions ======//

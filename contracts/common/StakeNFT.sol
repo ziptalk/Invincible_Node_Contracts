@@ -249,15 +249,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @notice Deletes the stake information associated with a given NFT token ID.
-     * @dev This function is only callable by the InviCore contract.
-     * @param _nftTokenId The ID of the NFT token.
-     */
-    function deleteStakeInfo(uint32 _nftTokenId) public onlyInviCore {
-        delete stakeInfos[_nftTokenId];
-    }
-
-    /**
      * @notice Deletes the ownership of an NFT from a specific address.
      * @dev This function is only callable by the InviCore contract.
      * @param _nftOwner The address of the NFT owner.
