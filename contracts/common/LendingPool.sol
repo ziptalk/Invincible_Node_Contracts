@@ -94,6 +94,13 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         return lendAmount;
     }
 
+    function getMaxLendAmountByNFT(uint32 _nftId) public view returns (uint256) {
+        StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
+        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
+        uint128 principal = stakeInfo.principal + rewardAmount;
+        return getMaxLendAmount(principal);
+    }
+
 
     //====== setter functions ======//
     /**

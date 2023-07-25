@@ -191,8 +191,15 @@ export const deployAllContract = async (network: string) => {
     liquidStakingAddress = klaytnLiveAddress.mainnet.stakelyContractAddress;
     networkId = 2;
   } else {
-    // report error
-    console.log("invalid network type error");
+    //========== Test on Hardhat ==========//
+    console.log("Testing on hardhat");
+    // deploy stToken and liquidStaking contract
+    const StTokenContract = await ethers.getContractFactory("StToken");
+    const stTokenContract = await upgrades.deployProxy(StTokenContract, [], { initializer: "initialize" });
+    await stTokenContract.deployed();
+
+    stTokenContractAddress = stTokenContract.address;
+    liquidStakingAddress = stTokenContract.address;
   }
 
   console.log("stTokenContractAddress: ", stTokenContractAddress);
