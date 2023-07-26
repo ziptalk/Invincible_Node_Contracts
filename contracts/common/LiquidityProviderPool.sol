@@ -323,15 +323,17 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev This function is called by the InviCore contract.
      */
     function distributeNativeReward() external payable onlyInviCore {
+        require(totalStakedAmount > 0, "LpPool: No staked amount");
         uint128 totalILPHoldersCount = iLP.totalILPHoldersCount();
         for (uint128 i = 0; i < totalILPHoldersCount;) {
             address account = iLP.ILPHolders(i);
-            uint128 rewardAmount = (uint128(msg.value) * stakedAmount[account] / totalStakedAmount);
+            uint256 rewardAmount = msg.value * stakedAmount[account] / totalStakedAmount;
 
+            console.log("reward: ", rewardAmount/10**18);
             // update reward amount
-            nativeRewardAmount[account] += rewardAmount;
-            totalNativeRewardAmount += rewardAmount;
-            totalNativeRewardAmountByAddress[account] += rewardAmount;
+            nativeRewardAmount[account] += uint128(rewardAmount);
+            totalNativeRewardAmount +=  uint128(rewardAmount);
+            totalNativeRewardAmountByAddress[account] += uint128(rewardAmount);
 
             unchecked {i++;}
         }
@@ -373,7 +375,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function claimNativeReward() external nonReentrant {
         require(nativeRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
-        require(address(this).balance > nativeRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
+        require(address(this).balance >= nativeRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
         uint128 rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
         totalNativeRewardAmount -= rewardAmount;

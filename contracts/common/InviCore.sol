@@ -24,6 +24,9 @@ network Ids
  * @dev Main contract for InviToken's staking system
  */
 contract InviCore is Initializable, OwnableUpgradeable {
+    using Logics for uint256;
+    using Logics for uint128;
+    using Logics for uint32;
     //------Contracts / Addresses / Networks ------//
     IERC20 public stToken;
     StakeNFT public stakeNFTContract;
@@ -40,17 +43,17 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //------reward related------//
     uint32 public lpPoolRewardPortion;
     uint32 public inviTokenStakeRewardPortion;
-    uint128 public totalNFTRewards;
+    uint256 public totalNFTRewards;
     //------stake related------//
     uint32 public stakingAPR;
-    uint128 public minStakeAmount;
+    uint256 public minStakeAmount;
     //------unstake related------//
     uint32 public unstakeRequestsFront;
     uint32 public unstakeRequestsRear;
-    uint128 public unstakeRequestAmount;
+    uint256 public unstakeRequestAmount;
     //------other variable------// 
     uint32 public slippage;
-    uint128 public totalClaimableAmount;
+    uint256 public totalClaimableAmount;
     uint256 public lastStTokenDistributeTime;
     uint256 public lastClaimAndSplitUnstakedAmountTime;
     uint256 public stTokenDistributePeriod;
@@ -60,8 +63,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (address => uint128) public claimableAmount;
 
     //------events------//
-    event Stake(address indexed user, uint128 indexed amount);
-    event Unstake(address indexed user, uint128 indexed amount);
+    event Stake(address indexed user, uint256 indexed amount);
+    event Unstake(address indexed user, uint256 indexed amount);
     
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
@@ -112,7 +115,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @param _lockPeriod The lock period.
      * @return stakeInfo The stake information struct.
      */
-    function createStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) public view returns(StakeInfo memory)  {
+    function createStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) internal view returns(StakeInfo memory)  {
         // get lock period
         uint256 lockPeriod = getLockPeriod(_leverageRatio);
         // if provided lock period is less than minimum lock period, set lock period to minimum lock period
@@ -150,7 +153,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @return reward The expected reward.
      */
     function getExpectedReward(uint128 _amount, uint256 _lockPeriod) public view returns (uint) {
-        return ExpectedReward(_amount, _lockPeriod, stakingAPR);
+        uint256 expectedRewards = _amount.ExpectedReward( _lockPeriod, stakingAPR);
+        return expectedRewards;
     }
 
     /**
@@ -159,7 +163,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @return lockPeriod The lock period.
      */
     function getLockPeriod(uint32 _leverageRatio) public pure returns (uint) {
-        return LockPeriod(_leverageRatio);
+        uint32 lockPeriod = _leverageRatio.LockPeriod();
+        return lockPeriod;
     }
 
     /**
@@ -170,7 +175,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
      */
     function getProtocolFee(uint128 _lentAmount, uint32 _leverageRatio) public view returns (uint128) {
         uint128 totalLiquidity = lpPoolContract.getTotalLiquidity();
-        return ProtocolFee(_lentAmount, _leverageRatio, totalLiquidity);
+        uint128 protocolFee = _lentAmount.ProtocolFee(_leverageRatio, totalLiquidity);
+        return protocolFee;
     }
     
     /**
@@ -188,7 +194,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @return stakedAmount The staked amount.
      */
     function getStakedAmount(uint128 _amount, uint32 _leverageRatio) public pure returns (uint128) {
-        return StakedAmount(_amount, _leverageRatio);
+        uint128 stakedAmount = _amount.StakedAmount(_leverageRatio);
+        return stakedAmount;
     }
 
      /**
@@ -427,14 +434,19 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stTokenBalance > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
         uint256 totalReward = stTokenBalance - totalStakedAmount - totalNFTRewards;
-       
+        console.log("stTokenBalance     : ", stTokenBalance );
+        console.log("totalStakedAmount  : ", totalStakedAmount );
+        console.log("totalNFTRewards    : ", totalNFTRewards );
         // check nft rewards 
         uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
-
+        console.log("nftReward          : ", nftReward );
         // update NFT reward
         uint128 leftRewards =  stakeNFTContract.updateReward(uint128(nftReward));
+        console.log("leftRewards        : ", leftRewards );
         totalNFTRewards += uint128(nftReward) - leftRewards;
+        console.log("totalNFTRewards    : ", totalNFTRewards  );
         uint128 lpReward = uint128(totalReward) - uint128(nftReward) + leftRewards;
+        console.log("lpReward           : ", lpReward );
 
         // create unstake request for lps and invi stakers
         if (lpReward > 0) {
@@ -448,6 +460,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             });
             // push request to unstakeRequests
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
+            unstakeRequestAmount += lpReward;
 
              // create unstake event
             if (_networkId == 0 || _networkId == 1) {
@@ -537,6 +550,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
             // update unstakeRequestAmount
             unstakeRequestAmount -= amount;
+
+            // console.log("current balance: ", address(this).balance);
+            // console.log("amount         : ", amount);
             // if normal user
             if (requestType == 0) {
                 claimableAmount[recipient] += amount;

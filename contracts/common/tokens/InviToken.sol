@@ -41,7 +41,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         /////////////////////////////////////////////////////////////
         ///// Set this part /////////////////////////////////////////
         /////////////////////////////////////////////////////////////
-        regularMintAmount = 100000000; // 100 million    
+        regularMintAmount = 10000; // Test: 10000 / Main: 100 million    
         mintInterval = 10 hours; // testnet: 10 hour,  mainnet: 10 days       
         lastMinted = block.timestamp - mintInterval;     
         mintAmountChangeInterval = 10 days; // 10 days
@@ -117,7 +117,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @dev can be called only by owner
      */
     function regularMinting() external onlyOwner {
-        require(block.timestamp > lastMinted + mintInterval, "InviToken: mint interval is not passed");
+        require(block.timestamp > lastMinted + mintInterval, "InviToken: mint interval is not passed");        
       
         uint128 mintAmount = regularMintAmount * INVI_UNIT;
         

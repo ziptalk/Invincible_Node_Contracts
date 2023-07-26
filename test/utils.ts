@@ -13,10 +13,10 @@ export const provideLiquidity = async (
   nonce: number
 ) => {
   try {
-    let tx = await lpPoolContract.connect(user).stake({ value: amount, nonce: nonce });
+    let tx = await lpPoolContract.connect(user).stake({ value: amount });
     await tx.wait();
   } catch (e) {
-    console.log("provideLiquidity failed at " + nonce, e);
+    console.log("provideLiquidity failed at ", e);
   }
 };
 
