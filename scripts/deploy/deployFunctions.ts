@@ -166,6 +166,11 @@ export const deployPriceManager = async (network: string) => {
 
 // deploy all contract
 export const deployAllContract = async (network: string) => {
+  // deploy stToken and liquidStaking contract for test
+  const StTokenContract = await ethers.getContractFactory("StToken");
+  const stTokenContract = await upgrades.deployProxy(StTokenContract, [], { initializer: "initialize" });
+  await stTokenContract.deployed();
+
   if (network === "bifrost_testnet") {
     stTokenContractAddress = bfcLiveAddress.testnet.stBFCContractAddress;
     liquidStakingAddress = bfcLiveAddress.testnet.bfcLiquidStakingContractAddress;
@@ -193,13 +198,10 @@ export const deployAllContract = async (network: string) => {
   } else {
     //========== Test on Hardhat ==========//
     console.log("Testing on hardhat");
-    // deploy stToken and liquidStaking contract
-    const StTokenContract = await ethers.getContractFactory("StToken");
-    const stTokenContract = await upgrades.deployProxy(StTokenContract, [], { initializer: "initialize" });
-    await stTokenContract.deployed();
 
     stTokenContractAddress = stTokenContract.address;
     liquidStakingAddress = stTokenContract.address;
+    networkId = 2; // based on klaytn
   }
 
   console.log("stTokenContractAddress: ", stTokenContractAddress);
@@ -261,5 +263,6 @@ export const deployAllContract = async (network: string) => {
     inviSwapPoolContract,
     inviCoreContract,
     priceManagerContract,
+    stTokenContract,
   };
 };

@@ -18,6 +18,8 @@ let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
 let priceManagerContract: Contract;
 
+let stTokenContract: Contract;
+
 //-----------------------------------------------------------------------------------------------//
 //====================================== Change this part ========================================//
 const network: string = hre.network.name;
@@ -30,6 +32,7 @@ const deploy = async () => {
   console.log("Deploying contracts with the account:", deployer.address);
 
   // deploy contracts
+
   ({
     inviTokenContract,
     iLPTokenContract,
@@ -41,12 +44,14 @@ const deploy = async () => {
     inviSwapPoolContract,
     inviCoreContract,
     priceManagerContract,
+    stTokenContract,
   } = await deployAllContract(network));
 
   console.log("Contracts deployed");
   console.log("Setting initial states...");
 
   let addresses = {
+    stTokenContractAddress: stTokenContract.address,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
     iSPTTokenContractAddress: iSPTTokenContract.address,
@@ -63,6 +68,7 @@ const deploy = async () => {
 
   // return contract addresses
   return {
+    stTokenContractAddress: stTokenContract.address,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
     iSPTTokenContractAddress: iSPTTokenContract.address,
@@ -76,18 +82,12 @@ const deploy = async () => {
   };
 };
 
-const main = async () => {
+export const deployAll = async () => {
   console.log("deploying start ...");
   const ContractAddresses = await deploy();
   console.log("deploying end ...");
   // set init
-  await setInit(ContractAddresses, network);
+  const contracts = await setInit(ContractAddresses, network);
   console.log("ContractAddresses: ", ContractAddresses);
+  return contracts;
 };
-
-try {
-  main();
-} catch (e) {
-  console.error(e);
-  process.exitCode = 1;
-}

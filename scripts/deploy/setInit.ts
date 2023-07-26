@@ -21,12 +21,14 @@ let lendingPoolContract: Contract;
 let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
 let priceManagerContract: Contract;
+let stTokenContract: Contract;
 
 export const setInit = async (address: any, network: string) => {
   const [deployer] = await ethers.getSigners();
   let nonce = await ethers.provider.getTransactionCount(deployer.address);
   let tx;
   console.log("base Nonce : ", nonce, " network : ", network);
+  stTokenContract = await ethers.getContractAt("StToken", address.stTokenContractAddress);
   iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
   inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
   iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
@@ -174,6 +176,20 @@ export const setInit = async (address: any, network: string) => {
   await lendingPoolInit();
   await inviCoreInit();
   await inviSwapPoolInit();
+
+  return {
+    inviTokenContract,
+    iLPTokenContract,
+    iSPTTokenContract,
+    stakeNFTContract,
+    inviTokenStakeContract,
+    lpPoolContract,
+    lendingPoolContract,
+    inviSwapPoolContract,
+    inviCoreContract,
+    priceManagerContract,
+    stTokenContract,
+  };
 };
 
 //=================== when have error =================== //
