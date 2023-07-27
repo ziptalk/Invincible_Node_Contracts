@@ -46,6 +46,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint128 public totalNativeRewardAmount;
     uint128 public totalInviRewardAmount;
     uint128 public totalClaimableInviAmount;
+    uint128 public totalClaimableUnstakeAmount;
 
     uint256 public lastNativeRewardDistributeTime;
     uint256 public inviRewardInterval;
@@ -265,13 +266,18 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function receiveUnstaked() external payable onlyInviCore {
         unstakedAmount += uint128(msg.value);
+        console.log("sending ", msg.value, " to lp Pool");
+        // split unstaked amount if meets the condition
+        if (address(this).balance >= totalNativeRewardAmount && unstakeRequestsFront != unstakeRequestsRear) {
+            splitUnstakedAmount();
+        }
     }
 
     /**
      * @notice Send the unstaked amount to the unstake request recipients.
      * @dev Prevents reentrancy attack
      */
-    function splitUnstakedAmount() external nonReentrant {
+    function splitUnstakedAmount() public nonReentrant {
         // require contract balance to be above totalNativeRewardAmount
         require(address(this).balance >= totalNativeRewardAmount, "LpPool: Insufficient contract balance");
 
@@ -282,11 +288,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint32 rear = unstakeRequestsRear;
         for (uint32 i=front; i< rear;) {
             UnstakeRequestLP storage request = unstakeRequests[i];
+            console.log("lp pool balance: ", address(this).balance);
+            console.log("request amount : ", request.amount);
+            console.log("unstaked Amount: ", unstakedAmount);
             if (request.amount > unstakedAmount) {
                 break;
             }
             // update claimable amount
             claimableUnstakeAmount[request.recipient] += request.amount;
+            totalClaimableUnstakeAmount += request.amount;
+            console.log("claimable amount: ", claimableUnstakeAmount[request.recipient]);
 
             // update unstaked amount
             unstakedAmount -= request.amount;
@@ -313,6 +324,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint128 amount = claimableUnstakeAmount[msg.sender];
         // update values
         claimableUnstakeAmount[msg.sender] = 0;
+        totalClaimableUnstakeAmount -= amount;
 
         (bool send, ) = msg.sender.call{value: amount}("");
         require(send, "Transfer failed");
@@ -327,9 +339,13 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint128 totalILPHoldersCount = iLP.totalILPHoldersCount();
         for (uint128 i = 0; i < totalILPHoldersCount;) {
             address account = iLP.ILPHolders(i);
+            console.log("account: ", account);
             uint256 rewardAmount = msg.value * stakedAmount[account] / totalStakedAmount;
-
-            console.log("reward: ", rewardAmount/10**18);
+            
+            console.log("total value: ", msg.value);
+            console.log("staked amount: ", stakedAmount[account]);
+            console.log("total staked amount: ", totalStakedAmount);
+            console.log("reward: ", rewardAmount);
             // update reward amount
             nativeRewardAmount[account] += uint128(rewardAmount);
             totalNativeRewardAmount +=  uint128(rewardAmount);

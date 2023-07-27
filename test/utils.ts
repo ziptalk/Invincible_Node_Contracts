@@ -95,6 +95,11 @@ export const claimAndSplitCore = async (
 };
 
 export const splitUnstakedLPP = async (lpPoolContract: Contract, user: SignerWithAddress) => {
+  // get unstake requests
+  const unstakeRequestFront = await lpPoolContract.connect(user).unstakeRequestsFront();
+  const unstakeRequestRear = await lpPoolContract.connect(user).unstakeRequestsRear();
+  if (unstakeRequestFront == unstakeRequestRear) return;
+
   const claimAndSplit = await lpPoolContract.connect(user).splitUnstakedAmount();
   await claimAndSplit.wait();
 
@@ -110,12 +115,15 @@ export const checkOverallStatus = async (
   stTokenContract: Contract,
   user: SignerWithAddress
 ) => {
+  console.log("===============Overall Status=================");
   const coreTotalStakedAmount = await inviCoreContract.connect(user).getTotalStakedAmount();
   console.log("coreTotalStakedAmount      : ", ethers.utils.formatEther(coreTotalStakedAmount.toString()));
   const coreStTokenBalance = await stTokenContract.balanceOf(inviCoreContract.address);
   console.log("coreStTokenBalance         : ", ethers.utils.formatEther(coreStTokenBalance.toString()));
   const coreTotalNFTRewards = await inviCoreContract.connect(user).totalNFTRewards();
   console.log("coreTotalNFTRewards        : ", ethers.utils.formatEther(coreTotalNFTRewards.toString()));
+  const coreTotalClaimableAmount = await inviCoreContract.connect(user).totalClaimableAmount();
+  console.log("coreTotalClaimableAmount   : ", ethers.utils.formatEther(coreTotalClaimableAmount.toString()));
   const lpTotalStakedAmount = await lpPoolContract.connect(user).getTotalStakedAmount();
   const lpTotalLentAmount = await lpPoolContract.connect(user).totalLentAmount();
   console.log("lpTotalStakedAmount        : ", ethers.utils.formatEther(lpTotalStakedAmount.toString()));
@@ -126,4 +134,51 @@ export const checkOverallStatus = async (
   console.log("inviCoreBalance            : ", ethers.utils.formatEther(inviCoreBalance.toString()));
   const lpPoolBalance = await hardhatEthers.provider.getBalance(lpPoolContract.address);
   console.log("lpPoolBalance              : ", ethers.utils.formatEther(lpPoolBalance.toString()));
+  const lpPoolTotalNativeReward = await lpPoolContract.connect(user).totalNativeRewardAmount();
+  console.log("lpPoolTotalNativeReward    : ", ethers.utils.formatEther(lpPoolTotalNativeReward.toString()));
+  const lpPoolTotalClaimableUnstakeAmount = await lpPoolContract.connect(user).totalClaimableUnstakeAmount();
+  console.log(
+    "lpPoolTotalClaimableUnstakeAmount    : ",
+    ethers.utils.formatEther(lpPoolTotalClaimableUnstakeAmount.toString())
+  );
+  //const stakeNFTTokenId
+};
+
+export const repayNFT = async (inviCoreContract: Contract, stakeNFTContract: Contract, user: SignerWithAddress) => {
+  // get NFTOwnership
+  const NFTOwnership = await stakeNFTContract.connect(user).getNFTOwnership(user.getAddress());
+  console.log("NFTOwnership: ", NFTOwnership.toString());
+
+  if (NFTOwnership.length === 0) return;
+
+  // get stake Info
+  const stakeInfoNft = await stakeNFTContract.connect(user).stakeInfos(NFTOwnership[0]);
+  console.log("stakeInfoNft: ", stakeInfoNft.toString());
+  // get lock period
+  const nftLockPeriod = stakeInfoNft[1];
+  console.log("lock period: ", nftLockPeriod.toString());
+
+  // pass time until unstake end period
+  await hardhatEthers.provider.send("evm_increaseTime", [nftLockPeriod.toNumber()]);
+  await hardhatEthers.provider.send("evm_mine", []);
+
+  // unstake NFT
+  const unstakeNft = await inviCoreContract.connect(user).repayNFT(NFTOwnership[0]);
+  await unstakeNft.wait();
+};
+
+export const stTokenRewardDistribution = async (
+  inviCoreContract: Contract,
+  stTokenContract: Contract,
+  rewardAmount: BigNumber,
+  user: SignerWithAddress
+) => {
+  // spread rewards to inviCore Contract
+  const spreadRewards = await stTokenContract
+    .connect(user)
+    .spreadRewards(inviCoreContract.address, { value: rewardAmount });
+  await spreadRewards.wait();
+
+  const distributeRewards = await inviCoreContract.connect(user).distributeStTokenReward();
+  await distributeRewards.wait();
 };

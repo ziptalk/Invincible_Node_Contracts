@@ -589,6 +589,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         claimableAmount[msg.sender] = 0;
         (bool sent, ) = msg.sender.call{value : amount }("");
         require(sent, "InviCore: Failed to send coin");
+        console.log("reward claimed: ", amount);
     }
     
     //====== utils function ======//
@@ -615,7 +616,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(_stakeInfo.lockStart >= today && _stakeInfo.lockStart <= today + 86400, "InviCore: Invalid lock start time");
         require(_stakeInfo.lockEnd - _stakeInfo.lockStart == _stakeInfo.lockPeriod, "InviCore: Invalid lock end time");
 
-        // verify lentAmount
+        // verify lentAmount (leverage ratio)
         uint128 lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * LEVERAGE_UNIT) / LEVERAGE_UNIT;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), "InviCore: cannot lend more than max lent amount");
 

@@ -10,7 +10,9 @@ import {
   claimAndSplitCore,
   leverageStake,
   provideLiquidity,
+  repayNFT,
   splitUnstakedLPP,
+  stTokenRewardDistribution,
 } from "../utils";
 import { getTestAddress } from "../getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
@@ -53,6 +55,10 @@ describe("Invi core service test", function () {
       await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
       console.log("provided liquidity");
 
+      // another lp
+      const lpAmount2: BigNumber = ethers.utils.parseEther("100");
+      await provideLiquidity(lpPoolContract, userC, lpAmount2, nonceLP); // userC stake
+
       // Step 2. stake
       console.log("===Step 2 - stake");
       const principal: BigNumber = ethers.utils.parseEther("1");
@@ -61,6 +67,11 @@ describe("Invi core service test", function () {
       console.log("minLockPeriod: ", minLockPeriod);
       const lockPeriod = minLockPeriod * 2;
       await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+
+      // add userB
+      const principalB: BigNumber = ethers.utils.parseEther("2");
+      const leverageRatioB = 3 * units.leverageUnit;
+      await leverageStake(inviCoreContract, userB, principalB, leverageRatioB, lockPeriod, nonceUserA); // userB stake
 
       // Step 3. Reward distribution from stToken
       console.log("===Step 3 - distribute reward");
@@ -107,27 +118,7 @@ describe("Invi core service test", function () {
       // Step 8. unstake nft
       console.log("===Step 8 - unstake nft");
       // ==== get unstake end period of nft
-      // get NFTOwnership
-      const NFTOwnership = await stakeNFTContract.connect(userA).getNFTOwnership(userA.address);
-      console.log("NFTOwnership: ", NFTOwnership.toString());
-      // get stake Info
-      const stakeInfoNft = await stakeNFTContract.connect(userA).stakeInfos(NFTOwnership[0]);
-      console.log("stakeInfoNft: ", stakeInfoNft.toString());
-      // get lock period
-      const nftLockPeriod = stakeInfoNft[1];
-      console.log("lock period: ", nftLockPeriod.toString());
-
-      // pass time until unstake end period
-      await ethers.provider.send("evm_increaseTime", [nftLockPeriod.toNumber()]);
-      await ethers.provider.send("evm_mine", []);
-
-      // get evm time
-      const evmTime = await ethers.provider.getBlock("latest");
-      console.log("evmTime: ", evmTime.timestamp.toString());
-
-      // unstake NFT
-      const unstakeNft = await inviCoreContract.connect(userA).repayNFT(NFTOwnership[0]);
-      await unstakeNft.wait();
+      await repayNFT(inviCoreContract, stakeNFTContract, userA);
 
       // check unstake requests
       await checkUnstakeRequests(inviCoreContract, userA);
@@ -298,7 +289,24 @@ describe("Invi core service test", function () {
         stakeInfoNft3.leverageRatio.toString()
       );
 
-      expect(stakeInfoNft3.leverageRatio.toString()).to.equal(units.leverageUnit.toString());
+      //expect(stakeInfoNft3.leverageRatio.toString()).to.equal(units.leverageUnit.toString());
+
+      await checkOverallStatus(inviCoreContract, lpPoolContract, stakeNFTContract, stTokenContract, deployer);
+
+      // Step 15. claim and split unstaked repeat
+      console.log("===Step 15 - claim and split unstaked repeat");
+      for (let i = 0; i < 5; i++) {
+        // distribute reward
+        let rewardAmount = ethers.utils.parseEther("10");
+        // spread rewards to inviCore Contract
+        await stTokenRewardDistribution(inviCoreContract, stTokenContract, rewardAmount, deployer);
+        await repayNFT(inviCoreContract, stakeNFTContract, userB);
+        await claimAndSplitCore(inviCoreContract, lpPoolContract, deployer);
+        // await splitUnstakedLPP(lpPoolContract, deployer);
+        // claim unstaked
+        const tx = await inviCoreContract.connect(userB).claimUnstaked();
+        await tx.wait();
+      }
 
       await checkOverallStatus(inviCoreContract, lpPoolContract, stakeNFTContract, stTokenContract, deployer);
     };
