@@ -62,7 +62,17 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function mintToken(address _account, uint128 _amount) onlyLPPool external {
         _mint(_account, _amount);
         
-        ILPHolders[totalILPHoldersCount++] = _account;
+        bool exist = false;
+        // if duplicated ILP holder
+        for (uint128 i = 0; i < totalILPHoldersCount; i++) {
+            if (ILPHolders[i] == _account) {
+                exist = true;
+            }
+        }
+        // else update ILPHolderList 
+        if (!exist) {
+            ILPHolders[totalILPHoldersCount++] = _account;
+        }
     }
 
     /**
