@@ -182,3 +182,18 @@ export const stTokenRewardDistribution = async (
   const distributeRewards = await inviCoreContract.connect(user).distributeStTokenReward();
   await distributeRewards.wait();
 };
+
+export const getSwapPoolStatus = async (inviSwapPoolContract: Contract, user: SignerWithAddress) => {
+  // get pool status
+  // lp count
+  const lpCount = await inviSwapPoolContract.lpCount();
+  console.log("lpCount: ", lpCount.toString());
+  const totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
+  console.log("totalLiquidityNative   : ", ethers.utils.formatEther(totalLiquidityNative.toString()));
+  const totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
+  console.log("totalLiquidityInvi     : ", ethers.utils.formatEther(totalLiquidityInvi.toString()));
+  const totalRewardNative = await inviSwapPoolContract.totalRewardNative();
+  console.log("totalRewardNative      : ", ethers.utils.formatEther(totalRewardNative.toString()));
+  const totalRewardInvi = await inviSwapPoolContract.totalRewardInvi();
+  console.log("totalRewardInvi        : ", ethers.utils.formatEther(totalRewardInvi.toString()));
+};

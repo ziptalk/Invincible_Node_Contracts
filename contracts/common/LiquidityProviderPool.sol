@@ -364,10 +364,12 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function distributeInviTokenReward() external nonReentrant {
         require(block.timestamp  >= inviRewardInterval + lastInviRewardedTime, "LpPool: Invi reward interval not passed");
         uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
+        console.log("total invi token: ", totalInviToken);
         require(totalInviToken  > 1000000 + totalClaimableInviAmount, "LpPool: Insufficient invi token to distribute");
         uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
-        uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount) / intervalVar;
+        uint256 rewardTotal = totalInviToken / intervalVar;
         uint128 holderNumber = iLP.totalILPHoldersCount();
+        console.log("holderNumber", holderNumber);
         for (uint128 i = 0; i < holderNumber;) {
             address account = iLP.ILPHolders(i);
             if (stakedAmount[account] == 0) continue;
@@ -411,9 +413,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint128 rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;
-        uint32 inviSlippage = 1000;
         // send invi token to account
-        require(inviToken.transfer(msg.sender, rewardAmount - inviSlippage), "LpPool: Transfer failed");
+        require(inviToken.transfer(msg.sender, rewardAmount), "LpPool: Transfer failed");
     }
     
     //====== utils functions ======//

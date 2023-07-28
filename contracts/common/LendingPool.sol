@@ -9,7 +9,7 @@ import "./lib/Structs.sol";
 import "./lib/Unit.sol";
 import "./tokens/InviToken.sol";
 import "hardhat/console.sol";
-import "./PriceManager.sol";
+import "./swap/InviSwapPool.sol";
 
 /**
  * @title LendingPool
@@ -18,12 +18,12 @@ import "./PriceManager.sol";
 contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
-    PriceManager public priceManager;
+    InviSwapPool public inviSwapPool;
 
     uint32 public maxLendRatio;
     uint128 public totalLentAmount;
     bool private _setStakeNFTContract;
-    bool private _setPriceManager;
+    bool private _setInviSwapPoolContract;
     bool private _locked;
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
@@ -50,7 +50,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
         _setStakeNFTContract = false;
-        _setPriceManager = false;
     }
 
     //====== modifiers ======//
@@ -68,11 +67,17 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     
     /**
      * @notice gets current lend ratio
+     * @dev returns maxLendRatio if currentInviSupply is greater than threshold, else returns maxLendRatio * currentInviSupply / threshold
+     * @dev threshold is 100000
      * @return current lend ratio
      */
     function getLendRatio() public view returns (uint256) {
         uint256 currentInviSupply = inviToken.balanceOf(address(this));
-        return currentInviSupply * maxLendRatio / (currentInviSupply + totalLentAmount);
+        uint256 threshold = 100000; 
+        if (currentInviSupply < threshold) {
+            return maxLendRatio * currentInviSupply / threshold;
+        }
+        return maxLendRatio;
     }
 
     /**
@@ -81,16 +86,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @return The lent amount.
      */
     function getMaxLendAmount(uint128 _amount) public view returns (uint256) {
-        //===== Old version =====//
-        // uint128 nativePrice = priceManager.getNativePrice();
-        // uint128 inviPrice = priceManager.getInviPrice();
-        // uint256 totalInviSupply = uint128(inviToken.balanceOf(address(this)));
-        // uint256 maxLendAmount = _amount * nativePrice * maxLendRatio / (inviPrice * LEND_RATIO_UNIT);
-        // return maxLendAmount * (totalInviSupply - maxLendAmount) / totalInviSupply;
-
-        //===== New version =====//
         uint256 lendRatio = getLendRatio();
-        uint256 lendAmount = _amount * lendRatio / LEND_RATIO_UNIT;
+        uint256 inviValue = inviSwapPool.totalLiquidityInvi();
+        uint256 nativeValue = inviSwapPool.totalLiquidityNative();
+        uint256 lendAmount = _amount * inviValue * lendRatio / LEND_RATIO_UNIT / nativeValue;
         return lendAmount;
     }
 
@@ -100,7 +99,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         uint128 principal = stakeInfo.principal + rewardAmount;
         return getMaxLendAmount(principal);
     }
-
 
     //====== setter functions ======//
     /**
@@ -115,14 +113,14 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @notice Sets the PriceManager contract address.
+     * @notice Sets the InviSwapPool contract address.
      * @dev can be set only once by owner
-     * @param _priceManager The address of the PriceManager contract.
+     * @param _inviSwapPool The address of the InviSwapPool contract.
      */
-    function setPriceManagerAddress(address _priceManager) external onlyOwner {
-        require(_setPriceManager == false, "LendingPool: priceManager contract already set");
-        priceManager = PriceManager(_priceManager);
-        _setPriceManager = true;
+    function setInviSwapPoolContract(address _inviSwapPool) external onlyOwner {
+        require(_setInviSwapPoolContract == false, "LendingPool: inviSwapPool contract already set");
+        inviSwapPool = InviSwapPool(_inviSwapPool);
+        _setInviSwapPoolContract = true;
     }
 
     /**
