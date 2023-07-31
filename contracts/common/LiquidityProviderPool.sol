@@ -372,6 +372,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         console.log("holderNumber", holderNumber);
         for (uint128 i = 0; i < holderNumber;) {
             address account = iLP.ILPHolders(i);
+            console.log("Account: ", account);
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount ;
            
