@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/external/IERC20.sol";
 import "./lib/AddressUtils.sol";
-import "./lib/Logics.sol";
 import "hardhat/console.sol";
 
 contract InviTokenStake is Initializable, OwnableUpgradeable {
@@ -13,13 +12,16 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     IERC20 public inviToken;
     address public inviCoreAddress;
 
+    bool private _locked;
+    bool private _setInviTokenAddress;
+    bool private _setInvicoreAddress;
+
     //------stake status------//
     mapping(address => uint128) public stakedAmount;
     mapping(address => uint128) public nativeRewardAmount;
     mapping(address => uint128) public inviRewardAmount;
     uint128 public totalStakedAmount;
     uint128 public minStakeAmount;
-
 
     //------Unstake------//
     mapping(address => uint256) public unstakeRequestTime;
@@ -30,7 +32,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //------Rewards------//
     uint256 public inviRewardInterval;
-    uint256 public inviReceiveInterval;
+    uint256 public inviReceiveInterval; 
     uint256 public lastInviRewardedTime;
     uint256 public lastNativeRewardDistributeTime;
     uint128 public totalInviRewardAmount;
@@ -40,7 +42,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     uint128 public totalAddressNumber;
     mapping(uint128 => address) public addressList;
    
-    bool private _locked;
 
     //====== upgrades ======//
     //====== modifiers ======// 
@@ -56,6 +57,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
     
     //====== initializer ======//
+    /**
+     * @dev Initializes the contract.
+     * @param _inviTokenAddr The address of the InviToken contract.
+     */
     function initialize(address _inviTokenAddr) public initializer {
         __Ownable_init();
         inviToken = IERC20(_inviTokenAddr);
@@ -78,7 +83,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //====== getter functions ======//
     /**
-     * @dev get unstake complete time of address
+     * @notice get unstake complete time of address
      * @param _addr target address
      */
     function getUnstakeTime(address _addr) public view returns (uint) {
@@ -87,7 +92,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev get claimable unstake amount of address
+     * @notice get claimable unstake amount of address
      * @param _addr target address
      */
     function getClaimableAmount(address _addr) public view returns (uint) {
@@ -99,29 +104,41 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
     
     //====== setter functions ======//
-    
+    /**
+     * @notice Set inviCore address
+     * @dev can be called only once by owner
+     * @param _inviCoreAddr inviCore address.
+     */
     function setInviCoreAddress(address _inviCoreAddr) external onlyOwner {
+        require(!_setInvicoreAddress, "InviTokenStake: inviCore address already set");
         inviCoreAddress = _inviCoreAddr;
+        _setInvicoreAddress = true;
     }
 
     /**
-     * @dev Set inviToken address
+     * @notice Set inviToken address
+     * @dev can be called only once by owner
      * @param _inviTokenAddr The new inviToken address.
      */
     function setInviTokenAddress(address _inviTokenAddr) external onlyOwner {
+        require(!_setInviTokenAddress, "InviTokenStake: inviToken address already set");
         inviToken = IERC20(_inviTokenAddr);
+        _setInviTokenAddress = true;
     }
     
     /**
-     * @dev Set unstake period
+     * @notice Set unstake period
+     * @dev can be called only by owner
      * @param _unstakePeriod The new unstake period.
      */
     function setUnstakePeriod(uint256 _unstakePeriod) external onlyOwner {
+        require(_unstakePeriod > 1 days && _unstakePeriod < 30 days, "InviTokenStake: unstake period should be between 1 day and 30 days");
         unstakePeriod = _unstakePeriod;
     }
 
      /**
-     * @dev Set the minimum stake amount
+     * @notice Set the minimum stake amount
+     * @dev can be called only by owner
      * @param _minStakeAmount The new minimum stake amount.
      */
     function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
@@ -130,7 +147,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     //====== service functions ======//
     /**
-     * @dev stake inviToken
+     * @notice stake inviToken
+     * @dev prevents reentrancy attack
      * @param _stakeAmount stake amount
      */
     function stake(uint128 _stakeAmount) external nonReentrant {
@@ -148,7 +166,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev request unstake
+     * @notice request unstake
+     * @dev prevents reentrancy attack
      * @param _unstakeAmount unstake amount
      */
     function requestUnstake(uint128 _unstakeAmount) external nonReentrant {
@@ -168,7 +187,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev cancel unstake request
+     * @notice cancel unstake request
+     * @dev prevents reentrancy attack
      */
     function cancelUnstake() external nonReentrant {
         require(unstakeRequestAmount[msg.sender] >= 0 && unstakeRequestTime[msg.sender] != 0, "InviTokenStake: unstake amount none");
@@ -184,7 +204,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev claim unstaked inviToken
+     * @notice claim unstaked inviToken
+     * @dev prevents reentrancy attack
      */
     function claimUnstaked() external nonReentrant {
         require(getClaimableAmount(msg.sender) > 0, "InviTokenStake: no claimable unstake amount");
@@ -208,7 +229,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev distribute native token rewards by InviCore
+     * @notice distribute native token rewards by InviCore
+     * @dev can be called only by inviCore
+     * @dev prevents reentrancy attack
      */
     function distributeNativeReward() external payable onlyInviCore {
         uint128 receivedReward = uint128(msg.value);
@@ -225,7 +248,9 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev distribute invi token rewards. Require interval time passed
+     * @notice distribute invi token rewards. Require interval time passed
+     * @dev prevents reentrancy attack
+     * @dev require interval time passed
      */
     function distributeInviTokenReward() external nonReentrant {
         require(block.timestamp >= inviRewardInterval + lastInviRewardedTime, "InviTokenStake: Not enough time passed");
@@ -234,23 +259,27 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
         uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
         uint256 rewardTotal = (totalInviToken - totalClaimableInviAmount- totalStakedAmount) / intervalVar;
-        for (uint128 i = 0; i < totalAddressNumber; i++) {
+        for (uint128 i = 0; i < totalAddressNumber;) {
             address account = addressList[i];
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount;
-        
+            uint128 reward = uint128(rewardAmount);
+
             // update rewards
-            inviRewardAmount[account] += uint128(rewardAmount);
-            totalInviRewardAmount += uint128(rewardAmount);
-            totalClaimableInviAmount += uint128(rewardAmount);
-            totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
+            inviRewardAmount[account] += reward;
+            totalInviRewardAmount += reward;
+            totalClaimableInviAmount += reward;
+            totalInviRewardAmountByAddress[account] += reward;
+
+            unchecked {i++;}
         }
 
         lastInviRewardedTime = block.timestamp;
     }
 
     /**
-     * @dev Claim the native coin rewards.
+     * @notice Claim the native coin rewards.
+     * @dev prevents reentrancy attack
      */
     function claimNativeReward() external nonReentrant {
         require(nativeRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");
@@ -268,7 +297,8 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
 
     
     /**
-     * @dev Claim the INVI token rewards.
+     * @notice Claim the INVI token rewards.
+     * @dev prevents reentrancy attack
      */
     function claimInviReward() external nonReentrant {
         require(inviRewardAmount[msg.sender] > 0, "InviTokenStake: no rewards available for this user");

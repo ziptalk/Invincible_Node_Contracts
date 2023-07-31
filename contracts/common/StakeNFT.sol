@@ -49,17 +49,14 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     //====== modifiers ======//
-
     modifier onlyInviCore {
         require(msg.sender == inviCoreAddress, "StakeNFT: msg sender should be invi core");
         _;
     }
-
     modifier onlyLendingPool {
         require(msg.sender == address(lendingPoolAddress), "StakeNFT: msg sender should be lending pool");
         _;
     }
-
     modifier onlyLpPool {
         require(msg.sender == address(lpPoolAddress), "StakeNFT: msg sender should be lp pool");
         _;
@@ -104,7 +101,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function getAllStakeInfoOfUser(address _user) public view returns (StakeInfo[] memory) {
         uint32[] memory _nftTokenIds = NFTOwnership[_user];
         StakeInfo[] memory stakeInfosOfUser = new StakeInfo[](_nftTokenIds.length);
-        for (uint i = 0; i < _nftTokenIds.length; i++) {
+        for (uint32 i = 0; i < _nftTokenIds.length; i++) {
             stakeInfosOfUser[i] = stakeInfos[_nftTokenIds[i]];
         }
         return stakeInfosOfUser;
@@ -252,15 +249,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Deletes the stake information associated with a given NFT token ID.
-     * @param _nftTokenId The ID of the NFT token.
-     */
-    function deleteStakeInfo(uint32 _nftTokenId) public onlyInviCore {
-        delete stakeInfos[_nftTokenId];
-    }
-
-    /**
-     * @dev Deletes the ownership of an NFT from a specific address.
+     * @notice Deletes the ownership of an NFT from a specific address.
+     * @dev This function is only callable by the InviCore contract.
      * @param _nftOwner The address of the NFT owner.
      * @param _nftTokenId The ID of the NFT token.
      */
@@ -272,8 +262,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Gets the index of a given value in an array.
-     * @param _lackAmount The array to be searched.
+     * @notice Resolves issue when liquidity pool is not enough (lentAmount > total remaining liquidity)
+     * @dev This function is only callable by the LPPool contract.
+     * @param _lackAmount lack liquidity amount
+     * @param _totalLentAmount total lent amount of all NFTs
      */
     function resolveLiquidityIssue(uint128 _lackAmount, uint128 _totalLentAmount) external onlyLpPool {
         for (uint32 i = 0 ; i < _tokenIds; i++) {
@@ -284,6 +276,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
 
             // if still locked
             if (stakeInfos[nftId].lockEnd > block.timestamp) {
+                uint256 prevLockPeriod = stakeInfo.lockPeriod;
                 uint128 _lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
                 uint128 _decreaseAmount = _lackAmount * _lentAmount / _totalLentAmount;
                 // update stakedAmount
@@ -297,15 +290,19 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                 if (_lentAmount > 0) {
                     // lock end decrease (updated lentAmount / previous lentAmount)
                     stakeInfo.lockEnd = block.timestamp + leftLockPeriod * (stakeInfo.stakedAmount - stakeInfo.principal) / _lentAmount ;
-                    // set minimum lock period
+                    // set minimum lock period 
                     if (stakeInfo.lockEnd - stakeInfo.lockStart < 50 days ) {
                         stakeInfo.lockEnd = stakeInfo.lockStart + 50 days;
                     }
                     // lock Period decrease 
                     stakeInfo.lockPeriod = stakeInfo.lockEnd - stakeInfo.lockStart;
+                    // update protocol fee
+                    uint256 updatedFee = stakeInfo.protocolFee * stakeInfo.lockPeriod / prevLockPeriod;
+                    stakeInfo.protocolFee = uint32(updatedFee);
                 }
                 // update leverageRatio
-                stakeInfo.leverageRatio = uint32(stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal)) ;
+                uint128 leverageRatio = stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal);
+                stakeInfo.leverageRatio = uint32(leverageRatio);
             }
         }
         totalStakedAmount -= _lackAmount;

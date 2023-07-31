@@ -24,28 +24,36 @@ network Ids
  * @dev Main contract for InviToken's staking system
  */
 contract InviCore is Initializable, OwnableUpgradeable {
+    using Logics for uint256;
+    using Logics for uint128;
+    using Logics for uint32;
     //------Contracts / Addresses / Networks ------//
     IERC20 public stToken;
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
     ILiquidStaking public liquidStakingContract;
+
+    bool private _setStakeNFTContract;
+    bool private _setLpPoolContract;
+    bool private _setInviTokenStakeContract;
+    bool private _locked; // for reentrancy guard
     uint32 private _networkId;
 
     //------reward related------//
     uint32 public lpPoolRewardPortion;
     uint32 public inviTokenStakeRewardPortion;
-    uint128 public totalNFTRewards;
+    uint256 public totalNFTRewards;
     //------stake related------//
     uint32 public stakingAPR;
-    uint128 public minStakeAmount;
+    uint256 public minStakeAmount;
     //------unstake related------//
     uint32 public unstakeRequestsFront;
     uint32 public unstakeRequestsRear;
-    uint128 public unstakeRequestAmount;
+    uint256 public unstakeRequestAmount;
     //------other variable------// 
     uint32 public slippage;
-    uint128 public totalClaimableAmount;
+    uint256 public totalClaimableAmount;
     uint256 public lastStTokenDistributeTime;
     uint256 public lastClaimAndSplitUnstakedAmountTime;
     uint256 public stTokenDistributePeriod;
@@ -55,10 +63,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (address => uint128) public claimableAmount;
 
     //------events------//
-    event Stake(uint128 indexed amount);
-    event Unstake(uint128 indexed amount);
+    event Stake(address indexed user, uint256 indexed amount);
+    event Unstake(address indexed user, uint256 indexed amount);
     
-    bool private _locked;
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
         _locked = true;
@@ -90,7 +97,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         stTokenDistributePeriod = 1 minutes; // test: 1min / main: 1hour
 
         _locked = false;
-        minStakeAmount = 10**16;
+        minStakeAmount = 10**15; // 0.001
     }
 
     //====== modifier functions ======//
@@ -99,50 +106,16 @@ contract InviCore is Initializable, OwnableUpgradeable {
         _;
     }
 
-    //====== setter address & contract functions ======//
-    /**
-     * @dev Sets the address of the StakeNFT contract.
-     * @param _stakeNFTAddr The address of the StakeNFT contract.
-    */
-    function setStakeNFTContract(address _stakeNFTAddr) external onlyOwner {
-        stakeNFTContract = StakeNFT(_stakeNFTAddr);
-    }
-
-    /**
-     * @dev Sets the address of the LiquidityProviderPool contract.
-     * @param _lpPoolAddr The address of the LiquidityProviderPool contract.
-     */
-    function setLpPoolContract(address _lpPoolAddr) external onlyOwner {
-        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
-    }
-
-    /**
-     * @dev Sets the address of the InviTokenStake contract.
-     * @param _inviTokenStakeAddr The address of the InviTokenStake contract.
-     */
-    function setInviTokenStakeContract(address _inviTokenStakeAddr) external onlyOwner {
-        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
-    }
-
-    /**
-     * @dev Sets the address of the ST token contract.
-     * @param _stTokenAddr The address of the ST token contract.
-     */
-    function setStTokenContract(address _stTokenAddr) external onlyOwner {
-        stToken = IERC20(_stTokenAddr);
-    }
-    
-
     //====== getter functions ======//
     /**
-     * @dev Retrieves the stake information for the provided account, principal amount, leverage ratio, and lock period.
+     * @notice Retrieves the stake information for the provided account, principal amount, leverage ratio, and lock period.
      * @param _account The account address.
      * @param _principal The principal amount.
      * @param _leverageRatio The leverage ratio.
      * @param _lockPeriod The lock period.
      * @return stakeInfo The stake information struct.
      */
-    function createStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) public view returns(StakeInfo memory)  {
+    function createStakeInfo(address _account, uint128 _principal, uint32 _leverageRatio, uint256 _lockPeriod) internal view returns(StakeInfo memory)  {
         // get lock period
         uint256 lockPeriod = getLockPeriod(_leverageRatio);
         // if provided lock period is less than minimum lock period, set lock period to minimum lock period
@@ -174,37 +147,40 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Retrieves the expected reward for the provided amount and lock period.
+     * @notice Retrieves the expected reward for the provided amount and lock period.
      * @param _amount The total amount (principal + lent amount).
      * @param _lockPeriod The lock period.
      * @return reward The expected reward.
      */
     function getExpectedReward(uint128 _amount, uint256 _lockPeriod) public view returns (uint) {
-        return ExpectedReward(_amount, _lockPeriod, stakingAPR);
+        uint256 expectedRewards = _amount.ExpectedReward( _lockPeriod, stakingAPR);
+        return expectedRewards;
     }
 
     /**
-     * @dev Retrieves the lock period for the provided leverage ratio.
+     * @notice Retrieves the lock period for the provided leverage ratio.
      * @param _leverageRatio The leverage ratio.
      * @return lockPeriod The lock period.
      */
     function getLockPeriod(uint32 _leverageRatio) public pure returns (uint) {
-        return LockPeriod(_leverageRatio);
+        uint32 lockPeriod = _leverageRatio.LockPeriod();
+        return lockPeriod;
     }
 
     /**
-     * @dev Retrieves the protocol fee for the provided lent amount and leverage ratio.
+     * @notice Retrieves the protocol fee for the provided lent amount and leverage ratio.
      * @param _lentAmount The lent amount.
      * @param _leverageRatio The leverage ratio.
      * @return protocolFee The protocol fee.
      */
     function getProtocolFee(uint128 _lentAmount, uint32 _leverageRatio) public view returns (uint128) {
         uint128 totalLiquidity = lpPoolContract.getTotalLiquidity();
-        return ProtocolFee(_lentAmount, _leverageRatio, totalLiquidity);
+        uint128 protocolFee = _lentAmount.ProtocolFee(_leverageRatio, totalLiquidity);
+        return protocolFee;
     }
     
     /**
-     * @dev Retrieves the total liquidity from the LP Pool.
+     * @notice Retrieves the total liquidity from the LP Pool.
      * @return liquidity The total liquidity.
      */
     function getTotalLiquidity() public view returns (uint) {
@@ -212,17 +188,18 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Retrieves the staked amount for the provided principal amount and leverage ratio.
+     * @notice Retrieves the staked amount for the provided principal amount and leverage ratio.
      * @param _amount The principal amount.
      * @param _leverageRatio The leverage ratio.
      * @return stakedAmount The staked amount.
      */
     function getStakedAmount(uint128 _amount, uint32 _leverageRatio) public pure returns (uint128) {
-        return StakedAmount(_amount, _leverageRatio);
+        uint128 stakedAmount = _amount.StakedAmount(_leverageRatio);
+        return stakedAmount;
     }
 
      /**
-     * @dev Retrieves the length of the unstake requests array.
+     * @notice Retrieves the length of the unstake requests array.
      * @return length The length of the unstake requests array.
      */
     function getUnstakeRequestsLength() public view returns (uint32) {
@@ -230,7 +207,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Retrieves the total staked amount.
+     * @notice Retrieves the total staked amount.
      * @return totalStakedAmount The total staked amount.
      */
     function getTotalStakedAmount() public view returns (uint128) {
@@ -239,7 +216,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Retrieves the balance of ST tokens held by the contract.
+     * @notice Retrieves the balance of ST tokens held by the contract.
      * @return balance The ST token balance.
      */
     function getStTokenBalance() public view returns (uint) {
@@ -249,7 +226,57 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== setter functions ======//
     /**
-     * @dev Sets the staking APR (Annual Percentage Rate).
+     * @notice Sets the address of the StakeNFT contract.
+     * @dev can be called only once by the owner.
+     * @param _stakeNFTAddr The address of the StakeNFT contract.
+    */
+    function setStakeNFTContract(address _stakeNFTAddr) external onlyOwner {
+        require(!_setStakeNFTContract, "InviCore: stakeNFTContract is already set");
+        stakeNFTContract = StakeNFT(_stakeNFTAddr);
+        _setStakeNFTContract = true;
+    }
+
+    /**
+     * @notice Sets the address of the LiquidityProviderPool contract.
+     * @dev can be called only once by the owner.
+     * @param _lpPoolAddr The address of the LiquidityProviderPool contract.
+     */
+    function setLpPoolContract(address _lpPoolAddr) external onlyOwner {
+        require(!_setLpPoolContract, "InviCore: lpPoolContract is already set");
+        lpPoolContract = LiquidityProviderPool(_lpPoolAddr);
+        _setLpPoolContract = true;
+    }
+
+    /**
+     * @notice Sets the address of the InviTokenStake contract.
+     * @dev can be called only once by the owner.
+     * @param _inviTokenStakeAddr The address of the InviTokenStake contract.
+     */
+    function setInviTokenStakeContract(address _inviTokenStakeAddr) external onlyOwner {
+        require(!_setInviTokenStakeContract, "InviCore: inviTokenStakeContract is already set");
+        inviTokenStakeContract = InviTokenStake(_inviTokenStakeAddr);
+        _setInviTokenStakeContract = true;
+    }
+
+    /**
+     * @notice Sets the address of the ST token contract.
+     * @dev Only the owner can call this function.
+     * @param _stTokenAddr The address of the ST token contract.
+     */
+    function setStTokenContract(address _stTokenAddr) external onlyOwner {
+        stToken = IERC20(_stTokenAddr);
+    }
+
+    /**
+     * @notice Sets the address of the Liquid Staking contract.
+     * @dev Only the owner can call this function.
+     * @param _liquidStakingAddr The address of the Liquid Staking contract.
+     */
+    function setLiquidStakingContract(address _liquidStakingAddr) external onlyOwner {
+        liquidStakingContract = ILiquidStaking(_liquidStakingAddr);
+    }
+    /**
+     * @notice Sets the staking APR (Annual Percentage Rate).
      * @param _stakingAPR The staking APR.
      */
     function setStakingAPR(uint32 _stakingAPR) external onlyOwner {
@@ -257,7 +284,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Sets the slippage for protocol fees.
+     * @notice Sets the slippage for protocol fees.
      * @param _slippage The slippage.
      */
     function setSlippage(uint32 _slippage) external onlyOwner {
@@ -265,7 +292,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
      /**
-     * @dev Sets the reward portion for LP pool and INVI token stake.
+     * @notice Sets the reward portion for LP pool and INVI token stake.
      * @param _lpPoolRewardPortion The reward portion for the LP pool.
      * @param _inviTokenStakeRewardPortion The reward portion for the INVI token stake.
      */
@@ -276,7 +303,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     }
 
      /**
-     * @dev Set the minimum stake amount
+     * @notice Set the minimum stake amount
      * @param _minStakeAmount The new minimum stake amount.
      */
     function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
@@ -285,7 +312,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     //====== service functions ======//
     /**
-     * @dev Stakes native coins by minting an NFT and staking the principal amount.
+     * @notice Stakes native coins by minting an NFT and staking the principal amount.
+     * @dev prevents reentrancy attack
      * @param _principal The principal amount to stake.
      * @param _leverageRatio The leverage ratio.
      * @param _lockPeriod The lock period.
@@ -311,12 +339,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
 
-        emit Stake(_stakeInfo.principal);
+        emit Stake(msg.sender, _stakeInfo.principal);
         return nftId;
     }
 
     /**
-     * @dev return NFT and request unstake for user
+     * @notice return NFT and request unstake for user
+     * @dev prevents reentrancy attack
      * @param _nftTokenId The ID of the NFT to unstake.
      */
     function repayNFT(uint32 _nftTokenId) external nonReentrant {
@@ -341,20 +370,19 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint128 lpPoolReward = stakersReward *  lpPoolRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         uint128 inviTokenStakeReward = stakersReward * inviTokenStakeRewardPortion / REWARD_PORTION_TOTAL_UNIT;
         // update totalNFTReward
-        totalNFTRewards -= userReward;
+        totalNFTRewards -= rewardAmount;
         // create unstake request for user (principal + reward)
         UnstakeRequest memory request = UnstakeRequest({
             recipient: msg.sender,
             fee: stakeInfo.protocolFee, 
             amount: stakeInfo.principal + userReward, 
             requestType: 0, 
-            nftId: _nftTokenId
+            nftId: _nftTokenId 
         });
 
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
         
-        //unstakeRequestsRear = enqueueUnstakeRequests(unstakeRequests, request, unstakeRequestsRear);
         if (lpPoolReward > 0) {
             // create unstake request for LPs
             UnstakeRequest memory lpRequest = UnstakeRequest({
@@ -378,8 +406,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             unstakeRequests[unstakeRequestsRear++] = inviStakerRequest;
         }
 
-        //burn NFT & delete stakeInfo
-        stakeNFTContract.deleteStakeInfo(_nftTokenId);
+        //burn NFT
         stakeNFTContract.deleteNFTOwnership(msg.sender, _nftTokenId);
         stakeNFTContract.burnNFT(_nftTokenId);  
 
@@ -392,12 +419,12 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update unstake request amount
         unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
-
-        emit Unstake(stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+        emit Unstake(msg.sender, stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
     }
 
     /**
-     * @dev distribute reward to stakers / lps / inviStakers
+     * @notice distribute reward to stakers / lps / inviStakers
+     * @dev prevents reentrancy attack
      */
     function distributeStTokenReward() external nonReentrant {
         require(stTokenDistributePeriod + lastStTokenDistributeTime < block.timestamp, "InviCore: reward distribution period not passed");
@@ -407,14 +434,19 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stTokenBalance > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
         uint256 totalReward = stTokenBalance - totalStakedAmount - totalNFTRewards;
-       
+        console.log("stTokenBalance     : ", stTokenBalance );
+        console.log("totalStakedAmount  : ", totalStakedAmount );
+        console.log("totalNFTRewards    : ", totalNFTRewards );
         // check nft rewards 
         uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
-
+        console.log("nftReward          : ", nftReward );
         // update NFT reward
         uint128 leftRewards =  stakeNFTContract.updateReward(uint128(nftReward));
+        console.log("leftRewards        : ", leftRewards );
         totalNFTRewards += uint128(nftReward) - leftRewards;
+        console.log("totalNFTRewards    : ", totalNFTRewards  );
         uint128 lpReward = uint128(totalReward) - uint128(nftReward) + leftRewards;
+        console.log("lpReward           : ", lpReward );
 
         // create unstake request for lps and invi stakers
         if (lpReward > 0) {
@@ -428,6 +460,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             });
             // push request to unstakeRequests
             unstakeRequests[unstakeRequestsRear++] = lpRequest;
+            unstakeRequestAmount += lpReward;
 
              // create unstake event
             if (_networkId == 0 || _networkId == 1) {
@@ -437,23 +470,26 @@ contract InviCore is Initializable, OwnableUpgradeable {
             }
         }
 
-
         // update stTokenRewardTime
         lastStTokenDistributeTime = block.timestamp;
-        emit Unstake(lpReward + leftRewards);
+        emit Unstake(msg.sender, lpReward + leftRewards);
     }
 
     /**
-     * @dev stake function for only lp pool
+     * @notice stake function for only lp pool
+     * @dev prevents reentrancy attack
+     * @dev only lp pool can call this function
      */
-    function stakeLp() external onlyLpPool payable nonReentrant {
+    function stakeLp() external payable onlyLpPool nonReentrant {
         // stake 
         liquidStakingContract.stake{value : msg.value}();
-        emit Stake(uint128(msg.value));
+        emit Stake(msg.sender, uint128(msg.value));
     }
 
     /**
-     * @dev unstake function for only lp pool
+     * @notice unstake function for lp pool
+     * @dev prevents reentrancy attack
+     * @dev only lp pool can call this function
      */
    function unstakeLp(uint128 _requestAmount) external onlyLpPool nonReentrant{
         // create unstake event
@@ -476,11 +512,13 @@ contract InviCore is Initializable, OwnableUpgradeable {
         unstakeRequests[unstakeRequestsRear++] = lpRequest;
         unstakeRequestAmount += _requestAmount;
 
-        emit Unstake(_requestAmount);
+        emit Unstake(msg.sender, _requestAmount);
     }
 
     /**
-     * @dev claim and split unstaked amount
+     * @notice claim and split unstaked amount. 
+     * @dev prevents reentrancy attack
+     * @dev can be called by anyone. 
      */
     function claimAndSplitUnstakedAmount() external nonReentrant {
         // claim first
@@ -493,19 +531,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint32 front = unstakeRequestsFront;
         uint32 rear = unstakeRequestsRear;
         uint32 count = 0;
-        require(address(this).balance >= totalClaimableAmount , "InviCore: Not enough amount");
+        uint256 balance = address(this).balance;
+        require(balance >= totalClaimableAmount , "InviCore: Not enough amount");
         for (uint32 i = front; i < rear;) {
             UnstakeRequest memory request = unstakeRequests[i];
-            if (request.amount > address(this).balance - totalClaimableAmount) {
+            if (request.amount > balance - totalClaimableAmount) {
                 break;
             }
             count++;
             
-            // delete if have error in unstake request
-            if (request.recipient == 0x0000000000000000000000000000000000000000) {
-                delete unstakeRequests[unstakeRequestsFront++];
-                continue;
-            }
             // check request type (0: user, 1: LP, 2: INVI staker)
             uint32 requestType = request.requestType;
             uint128 amount = request.amount;
@@ -516,6 +550,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
             // update unstakeRequestAmount
             unstakeRequestAmount -= amount;
+
+            // console.log("current balance: ", address(this).balance);
+            // console.log("amount         : ", amount);
             // if normal user
             if (requestType == 0) {
                 claimableAmount[recipient] += amount;
@@ -539,10 +576,11 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         // update last send unstaked amount time
         lastClaimAndSplitUnstakedAmountTime = block.timestamp;
-    } 
+    }
 
     /**
-     * @dev claim unstaked amount for user
+     * @notice claim unstaked amount for user
+     * @dev prevents reentrancy attack
      */
     function claimUnstaked() external nonReentrant {
         require(claimableAmount[msg.sender] > 0, "InviCore: No claimable amount");
@@ -551,11 +589,12 @@ contract InviCore is Initializable, OwnableUpgradeable {
         claimableAmount[msg.sender] = 0;
         (bool sent, ) = msg.sender.call{value : amount }("");
         require(sent, "InviCore: Failed to send coin");
+        console.log("reward claimed: ", amount);
     }
     
     //====== utils function ======//
     /**
-     * @dev verify if stake info is correct
+     * @notice verify if stake info is correct
      * @param _stakeInfo stake info of user
      * @param _slippage slippage of user
      * @param _user user address
@@ -577,7 +616,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(_stakeInfo.lockStart >= today && _stakeInfo.lockStart <= today + 86400, "InviCore: Invalid lock start time");
         require(_stakeInfo.lockEnd - _stakeInfo.lockStart == _stakeInfo.lockPeriod, "InviCore: Invalid lock end time");
 
-        // verify lentAmount
+        // verify lentAmount (leverage ratio)
         uint128 lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * LEVERAGE_UNIT) / LEVERAGE_UNIT;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), "InviCore: cannot lend more than max lent amount");
 
@@ -591,6 +630,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // remove it later
     receive () external payable {}
+
 
     fallback () external payable {}
 }

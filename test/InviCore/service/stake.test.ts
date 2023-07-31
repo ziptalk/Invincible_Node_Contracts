@@ -6,7 +6,7 @@ import hre from "hardhat";
 import { units } from "../../units";
 import { leverageStake, provideLiquidity } from "../../utils";
 import { getTestAddress } from "../../getTestAddress";
-import { deployAllWithSetting } from "../../deploy";
+import { deployAll } from "../../../scripts/deploy/deployAll";
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -15,15 +15,17 @@ describe("Invi core service test", function () {
 
   const network: string = hre.network.name;
   const testAddresses: any = getTestAddress(network);
+  console.log(network);
 
   this.beforeAll(async function () {
     // for testnet test
-    if (!network) {
-      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAllWithSetting());
+    if (network === "hardhat") {
+      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAll());
+    } else {
+      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
     }
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
   });
 
   it("Test stake function", async () => {
@@ -35,7 +37,7 @@ describe("Invi core service test", function () {
     let tx;
 
     //* given
-    const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
+    const lpAmount: BigNumber = ethers.utils.parseEther("1");
     const previousUserNftBalance = await stakeNFTContract.balanceOf(userA.address);
     const previousTotalStakedAmount = await lpPoolContract.totalStakedAmount();
     console.log("previous total staked amount: ", previousTotalStakedAmount.toString());
@@ -45,7 +47,7 @@ describe("Invi core service test", function () {
     console.log("provided liquidity");
 
     //* when
-    const principal: BigNumber = ethers.utils.parseEther("0.00001");
+    const principal: BigNumber = ethers.utils.parseEther("0.01");
     const leverageRatio = 2 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     console.log("minLockPeriod: ", minLockPeriod);
