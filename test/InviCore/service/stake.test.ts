@@ -52,11 +52,10 @@ describe("Invi core service test", function () {
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     console.log("minLockPeriod: ", minLockPeriod);
     const lockPeriod = minLockPeriod * 2;
-    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
-    console.log("StakeInfo: ", stakeInfo.toString());
+    await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
 
     //* then
-    const stakedAmount: BigNumber = stakeInfo.stakedAmount;
+    const stakedAmount: BigNumber = principal.mul(leverageRatio);
     const lentAmount: BigNumber = stakedAmount.sub(principal);
 
     let userNftBalance = await stakeNFTContract.connect(userA).balanceOf(userA.address);
@@ -66,6 +65,8 @@ describe("Invi core service test", function () {
     expect(userNftBalance).to.equal(parseInt(previousUserNftBalance) + 1);
     expect(totalStakedAmount).to.equal(BigNumber.from(previousTotalStakedAmount).add(lpAmount));
     expect(totalLentAmount).to.equal(BigNumber.from(previousTotalLentAmount).add(lentAmount));
-    expect(stakeNFTTotalStakedAmount).to.equal(BigNumber.from(previousStakeNFTTotalStakedAmount).add(principal).add(lentAmount));
+    expect(stakeNFTTotalStakedAmount).to.equal(
+      BigNumber.from(previousStakeNFTTotalStakedAmount).add(principal).add(lentAmount)
+    );
   });
 });
