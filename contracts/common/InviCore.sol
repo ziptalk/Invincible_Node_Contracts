@@ -222,6 +222,15 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function getStTokenBalance() public view returns (uint) {
         return stToken.balanceOf(address(this));
     }
+
+    function getMaxLeverageRatio(uint256 _stakeAmount) public view returns (uint32) {
+        uint256 maxLendAmount = lpPoolContract.getMaxLentAmount();
+        uint256 maxLeverageRatio = (_stakeAmount + maxLendAmount) * LEVERAGE_UNIT / _stakeAmount ;
+        if (maxLeverageRatio >  5 * LEVERAGE_UNIT) {
+            maxLeverageRatio = 5 * LEVERAGE_UNIT;
+        }
+        return uint32(maxLeverageRatio);
+    }
     
 
     //====== setter functions ======//
@@ -616,6 +625,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(_stakeInfo.lockStart >= today && _stakeInfo.lockStart <= today + 86400, "InviCore: Invalid lock start time");
         require(_stakeInfo.lockEnd - _stakeInfo.lockStart == _stakeInfo.lockPeriod, "InviCore: Invalid lock end time");
 
+        // verify leverage Ratio
+        require(_stakeInfo.leverageRatio <= 5 * LEVERAGE_UNIT, "InviCore: Invalid leverage ratio");
         // verify lentAmount (leverage ratio)
         uint128 lentAmount = _stakeInfo.principal * (_stakeInfo.leverageRatio - 1 * LEVERAGE_UNIT) / LEVERAGE_UNIT;
         require(lentAmount <= lpPoolContract.getMaxLentAmount(), "InviCore: cannot lend more than max lent amount");

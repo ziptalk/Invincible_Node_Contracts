@@ -41,7 +41,7 @@ describe("Tokenomics test", function () {
     }
   });
 
-  it("Test with all operation", async () => {
+  it("Test without liquidity providing or invi staking", async () => {
     if (network !== "hardhat") return; // only hardhat test
 
     const [deployer, LP1, LP2, LP3, userA, userB, userC] = await ethers.getSigners();
@@ -114,7 +114,7 @@ describe("Tokenomics test", function () {
 
     // Iterate Operation
     console.log("======== Start Iteration =========");
-    let iteration = 3;
+    let iteration = 200;
     for (let i = 0; i < iteration; i++) {
       console.log("======== Iteration ", i, " =========");
       console.log("======== Step 1: leverage Stake =========");
@@ -159,16 +159,13 @@ describe("Tokenomics test", function () {
       const lend = await lendingPoolContract.connect(userA).lend(NFTOwnership[0], maxLendAmountWithBoost);
       await lend.wait();
 
-      console.log("======== Step 3: Invi Stake =========");
-      // get userA INVI balance
-      const userAINVIBalance = await inviTokenContract.balanceOf(userA.address);
-      console.log("userAINVIBalance: ", ethers.utils.formatEther(userAINVIBalance));
-      // get invi stake amount
-      const inviStakeAmount = userAINVIBalance.div(2);
-      console.log("inviStakeAmount: ", ethers.utils.formatEther(inviStakeAmount));
-      // stake INVI
-      const stakeInvi = await inviTokenStakeContract.connect(userA).stake(inviStakeAmount);
-      await stakeInvi.wait();
+      //   console.log("======== Step 3: Invi Stake =========");
+      //   // get userA INVI balance
+      //   const userAINVIBalance = await inviTokenContract.balanceOf(userA.address);
+      //   console.log("userAINVIBalance: ", ethers.utils.formatEther(userAINVIBalance));
+      //   // get invi stake amount
+      //   const inviStakeAmount = userAINVIBalance.div(2);
+      //   console.log("inviStakeAmount: ", ethers.utils.formatEther(inviStakeAmount));
 
       console.log("======== Step 4: Swap INVI to Klay =========");
       const getInviTokenBalanceOfUserA = await inviTokenContract.balanceOf(userA.address);
@@ -186,12 +183,12 @@ describe("Tokenomics test", function () {
       receipt = await swapInviToNative.wait();
       console.log("gasUsed: ", receipt.gasUsed.toString());
 
-      console.log("======== Step 5: Provide Liquidity =========");
-      // get userA Balance
-      userABalance = await ethers.provider.getBalance(userA.address);
-      const lpAmount = userABalance.div(2);
-      // provide liquidity
-      tx = await provideLiquidity(lpPoolContract, userA, lpAmount, 0);
+      // console.log("======== Step 5: Provide Liquidity =========");
+      // // get userA Balance
+      // userABalance = await ethers.provider.getBalance(userA.address);
+      // const lpAmount = userABalance.div(2);
+      // // provide liquidity
+      // tx = await provideLiquidity(lpPoolContract, userA, lpAmount, 0);
     }
 
     // check Initial Status

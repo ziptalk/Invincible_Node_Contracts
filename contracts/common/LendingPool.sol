@@ -21,6 +21,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     InviSwapPool public inviSwapPool;
 
     uint32 public maxLendRatio;
+    uint32 private _lendRatio;
     uint128 public totalLentAmount;
     bool private _setStakeNFTContract;
     bool private _setInviSwapPoolContract;
@@ -47,7 +48,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function initialize(address _inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(_inviTokenAddr);
-        maxLendRatio = 90 * LEND_RATIO_UNIT / 100; // 90%
+        _lendRatio = 90;
+        maxLendRatio = _lendRatio * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
         _setStakeNFTContract = false;
     }
@@ -87,8 +89,8 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      */
     function getMaxLendAmount(uint128 _amount) public view returns (uint256) {
         uint256 lendRatio = getLendRatio();
-        uint256 inviValue = inviSwapPool.totalLiquidityInvi();
-        uint256 nativeValue = inviSwapPool.totalLiquidityNative();
+        uint256 nativeValue = inviSwapPool.totalLiquidityInvi();
+        uint256 inviValue = inviSwapPool.totalLiquidityNative();
         uint256 lendAmount = _amount * inviValue * lendRatio / LEND_RATIO_UNIT / nativeValue;
         return lendAmount;
     }
@@ -98,6 +100,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint128 principal = stakeInfo.principal + rewardAmount;
         return getMaxLendAmount(principal);
+    }
+
+    function getMaxLendAmountWithBoost(uint128 _amount) public view returns (uint256) {
+        uint128 maxLendAmount = uint128(getMaxLendAmount(_amount));
+        uint128 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
+        return maxLendAmountWithBoost;
     }
 
     //====== setter functions ======//
@@ -146,8 +154,13 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint128 principal = stakeInfo.principal + rewardAmount;
         uint128 maxLendAmount = uint128(getMaxLendAmount(principal));
+        uint128 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
+        if (_requestAmount > maxLendAmount) {
+            require(maxLendAmountWithBoost >= _requestAmount, "LendingPool: invalid request amount");
+            stakeNFTContract.boostLendAmount(_nftId, maxLendAmount, _requestAmount);
+        }
         
-        require(_requestAmount <= maxLendAmount, "LendingPool: invalid request amount");
+        // require(_requestAmount <= maxLendAmount, "LendingPool: invalid request amount");
 
         totalLentAmount += _requestAmount;
 

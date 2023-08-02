@@ -41,7 +41,7 @@ describe("Tokenomics test", function () {
     }
   });
 
-  it("Test with all operation", async () => {
+  it("Test without liquidity providing", async () => {
     if (network !== "hardhat") return; // only hardhat test
 
     const [deployer, LP1, LP2, LP3, userA, userB, userC] = await ethers.getSigners();
@@ -186,12 +186,12 @@ describe("Tokenomics test", function () {
       receipt = await swapInviToNative.wait();
       console.log("gasUsed: ", receipt.gasUsed.toString());
 
-      console.log("======== Step 5: Provide Liquidity =========");
-      // get userA Balance
-      userABalance = await ethers.provider.getBalance(userA.address);
-      const lpAmount = userABalance.div(2);
-      // provide liquidity
-      tx = await provideLiquidity(lpPoolContract, userA, lpAmount, 0);
+      // console.log("======== Step 5: Provide Liquidity =========");
+      // // get userA Balance
+      // userABalance = await ethers.provider.getBalance(userA.address);
+      // const lpAmount = userABalance.div(2);
+      // // provide liquidity
+      // tx = await provideLiquidity(lpPoolContract, userA, lpAmount, 0);
     }
 
     // check Initial Status

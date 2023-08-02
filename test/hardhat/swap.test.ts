@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers, upgrades } from "hardhat";
-const { expectRevert } = require("@openzeppelin/test-helpers");
+import { ethers } from "hardhat";
 import hre from "hardhat";
 import { units } from "../units";
 import {
@@ -29,7 +28,6 @@ describe("Swap test", function () {
   let iSPTTokenContract: Contract;
 
   const network: string = hre.network.name;
-  const testAddresses: any = getTestAddress(network);
   console.log(network);
 
   this.beforeAll(async function () {
