@@ -114,7 +114,7 @@ describe("Tokenomics test", function () {
 
     // Iterate Operation
     console.log("======== Start Iteration =========");
-    let iteration = 200;
+    let iteration = 30;
     for (let i = 0; i < iteration; i++) {
       console.log("======== Iteration ", i, " =========");
       console.log("======== Step 1: leverage Stake =========");
@@ -231,5 +231,27 @@ describe("Tokenomics test", function () {
     // get total Invi Staked userA
     const totalInviStakedUserA = await inviTokenStakeContract.stakedAmount(userA.address);
     console.log("totalInviStakedUserA : ", ethers.utils.formatEther(totalInviStakedUserA));
+    // get total staked amount
+    const totalStakedAmount = await inviCoreContract.getTotalStakedAmount();
+    console.log("totalStakedAmount    : ", ethers.utils.formatEther(totalStakedAmount));
+    // get lp1 swap pool reward
+    const lp1NativeReward = await inviSwapPoolContract.lpRewardNative(LP1.address);
+    console.log("lp1NativeReward      : ", ethers.utils.formatEther(lp1NativeReward));
+    const lp1InviReward = await inviSwapPoolContract.lpRewardInvi(LP1.address);
+    console.log("lp1InviReward        : ", ethers.utils.formatEther(lp1InviReward));
+
+    //=============== Give Rewards and start unstake ===============//
+    console.log("======== Give Rewards and start unstake =========");
+    // reward amount
+    const rewardAmount = totalStakedAmount.mul(5).div(100);
+    console.log("rewardAmount         : ", ethers.utils.formatEther(rewardAmount));
+    tx = await stTokenContract.connect(deployer).spreadRewards(inviCoreContract.address, {
+      value: rewardAmount,
+    });
+    await tx.wait();
+
+    // distribute stToken rewards
+    tx = await inviCoreContract.connect(deployer).distributeStTokenReward();
+    await tx.wait();
   });
 });
