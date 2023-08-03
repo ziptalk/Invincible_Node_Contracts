@@ -43,8 +43,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      */
     function initialize(address _inviAddr) initializer public {
         inviToken = IERC20(_inviAddr);
-        inviFees = 3;
-        nativeFees = 3;
+        inviFees = 7;
+        nativeFees = 7;
         lpCount = 0;
         totalLiquidityNative = 1;
         totalLiquidityInvi = 1;
@@ -65,10 +65,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getInviToNativeOutAmount(uint _amountIn) public view returns (uint) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
-        uint256 slippage = amountOut * amountOut / currentNativeLiquidity;
-        require(amountOut > slippage, "InviSwapPool: logic error");
-        return amountOut - slippage; 
+        uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
+        return amountOut; 
     }
 
     /**
@@ -79,11 +77,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
-        uint256 slippage = amountOut * amountOut / currentNativeLiquidity;
-
-        require(amountOut > slippage, "InviSwapPool: logic error");
-        return amountOut - slippage;
+        uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
+        return amountOut;
     }
 
     function getNativeToInviOutMaxInput() public view returns (uint) {

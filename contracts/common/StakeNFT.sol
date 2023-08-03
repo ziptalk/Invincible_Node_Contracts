@@ -258,6 +258,15 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     }
 
     /**
+     * @dev Checks if an NFT with a given token ID is lent.
+     * @param _nftTokenId The ID of the NFT token.
+     * @return A boolean indicating whether the NFT is lent or not.
+     */
+    function isLent(uint32 _nftTokenId) public view returns (bool) {
+        return stakeInfos[_nftTokenId].isLent;
+    }
+
+    /**
      * @notice Deletes the ownership of an NFT from a specific address.
      * @dev This function is only callable by the InviCore contract.
      * @param _nftOwner The address of the NFT owner.

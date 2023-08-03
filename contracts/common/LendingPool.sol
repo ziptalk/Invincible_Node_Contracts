@@ -91,8 +91,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         uint256 lendRatio = getLendRatio();
         uint256 nativeValue = inviSwapPool.totalLiquidityInvi();
         uint256 inviValue = inviSwapPool.totalLiquidityNative();
-        uint256 lendAmount = _amount * inviValue * lendRatio / LEND_RATIO_UNIT / nativeValue;
-        return lendAmount;
+        uint256 lendAmount = _amount * nativeValue / inviValue;
+        // if (_amount >= lendAmount) {
+        //     return _amount * lendRatio / LEND_RATIO_UNIT;
+        // } else {
+            return lendAmount * lendRatio / LEND_RATIO_UNIT;
+        //}
     }
 
     function getMaxLendAmountByNFT(uint32 _nftId) public view returns (uint256) {
@@ -151,6 +155,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         require(_requestAmount <= inviToken.balanceOf(address(this)), "LendingPool: insufficient balance");
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
+        require(stakeNFTContract.isLent(_nftId) == false, "LendingPool: NFT already lent");
         uint256 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint256 principal = stakeInfo.principal + rewardAmount;
         uint256 maxLendAmount = uint256(getMaxLendAmount(principal));
@@ -163,7 +168,6 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         // require(_requestAmount <= maxLendAmount, "LendingPool: invalid request amount");
 
         totalLentAmount += _requestAmount;
-
         LendInfo memory lendInfo = LendInfo({
             user: stakeInfo.user,  
             principal: principal, 
@@ -172,6 +176,9 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         });
         lendInfos[_nftId] = lendInfo;
         stakeNFTContract.setNFTIsLent(lendInfo.nftId, true);
+        console.log(_nftId);
+        console.log(stakeNFTContract.isUnlock(lendInfo.nftId));
+        console.log(stakeNFTContract.isLent(lendInfo.nftId));
         nftLentTime[_nftId] = block.timestamp;
         inviToken.transfer(lendInfo.user, _requestAmount);
 
@@ -187,6 +194,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
         uint256 repayAmount = lendInfo.lentAmount;
+        console.log("repayAmount: ", repayAmount);
         require(lendInfo.user != address(0), "LendingPool: nft id not found");
         require(repayAmount <= inviToken.balanceOf(msg.sender), "LendingPool: insufficient balance");
         inviToken.transferToken(msg.sender, address(this), repayAmount);

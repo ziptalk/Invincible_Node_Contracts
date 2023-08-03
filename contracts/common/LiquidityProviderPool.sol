@@ -339,13 +339,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         uint256 totalILPHoldersCount = iLP.totalILPHoldersCount();
         for (uint256 i = 0; i < totalILPHoldersCount;) {
             address account = iLP.ILPHolders(i);
-            console.log("account: ", account);
+            
             uint256 rewardAmount = msg.value * stakedAmount[account] / totalStakedAmount;
             
-            console.log("total value: ", msg.value);
-            console.log("staked amount: ", stakedAmount[account]);
-            console.log("total staked amount: ", totalStakedAmount);
-            console.log("reward: ", rewardAmount);
             // update reward amount
             nativeRewardAmount[account] += uint256(rewardAmount);
             totalNativeRewardAmount +=  uint256(rewardAmount);
