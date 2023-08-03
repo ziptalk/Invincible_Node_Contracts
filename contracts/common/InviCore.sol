@@ -361,6 +361,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // verify NFT
         require(stakeNFTContract.isOwner(_nftTokenId, msg.sender), "InviCore: not owner of NFT");
         require(stakeNFTContract.isUnlock(_nftTokenId), "InviCore: NFT is locked");
+        require(!stakeNFTContract.isLent(_nftTokenId), "InviCore: NFT is lent");
+
 
         // get stakeInfo by nftTokenId
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftTokenId);
@@ -443,20 +445,17 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stTokenBalance > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
         uint256 totalReward = stTokenBalance - totalStakedAmount - totalNFTRewards;
-        console.log("stTokenBalance     : ", stTokenBalance );
-        console.log("totalStakedAmount  : ", totalStakedAmount );
-        console.log("totalNFTRewards    : ", totalNFTRewards );
+
         // check nft rewards 
         uint256 nftReward = totalReward * stakeNFTContract.totalStakedAmount() / totalStakedAmount;
-        console.log("nftReward          : ", nftReward );
+        
         // update NFT reward
         uint256 leftRewards =  stakeNFTContract.updateReward(uint256(nftReward));
-        console.log("leftRewards        : ", leftRewards );
+      
         totalNFTRewards += uint256(nftReward) - leftRewards;
-        console.log("totalNFTRewards    : ", totalNFTRewards  );
+      
         uint256 lpReward = uint256(totalReward) - uint256(nftReward) + leftRewards;
-        console.log("lpReward           : ", lpReward );
-
+   
         // create unstake request for lps and invi stakers
         if (lpReward > 0) {
            // create unstake request for LPs
@@ -598,7 +597,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         claimableAmount[msg.sender] = 0;
         (bool sent, ) = msg.sender.call{value : amount }("");
         require(sent, "InviCore: Failed to send coin");
-        console.log("reward claimed: ", amount);
     }
     
     //====== utils function ======//
