@@ -13,8 +13,8 @@ string constant ILP_TOKEN_NAME = "ILPTest";
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     LiquidityProviderPool public lpPoolContract;
-    mapping(uint128 => address) public ILPHolders;
-    uint128 public totalILPHoldersCount;
+    mapping(uint256 => address) public ILPHolders;
+    uint256 public totalILPHoldersCount;
     bool _setLpPoolContract;
 
     //====== modifiers ======//
@@ -59,12 +59,12 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @param _account target account to mint Token
      * @param _amount amount to mint
      */
-    function mintToken(address _account, uint128 _amount) onlyLPPool external {
+    function mintToken(address _account, uint256 _amount) onlyLPPool external {
         _mint(_account, _amount);
         
         bool exist = false;
         // if duplicated ILP holder
-        for (uint128 i = 0; i < totalILPHoldersCount; i++) {
+        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
             if (ILPHolders[i] == _account) {
                 exist = true;
             }
@@ -80,7 +80,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @param _account account to burn token from
      * @param _amount amount to burn token from
      */
-    function burnToken(address _account, uint128 _amount) onlyLPPool external  {
+    function burnToken(address _account, uint256 _amount) onlyLPPool external  {
         _burn(_account, _amount);
     }
 
@@ -96,7 +96,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         
         bool exist = false;
         // if duplicated ILP holder
-        for (uint128 i = 0; i < totalILPHoldersCount; i++) {
+        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
             if (ILPHolders[i] == to) {
                 exist = true;
             }
@@ -106,8 +106,8 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
             ILPHolders[totalILPHoldersCount++] = to;
         }
         require(lpPoolContract.getStakedAmount(_owner) >= amount, "ILP: insufficient staked amount");
-        lpPoolContract.setStakedAmount(msg.sender, lpPoolContract.getStakedAmount(msg.sender) - uint128(amount));
-        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint128(amount));
+        lpPoolContract.setStakedAmount(msg.sender, lpPoolContract.getStakedAmount(msg.sender) - uint256(amount));
+        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint256(amount));
         return true;
     }
     
@@ -125,7 +125,7 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         
         bool exist = false;
         // if duplicated ILP holder
-        for (uint128 i = 0; i < totalILPHoldersCount; i++) {
+        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
             if (ILPHolders[i] == to) {
                 exist = true;
             }
@@ -135,8 +135,8 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
             ILPHolders[totalILPHoldersCount++] = to;
         }
         require(lpPoolContract.getStakedAmount(from) >= amount, "ILP: insufficient staked amount");
-        lpPoolContract.setStakedAmount(from, lpPoolContract.getStakedAmount(from) - uint128(amount));
-        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint128(amount));
+        lpPoolContract.setStakedAmount(from, lpPoolContract.getStakedAmount(from) - uint256(amount));
+        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint256(amount));
         return true;
     }
 }

@@ -61,19 +61,27 @@ export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContr
   let lpPoolContract;
   if (network === "BIFROST") {
     LpPoolContract = await ethers.getContractFactory("BfcLiquidityProviderPool");
-    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await lpPoolContract.deployed();
   } else if (network === "KLAYTN") {
     LpPoolContract = await ethers.getContractFactory("KlaytnLiquidityProviderPool");
-    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await lpPoolContract.deployed();
   } else if (network === "EVMOS") {
     LpPoolContract = await ethers.getContractFactory("EvmosLiquidityProviderPool");
-    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await lpPoolContract.deployed();
   } else {
     LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
-    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+    lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await lpPoolContract.deployed();
   }
 
@@ -86,43 +94,72 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract, 
   let inviTokenStakeContract;
   if (network === "BIFROST") {
     InviTokenStakeContract = await ethers.getContractFactory("BfcInviTokenStake");
-    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await inviTokenStakeContract.deployed();
   } else if (network === "KLAYTN") {
     InviTokenStakeContract = await ethers.getContractFactory("KlaytnInviTokenStake");
-    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await inviTokenStakeContract.deployed();
   } else if (network === "EVMOS") {
     InviTokenStakeContract = await ethers.getContractFactory("EvmosInviTokenStake");
-    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await inviTokenStakeContract.deployed();
   } else {
     InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
-    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+    inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], {
+      initializer: "initialize",
+    });
     await inviTokenStakeContract.deployed();
   }
   return inviTokenStakeContract;
 };
 
 // deploy inviCore contract
-export const deployInviCoreContract = async (stTokenContract: String, liquidStakingAddress: String, network: String, networkId: number) => {
+export const deployInviCoreContract = async (
+  stTokenContract: String,
+  liquidStakingAddress: String,
+  network: String,
+  networkId: number
+) => {
   let InviCoreContract;
   let inviCoreContract;
   if (network === "BIFROST") {
     InviCoreContract = await ethers.getContractFactory("BfcInviCore");
-    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress, networkId], { initializer: "initialize" });
+    inviCoreContract = await upgrades.deployProxy(
+      InviCoreContract,
+      [stTokenContract, liquidStakingAddress, networkId],
+      { initializer: "initialize" }
+    );
     await inviCoreContract.deployed();
   } else if (network === "KLAYTN") {
     InviCoreContract = await ethers.getContractFactory("KlaytnInviCore");
-    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress, networkId], { initializer: "initialize" });
+    inviCoreContract = await upgrades.deployProxy(
+      InviCoreContract,
+      [stTokenContract, liquidStakingAddress, networkId],
+      { initializer: "initialize" }
+    );
     await inviCoreContract.deployed();
   } else if (network === "EVMOS") {
     InviCoreContract = await ethers.getContractFactory("EvmosInviCore");
-    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress, networkId], { initializer: "initialize" });
+    inviCoreContract = await upgrades.deployProxy(
+      InviCoreContract,
+      [stTokenContract, liquidStakingAddress, networkId],
+      { initializer: "initialize" }
+    );
     await inviCoreContract.deployed();
   } else {
     InviCoreContract = await ethers.getContractFactory("InviCore");
-    inviCoreContract = await upgrades.deployProxy(InviCoreContract, [stTokenContract, liquidStakingAddress, networkId], { initializer: "initialize" });
+    inviCoreContract = await upgrades.deployProxy(
+      InviCoreContract,
+      [stTokenContract, liquidStakingAddress, networkId],
+      { initializer: "initialize" }
+    );
     await inviCoreContract.deployed();
   }
 
@@ -132,16 +169,20 @@ export const deployInviCoreContract = async (stTokenContract: String, liquidStak
 // deploy SwapPoolInviKlay contract
 export const deploySwapPoolInviKlay = async (inviTokenContract: Contract) => {
   const SwapPoolInviKlay = await ethers.getContractFactory("SwapPoolInviKlay");
-  const swapPoolInviKlay = await upgrades.deployProxy(SwapPoolInviKlay, [inviTokenContract.address], { initializer: "initialize" });
+  const swapPoolInviKlay = await upgrades.deployProxy(SwapPoolInviKlay, [inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await swapPoolInviKlay.deployed();
 
   return swapPoolInviKlay;
 };
 
 // deploy InviSwapPool contract
-export const deployInviSwapPool = async (inviTokenContract: Contract, iSPTTokenContract: Contract) => {
+export const deployInviSwapPool = async (inviTokenContract: Contract) => {
   const InviSwapPool = await ethers.getContractFactory("InviSwapPool");
-  const inviSwapPool = await upgrades.deployProxy(InviSwapPool, [inviTokenContract.address, iSPTTokenContract.address], { initializer: "initialize" });
+  const inviSwapPool = await upgrades.deployProxy(InviSwapPool, [inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await inviSwapPool.deployed();
 
   return inviSwapPool;
@@ -149,7 +190,9 @@ export const deployInviSwapPool = async (inviTokenContract: Contract, iSPTTokenC
 
 export const deployLendingPoolContract = async (inviToken: Contract) => {
   const LendingPoolContract = await ethers.getContractFactory("LendingPool");
-  const lendingPoolContract = await upgrades.deployProxy(LendingPoolContract, [inviToken.address], { initializer: "initialize" });
+  const lendingPoolContract = await upgrades.deployProxy(LendingPoolContract, [inviToken.address], {
+    initializer: "initialize",
+  });
   await lendingPoolContract.deployed();
 
   return lendingPoolContract;
@@ -240,11 +283,16 @@ export const deployAllContract = async (network: string) => {
   await lendingPoolContract.deployed();
   console.log("deployed lendingPool contract: ", lendingPoolContract.address);
   // deploy InviSwapPool contract
-  const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract, iSPTTokenContract);
+  const inviSwapPoolContract = await deployInviSwapPool(inviTokenContract);
   await inviSwapPoolContract.deployed();
   console.log("deployed inviSwapPool contract: ", inviSwapPoolContract.address);
   // deploy inviCore contract
-  const inviCoreContract = await deployInviCoreContract(stTokenContractAddress, liquidStakingAddress, network, networkId);
+  const inviCoreContract = await deployInviCoreContract(
+    stTokenContractAddress,
+    liquidStakingAddress,
+    network,
+    networkId
+  );
   await inviCoreContract.deployed();
   console.log("deployed inviCore contract: ", inviCoreContract.address);
   // deploy swapManager contract

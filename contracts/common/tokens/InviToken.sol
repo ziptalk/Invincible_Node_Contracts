@@ -24,7 +24,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     address public inviSwapPoolAddress;
 
     //------ Variables ------//
-    uint128 public regularMintAmount;
+    uint256 public regularMintAmount;
     uint256 public mintInterval; 
     uint256 public lastMinted;
     uint256 public mintAmountChangeInterval;
@@ -119,7 +119,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function regularMinting() external onlyOwner {
         require(block.timestamp > lastMinted + mintInterval, "InviToken: mint interval is not passed");        
       
-        uint128 mintAmount = regularMintAmount * INVI_UNIT;
+        uint256 mintAmount = regularMintAmount * INVI_UNIT;
         
         // mint token
         _mint(address(this), mintAmount);
@@ -142,7 +142,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @param _amount transfer amount
      * @dev can be called only by owner
      */
-    function sendInvi(address _receiver, uint128 _amount) external onlyOwner {
+    function sendInvi(address _receiver, uint256 _amount) external onlyOwner {
         _transfer(address(this), _receiver, _amount);
     }
 
@@ -153,7 +153,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @param _receiver receiver address
      * @param _amount transfer amount
      */
-    function transferToken(address _sender, address _receiver, uint128 _amount) external onlyAllowedContractsToTransfer returns (bool) {
+    function transferToken(address _sender, address _receiver, uint256 _amount) external onlyAllowedContractsToTransfer returns (bool) {
         _transfer(_sender, _receiver, _amount);
         return true;
     }
@@ -164,7 +164,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      * @param _account target address
      * @param _amount burn amount
      */
-    function burnLentToken(address _account, uint128 _amount) onlyLendingPool external  {
+    function burnLentToken(address _account, uint256 _amount) onlyLendingPool external  {
         _burn(_account, _amount);
     } 
 }

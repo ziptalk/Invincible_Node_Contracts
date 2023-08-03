@@ -16,7 +16,6 @@ import "../lib/Math.sol";
 contract InviSwapPool is Initializable, OwnableUpgradeable {
     using Math for uint256;
     //------Contracts and Addresses------//
-    IERC20 public isptToken;
     IERC20 public inviToken;
 
     //------events------//
@@ -24,6 +23,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     //------Variables------//
     mapping(address => uint256) public lpRewardNative;
     mapping(address => uint256) public lpRewardInvi;
+    mapping(address => uint256) public lpScore;
     mapping(uint32 => address) public lpList;
 
     uint32 public lpCount;
@@ -31,6 +31,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     uint256 public totalLiquidityInvi;
     uint256 public totalRewardNative;
     uint256 public totalRewardInvi;
+    uint256 public totalLpScore;
 
     uint public inviFees;
     uint public nativeFees;
@@ -39,11 +40,9 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     /**
      * @dev Initializes the InviSwapPool contract.
      * @param _inviAddr The address of the InviToken contract.
-     * @param _isptAddr The address of the ISPT (InviSwapPool Token) contract.
      */
-    function initialize(address _inviAddr, address _isptAddr) initializer public {
+    function initialize(address _inviAddr) initializer public {
         inviToken = IERC20(_inviAddr);
-        isptToken = IERC20(_isptAddr);
         inviFees = 3;
         nativeFees = 3;
         lpCount = 0;
@@ -107,10 +106,10 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getAddLiquidityNative(uint _amountIn) public view returns (uint256) {
         return _amountIn * totalLiquidityInvi / totalLiquidityNative;
     }
-    function getExpectedAmountsOutRemoveLiquidity(uint _liquidityTokensAmount) public view returns (uint256 inviAmount, uint256 nativeAmount) {
-        uint256 isptTotalSupply = isptToken.totalSupply();    
-        uint256 expectedInvi = _liquidityTokensAmount * totalLiquidityInvi / isptTotalSupply;
-        uint256 expectedNative = _liquidityTokensAmount * totalLiquidityNative / isptTotalSupply;
+    function getExpectedAmountsOutRemoveLiquidity(uint256 _liquidityAmount) public view returns (uint256 inviAmount, uint256 nativeAmount) {
+        uint256 totalScore = totalLpScore;
+        uint256 expectedInvi = _liquidityAmount * totalLiquidityInvi / totalScore;
+        uint256 expectedNative = _liquidityAmount * totalLiquidityNative / totalScore;
         return (expectedInvi, expectedNative);
     }
 
@@ -137,7 +136,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of InviTokens to swap.
      * @param _amountOutMin The minimum amount of native token expected to receive.
      */
-    function swapInviToNative(uint128 _amountIn, uint _amountOutMin) public {
+    function swapInviToNative(uint256 _amountIn, uint _amountOutMin) public {
         require(totalLiquidityNative <= address(this).balance + 10, "Test logic2");
         require(_amountIn < getInviToNativeOutMaxInput(), "InviSwapPool: exceeds max input amount");
         uint256 amountOut = getInviToNativeOutAmount(_amountIn);
@@ -187,7 +186,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         totalLiquidityInvi += expectedInvi;
 
         // transfer tokens from sender
-        require(inviToken.transferToken(msg.sender, address(this), uint128(expectedInvi)), "InviSwapPool: transfer failed");
+        require(inviToken.transferToken(msg.sender, address(this), uint256(expectedInvi)), "InviSwapPool: transfer failed");
         
         // add to lp list
         bool exist = false;
@@ -202,16 +201,19 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
             lpList[lpCount++] = msg.sender;
         }
 
-
-        // mint token
-        isptToken.mintToken(msg.sender, (msg.value * expectedInvi).sqrt());
+        // update lp score
+        lpScore[msg.sender] += (msg.value * expectedInvi).sqrt();
+        // update total lp score
+        totalLpScore += (msg.value * expectedInvi).sqrt();
         require(totalLiquidityNative <= address(this).balance + 10, "Test logic4");
 
     }
 
-    function removeLiquidity(uint _liquidityTokensAmount, uint _expectedInviAmount, uint _expectedNativeAmount, uint _slippage) public { 
+    function removeLiquidity(uint _liquidityAmount, uint _expectedInviAmount, uint _expectedNativeAmount, uint _slippage) public { 
+        require(_liquidityAmount <= totalLiquidityNative, "InviSwapPool: exceeds max input amount");
+        require(_liquidityAmount <= lpScore[msg.sender], "InviSwapPool: exceeds max input amount");
         // calculate amount of tokens to be transferred
-        (uint256 inviAmount, uint256 nativeAmount) = getExpectedAmountsOutRemoveLiquidity(_liquidityTokensAmount);
+        (uint256 inviAmount, uint256 nativeAmount) = getExpectedAmountsOutRemoveLiquidity(_liquidityAmount);
 
         uint expectedNativeAmountMin = _expectedNativeAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedNativeAmountMax = _expectedNativeAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
@@ -225,15 +227,14 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         require(address(this).balance >= nativeAmount + totalRewardNative , "InviSwapPool: insufficient balance");
         require(inviToken.balanceOf(address(this)) >= inviAmount + totalRewardInvi, "InviSwapPool: insufficient balance");
 
-         // burn liquidity Tokens from sender
-        isptToken.burnToken(msg.sender, _liquidityTokensAmount);
+        // update liquidity
+        lpScore[msg.sender] -= _liquidityAmount;
+        totalLpScore -= _liquidityAmount;
 
         // Update the contract's total liquidity and the user's liquidity holdings and rewards
         totalLiquidityNative -= nativeAmount;
         totalLiquidityInvi -= inviAmount;
 
-        // lpRewardNative[msg.sender] -= NativeReward;
-        // lpRewardInvi[msg.sender] -= inviReward;
 
          // Transfer the Native and Invi tokens to the user
         (bool NativeSuccess, ) = msg.sender.call{value: nativeAmount}("");
@@ -268,8 +269,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function _splitRewards(uint _type, uint _amount) private {
         for (uint32 i = 0 ; i < lpCount; i++) {
             address lp = lpList[i];
-            uint lpAmount = isptToken.balanceOf(lp);
-            uint totalSupply = isptToken.totalSupply();
+            uint lpAmount = lpScore[lp];
+            uint totalSupply = totalLpScore;
             if (_type == 0) {
                 uint nativeReward = (_amount * lpAmount) / totalSupply;
                 lpRewardNative[lp] += nativeReward;

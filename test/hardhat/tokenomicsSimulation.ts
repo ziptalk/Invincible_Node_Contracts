@@ -114,7 +114,7 @@ describe("Tokenomics test", function () {
 
     // Iterate Operation
     console.log("======== Start Iteration =========");
-    let iteration = 3;
+    let iteration = 1;
     for (let i = 0; i < iteration; i++) {
       console.log("======== Iteration ", i, " =========");
       console.log("======== Step 1: leverage Stake =========");

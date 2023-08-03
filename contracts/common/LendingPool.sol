@@ -22,15 +22,15 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     uint32 public maxLendRatio;
     uint32 private _lendRatio;
-    uint128 public totalLentAmount;
+    uint256 public totalLentAmount;
     bool private _setStakeNFTContract;
     bool private _setInviSwapPoolContract;
     bool private _locked;
     mapping(uint => LendInfo) public lendInfos;
     mapping(uint => uint) public nftLentTime;
 
-    event Lend(address indexed user, uint128 indexed principal, uint128 indexed lentAmount);
-    event Repay(address indexed user, uint128 indexed returnAmount);
+    event Lend(address indexed user, uint256 indexed principal, uint256 indexed lentAmount);
+    event Repay(address indexed user, uint256 indexed returnAmount);
 
     //====== modifiers ======// 
     modifier nonReentrant() {
@@ -87,7 +87,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _amount The principal value of the NFT.
      * @return The lent amount.
      */
-    function getMaxLendAmount(uint128 _amount) public view returns (uint256) {
+    function getMaxLendAmount(uint256 _amount) public view returns (uint256) {
         uint256 lendRatio = getLendRatio();
         uint256 nativeValue = inviSwapPool.totalLiquidityInvi();
         uint256 inviValue = inviSwapPool.totalLiquidityNative();
@@ -97,14 +97,14 @@ contract LendingPool is Initializable, OwnableUpgradeable {
 
     function getMaxLendAmountByNFT(uint32 _nftId) public view returns (uint256) {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
-        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
-        uint128 principal = stakeInfo.principal + rewardAmount;
+        uint256 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
+        uint256 principal = stakeInfo.principal + rewardAmount;
         return getMaxLendAmount(principal);
     }
 
-    function getMaxLendAmountWithBoost(uint128 _amount) public view returns (uint256) {
-        uint128 maxLendAmount = uint128(getMaxLendAmount(_amount));
-        uint128 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
+    function getMaxLendAmountWithBoost(uint256 _amount) public view returns (uint256) {
+        uint256 maxLendAmount = uint256(getMaxLendAmount(_amount));
+        uint256 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
         return maxLendAmountWithBoost;
     }
 
@@ -147,14 +147,14 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @param _nftId target nft
      * @param _requestAmount amount to lend
      */
-    function lend(uint32 _nftId, uint128 _requestAmount) external nonReentrant {
+    function lend(uint32 _nftId, uint256 _requestAmount) external nonReentrant {
         require(_requestAmount <= inviToken.balanceOf(address(this)), "LendingPool: insufficient balance");
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
-        uint128 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
-        uint128 principal = stakeInfo.principal + rewardAmount;
-        uint128 maxLendAmount = uint128(getMaxLendAmount(principal));
-        uint128 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
+        uint256 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
+        uint256 principal = stakeInfo.principal + rewardAmount;
+        uint256 maxLendAmount = uint256(getMaxLendAmount(principal));
+        uint256 maxLendAmountWithBoost = maxLendAmount * 100 / _lendRatio;
         if (_requestAmount > maxLendAmount) {
             require(maxLendAmountWithBoost >= _requestAmount, "LendingPool: invalid request amount");
             stakeNFTContract.boostLendAmount(_nftId, maxLendAmount, _requestAmount);
@@ -186,7 +186,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function repay(uint _nftId) external nonReentrant {
         require(stakeNFTContract.isOwner(_nftId, msg.sender) == true, "LendingPool: not owner of NFT");
         LendInfo memory lendInfo = lendInfos[_nftId];
-        uint128 repayAmount = lendInfo.lentAmount;
+        uint256 repayAmount = lendInfo.lentAmount;
         require(lendInfo.user != address(0), "LendingPool: nft id not found");
         require(repayAmount <= inviToken.balanceOf(msg.sender), "LendingPool: insufficient balance");
         inviToken.transferToken(msg.sender, address(this), repayAmount);

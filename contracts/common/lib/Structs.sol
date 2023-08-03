@@ -6,9 +6,9 @@ struct StakeInfo{
     uint256 lockPeriod;
     uint256 lockStart;
     uint256 lockEnd;
-    uint128 protocolFee;
-    uint128 principal;
-    uint128 stakedAmount;
+    uint256 protocolFee;
+    uint256 principal;
+    uint256 stakedAmount;
     uint32 originalLeverageRatio;
     uint32 leverageRatio;
     bool isLent;
@@ -16,8 +16,8 @@ struct StakeInfo{
 
 struct LendInfo{
     address user;
-    uint128 principal;
-    uint128 lentAmount;
+    uint256 principal;
+    uint256 lentAmount;
     uint32 nftId;
 }
 
@@ -28,8 +28,8 @@ struct ExchangeRatio{
 
 struct UnstakeRequest{
     address recipient;
-    uint128 fee;
-    uint128 amount;
+    uint256 fee;
+    uint256 amount;
     uint32 requestType; // 0: user, 1: LP, 2: INVI
     uint32 nftId;
 }
@@ -37,5 +37,5 @@ struct UnstakeRequest{
 struct UnstakeRequestLP {
     address recipient;
     uint256 requestTime;
-    uint128 amount;
+    uint256 amount;
 }

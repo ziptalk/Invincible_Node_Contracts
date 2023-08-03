@@ -25,11 +25,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     address public lpPoolAddress;
 
     //------Variables------//
-    uint128 public totalStakedAmount;
+    uint256 public totalStakedAmount;
     //------mappings------//
     mapping (uint32 => uint32) public nftTokenIds;
     mapping (address => uint32[]) public NFTOwnership; // show which address have which NFT
-    mapping (uint32 => uint128) public rewardAmount;
+    mapping (uint32 => uint256) public rewardAmount;
     mapping (uint32 => StakeInfo) public stakeInfos; // store all stakeInfos
 
     //------private Variables------//
@@ -197,9 +197,10 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @dev Updates the reward amount for all NFTs based on the total reward.
      * @param _totalReward The total reward amount.
      */
-    function updateReward(uint128 _totalReward) external onlyInviCore returns(uint128){
+    function updateReward(uint256 _totalReward) external onlyInviCore returns(uint256){
         // rewards that belongs to LP
-        uint128 lpReward = 0;
+        uint256 lpReward = 0;
+        uint256 amount;
         for (uint32 i = 0; i < _tokenIds; i++) {
             uint32 nftId = nftTokenIds[i];
             // if tokenIds not available, skip
@@ -208,9 +209,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
             }
             // if NFT pass the lock period, the reward will be added to LP
             if (stakeInfos[nftId].lockEnd < block.timestamp) {
-                lpReward += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+                amount = _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+                lpReward += amount;
             } else { // otherwise, the reward will be added to the NFT
-                rewardAmount[nftId] += _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+                amount = _totalReward * stakeInfos[nftId].stakedAmount / totalStakedAmount;
+                rewardAmount[nftId] += amount;
             }
         }
         return lpReward;
@@ -273,7 +276,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _lackAmount lack liquidity amount
      * @param _totalLentAmount total lent amount of all NFTs
      */
-    function resolveLiquidityIssue(uint128 _lackAmount, uint128 _totalLentAmount) external onlyLpPool {
+    function resolveLiquidityIssue(uint256 _lackAmount, uint256 _totalLentAmount) external onlyLpPool {
         for (uint32 i = 0 ; i < _tokenIds; i++) {
             uint32 nftId = nftTokenIds[i];
             if (nftId == 0) continue;
@@ -283,8 +286,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
             // if still locked
             if (stakeInfos[nftId].lockEnd > block.timestamp) {
                 uint256 prevLockPeriod = stakeInfo.lockPeriod;
-                uint128 _lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
-                uint128 _decreaseAmount = _lackAmount * _lentAmount / _totalLentAmount;
+                uint256 _lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
+                uint256 _decreaseAmount = _lackAmount * _lentAmount / _totalLentAmount;
                 // update stakedAmount
                 stakeInfo.stakedAmount -= _decreaseAmount;
 
@@ -307,7 +310,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
                     stakeInfo.protocolFee = uint32(updatedFee);
                 }
                 // update leverageRatio
-                uint128 leverageRatio = stakeInfo.stakedAmount * uint128(LEVERAGE_UNIT) / uint128(stakeInfo.principal);
+                uint256 leverageRatio = stakeInfo.stakedAmount * uint256(LEVERAGE_UNIT) / uint256(stakeInfo.principal);
                 stakeInfo.leverageRatio = uint32(leverageRatio);
             }
         }

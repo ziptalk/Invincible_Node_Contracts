@@ -3498,7 +3498,7 @@
             "label": "regularMintAmount",
             "offset": 0,
             "slot": "155",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviToken",
             "src": "contracts\\common\\tokens\\InviToken.sol:21"
           },
@@ -3568,8 +3568,8 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -3690,7 +3690,7 @@
             "label": "totalILPHoldersCount",
             "offset": 0,
             "slot": "152",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "ILPToken",
             "src": "contracts\\common\\tokens\\ILPToken.sol:16"
           },
@@ -3698,7 +3698,7 @@
             "label": "ILPHolders",
             "offset": 0,
             "slot": "153",
-            "type": "t_mapping(t_uint128,t_address)",
+            "type": "t_mapping(t_uint256,t_address)",
             "contract": "ILPToken",
             "src": "contracts\\common\\tokens\\ILPToken.sol:17"
           }
@@ -3732,16 +3732,16 @@
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint128,t_address)": {
-            "label": "mapping(uint128 => address)",
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
           "t_string_storage": {
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -4042,7 +4042,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "204",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:31"
           },
@@ -4066,7 +4066,7 @@
             "label": "rewardAmount",
             "offset": 0,
             "slot": "207",
-            "type": "t_mapping(t_uint32,t_uint128)",
+            "type": "t_mapping(t_uint32,t_uint256)",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:35"
           },
@@ -4152,8 +4152,8 @@
             "label": "mapping(uint32 => struct StakeInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint32,t_uint128)": {
-            "label": "mapping(uint32 => uint128)",
+          "t_mapping(t_uint32,t_uint256)": {
+            "label": "mapping(uint32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_uint32)": {
@@ -4187,19 +4187,19 @@
               },
               {
                 "label": "protocolFee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
               {
                 "label": "stakedAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "2"
               },
@@ -4230,8 +4230,8 @@
             ],
             "numberOfBytes": "224"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -4316,7 +4316,7 @@
             "label": "stakedAmount",
             "offset": 0,
             "slot": "103",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:17"
           },
@@ -4324,7 +4324,7 @@
             "label": "nativeRewardAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:18"
           },
@@ -4332,7 +4332,7 @@
             "label": "inviRewardAmount",
             "offset": 0,
             "slot": "105",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:19"
           },
@@ -4340,7 +4340,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:20"
           },
@@ -4356,7 +4356,7 @@
             "label": "claimableUnstakeAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:24"
           },
@@ -4364,7 +4364,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "109",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:25"
           },
@@ -4372,7 +4372,7 @@
             "label": "totalClaimableInviAmount",
             "offset": 0,
             "slot": "110",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:26"
           },
@@ -4420,7 +4420,7 @@
             "label": "totalInviRewardAmount",
             "offset": 0,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:34"
           },
@@ -4428,7 +4428,7 @@
             "label": "totalInviRewardAmountByAddress",
             "offset": 0,
             "slot": "117",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:35"
           },
@@ -4436,7 +4436,7 @@
             "label": "totalAddressNumber",
             "offset": 0,
             "slot": "118",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:38"
           },
@@ -4444,7 +4444,7 @@
             "label": "addressList",
             "offset": 0,
             "slot": "119",
-            "type": "t_mapping(t_uint128,t_address)",
+            "type": "t_mapping(t_uint256,t_address)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:39"
           }
@@ -4470,20 +4470,20 @@
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_address,t_uint256)": {
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint128,t_address)": {
-            "label": "mapping(uint128 => address)",
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -4580,7 +4580,7 @@
             "label": "stakedAmount",
             "offset": 0,
             "slot": "105",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:28"
           },
@@ -4588,7 +4588,7 @@
             "label": "nativeRewardAmount",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:29"
           },
@@ -4596,7 +4596,7 @@
             "label": "inviRewardAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:30"
           },
@@ -4604,7 +4604,7 @@
             "label": "totalInviRewardAmountByAddress",
             "offset": 0,
             "slot": "108",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:31"
           },
@@ -4612,7 +4612,7 @@
             "label": "totalNativeRewardAmountByAddress",
             "offset": 0,
             "slot": "109",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:32"
           },
@@ -4620,7 +4620,7 @@
             "label": "claimableUnstakeAmount",
             "offset": 0,
             "slot": "110",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:33"
           },
@@ -4628,7 +4628,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "111",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:34"
           },
@@ -4668,7 +4668,7 @@
             "label": "unstakedAmount",
             "offset": 12,
             "slot": "113",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:43"
           },
@@ -4676,7 +4676,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:44"
           },
@@ -4684,7 +4684,7 @@
             "label": "totalLentAmount",
             "offset": 16,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:45"
           },
@@ -4692,7 +4692,7 @@
             "label": "totalNativeRewardAmount",
             "offset": 0,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:46"
           },
@@ -4700,7 +4700,7 @@
             "label": "totalInviRewardAmount",
             "offset": 16,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:47"
           },
@@ -4708,7 +4708,7 @@
             "label": "totalClaimableInviAmount",
             "offset": 0,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:48"
           },
@@ -4786,8 +4786,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint256,t_struct(UnstakeRequestLP)8623_storage)": {
@@ -4805,7 +4805,7 @@
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
@@ -4818,8 +4818,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -4920,7 +4920,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LendingPool",
             "src": "contracts\\common\\LendingPool.sol:24"
           },
@@ -4995,27 +4995,27 @@
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "minLendAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
               {
                 "label": "lentAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "2"
               }
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -5368,7 +5368,7 @@
             "label": "totalNFTRewards",
             "offset": 0,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:39"
           },
@@ -5400,7 +5400,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:45"
           },
@@ -5416,7 +5416,7 @@
             "label": "totalClaimableAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:48"
           },
@@ -5456,7 +5456,7 @@
             "label": "claimableAmount",
             "offset": 0,
             "slot": "113",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:54"
           }
@@ -5498,8 +5498,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_struct(UnstakeRequest)8616_storage)": {
@@ -5529,21 +5529,21 @@
               },
               {
                 "label": "fee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               }
             ],
             "numberOfBytes": "64"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -5612,7 +5612,7 @@
             "label": "inviPrice",
             "offset": 0,
             "slot": "101",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "PriceManager",
             "src": "contracts\\common\\PriceManager.sol:18"
           },
@@ -5620,7 +5620,7 @@
             "label": "nativePrice",
             "offset": 16,
             "slot": "101",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "PriceManager",
             "src": "contracts\\common\\PriceManager.sol:19"
           }
@@ -5642,8 +5642,8 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -5820,7 +5820,7 @@
             "label": "regularMintAmount",
             "offset": 0,
             "slot": "155",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviToken",
             "src": "contracts\\common\\tokens\\InviToken.sol:27"
           },
@@ -5890,8 +5890,8 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -6012,7 +6012,7 @@
             "label": "ILPHolders",
             "offset": 0,
             "slot": "152",
-            "type": "t_mapping(t_uint128,t_address)",
+            "type": "t_mapping(t_uint256,t_address)",
             "contract": "ILPToken",
             "src": "contracts\\common\\tokens\\ILPToken.sol:16"
           },
@@ -6020,7 +6020,7 @@
             "label": "totalILPHoldersCount",
             "offset": 0,
             "slot": "153",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "ILPToken",
             "src": "contracts\\common\\tokens\\ILPToken.sol:17"
           },
@@ -6066,16 +6066,16 @@
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint128,t_address)": {
-            "label": "mapping(uint128 => address)",
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
           "t_string_storage": {
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -6228,7 +6228,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "204",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:28"
           },
@@ -6252,7 +6252,7 @@
             "label": "rewardAmount",
             "offset": 0,
             "slot": "207",
-            "type": "t_mapping(t_uint32,t_uint128)",
+            "type": "t_mapping(t_uint32,t_uint256)",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:32"
           },
@@ -6338,8 +6338,8 @@
             "label": "mapping(uint32 => struct StakeInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint32,t_uint128)": {
-            "label": "mapping(uint32 => uint128)",
+          "t_mapping(t_uint32,t_uint256)": {
+            "label": "mapping(uint32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_uint32)": {
@@ -6379,19 +6379,19 @@
               },
               {
                 "label": "protocolFee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "4"
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "4"
               },
               {
                 "label": "stakedAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "5"
               },
@@ -6416,8 +6416,8 @@
             ],
             "numberOfBytes": "192"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -6526,7 +6526,7 @@
             "label": "stakedAmount",
             "offset": 0,
             "slot": "103",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:20"
           },
@@ -6534,7 +6534,7 @@
             "label": "nativeRewardAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:21"
           },
@@ -6542,7 +6542,7 @@
             "label": "inviRewardAmount",
             "offset": 0,
             "slot": "105",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:22"
           },
@@ -6550,7 +6550,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:23"
           },
@@ -6558,7 +6558,7 @@
             "label": "minStakeAmount",
             "offset": 16,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:24"
           },
@@ -6574,7 +6574,7 @@
             "label": "claimableUnstakeAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:28"
           },
@@ -6582,7 +6582,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "109",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:29"
           },
@@ -6590,7 +6590,7 @@
             "label": "totalClaimableInviAmount",
             "offset": 0,
             "slot": "110",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:30"
           },
@@ -6638,7 +6638,7 @@
             "label": "totalInviRewardAmount",
             "offset": 0,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:38"
           },
@@ -6646,7 +6646,7 @@
             "label": "totalInviRewardAmountByAddress",
             "offset": 0,
             "slot": "117",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:39"
           },
@@ -6654,7 +6654,7 @@
             "label": "totalAddressNumber",
             "offset": 0,
             "slot": "118",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:42"
           },
@@ -6662,7 +6662,7 @@
             "label": "addressList",
             "offset": 0,
             "slot": "119",
-            "type": "t_mapping(t_uint128,t_address)",
+            "type": "t_mapping(t_uint256,t_address)",
             "contract": "InviTokenStake",
             "src": "contracts\\common\\InviTokenStake.sol:43"
           }
@@ -6688,20 +6688,20 @@
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_address,t_uint256)": {
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint128,t_address)": {
-            "label": "mapping(uint128 => address)",
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -6798,7 +6798,7 @@
             "label": "stakedAmount",
             "offset": 0,
             "slot": "105",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:27"
           },
@@ -6806,7 +6806,7 @@
             "label": "nativeRewardAmount",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:28"
           },
@@ -6814,7 +6814,7 @@
             "label": "inviRewardAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:29"
           },
@@ -6822,7 +6822,7 @@
             "label": "totalInviRewardAmountByAddress",
             "offset": 0,
             "slot": "108",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:30"
           },
@@ -6830,7 +6830,7 @@
             "label": "totalNativeRewardAmountByAddress",
             "offset": 0,
             "slot": "109",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:31"
           },
@@ -6838,7 +6838,7 @@
             "label": "claimableUnstakeAmount",
             "offset": 0,
             "slot": "110",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:32"
           },
@@ -6846,7 +6846,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "111",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:33"
           },
@@ -6886,7 +6886,7 @@
             "label": "unstakedAmount",
             "offset": 12,
             "slot": "113",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:42"
           },
@@ -6894,7 +6894,7 @@
             "label": "minStakeAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:43"
           },
@@ -6902,7 +6902,7 @@
             "label": "totalStakedAmount",
             "offset": 16,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:44"
           },
@@ -6910,7 +6910,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:45"
           },
@@ -6918,7 +6918,7 @@
             "label": "totalNativeRewardAmount",
             "offset": 16,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:46"
           },
@@ -6926,7 +6926,7 @@
             "label": "totalInviRewardAmount",
             "offset": 0,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:47"
           },
@@ -6934,7 +6934,7 @@
             "label": "totalClaimableInviAmount",
             "offset": 16,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:48"
           },
@@ -7028,8 +7028,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint256,t_struct(UnstakeRequestLP)9037_storage)": {
@@ -7053,15 +7053,15 @@
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "2"
               }
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -7162,7 +7162,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LendingPool",
             "src": "contracts\\common\\LendingPool.sol:24"
           },
@@ -7255,19 +7255,19 @@
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "minLendAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
               {
                 "label": "lentAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "2"
               },
@@ -7280,8 +7280,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -7446,7 +7446,7 @@
             "label": "totalNFTRewards",
             "offset": 4,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:43"
           },
@@ -7462,7 +7462,7 @@
             "label": "minStakeAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:46"
           },
@@ -7486,7 +7486,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:50"
           },
@@ -7502,7 +7502,7 @@
             "label": "totalClaimableAmount",
             "offset": 0,
             "slot": "109",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:53"
           },
@@ -7542,7 +7542,7 @@
             "label": "claimableAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:60"
           }
@@ -7584,8 +7584,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_struct(UnstakeRequest)9030_storage)": {
@@ -7603,13 +7603,13 @@
               },
               {
                 "label": "fee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
@@ -7628,8 +7628,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -7786,7 +7786,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "204",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:28"
           },
@@ -7810,7 +7810,7 @@
             "label": "rewardAmount",
             "offset": 0,
             "slot": "207",
-            "type": "t_mapping(t_uint32,t_uint128)",
+            "type": "t_mapping(t_uint32,t_uint256)",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:32"
           },
@@ -7896,8 +7896,8 @@
             "label": "mapping(uint32 => struct StakeInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint32,t_uint128)": {
-            "label": "mapping(uint32 => uint128)",
+          "t_mapping(t_uint32,t_uint256)": {
+            "label": "mapping(uint32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_uint32)": {
@@ -7937,19 +7937,19 @@
               },
               {
                 "label": "protocolFee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "4"
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "4"
               },
               {
                 "label": "stakedAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "5"
               },
@@ -7974,8 +7974,8 @@
             ],
             "numberOfBytes": "192"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -8076,7 +8076,7 @@
             "label": "stakedAmount",
             "offset": 0,
             "slot": "105",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:27"
           },
@@ -8084,7 +8084,7 @@
             "label": "nativeRewardAmount",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:28"
           },
@@ -8092,7 +8092,7 @@
             "label": "inviRewardAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:29"
           },
@@ -8100,7 +8100,7 @@
             "label": "totalInviRewardAmountByAddress",
             "offset": 0,
             "slot": "108",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:30"
           },
@@ -8108,7 +8108,7 @@
             "label": "totalNativeRewardAmountByAddress",
             "offset": 0,
             "slot": "109",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:31"
           },
@@ -8116,7 +8116,7 @@
             "label": "claimableUnstakeAmount",
             "offset": 0,
             "slot": "110",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:32"
           },
@@ -8124,7 +8124,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "111",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:33"
           },
@@ -8164,7 +8164,7 @@
             "label": "unstakedAmount",
             "offset": 12,
             "slot": "113",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:42"
           },
@@ -8172,7 +8172,7 @@
             "label": "minStakeAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:43"
           },
@@ -8180,7 +8180,7 @@
             "label": "totalStakedAmount",
             "offset": 16,
             "slot": "114",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:44"
           },
@@ -8188,7 +8188,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:45"
           },
@@ -8196,7 +8196,7 @@
             "label": "totalNativeRewardAmount",
             "offset": 16,
             "slot": "115",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:46"
           },
@@ -8204,7 +8204,7 @@
             "label": "totalInviRewardAmount",
             "offset": 0,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:47"
           },
@@ -8212,7 +8212,7 @@
             "label": "totalClaimableInviAmount",
             "offset": 16,
             "slot": "116",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LiquidityProviderPool",
             "src": "contracts\\common\\LiquidityProviderPool.sol:48"
           },
@@ -8306,8 +8306,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint256,t_struct(UnstakeRequestLP)9076_storage)": {
@@ -8331,15 +8331,15 @@
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "2"
               }
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -8440,7 +8440,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LendingPool",
             "src": "contracts\\common\\LendingPool.sol:24"
           },
@@ -8533,13 +8533,13 @@
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "lentAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
@@ -8552,8 +8552,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -8718,7 +8718,7 @@
             "label": "totalNFTRewards",
             "offset": 4,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:43"
           },
@@ -8734,7 +8734,7 @@
             "label": "minStakeAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:46"
           },
@@ -8758,7 +8758,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:50"
           },
@@ -8774,7 +8774,7 @@
             "label": "totalClaimableAmount",
             "offset": 0,
             "slot": "109",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:53"
           },
@@ -8814,7 +8814,7 @@
             "label": "claimableAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:60"
           }
@@ -8856,8 +8856,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_struct(UnstakeRequest)9069_storage)": {
@@ -8875,13 +8875,13 @@
               },
               {
                 "label": "fee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
@@ -8900,8 +8900,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -9058,7 +9058,7 @@
             "label": "totalStakedAmount",
             "offset": 0,
             "slot": "204",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:28"
           },
@@ -9082,7 +9082,7 @@
             "label": "rewardAmount",
             "offset": 0,
             "slot": "207",
-            "type": "t_mapping(t_uint32,t_uint128)",
+            "type": "t_mapping(t_uint32,t_uint256)",
             "contract": "StakeNFT",
             "src": "contracts\\common\\StakeNFT.sol:32"
           },
@@ -9168,8 +9168,8 @@
             "label": "mapping(uint32 => struct StakeInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint32,t_uint128)": {
-            "label": "mapping(uint32 => uint128)",
+          "t_mapping(t_uint32,t_uint256)": {
+            "label": "mapping(uint32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_uint32)": {
@@ -9209,19 +9209,19 @@
               },
               {
                 "label": "protocolFee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "4"
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "4"
               },
               {
                 "label": "stakedAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "5"
               },
@@ -9246,8 +9246,8 @@
             ],
             "numberOfBytes": "192"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -9348,7 +9348,7 @@
             "label": "totalLentAmount",
             "offset": 0,
             "slot": "104",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "LendingPool",
             "src": "contracts\\common\\LendingPool.sol:24"
           },
@@ -9441,13 +9441,13 @@
               },
               {
                 "label": "principal",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "lentAmount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
@@ -9460,8 +9460,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {
@@ -9626,7 +9626,7 @@
             "label": "totalNFTRewards",
             "offset": 4,
             "slot": "106",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:43"
           },
@@ -9642,7 +9642,7 @@
             "label": "minStakeAmount",
             "offset": 0,
             "slot": "107",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:46"
           },
@@ -9666,7 +9666,7 @@
             "label": "unstakeRequestAmount",
             "offset": 0,
             "slot": "108",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:50"
           },
@@ -9682,7 +9682,7 @@
             "label": "totalClaimableAmount",
             "offset": 0,
             "slot": "109",
-            "type": "t_uint128",
+            "type": "t_uint256",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:53"
           },
@@ -9722,7 +9722,7 @@
             "label": "claimableAmount",
             "offset": 0,
             "slot": "114",
-            "type": "t_mapping(t_address,t_uint128)",
+            "type": "t_mapping(t_address,t_uint256)",
             "contract": "InviCore",
             "src": "contracts\\common\\InviCore.sol:60"
           }
@@ -9764,8 +9764,8 @@
             "label": "contract StakeNFT",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_uint128)": {
-            "label": "mapping(address => uint128)",
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint32,t_struct(UnstakeRequest)9083_storage)": {
@@ -9783,13 +9783,13 @@
               },
               {
                 "label": "fee",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "amount",
-                "type": "t_uint128",
+                "type": "t_uint256",
                 "offset": 16,
                 "slot": "1"
               },
@@ -9808,8 +9808,8 @@
             ],
             "numberOfBytes": "96"
           },
-          "t_uint128": {
-            "label": "uint128",
+          "t_uint256": {
+            "label": "uint256",
             "numberOfBytes": "16"
           },
           "t_uint256": {

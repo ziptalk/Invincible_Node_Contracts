@@ -15,8 +15,8 @@ import "./lib/Math.sol";
  */
 contract PriceManager is Initializable, OwnableUpgradeable {
     //------Variables------//
-    uint128 public inviPrice;
-    uint128 public nativePrice;
+    uint256 public inviPrice;
+    uint256 public nativePrice;
 
     //======initializer======//
     /**
@@ -33,7 +33,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @notice Returns the current price of InviToken.
      * @return The price of InviToken.
      */
-    function getInviPrice() public view returns (uint128) {
+    function getInviPrice() public view returns (uint256) {
         return inviPrice;
     }
    
@@ -41,7 +41,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @notice Returns the current price of the native token.
      * @return The price of the native token.
      */
-    function getNativePrice() public view returns (uint128) {
+    function getNativePrice() public view returns (uint256) {
         return nativePrice;
     }
 
@@ -50,7 +50,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @notice Sets the price of InviToken.
      * @param _price The new price of InviToken.
      */
-    function setInviPrice(uint128 _price) public onlyOwner {
+    function setInviPrice(uint256 _price) public onlyOwner {
         inviPrice = _price;
     }
    
@@ -58,7 +58,7 @@ contract PriceManager is Initializable, OwnableUpgradeable {
      * @notice Sets the price of the native token.
      * @param _price The new price of the native token.
      */
-    function setNativePrice(uint128 _price) public onlyOwner {
+    function setNativePrice(uint256 _price) public onlyOwner {
         nativePrice = _price;
     }
 }
