@@ -51,6 +51,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint32 public unstakeRequestsFront;
     uint32 public unstakeRequestsRear;
     uint256 public unstakeRequestAmount;
+    uint256 public nftUnstakePeriod;
     //------other variable------// 
     uint32 public slippage;
     uint256 public totalClaimableAmount;
@@ -61,6 +62,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     //------Mappings------//
     mapping (uint32 => UnstakeRequest) public unstakeRequests;
     mapping (address => uint256) public claimableAmount;
+    mapping (uint32 => uint256) public nftUnstakeTime;
 
     //------events------//
     event Stake(address indexed user, uint256 indexed amount);
@@ -98,6 +100,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
         _locked = false;
         minStakeAmount = 10**15; // 0.001
+
+        nftUnstakePeriod = 7 days; // main: 7days / test: 1 min
     }
 
     //====== modifier functions ======//
@@ -319,6 +323,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         minStakeAmount = _minStakeAmount;
     }
 
+    function setNftUnstakePeriod(uint256 _nftUnstakePeriod) external onlyOwner {
+        nftUnstakePeriod = _nftUnstakePeriod;
+    }
+
     //====== service functions ======//
     /**
      * @notice Stakes native coins by minting an NFT and staking the principal amount.
@@ -391,6 +399,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
             nftId: _nftTokenId 
         });
 
+        // update nftUnstakeTime
+        nftUnstakeTime[_nftTokenId] = block.timestamp + nftUnstakePeriod;
         //push request to unstakeRequests
         unstakeRequests[unstakeRequestsRear++] = request;
         

@@ -48,7 +48,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function initialize(address _inviTokenAddr) initializer public {
         __Ownable_init();
         inviToken = InviToken(_inviTokenAddr);
-        _lendRatio = 90;
+        _lendRatio = 80;
         maxLendRatio = _lendRatio * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
         _setStakeNFTContract = false;
