@@ -3,6 +3,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import "dotenv/config";
 import { ethers } from "hardhat";
+import { setBlockGasLimit } from "@nomicfoundation/hardhat-network-helpers";
 
 // testnet
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;
@@ -35,6 +36,13 @@ const config: HardhatUserConfig = {
     artifacts: "./artifacts",
   },
   networks: {
+    hardhat: {
+      accounts: {
+        accountsBalance: "100000000000000000000000", // 100000 ETH
+      },
+      gasPrice: 1000000000,
+      blockGasLimit: 10000000,
+    },
     // testnets
     goerli: {
       url: process.env.GOERLI_URL,
