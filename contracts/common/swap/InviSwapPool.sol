@@ -85,15 +85,13 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
         
-        return totalLiquidityInvi * currentInviLiquidity / (2*currentNativeLiquidity);
+        return totalLiquidityInvi * currentNativeLiquidity / (2*currentInviLiquidity);
     }
     function getInviToNativeOutMaxInput() public view returns (uint) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        
-        return totalLiquidityNative * currentNativeLiquidity / (2*currentInviLiquidity);
+        return totalLiquidityNative * currentInviLiquidity / (2*currentNativeLiquidity);
     }
-
 
     function getAddLiquidityInvi(uint256 _amountIn) public view returns (uint256) {
         return _amountIn * totalLiquidityNative / totalLiquidityInvi;
@@ -158,6 +156,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         require(msg.value > 0, "InviSwapPool: zero amount");
         uint256 amountOut = getNativeToInviOutAmount(msg.value);
         uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
+        console.log("amountOut              : ", amountOut);
+        console.log("totalLiquidityInvi     : ", totalLiquidityInvi);
         require(amountOut < totalLiquidityInvi, "InviSwapPool: not enough reserves");
         require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
         totalLiquidityNative += msg.value;

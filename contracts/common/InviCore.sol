@@ -451,6 +451,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(stTokenDistributePeriod + lastStTokenDistributeTime < block.timestamp, "InviCore: reward distribution period not passed");
         // get total staked amount
         uint256 totalStakedAmount = getTotalStakedAmount();
+        require(totalStakedAmount > 0, "InviCore: total staked amount is zero");
         uint256 stTokenBalance = stToken.balanceOf(address(this));
         require(stTokenBalance > totalStakedAmount + totalNFTRewards , "InviCore: not enough reward");
         // get total rewards
@@ -562,6 +563,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
             uint32 requestType = request.requestType;
             uint256 amount = request.amount;
             address recipient = request.recipient;
+            uint32 nftId = request.nftId;
             
             // remove first element of unstakeRequests
             delete unstakeRequests[unstakeRequestsFront++];
@@ -569,10 +571,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
             // update unstakeRequestAmount
             unstakeRequestAmount -= amount;
 
-            // console.log("current balance: ", address(this).balance);
-            // console.log("amount         : ", amount);
             // if normal user
             if (requestType == 0) {
+                nftUnstakeTime[nftId] = 0;
                 claimableAmount[recipient] += amount;
                 totalClaimableAmount += amount;
             } 
