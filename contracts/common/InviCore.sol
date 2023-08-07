@@ -8,6 +8,7 @@ import "./lib/Structs.sol";
 import "hardhat/console.sol";
 import "./LiquidityProviderPool.sol";
 import "./InviTokenStake.sol";
+import "./tokens/InviToken.sol";
 import "./lib/Logics.sol";
 import "./lib/Unit.sol";
 import "../interfaces/external/ILiquidStaking.sol";
@@ -29,6 +30,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     using Logics for uint32;
     //------Contracts / Addresses / Networks ------//
     IERC20 public stToken;
+    InviToken public inviToken;
     StakeNFT public stakeNFTContract;
     LiquidityProviderPool public lpPoolContract;
     InviTokenStake public inviTokenStakeContract;
@@ -82,9 +84,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @param _liquidStakingAddr The address of the Liquid Staking contract.
      * @param _network The network ID.
      */
-    function initialize(address _stTokenAddr, address _liquidStakingAddr, uint8 _network) initializer public {
+    function initialize(address _stTokenAddr, address _inviTokenAddr, address _liquidStakingAddr, uint8 _network) initializer public {
         __Ownable_init();
         stToken = IERC20(_stTokenAddr);
+        inviToken = InviToken(_inviTokenAddr);
         liquidStakingContract = ILiquidStaking(_liquidStakingAddr);
 
         slippage = 5 * SLIPPAGE_UNIT;
@@ -368,7 +371,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     function repayNFT(uint32 _nftTokenId) external nonReentrant {
         // verify NFT
         require(stakeNFTContract.isOwner(_nftTokenId, msg.sender), "InviCore: not owner of NFT");
-        require(stakeNFTContract.isUnlock(_nftTokenId), "InviCore: NFT is locked");
+        require(!stakeNFTContract.isLocked(_nftTokenId), "InviCore: NFT is locked");
         require(!stakeNFTContract.isLent(_nftTokenId), "InviCore: NFT is lent");
 
 
@@ -441,6 +444,23 @@ contract InviCore is Initializable, OwnableUpgradeable {
         // update unstake request amount
         unstakeRequestAmount += stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward;
         emit Unstake(msg.sender, stakeInfo.principal + userReward + lpPoolReward + inviTokenStakeReward);
+    }
+
+    function boostUnlock(uint32 _nftId) external nonReentrant {
+        require(stakeNFTContract.isOwner(_nftId, msg.sender), "InviCore: not owner of NFT");
+        require(stakeNFTContract.isLocked(_nftId), "InviCore: NFT is already unlocked");
+        require(!stakeNFTContract.isLent(_nftId), "InviCore: NFT is lent");
+        (uint256 requiredAmount, uint256 currentTimestamp) = stakeNFTContract.getBoostUnlockAmount(_nftId);
+        require(requiredAmount > 0, "InviCore: boost unlock amount is zero");
+
+        // burn required amount from user
+        console.log("requiredAmount     : %s", requiredAmount / 10**18);
+        console.log("invitoken balance  : %s", inviToken.balanceOf(msg.sender) / 10**18);
+        require(inviToken.balanceOf(msg.sender) >= requiredAmount, "InviCore: not enough INVI token");
+        inviToken.burnToken(msg.sender, requiredAmount);
+        
+        // update unlock time
+        stakeNFTContract.updateUnlockTimeWhenBoostUnlock(_nftId, currentTimestamp);
     }
 
     /**

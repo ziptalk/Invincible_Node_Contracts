@@ -16,12 +16,14 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     bool private _setInviTokenStakeAddress;
     bool private _setLpPoolAddress;
     bool private _setInviSwapPoolAddress;
+    bool private _setInviCoreAddress;
 
     //------ contract addresses ------//
     address public lendingPoolAddress;
     address public inviTokenStakeAddress;
     address public lpPoolAddress;
     address public inviSwapPoolAddress;
+    address public inviCoreAddress;
 
     //------ Variables ------//
     uint256 public regularMintAmount;
@@ -29,6 +31,7 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint256 public lastMinted;
     uint256 public mintAmountChangeInterval;
     uint256 public lastMintAmountChange;
+    uint256 public totalBurntAmount;
 
     //====== initializer ======//
     /**
@@ -41,17 +44,19 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         /////////////////////////////////////////////////////////////
         ///// Set this part /////////////////////////////////////////
         /////////////////////////////////////////////////////////////
-        regularMintAmount = 10000000; // Test: 10000 / Main: 100 million    
+        regularMintAmount = 100000000; // Test: 10000 / Main: 100 million    
         mintInterval = 10 hours; // testnet: 10 hour,  mainnet: 10 days       
         lastMinted = block.timestamp - mintInterval;     
         mintAmountChangeInterval = 10 days; // 10 days
         lastMintAmountChange = block.timestamp - mintAmountChangeInterval;
         /////////////////////////////////////////////////////////////
-
         _setLendingPoolAddress = false;
         _setInviTokenStakeAddress = false;
         _setLpPoolAddress = false;
         _setInviSwapPoolAddress = false;
+        _setInviCoreAddress = false;
+
+        totalBurntAmount = 0;
     }
 
     //====== modifier ======//
@@ -60,8 +65,13 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _;
     }
 
+    modifier onlyInviCore {
+        require(msg.sender == inviCoreAddress, "Error: not inviCore contract");
+        _;
+    }
+
     modifier onlyAllowedContractsToTransfer {
-        require(msg.sender == inviTokenStakeAddress || msg.sender == lendingPoolAddress || msg.sender == inviSwapPoolAddress, "InviToken: Not allowed address");
+        require(msg.sender == inviCoreAddress || msg.sender == inviTokenStakeAddress || msg.sender == lendingPoolAddress || msg.sender == inviSwapPoolAddress, "InviToken: Not allowed address");
         _;
     }
 
@@ -110,6 +120,17 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _setInviSwapPoolAddress = true;
     }
 
+    /**
+     * @notice set inviCoreAddress
+     * @dev can be set only once by owner
+     * @param _inviCoreAddr inviCoreAddress
+     */
+    function setInviCoreAddress(address _inviCoreAddr) onlyOwner external {
+        require(_setInviCoreAddress == false, "InviToken: inviCore contract already set");
+        inviCoreAddress = _inviCoreAddr;
+        _setInviCoreAddress = true;
+    }
+
     //====== service functions ======//
     /**
      * @notice mint token regularly to this and other contracts
@@ -134,6 +155,11 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
 
         // send minted token to lpPool (15%)
         _transfer(address(this), lpPoolAddress, mintAmount * 15 / 100);
+    }
+
+    function burnToken(address _targetAddress, uint256 _amount) external onlyInviCore {
+        _burn(_targetAddress, _amount);
+        totalBurntAmount += _amount;
     }
 
     /**

@@ -10,6 +10,7 @@ import "./lib/ArrayUtils.sol";
 import "hardhat/console.sol";
 import "./LendingPool.sol";
 import "./lib/Unit.sol";
+import "./swap/InviSwapPool.sol";
 
 /**
  * @title StakeNFT
@@ -19,10 +20,13 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     // using Counters for Counters.Counter;
     // Counters.Counter private _tokenIds;
 
+    bool private _setInviSwapPool;
+
     //------Contracts and Addresses------//
     address public inviCoreAddress;
     address public lendingPoolAddress;
     address public lpPoolAddress;
+    InviSwapPool public inviSwapPool;
 
     //------Variables------//
     uint256 public totalStakedAmount;
@@ -44,7 +48,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     function initialize() initializer public {
         __ERC721_init("Stake NFT", "SNFT");
         __Ownable_init();
-
+        _setInviSwapPool = false;
         _tokenIds = 1;
     }
 
@@ -107,6 +111,25 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfosOfUser;
     }
 
+    function getBoostUnlockAmount(uint32 _nftTokenId) external view onlyInviCore returns (uint256, uint256) {
+        StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
+        uint256 inviLiquidity = inviSwapPool.totalLiquidityInvi();
+        uint256 nativeLiquidity = inviSwapPool.totalLiquidityNative();
+        // get current timestamp
+        uint256 currentTimestamp = block.timestamp;
+        // get principal
+        uint256 principal = stakeInfo.principal;
+        // get lock Period
+        uint256 lockPeriod = stakeInfo.lockPeriod;
+        // get lock Left
+        uint256 lockLeft = stakeInfo.lockEnd - currentTimestamp;
+        // get InviValue referring to swap pool
+        //uint256 inviAmount = principal * (inviSwapPool.totalLiquidityNative / inviSwapPool.totalLiquidityInvi) * (lockLeft / lockPeriod) / 5;
+        uint256 inviAmount = principal * nativeLiquidity * lockLeft / (inviLiquidity * lockPeriod * 5);
+
+        return (inviAmount, currentTimestamp );
+    }
+
     //====== setter functions ======//
 
     /**
@@ -123,6 +146,12 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      */
     function setLendingPoolAddress(address _LendingPool) public onlyOwner {
         lendingPoolAddress = _LendingPool;
+    }
+
+    function setInviSwapPool(address _inviSwapPool) public onlyOwner {
+        require(!_setInviSwapPool, "StakeNFT: inviSwapPool has been set");
+        inviSwapPool = InviSwapPool(_inviSwapPool);
+        _setInviSwapPool = true;
     }
 
     /**
@@ -225,6 +254,12 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         stakeInfos[_nftTokenId].lockEnd = stakeInfos[_nftTokenId].lockStart + newLockPeriod;
     }
 
+    function updateUnlockTimeWhenBoostUnlock(uint32 _nftId, uint256 _updatingTime) external onlyInviCore {
+        stakeInfos[_nftId].lockPeriod = _updatingTime - stakeInfos[_nftId].lockStart;
+        stakeInfos[_nftId].lockEnd = _updatingTime;
+
+    }
+
     //====== utils functions ======//
 
     /**
@@ -252,9 +287,11 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
      * @param _nftTokenId The ID of the NFT token.
      * @return A boolean indicating whether the NFT is unlocked or not.
      */
-    function isUnlock(uint32 _nftTokenId) public view returns (bool) {
+    function isLocked(uint32 _nftTokenId) public view returns (bool) {
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
-        return stakeInfo.lockEnd < block.timestamp;
+        // console.log("stakeInfo.lockEnd: %s", stakeInfo.lockEnd);
+        // console.log("block.timestamp: %s", block.timestamp);
+        return stakeInfo.lockEnd > block.timestamp;
     }
 
     /**

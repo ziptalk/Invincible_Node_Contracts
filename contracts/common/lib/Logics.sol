@@ -11,7 +11,7 @@ library Logics {
         uint32 c = 10; // coefficient
         uint32 e = 3; // exponent
         uint32 const = 50; // constant
-        uint32 onlyForTestConstant = 24 * 60 * 600; // for test: 200 / 24 * 60 * 600 // main: 1 
+        uint32 onlyForTestConstant = 1; // for test: 200 / 24 * 60 * 600 // main: 1 
         uint256 lockPeriod = (c * uint256(_leverageRatio) ** e / uint256(LEVERAGE_UNIT) ** e + const) * day / onlyForTestConstant;
         // apply testnetConstant for only testnet
         return uint32(lockPeriod);

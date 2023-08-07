@@ -43,8 +43,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      */
     function initialize(address _inviAddr) initializer public {
         inviToken = IERC20(_inviAddr);
-        inviFees = 7;
-        nativeFees = 7;
+        inviFees = 5;
+        nativeFees = 5;
         lpCount = 0;
         totalLiquidityNative = 1;
         totalLiquidityInvi = 1;
@@ -156,8 +156,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         require(msg.value > 0, "InviSwapPool: zero amount");
         uint256 amountOut = getNativeToInviOutAmount(msg.value);
         uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
-        console.log("amountOut              : ", amountOut);
-        console.log("totalLiquidityInvi     : ", totalLiquidityInvi);
+        //console.log("amountOut              : ", amountOut);
+        //console.log("totalLiquidityInvi     : ", totalLiquidityInvi);
         require(amountOut < totalLiquidityInvi, "InviSwapPool: not enough reserves");
         require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
         totalLiquidityNative += msg.value;

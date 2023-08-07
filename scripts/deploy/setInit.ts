@@ -81,6 +81,8 @@ export const setInit = async (address: any, network: string) => {
         .connect(deployer)
         .setInviSwapPoolAddress(inviSwapPoolContract.address, { nonce: nonce++ });
       await tx.wait();
+      tx = await inviTokenContract.connect(deployer).setInviCoreAddress(inviCoreContract.address, { nonce: nonce++ });
+      await tx.wait();
       console.log("inviToken init condition set at " + nonce);
     } catch (e) {
       console.log("(error)inviToken init condition set failed at " + nonce);
@@ -108,6 +110,8 @@ export const setInit = async (address: any, network: string) => {
         .setLendingPoolAddress(lendingPoolContract.address, { nonce: nonce++ });
       await tx.wait();
       tx = await stakeNFTContract.connect(deployer).setLpPoolAddress(lpPoolContract.address, { nonce: nonce++ });
+      await tx.wait();
+      tx = await stakeNFTContract.connect(deployer).setInviSwapPool(inviSwapPoolContract.address, { nonce: nonce++ });
       await tx.wait();
       console.log("stakeNFT init condition set at " + nonce + "");
     } catch (e) {

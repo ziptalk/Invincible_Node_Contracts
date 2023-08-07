@@ -123,6 +123,7 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract, 
 // deploy inviCore contract
 export const deployInviCoreContract = async (
   stTokenContract: String,
+  inviTokenContract: String,
   liquidStakingAddress: String,
   network: String,
   networkId: number
@@ -157,7 +158,7 @@ export const deployInviCoreContract = async (
     InviCoreContract = await ethers.getContractFactory("InviCore");
     inviCoreContract = await upgrades.deployProxy(
       InviCoreContract,
-      [stTokenContract, liquidStakingAddress, networkId],
+      [stTokenContract, inviTokenContract, liquidStakingAddress, networkId],
       { initializer: "initialize" }
     );
     await inviCoreContract.deployed();
@@ -289,6 +290,7 @@ export const deployAllContract = async (network: string) => {
   // deploy inviCore contract
   const inviCoreContract = await deployInviCoreContract(
     stTokenContractAddress,
+    inviTokenContract.address,
     liquidStakingAddress,
     network,
     networkId
