@@ -8,7 +8,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 string constant TOKEN_FULL_NAME = "St Token Test";
 string constant TOKEN_NAME = "STToken";
 
-// for test purpose
+// ==================================================== //
+//==================for test purpose ================== //
+// ==================================================== //
 contract StToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint256 public claimableAmount;
     //====== initializer ======//

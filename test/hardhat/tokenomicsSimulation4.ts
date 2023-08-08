@@ -60,6 +60,7 @@ describe("Tokenomics test", function () {
       const nativeAmountToSwap = userABalance.mul(swapAmountRatio).div(100);
       //console.log("nativeAmountToSwap   : ", ethers.utils.formatEther(nativeAmountToSwap.toString()));
       let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
+      expectedAmountOut = expectedAmountOut[0].sub(expectedAmountOut[1]);
       //console.log("expectedAmountOut    : ", ethers.utils.formatEther(expectedAmountOut.toString()));
       tx = await inviSwapPoolContract.connect(userA).swapNativeToInvi(expectedAmountOut.mul(99).div(100), {
         value: nativeAmountToSwap,
@@ -83,6 +84,7 @@ describe("Tokenomics test", function () {
       console.log("getInviToNativeOutMaxInput: ", ethers.utils.formatEther(getInviToNativeOutMaxInput.toString()));
       console.log("inviAmountToSwap          : ", ethers.utils.formatEther(inviAmountToSwap.toString()));
       let expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
+      expectedAmountOut = expectedAmountOut[0].sub(expectedAmountOut[1]);
       const swapInviToNative = await inviSwapPoolContract
         .connect(userA)
         .swapInviToNative(inviAmountToSwap, expectedAmountOut.mul(99).div(100));
@@ -314,7 +316,7 @@ describe("Tokenomics test", function () {
       let userABalance = await ethers.provider.getBalance(userA.address);
       console.log("UserA Native Balance : ", ethers.utils.formatEther(userABalance));
       // return all nfts
-      for (let i = userNFTList.length - 1; i > 0; i--) {
+      for (let i = userNFTList.length; i > 0; i--) {
         console.log("nft ID: ", i);
         let gasPrice = 100000000;
         let gasLimit = 1000000;
@@ -368,7 +370,7 @@ describe("Tokenomics test", function () {
       let totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       //console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
 
-      //   await swapInviToNative(95);
+      await swapInviToNative(3);
 
       // get status
       console.log("======== Final Status after returning nfts =========");
@@ -402,6 +404,8 @@ describe("Tokenomics test", function () {
       console.log("lp1LpReward          : ", ethers.utils.formatEther(lp1LpReward));
       let totalBurntAmount = await inviTokenContract.totalBurntAmount();
       console.log("totalBurntAmount     : ", ethers.utils.formatEther(totalBurntAmount));
+      let swapPoolNativeBalance = await ethers.provider.getBalance(inviSwapPoolContract.address);
+      console.log("swapPoolNativeBalance: ", ethers.utils.formatEther(swapPoolNativeBalance));
     };
 
     await iterate(50);

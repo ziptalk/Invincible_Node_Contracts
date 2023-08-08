@@ -20,7 +20,7 @@ let lpPoolContract: Contract;
 let lendingPoolContract: Contract;
 let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
-let priceManagerContract: Contract;
+//let priceManagerContract: Contract;
 let stTokenContract: Contract;
 
 export const setInit = async (address: any, network: string) => {
@@ -35,7 +35,7 @@ export const setInit = async (address: any, network: string) => {
   stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
   lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
   inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
-  priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
+  //priceManagerContract = await ethers.getContractAt("PriceManager", address.priceManagerContractAddress);
 
   if (network === "BIFROST") {
     inviTokenStakeContract = await ethers.getContractAt("BfcInviTokenStake", address.inviTokenStakeContractAddress);
@@ -197,7 +197,7 @@ export const setInit = async (address: any, network: string) => {
     lendingPoolContract,
     inviSwapPoolContract,
     inviCoreContract,
-    priceManagerContract,
+    //priceManagerContract,
     stTokenContract,
   };
 };

@@ -17,11 +17,6 @@ import "./swap/InviSwapPool.sol";
  * @dev The StakeNFT contract enables users to stake and manage Non-Fungible Tokens (NFTs).
  */
 contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
-    // using Counters for Counters.Counter;
-    // Counters.Counter private _tokenIds;
-
-    bool private _setInviSwapPool;
-
     //------Contracts and Addresses------//
     address public inviCoreAddress;
     address public lendingPoolAddress;
@@ -39,7 +34,8 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     //------private Variables------//
     string private _name;
     string private _symbol;
-    uint32 public _tokenIds;
+    uint32 private _tokenIds;
+    bool private _setInviSwapPool;
     
     //====== initializer ======//
     /**

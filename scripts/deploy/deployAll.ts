@@ -43,7 +43,7 @@ const deploy = async () => {
     lendingPoolContract,
     inviSwapPoolContract,
     inviCoreContract,
-    priceManagerContract,
+    //priceManagerContract,
     stTokenContract,
   } = await deployAllContract(network));
 
@@ -61,7 +61,7 @@ const deploy = async () => {
     lendingPoolContractAddress: lendingPoolContract.address,
     inviSwapPoolContractAddress: inviSwapPoolContract.address,
     inviCoreContractAddress: inviCoreContract.address,
-    priceManagerContractAddress: priceManagerContract.address,
+    //priceManagerContractAddress: priceManagerContract.address,
   };
 
   console.log(addresses);
@@ -78,7 +78,7 @@ const deploy = async () => {
     lendingPoolContractAddress: lendingPoolContract.address,
     inviSwapPoolContractAddress: inviSwapPoolContract.address,
     inviCoreContractAddress: inviCoreContract.address,
-    priceManagerContractAddress: priceManagerContract.address,
+    //priceManagerContractAddress: priceManagerContract.address,
   };
 };
 

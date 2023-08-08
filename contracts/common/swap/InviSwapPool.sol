@@ -62,11 +62,18 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of native token.
      * @return The amount of InviTokens that will be received.
      */
-    function getInviToNativeOutAmount(uint _amountIn) public view returns (uint) {
+    function getInviToNativeOutAmount(uint _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
         uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
-        return amountOut; 
+        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+        // extra fees for this swap if liquidity is unbalanced
+        if (totalLiquidityNative < totalLiquidityInvi) {
+            uint256 extraFees = fees * totalLiquidityNative / totalLiquidityInvi / 2;
+            fees += extraFees;
+            amountOut -= extraFees;
+        }
+        return (amountOut, fees); 
     }
 
     /**
@@ -74,17 +81,17 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of InviTokens.
      * @return The amount of native token that will be received.
      */
-    function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256) {
+    function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
         uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
-        return amountOut;
+        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+        return (amountOut, fees);
     }
 
     function getNativeToInviOutMaxInput() public view returns (uint) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        
         return totalLiquidityInvi * currentNativeLiquidity / (2*currentInviLiquidity);
     }
     function getInviToNativeOutMaxInput() public view returns (uint) {
@@ -132,8 +139,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function swapInviToNative(uint256 _amountIn, uint _amountOutMin) public {
         require(totalLiquidityNative <= address(this).balance + 10, "Test logic2");
         require(_amountIn < getInviToNativeOutMaxInput(), "InviSwapPool: exceeds max input amount");
-        uint256 amountOut = getInviToNativeOutAmount(_amountIn);
-        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
+        // including fees
+        (uint256 amountOut, uint256 fees) = getInviToNativeOutAmount(_amountIn);
         require(amountOut < totalLiquidityNative, "not enough reserves");
         require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
         require(inviToken.transferToken(msg.sender, address(this), _amountIn), "InviSwapPool: transfer failed");
@@ -154,8 +161,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function swapNativeToInvi(uint _amountOutMin) public payable {
         require(msg.value < getNativeToInviOutMaxInput(), "exceeds max input amount");
         require(msg.value > 0, "InviSwapPool: zero amount");
-        uint256 amountOut = getNativeToInviOutAmount(msg.value);
-        uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
+        (uint256 amountOut, uint256 fees) = getNativeToInviOutAmount(msg.value);
         //console.log("amountOut              : ", amountOut);
         //console.log("totalLiquidityInvi     : ", totalLiquidityInvi);
         require(amountOut < totalLiquidityInvi, "InviSwapPool: not enough reserves");

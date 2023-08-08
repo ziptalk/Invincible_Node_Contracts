@@ -200,13 +200,13 @@ export const deployLendingPoolContract = async (inviToken: Contract) => {
 };
 
 // deploy SwapManager contract
-export const deployPriceManager = async (network: string) => {
-  const PriceManagerContract = await ethers.getContractFactory("PriceManager");
-  const priceManagerContract = await upgrades.deployProxy(PriceManagerContract, [], { initializer: "initialize" });
-  await priceManagerContract.deployed();
+// export const deployPriceManager = async (network: string) => {
+//   const PriceManagerContract = await ethers.getContractFactory("PriceManager");
+//   const priceManagerContract = await upgrades.deployProxy(PriceManagerContract, [], { initializer: "initialize" });
+//   await priceManagerContract.deployed();
 
-  return priceManagerContract;
-};
+//   return priceManagerContract;
+// };
 
 // deploy all contract
 export const deployAllContract = async (network: string) => {
@@ -298,9 +298,9 @@ export const deployAllContract = async (network: string) => {
   await inviCoreContract.deployed();
   console.log("deployed inviCore contract: ", inviCoreContract.address);
   // deploy swapManager contract
-  const priceManagerContract = await deployPriceManager(network);
-  await priceManagerContract.deployed();
-  console.log("deployed priceManager contract: ", priceManagerContract.address);
+  // const priceManagerContract = await deployPriceManager(network);
+  // await priceManagerContract.deployed();
+  // console.log("deployed priceManager contract: ", priceManagerContract.address);
 
   return {
     inviTokenContract,
@@ -312,7 +312,7 @@ export const deployAllContract = async (network: string) => {
     lendingPoolContract,
     inviSwapPoolContract,
     inviCoreContract,
-    priceManagerContract,
+    //priceManagerContract,
     stTokenContract,
   };
 };

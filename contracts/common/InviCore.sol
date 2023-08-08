@@ -454,8 +454,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
         require(requiredAmount > 0, "InviCore: boost unlock amount is zero");
 
         // burn required amount from user
-        console.log("requiredAmount     : %s", requiredAmount / 10**18);
-        console.log("invitoken balance  : %s", inviToken.balanceOf(msg.sender) / 10**18);
+        //console.log("requiredAmount     : %s", requiredAmount / 10**18);
+        //console.log("invitoken balance  : %s", inviToken.balanceOf(msg.sender) / 10**18);
         require(inviToken.balanceOf(msg.sender) >= requiredAmount, "InviCore: not enough INVI token");
         inviToken.burnToken(msg.sender, requiredAmount);
         
