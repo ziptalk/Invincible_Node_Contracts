@@ -16,6 +16,7 @@ import {
 } from "../utils";
 import { getTestAddress } from "../getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
+import { checkTx } from "../checkTx";
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -46,6 +47,7 @@ describe("Invi core service test", function () {
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let tx;
+    let receipt;
 
     //console.log(stTokenContract);
     const steps = async () => {
@@ -80,12 +82,14 @@ describe("Invi core service test", function () {
       const spreadRewards = await stTokenContract
         .connect(deployer)
         .spreadRewards(inviCoreContract.address, { value: rewardAmount });
-      await spreadRewards.wait();
+      receipt = await spreadRewards.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       // Step 4. distribute rewards from inviCore Contract
       console.log("===Step 4 - distribute reward");
       const distributeRewards = await inviCoreContract.connect(deployer).distributeStTokenReward();
-      await distributeRewards.wait();
+      receipt = await distributeRewards.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       // Step 5. Check rewards
       console.log("===Step 5 - check rewards");
@@ -111,7 +115,8 @@ describe("Invi core service test", function () {
 
       // claim native reward
       const claimNativeReward = await lpPoolContract.connect(LP).claimNativeReward();
-      await claimNativeReward.wait();
+      receipt = await claimNativeReward.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       expect(await lpPoolContract.connect(LP).nativeRewardAmount(LP.address)).to.equal(0);
 
@@ -132,7 +137,8 @@ describe("Invi core service test", function () {
 
       // claim unstaked for staker
       const claimUnstaked = await inviCoreContract.connect(userA).claimUnstaked();
-      await claimUnstaked.wait();
+      receipt = await claimUnstaked.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       expect(await inviCoreContract.connect(userA).claimableAmount(userA.address)).to.equal(0);
 
@@ -145,7 +151,9 @@ describe("Invi core service test", function () {
       const requestAmount = ethers.utils.parseEther("100");
       // request unstake
       const requestUnstake = await lpPoolContract.connect(LP).unstake(requestAmount);
-      await requestUnstake.wait();
+      receipt = await requestUnstake.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+
       // get unstake request in lp pool
       await checkUnstakeRequestLPP(lpPoolContract, deployer);
 
@@ -165,7 +173,8 @@ describe("Invi core service test", function () {
       console.log("claimableAmountLP: ", ethers.utils.formatEther(claimableAmountLP.toString()));
       // claim unstaked amount
       const claimUnstakedLPP = await lpPoolContract.connect(LP).claimUnstaked();
-      await claimUnstakedLPP.wait();
+      receipt = await claimUnstakedLPP.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       expect(await lpPoolContract.connect(LP).claimableUnstakeAmount(LP.address)).to.equal(0);
 
@@ -197,9 +206,13 @@ describe("Invi core service test", function () {
       const spreadRewards2 = await stTokenContract
         .connect(deployer)
         .spreadRewards(inviCoreContract.address, { value: rewardAmount2 });
-      await spreadRewards2.wait();
+      receipt = await spreadRewards2.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+
       const distributeRewards2 = await inviCoreContract.connect(deployer).distributeStTokenReward();
-      await distributeRewards2.wait();
+      receipt = await distributeRewards2.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+
       await claimAndSplitCore(inviCoreContract, lpPoolContract, deployer);
 
       await checkOverallStatus(inviCoreContract, lpPoolContract, stakeNFTContract, stTokenContract, deployer);
@@ -220,7 +233,8 @@ describe("Invi core service test", function () {
 
       // unstake
       const unstakeMost = await lpPoolContract.connect(LP).unstake(ilpBalance.mul(98).div(100));
-      await unstakeMost.wait();
+      receipt = await unstakeMost.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       // check overall status
       await checkOverallStatus(inviCoreContract, lpPoolContract, stakeNFTContract, stTokenContract, deployer);
@@ -229,7 +243,8 @@ describe("Invi core service test", function () {
       console.log("===Step 13 - distribute StTokenReward (should fail)");
       try {
         const tx = await inviCoreContract.connect(deployer).distributeStTokenReward();
-        await tx.wait();
+        receipt = await tx.wait();
+        console.log("gasUsed: ", receipt.gasUsed.toString());
       } catch (e) {
         console.log("distributeStTokenReward failed due to distribution period");
       }
@@ -243,7 +258,8 @@ describe("Invi core service test", function () {
 
       try {
         const tx = await inviCoreContract.connect(deployer).distributeStTokenReward();
-        await tx.wait();
+        receipt = await tx.wait();
+        console.log("gasUsed: ", receipt.gasUsed.toString());
       } catch (e) {
         console.log("distributeStTokenReward failed due to no reward");
       }
@@ -253,13 +269,15 @@ describe("Invi core service test", function () {
       ilpBalance = await iLPTokenContract.connect(LP).balanceOf(LP.address);
       console.log("ilpBalance: ", ethers.utils.formatEther(ilpBalance.toString()));
       const unstakeAll = await lpPoolContract.connect(LP).unstake(ilpBalance);
-      await unstakeAll.wait();
+      receipt = await unstakeAll.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
 
       // pass time until reward distribution period
       await ethers.provider.send("evm_increaseTime", [rewardDistributionPeriod.toNumber()]);
       try {
         const tx = await inviCoreContract.connect(deployer).distributeStTokenReward();
-        await tx.wait();
+        receipt = await tx.wait();
+        console.log("gasUsed: ", receipt.gasUsed.toString());
       } catch (e) {
         console.log("distributeStTokenReward failed properly");
       }
@@ -305,7 +323,8 @@ describe("Invi core service test", function () {
         // await splitUnstakedLPP(lpPoolContract, deployer);
         // claim unstaked
         const tx = await inviCoreContract.connect(userB).claimUnstaked();
-        await tx.wait();
+        receipt = await tx.wait();
+        await checkTx(receipt);
       }
 
       await checkOverallStatus(inviCoreContract, lpPoolContract, stakeNFTContract, stTokenContract, deployer);

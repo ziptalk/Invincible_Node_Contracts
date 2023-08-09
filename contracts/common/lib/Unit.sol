@@ -15,8 +15,8 @@ uint32 constant SWAP_RATIO_UNIT = 10 ** 3;
 
 
 //------ token Unit ------//
-uint128 constant INVI_UNIT = 10**18;
-uint128 constant ILP_UNIT = 10**18;
-uint128 constant INKLP_UNIT = 10 ** 18;
+uint256 constant INVI_UNIT = 10**18;
+uint256 constant ILP_UNIT = 10**18;
+uint256 constant INKLP_UNIT = 10 ** 18;
 
 

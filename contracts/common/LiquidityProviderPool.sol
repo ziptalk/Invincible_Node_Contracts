@@ -24,13 +24,13 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     StakeNFT public stakeNFT;
 
     //------ mappings ------//
-    mapping(address => uint128) public stakedAmount;
-    mapping(address => uint128) public nativeRewardAmount;
-    mapping(address => uint128) public inviRewardAmount;
-    mapping(address => uint128) public totalInviRewardAmountByAddress;
-    mapping(address => uint128) public totalNativeRewardAmountByAddress;
-    mapping(address => uint128) public claimableUnstakeAmount;
-    mapping(address => uint128) public unstakeRequestAmount;
+    mapping(address => uint256) public stakedAmount;
+    mapping(address => uint256) public nativeRewardAmount;
+    mapping(address => uint256) public inviRewardAmount;
+    mapping(address => uint256) public totalInviRewardAmountByAddress;
+    mapping(address => uint256) public totalNativeRewardAmountByAddress;
+    mapping(address => uint256) public claimableUnstakeAmount;
+    mapping(address => uint256) public unstakeRequestAmount;
     mapping(uint => UnstakeRequestLP) public unstakeRequests;
 
     //------variables------//
@@ -39,14 +39,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint32 public unstakeRequestsRear;
     uint32 public unstakeRequestsFront;
 
-    uint128 public unstakedAmount;
-    uint128 public minStakeAmount;
-    uint128 public totalStakedAmount;
-    uint128 public totalLentAmount;
-    uint128 public totalNativeRewardAmount;
-    uint128 public totalInviRewardAmount;
-    uint128 public totalClaimableInviAmount;
-    uint128 public totalClaimableUnstakeAmount;
+    uint256 public unstakedAmount;
+    uint256 public minStakeAmount;
+    uint256 public totalStakedAmount;
+    uint256 public totalLentAmount;
+    uint256 public totalNativeRewardAmount;
+    uint256 public totalInviRewardAmount;
+    uint256 public totalClaimableInviAmount;
+    uint256 public totalClaimableUnstakeAmount;
 
     uint256 public lastNativeRewardDistributeTime;
     uint256 public inviRewardInterval;
@@ -56,8 +56,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     uint256 public totalUnstakeRequestAmount;
 
     //------events------//
-    event Stake(address indexed user, uint128 indexed amount);
-    event Unstake(address indexed user, uint128 indexed amount);
+    event Stake(address indexed user, uint256 indexed amount);
+    event Unstake(address indexed user, uint256 indexed amount);
 
     bool private _locked;
     //====== modifiers ======// 
@@ -117,11 +117,12 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @notice Get the total liquidity available in the pool.
      * @return The total liquidity amount.
      */
-    function getTotalLiquidity() public view returns (uint128) {
+    function getTotalLiquidity() public view returns (uint256) {
+        require(totalStakedAmount >= totalLentAmount, "LpPool: total staked amount should be greater than total lent amount");
         return (totalStakedAmount - totalLentAmount);
     }
 
-    function getTotalStakedAmount() public view returns (uint128) {
+    function getTotalStakedAmount() public view returns (uint256) {
         return totalStakedAmount;
     }
 
@@ -129,17 +130,20 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @notice Get the maximum amount that can be lent based on the allowable ratio.
      * @return The maximum lent amount.
      */
-    function getMaxLentAmount() public view returns (uint128) {
+    function getMaxLentAmount() public view returns (uint256) {
+        if (totalStakedAmount == 0) {
+            return 0;
+        }
         uint256 totalLiquidity = getTotalLiquidity();
         uint256 result = (totalLiquidity**2 * liquidityAllowableRatio) / (totalStakedAmount * 100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
-        return uint128(result);
+        return uint256(result);
     }
 
     /**
      * @notice Get the total unstaked amount.
      * @return The total unstaked amount.
      */
-    function getStakedAmount(address _addr) public view returns (uint128) {
+    function getStakedAmount(address _addr) public view returns (uint256) {
         return stakedAmount[_addr];
     }
 
@@ -176,7 +180,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev This function is called by the InviCore contract.
      * @param _totalLentAmount The new total lent amount.
      */
-    function setTotalLentAmount(uint128 _totalLentAmount) external onlyInviCore {
+    function setTotalLentAmount(uint256 _totalLentAmount) external onlyInviCore {
         totalLentAmount = _totalLentAmount;
     }
 
@@ -185,7 +189,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev This function is called by the ILP Token contract.
      * @param _amount The new total unstaked amount.
      */
-    function setStakedAmount(address _target, uint128 _amount) external onlyILPToken {
+    function setStakedAmount(address _target, uint256 _amount) external onlyILPToken {
         stakedAmount[_target] = _amount;
     }
 
@@ -194,7 +198,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev This function is called by the owner.
      * @param _minStakeAmount The new minimum stake amount.
      */
-    function setMinStakeAmount(uint128 _minStakeAmount) external onlyOwner {
+    function setMinStakeAmount(uint256 _minStakeAmount) external onlyOwner {
         minStakeAmount = _minStakeAmount;
     }
 
@@ -205,7 +209,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function stake() external payable nonReentrant {
         require(msg.value >= minStakeAmount, "LpPool: amount should be greater than minStakeAmount");
-        uint128 stakeAmount = uint128(msg.value);
+        uint256 stakeAmount = uint256(msg.value);
         // update stake amount
         stakedAmount[msg.sender] += stakeAmount;
         totalStakedAmount += stakeAmount;
@@ -224,7 +228,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev Prevents reentrancy attack
      * @param _amount The amount to unstake.
      */
-    function unstake(uint128 _amount) external nonReentrant {
+    function unstake(uint256 _amount) external nonReentrant {
         require(stakedAmount[msg.sender] >= _amount &&  _amount > 0, "LpPool: Improper request amount");
         
         // update stake amount
@@ -233,7 +237,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         // check if totalStakedAmount is below totalLentAmount
         if (totalStakedAmount < totalLentAmount) {
-           uint128 excessAmount = totalLentAmount - totalStakedAmount;
+           uint256 excessAmount = totalLentAmount - totalStakedAmount;
 
             // request liquidity issue resolve to stakeNFT
            stakeNFT.resolveLiquidityIssue(excessAmount, totalLentAmount);
@@ -265,7 +269,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @dev This function is called by the InviCore contract.
      */
     function receiveUnstaked() external payable onlyInviCore {
-        unstakedAmount += uint128(msg.value);
+        unstakedAmount += uint256(msg.value);
         console.log("sending ", msg.value, " to lp Pool");
         // split unstaked amount if meets the condition
         if (address(this).balance >= totalNativeRewardAmount && unstakeRequestsFront != unstakeRequestsRear) {
@@ -321,7 +325,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function claimUnstaked() external nonReentrant {
         require(address(this).balance >= claimableUnstakeAmount[msg.sender], "LpPool: Insufficient claimable amount");
         require(claimableUnstakeAmount[msg.sender] > 0, "LpPool: No claimable amount");
-        uint128 amount = claimableUnstakeAmount[msg.sender];
+        uint256 amount = claimableUnstakeAmount[msg.sender];
         // update values
         claimableUnstakeAmount[msg.sender] = 0;
         totalClaimableUnstakeAmount -= amount;
@@ -336,20 +340,16 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function distributeNativeReward() external payable onlyInviCore {
         require(totalStakedAmount > 0, "LpPool: No staked amount");
-        uint128 totalILPHoldersCount = iLP.totalILPHoldersCount();
-        for (uint128 i = 0; i < totalILPHoldersCount;) {
+        uint256 totalILPHoldersCount = iLP.totalILPHoldersCount();
+        for (uint256 i = 0; i < totalILPHoldersCount;) {
             address account = iLP.ILPHolders(i);
-            console.log("account: ", account);
+            
             uint256 rewardAmount = msg.value * stakedAmount[account] / totalStakedAmount;
             
-            console.log("total value: ", msg.value);
-            console.log("staked amount: ", stakedAmount[account]);
-            console.log("total staked amount: ", totalStakedAmount);
-            console.log("reward: ", rewardAmount);
             // update reward amount
-            nativeRewardAmount[account] += uint128(rewardAmount);
-            totalNativeRewardAmount +=  uint128(rewardAmount);
-            totalNativeRewardAmountByAddress[account] += uint128(rewardAmount);
+            nativeRewardAmount[account] += uint256(rewardAmount);
+            totalNativeRewardAmount +=  uint256(rewardAmount);
+            totalNativeRewardAmountByAddress[account] += uint256(rewardAmount);
 
             unchecked {i++;}
         }
@@ -363,24 +363,24 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function distributeInviTokenReward() external nonReentrant {
         require(block.timestamp  >= inviRewardInterval + lastInviRewardedTime, "LpPool: Invi reward interval not passed");
-        uint128 totalInviToken = uint128( inviToken.balanceOf(address(this)));
-        console.log("total invi token: ", totalInviToken);
+        uint256 totalInviToken = uint256( inviToken.balanceOf(address(this)));
+        //console.log("total invi token: ", totalInviToken);
         require(totalInviToken  > 1000000 + totalClaimableInviAmount, "LpPool: Insufficient invi token to distribute");
-        uint128 intervalVar = uint128(inviReceiveInterval) / uint128(inviRewardInterval);
+        uint256 intervalVar = uint256(inviReceiveInterval) / uint256(inviRewardInterval);
         uint256 rewardTotal = totalInviToken / intervalVar;
-        uint128 holderNumber = iLP.totalILPHoldersCount();
-        console.log("holderNumber", holderNumber);
-        for (uint128 i = 0; i < holderNumber;) {
+        uint256 holderNumber = iLP.totalILPHoldersCount();
+        //console.log("holderNumber", holderNumber);
+        for (uint256 i = 0; i < holderNumber;) {
             address account = iLP.ILPHolders(i);
-            console.log("Account: ", account);
+           // console.log("Account: ", account);
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount ;
            
             // update rewards
-            inviRewardAmount[account] += uint128(rewardAmount);
-            totalInviRewardAmount += uint128(rewardAmount);
-            totalClaimableInviAmount += uint128(rewardAmount);
-            totalInviRewardAmountByAddress[account] += uint128(rewardAmount);
+            inviRewardAmount[account] += uint256(rewardAmount);
+            totalInviRewardAmount += uint256(rewardAmount);
+            totalClaimableInviAmount += uint256(rewardAmount);
+            totalInviRewardAmountByAddress[account] += uint256(rewardAmount);
 
             unchecked {i++;}
         }
@@ -395,7 +395,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function claimNativeReward() external nonReentrant {
         require(nativeRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
         require(address(this).balance >= nativeRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
-        uint128 rewardAmount = nativeRewardAmount[msg.sender];
+        uint256 rewardAmount = nativeRewardAmount[msg.sender];
         nativeRewardAmount[msg.sender] = 0;
         totalNativeRewardAmount -= rewardAmount;
 
@@ -411,7 +411,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function claimInviReward() external nonReentrant {
         require(inviRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
         require(inviToken.balanceOf(address(this)) > inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
-        uint128 rewardAmount = inviRewardAmount[msg.sender];
+        uint256 rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;
         // send invi token to account

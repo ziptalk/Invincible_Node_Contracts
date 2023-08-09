@@ -10,7 +10,7 @@ interface IConcentratedLiquidityPoolStruct {
         /// @dev the lowest tick above the current tick, pointer to the next node in the linked list.
         int24 nextTick;
         /// @dev how much liquidity changes when the pool price crosses the tick
-        uint128 liquidity;
+        uint256 liquidity;
         /// @dev the fee growth on the other side of the tick from the current tick in token0
         uint256 feeGrowthOutside0;
         /// @dev the fee growth on the other side of the tick from the current tick in token1
@@ -20,15 +20,15 @@ interface IConcentratedLiquidityPoolStruct {
     }
     struct Position {
         /// @dev the amount of liquidity in the position
-        uint128 liquidity;
+        uint256 liquidity;
         /// @dev fee growth of token0 inside the tick range as of the last mint/burn/collect
         uint256 feeGrowthInside0Last;
         /// @dev fee growth of token1 inside the tick range as of the last mint/burn/collect
         uint256 feeGrowthInside1Last;
         /// @dev computed amount of token0 owed to the position as of the last mint/burn/collect
-        uint128 feeOwed0;
+        uint256 feeOwed0;
         /// @dev computed amount of token1 owed to the position as of the last mint/burn/collect
-        uint128 feeOwed1;
+        uint256 feeOwed1;
     }
 
     struct MintParams {
@@ -41,9 +41,9 @@ interface IConcentratedLiquidityPoolStruct {
         /// @dev upper The upper end of the tick range for the position
         int24 upper;
         /// @dev amount0Desired The amount of token0 to mint the given amount of liquidity
-        uint128 amount0Desired;
+        uint256 amount0Desired;
         /// @dev amount1Desired The amount of token1 to mint the given amount of liquidity
-        uint128 amount1Desired;
+        uint256 amount1Desired;
     }
 
     struct SwapCache {
@@ -84,7 +84,7 @@ interface IConcentratedLiquidityPool is IConcentratedLiquidityPoolStruct {
 
     /// @notice The currently in range liquidity available to the poo
     // @dev This value has no relationship to the total liquidity across all ticks
-    function liquidity() external view returns (uint128);
+    function liquidity() external view returns (uint256);
 
     /// @notice Sqrt of price aka. √(token1/token0), multiplied by 2^96.
     function price() external view returns (uint160);
@@ -96,7 +96,7 @@ interface IConcentratedLiquidityPool is IConcentratedLiquidityPoolStruct {
     function getPriceAndNearestTicks() external view returns (uint160 price, int24 nearestTick);
 
     /// @notice reserve of token0 and token1
-    function getReserves() external view returns (uint128 reserve0, uint128 reserve1);
+    function getReserves() external view returns (uint256 reserve0, uint256 reserve1);
 
     /// @notice Look up information about a specific tick in the pool
     /// @param tick The tick to look up, the log base 1.0001 of price of the pool
@@ -137,7 +137,7 @@ interface IConcentratedLiquidityPool is IConcentratedLiquidityPoolStruct {
     function swap(bytes memory data) external returns (uint256 amountOut);
 
     /// @notice Mints LP tokens - should be called via the Concentrated Liquidity pool manager contract.
-    /// @param data MintParams(int24 lowerOld, int24 lower, int24 upperOld, int24 upper, uint128 amount0Desired, uint128 amount1Desired)
+    /// @param data MintParams(int24 lowerOld, int24 lower, int24 upperOld, int24 upper, uint256 amount0Desired, uint256 amount1Desired)
     function mint(MintParams memory data) external returns (uint256 liquidityMinted);
 
     /// @notice Receive token0 or token1 and pay it back with fee
@@ -159,7 +159,7 @@ interface IConcentratedLiquidityPool is IConcentratedLiquidityPoolStruct {
     function burn(
         int24 lower,
         int24 upper,
-        uint128 amount
+        uint256 amount
     ) external returns (uint256 token0Amount, uint256 token1Amount);
 
     /// @notice Collects tokens owed to a position
@@ -180,13 +180,13 @@ interface IConcentratedLiquidityPool is IConcentratedLiquidityPoolStruct {
     /// @return lastObservation The timestamp of the observation
     function getSecondsGrowthAndLastObservation() external view returns (uint160 secondGrowthGlobal, uint32 lastObservation);
 
-    function collectProtocolFee() external returns (uint128, uint128);
+    function collectProtocolFee() external returns (uint256, uint256);
 
     function getImmutables()
         external
         view
         returns (
-            uint128 MAX_TICK_LIQUIDITY,
+            uint256 MAX_TICK_LIQUIDITY,
             uint24 tickSpacing,
             uint24 swapFee,
             address factory,

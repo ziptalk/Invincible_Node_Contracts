@@ -5,6 +5,7 @@ import { provideLiquidity, leverageStake } from "../../utils";
 import { units } from "../../units";
 import hre from "hardhat";
 import { getTestAddress } from "../../getTestAddress";
+import { deployAll } from "../../../scripts/deploy/deployAll";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
@@ -19,11 +20,15 @@ describe("Invi core service test", function () {
   let inviTokenStakeContract: Contract;
 
   this.beforeAll(async function () {
-    // for testnet test
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenStakeContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    if (network === "hardhat") {
+      ({ inviCoreContract, stakeNFTContract, lpPoolContract, inviTokenStakeContract } = await deployAll());
+    } else {
+      // for testnet test
+      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
+      inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenStakeContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    }
   });
 
   it("Test repayNFT function", async () => {
@@ -51,7 +56,7 @@ describe("Invi core service test", function () {
     const leverageRatio = 1 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     const lockPeriod = minLockPeriod * 2;
-    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA);
+    await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA);
 
     // get nftId
     let nftId = await stakeNFTContract.NFTOwnership(userA.address, targetNft);
@@ -72,19 +77,23 @@ describe("Invi core service test", function () {
       initTotalLentAmount.toString()
     );
 
+    if (network === "hardhat") {
+      // pass time by lock period
+      await ethers.provider.send("evm_increaseTime", [lockPeriod]);
+      await ethers.provider.send("evm_mine", []);
+    }
+
     //* when
     const repay = await inviCoreContract.connect(userA).repayNFT(nftId);
     await repay.wait();
     console.log("repay", repay);
 
     //* then
-    const lentAmount = stakeInfo.stakedAmount - stakeInfo.principal;
     const totalUserStakedAmount = await stakeNFTContract.totalStakedAmount();
     const totalLPStakedAmount = await lpPoolContract.totalStakedAmount();
     const totalLentAmount = await lpPoolContract.totalLentAmount();
     const unstakeRequestLength = await inviCoreContract.functions.getUnstakeRequestsLength();
 
-    console.log("lentAmount: ", lentAmount);
     console.log("totalUserStakedAmount: ", totalUserStakedAmount);
     console.log("totalLPStakedAmount: ", totalLPStakedAmount);
     console.log("totalLentAmount: ", totalLentAmount);

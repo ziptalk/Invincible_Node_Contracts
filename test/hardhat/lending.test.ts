@@ -8,14 +8,16 @@ import {
   checkUnstakeRequestLPP,
   checkUnstakeRequests,
   claimAndSplitCore,
+  getSwapPoolStatus,
   leverageStake,
   provideLiquidity,
   splitUnstakedLPP,
 } from "../utils";
 import { getTestAddress } from "../getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
+import { swapSimulation } from "./swapSimulation";
 
-describe("Invi core service test", function () {
+describe("Lending service test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
@@ -23,6 +25,7 @@ describe("Invi core service test", function () {
   let lendingPoolContract: Contract;
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
+  let inviSwapPoolContract: Contract;
 
   const network: string = hre.network.name;
   const testAddresses: any = getTestAddress(network);
@@ -39,13 +42,14 @@ describe("Invi core service test", function () {
         lendingPoolContract,
         inviTokenStakeContract,
         inviTokenContract,
+        inviSwapPoolContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");
     }
   });
 
-  it("Test reward function", async () => {
+  it("Test lending function", async () => {
     if (network !== "hardhat") return; // only hardhat test
 
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
@@ -55,6 +59,7 @@ describe("Invi core service test", function () {
     let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
     let nonceUserB = await ethers.provider.getTransactionCount(userB.address);
     let tx;
+    let receipt;
 
     //* given
     // Regular Minting
@@ -62,7 +67,7 @@ describe("Invi core service test", function () {
     const regularMinting = await inviTokenContract.connect(deployer).regularMinting();
     await regularMinting.wait();
 
-    const lendingIteration = 5;
+    const lendingIteration = 3;
     const lendingSimulation = async () => {
       // Step 1. Provide liquidity and stake
       console.log("step 1");
@@ -93,6 +98,61 @@ describe("Invi core service test", function () {
       console.log("inviBalanceLendingPool     : ", ethers.utils.formatEther(inviBalanceLendingPool.toString()));
       console.log("inviBalanceLP              : ", ethers.utils.formatEther(inviBalanceLP.toString()));
       console.log("inviBalanceInviStake       : ", ethers.utils.formatEther(inviBalanceInviStake.toString()));
+
+      // Step2. conduct Swap
+      console.log("step 2");
+      // provide lp
+      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+      await provideLiquidity(lpPoolContract, userB, lpAmount, nonceUserB); // lp stake
+      console.log("provided liquidity LP / userB");
+
+      // get inviRewardInterval
+      const inviRewardInterval = await lpPoolContract.inviRewardInterval();
+      console.log("inviRewardInterval: ", inviRewardInterval.toString());
+
+      // distribute inviToken reward
+      for (let i = 0; i < 10; i++) {
+        const distributeInviTokenReward = await lpPoolContract.connect(deployer).distributeInviTokenReward();
+        receipt = await distributeInviTokenReward.wait();
+        console.log("gasUsed: ", receipt.gasUsed.toString());
+        // time pass
+        await ethers.provider.send("evm_increaseTime", [inviRewardInterval.toNumber()]);
+      }
+      // claim inviToken
+      const claimInviTokenLP = await lpPoolContract.connect(LP).claimInviReward();
+      receipt = await claimInviTokenLP.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+      const claimInviTokenUserB = await lpPoolContract.connect(userB).claimInviReward();
+      receipt = await claimInviTokenUserB.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+
+      // check inviToken balance
+      // get lp, userB inviToken balance
+      const lpInviTokenBalance = await inviTokenContract.balanceOf(LP.address);
+      console.log("lpInviTokenBalance: ", ethers.utils.formatEther(lpInviTokenBalance.toString()));
+      const userBInviTokenBalance = await inviTokenContract.balanceOf(userB.address);
+      console.log("userBInviTokenBalance: ", ethers.utils.formatEther(userBInviTokenBalance.toString()));
+      const totalInviRewardAmount = await lpPoolContract.totalInviRewardAmount();
+      console.log("totalInviRewardAmount: ", ethers.utils.formatEther(totalInviRewardAmount.toString()));
+
+      // Step 1. Add Liquidity
+      console.log("======Step 1");
+      const lpAmountPool: BigNumber = ethers.utils.parseEther("500");
+      // get native amount
+      const nativeAmount = await inviSwapPoolContract.connect(LP).getAddLiquidityNative(lpAmountPool);
+      console.log("required native amount: ", ethers.utils.formatEther(nativeAmount.toString()));
+      const getCurrentBalance = await ethers.provider.getBalance(LP.address);
+      console.log("getCurrentBalance     : ", ethers.utils.formatEther(getCurrentBalance.toString()));
+      const getAddLiquidityInvi = await inviSwapPoolContract.connect(LP).getAddLiquidityInvi(lpAmountPool);
+      console.log("getAddLiquidityInvi   : ", ethers.utils.formatEther(getAddLiquidityInvi.toString()));
+      const addLiquidity = await inviSwapPoolContract
+        .connect(LP)
+        .addLiquidity(getAddLiquidityInvi, 1 * units.slippageUnit, { value: lpAmountPool });
+      receipt = await addLiquidity.wait();
+      console.log("gasUsed: ", receipt.gasUsed.toString());
+
+      await getSwapPoolStatus(inviSwapPoolContract, inviTokenContract, deployer);
+      await swapSimulation(inviSwapPoolContract, inviTokenContract, deployer, LP, userA, userB);
 
       // Step3. Lend NFT and borrow INVI
       console.log("step 3");
@@ -169,6 +229,7 @@ describe("Invi core service test", function () {
     };
 
     for (let i = 0; i < lendingIteration; i++) {
+      console.log("================lending iteration: ", i);
       await lendingSimulation();
     }
   });

@@ -16,7 +16,6 @@ import "../lib/Math.sol";
 contract InviSwapPool is Initializable, OwnableUpgradeable {
     using Math for uint256;
     //------Contracts and Addresses------//
-    IERC20 public isptToken;
     IERC20 public inviToken;
 
     //------events------//
@@ -24,15 +23,15 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     //------Variables------//
     mapping(address => uint256) public lpRewardNative;
     mapping(address => uint256) public lpRewardInvi;
+    mapping(address => uint256) public lpScore;
     mapping(uint32 => address) public lpList;
-    mapping(address => uint256) public lpLiquidityNative;
-    mapping(address => uint256) public lpLiquidityInvi;
 
     uint32 public lpCount;
     uint256 public totalLiquidityNative;
     uint256 public totalLiquidityInvi;
     uint256 public totalRewardNative;
     uint256 public totalRewardInvi;
+    uint256 public totalLpScore;
 
     uint public inviFees;
     uint public nativeFees;
@@ -41,13 +40,11 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     /**
      * @dev Initializes the InviSwapPool contract.
      * @param _inviAddr The address of the InviToken contract.
-     * @param _isptAddr The address of the ISPT (InviSwapPool Token) contract.
      */
-    function initialize(address _inviAddr, address _isptAddr) initializer public {
+    function initialize(address _inviAddr) initializer public {
         inviToken = IERC20(_inviAddr);
-        isptToken = IERC20(_isptAddr);
-        inviFees = 3;
-        nativeFees = 3;
+        inviFees = 5;
+        nativeFees = 5;
         lpCount = 0;
         totalLiquidityNative = 1;
         totalLiquidityInvi = 1;
@@ -65,13 +62,18 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of native token.
      * @return The amount of InviTokens that will be received.
      */
-    function getInviToNativeOutAmount(uint _amountIn) public view returns (uint) {
+    function getInviToNativeOutAmount(uint _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
-        uint256 slippage = amountOut * amountOut / currentNativeLiquidity;
-        require(amountOut > slippage, "InviSwapPool: logic error");
-        return amountOut - slippage; 
+        uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
+        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+        // extra fees for this swap if liquidity is unbalanced
+        if (totalLiquidityNative < totalLiquidityInvi) {
+            uint256 extraFees = fees * totalLiquidityNative / totalLiquidityInvi / 2;
+            fees += extraFees;
+            amountOut -= extraFees;
+        }
+        return (amountOut, fees); 
     }
 
     /**
@@ -79,31 +81,24 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of InviTokens.
      * @return The amount of native token that will be received.
      */
-    function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256) {
-        console.log("amount in: ", _amountIn);
+    function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
-        uint256 slippage = amountOut * amountOut / currentNativeLiquidity;
-        console.log("amount out: ", amountOut);
-        console.log("slippage  : ", slippage);
-        require(amountOut > slippage, "InviSwapPool: logic error");
-        return amountOut - slippage;
+        uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
+        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+        return (amountOut, fees);
     }
 
     function getNativeToInviOutMaxInput() public view returns (uint) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        
-        return totalLiquidityInvi * currentInviLiquidity / (2*currentNativeLiquidity);
+        return totalLiquidityInvi * currentNativeLiquidity / (2*currentInviLiquidity);
     }
     function getInviToNativeOutMaxInput() public view returns (uint) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        
-        return totalLiquidityNative * currentNativeLiquidity / (2*currentInviLiquidity);
+        return totalLiquidityNative * currentInviLiquidity / (2*currentNativeLiquidity);
     }
-
 
     function getAddLiquidityInvi(uint256 _amountIn) public view returns (uint256) {
         return _amountIn * totalLiquidityNative / totalLiquidityInvi;
@@ -111,9 +106,10 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getAddLiquidityNative(uint _amountIn) public view returns (uint256) {
         return _amountIn * totalLiquidityInvi / totalLiquidityNative;
     }
-    function getExpectedAmountsOutRemoveLiquidity(uint _liquidityTokensAmount) public view returns (uint inviAmount, uint NativeAmount) {
-        uint expectedInvi = (_liquidityTokensAmount**2 / totalLiquidityNative * totalLiquidityInvi).sqrt();
-        uint expectedNative = (_liquidityTokensAmount**2 / totalLiquidityInvi * totalLiquidityNative).sqrt();
+    function getExpectedAmountsOutRemoveLiquidity(uint256 _liquidityAmount) public view returns (uint256 inviAmount, uint256 nativeAmount) {
+        uint256 totalScore = totalLpScore;
+        uint256 expectedInvi = _liquidityAmount * totalLiquidityInvi / totalScore;
+        uint256 expectedNative = _liquidityAmount * totalLiquidityNative / totalScore;
         return (expectedInvi, expectedNative);
     }
 
@@ -140,19 +136,22 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @param _amountIn The amount of InviTokens to swap.
      * @param _amountOutMin The minimum amount of native token expected to receive.
      */
-    function swapInviToNative(uint128 _amountIn, uint _amountOutMin) public {
+    function swapInviToNative(uint256 _amountIn, uint _amountOutMin) public {
+        require(totalLiquidityNative <= address(this).balance + 10, "Test logic2");
         require(_amountIn < getInviToNativeOutMaxInput(), "InviSwapPool: exceeds max input amount");
-        uint amountOut = getInviToNativeOutAmount(_amountIn);
-        uint fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.3% fee
+        // including fees
+        (uint256 amountOut, uint256 fees) = getInviToNativeOutAmount(_amountIn);
         require(amountOut < totalLiquidityNative, "not enough reserves");
         require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
         require(inviToken.transferToken(msg.sender, address(this), _amountIn), "InviSwapPool: transfer failed");
         totalLiquidityInvi += _amountIn;
-        totalLiquidityNative -= amountOut - fees;
+        totalLiquidityNative -= amountOut ;
         totalRewardNative += fees;
         _splitRewards(0, fees);
         (bool success, ) = msg.sender.call{value: amountOut - fees}("");
         require(success, "InviSwapPool: transfer failed");
+    
+        require(totalLiquidityNative <= address(this).balance + 10, "Test logic");
     }
 
     /**
@@ -162,8 +161,9 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function swapNativeToInvi(uint _amountOutMin) public payable {
         require(msg.value < getNativeToInviOutMaxInput(), "exceeds max input amount");
         require(msg.value > 0, "InviSwapPool: zero amount");
-        uint256 amountOut = getNativeToInviOutAmount(msg.value);
-        uint fees = (amountOut * inviFees) / SWAP_FEE_UNIT; // 0.3% fee
+        (uint256 amountOut, uint256 fees) = getNativeToInviOutAmount(msg.value);
+        //console.log("amountOut              : ", amountOut);
+        //console.log("totalLiquidityInvi     : ", totalLiquidityInvi);
         require(amountOut < totalLiquidityInvi, "InviSwapPool: not enough reserves");
         require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
         totalLiquidityNative += msg.value;
@@ -176,20 +176,18 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
       // slippage unit is 0.1%
     function addLiquidity(uint _expectedAmountInInvi, uint _slippage) public payable {
         uint256 expectedInvi = getAddLiquidityInvi(msg.value);
+        console.log("expectedInvi: ", expectedInvi);
         // require( expectedInvi <= _maxInvi, ERROR_SWAP_SLIPPAGE);
         uint256 expectedAmountInInviMin = _expectedAmountInInvi * (100*SLIPPAGE_UNIT - _slippage) / (100*SLIPPAGE_UNIT);
         uint256 expectedAmountInInviMax = _expectedAmountInInvi * (100*SLIPPAGE_UNIT + _slippage)  / (100*SLIPPAGE_UNIT);
-        console.log("expectedInvi: %s, expectedAmountInInviMin: %s, expectedAmountInInviMax: %s", expectedInvi, expectedAmountInInviMin, expectedAmountInInviMax);
         require(expectedInvi >= expectedAmountInInviMin && expectedInvi <= expectedAmountInInviMax , "InviSwapPool: unexpected INVI amount");
 
         // update liquidity
-        lpLiquidityNative[msg.sender] += msg.value;
-        lpLiquidityInvi[msg.sender] += expectedInvi;
         totalLiquidityNative += msg.value;
         totalLiquidityInvi += expectedInvi;
 
         // transfer tokens from sender
-        require(inviToken.transferToken(msg.sender, address(this), uint128(expectedInvi)), "InviSwapPool: transfer failed");
+        require(inviToken.transferToken(msg.sender, address(this), uint256(expectedInvi)), "InviSwapPool: transfer failed");
         
         // add to lp list
         bool exist = false;
@@ -204,51 +202,40 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
             lpList[lpCount++] = msg.sender;
         }
 
-        // mint token
-        isptToken.mintToken(msg.sender, (msg.value * expectedInvi).sqrt());
+        // update lp score
+        lpScore[msg.sender] += (msg.value * expectedInvi).sqrt();
+        // update total lp score
+        totalLpScore += (msg.value * expectedInvi).sqrt();
+        require(totalLiquidityNative <= address(this).balance + 10, "Test logic4");
+
     }
 
-    function removeLiquidity(uint _liquidityTokensAmount, uint _expectedInviAmount, uint _expectedNativeAmount, uint _slippage) public {
-        require(lpLiquidityInvi[msg.sender] > 0 && lpLiquidityNative[msg.sender] > 0 , "InviSwapPool: no liquidity");
- 
-        // burn liquidity Tokens from sender
-        isptToken.burnToken(msg.sender, _liquidityTokensAmount);
-
+    function removeLiquidity(uint _liquidityAmount, uint _expectedInviAmount, uint _expectedNativeAmount, uint _slippage) public { 
+        require(_liquidityAmount <= totalLiquidityNative, "InviSwapPool: exceeds max input amount");
+        require(_liquidityAmount <= lpScore[msg.sender], "InviSwapPool: exceeds max input amount");
         // calculate amount of tokens to be transferred
-        uint inviAmount = (_liquidityTokensAmount**2 / totalLiquidityNative * totalLiquidityInvi).sqrt();
-        uint nativeAmount = (_liquidityTokensAmount**2 / totalLiquidityInvi * totalLiquidityNative).sqrt();
+        (uint256 inviAmount, uint256 nativeAmount) = getExpectedAmountsOutRemoveLiquidity(_liquidityAmount);
 
         uint expectedNativeAmountMin = _expectedNativeAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedNativeAmountMax = _expectedNativeAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedInviAmountMin = _expectedInviAmount * (100*SLIPPAGE_UNIT - _slippage) / (SLIPPAGE_UNIT*100);
         uint expectedInviAmountMax = _expectedInviAmount * (100*SLIPPAGE_UNIT + _slippage) / (SLIPPAGE_UNIT*100);
-        console.log("expectedNativeAmountMin: ", expectedNativeAmountMin);
-        console.log("expectedNativeAmountMax: ", expectedNativeAmountMax);
-        console.log("expectedInviAmountMin: ", expectedInviAmountMin);
-        console.log("expectedInviAmountMax: ", expectedInviAmountMax);
-        console.log("actualNativeAmount: ", nativeAmount);
-        console.log("actualinviAmount: ", inviAmount);
+
         require(nativeAmount >= expectedNativeAmountMin && nativeAmount <= expectedNativeAmountMax, "InviSwapPool: exceeds max input amount");
         require(inviAmount >= expectedInviAmountMin && inviAmount <= expectedInviAmountMax, "InviSwapPool: exceeds max input amount");
-
-        // // Calculate rewards for the user
-        // uint NativeReward = lpRewardNative[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
-        // uint inviReward = lpRewardInvi[msg.sender] * _liquidityTokensAmount / lpLiquidity[msg.sender];
-
         // Check that the contract has sufficient Native and Invi tokens to withdraw
-        require(address(this).balance >= nativeAmount , "InviSwapPool: insufficient balance");
-        require(inviToken.balanceOf(address(this)) >= inviAmount, "InviSwapPool: insufficient balance");
+   
+        require(address(this).balance >= nativeAmount + totalRewardNative , "InviSwapPool: insufficient balance");
+        require(inviToken.balanceOf(address(this)) >= inviAmount + totalRewardInvi, "InviSwapPool: insufficient balance");
+
+        // update liquidity
+        lpScore[msg.sender] -= _liquidityAmount;
+        totalLpScore -= _liquidityAmount;
 
         // Update the contract's total liquidity and the user's liquidity holdings and rewards
         totalLiquidityNative -= nativeAmount;
         totalLiquidityInvi -= inviAmount;
-        lpLiquidityNative[msg.sender] -= nativeAmount;
-        lpLiquidityInvi[msg.sender] -= inviAmount;
 
-        console.log("totalLiquidityNative: ", totalLiquidityNative);
-        console.log("totalLiquidityInvi: ", totalLiquidityInvi);
-        // lpRewardNative[msg.sender] -= NativeReward;
-        // lpRewardInvi[msg.sender] -= inviReward;
 
          // Transfer the Native and Invi tokens to the user
         (bool NativeSuccess, ) = msg.sender.call{value: nativeAmount}("");
@@ -262,7 +249,6 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         uint nativeReward = lpRewardNative[msg.sender];
         if (inviReward > 0 ) {
             require(totalRewardInvi >= inviReward, "InviSwapPool: insufficient reward");
-            console.log("inviTokenBalance: ", inviToken.balanceOf(address(this)));
             require(inviToken.balanceOf(address(this)) >= inviReward, "InviSwapPool: insufficient balance");
             totalRewardInvi -= inviReward;
             lpRewardInvi[msg.sender] = 0;
@@ -284,16 +270,14 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function _splitRewards(uint _type, uint _amount) private {
         for (uint32 i = 0 ; i < lpCount; i++) {
             address lp = lpList[i];
-            uint lpAmount = isptToken.balanceOf(lp);
-            uint totalSupply = isptToken.totalSupply();
+            uint lpAmount = lpScore[lp];
+            uint totalSupply = totalLpScore;
             if (_type == 0) {
                 uint nativeReward = (_amount * lpAmount) / totalSupply;
                 lpRewardNative[lp] += nativeReward;
-                console.log("NativeReward", nativeReward);
             } else {
                 uint inviReward = (_amount * lpAmount) / totalSupply;
                 lpRewardInvi[lp] += inviReward;
-                console.log("InviReward", inviReward);
             }
         }
     }
