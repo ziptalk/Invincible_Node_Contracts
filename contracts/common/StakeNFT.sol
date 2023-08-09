@@ -114,14 +114,14 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         // get current timestamp
         uint256 currentTimestamp = block.timestamp;
         // get principal
-        uint256 principal = stakeInfo.principal;
+        uint256 stakedAmount = stakeInfo.stakedAmount;
         // get lock Period
         uint256 lockPeriod = stakeInfo.lockPeriod;
         // get lock Left
         uint256 lockLeft = stakeInfo.lockEnd - currentTimestamp;
         // get InviValue referring to swap pool
         //uint256 inviAmount = principal * (inviSwapPool.totalLiquidityNative / inviSwapPool.totalLiquidityInvi) * (lockLeft / lockPeriod) / 5;
-        uint256 inviAmount = principal * nativeLiquidity * lockLeft / (inviLiquidity * lockPeriod * 5);
+        uint256 inviAmount = stakedAmount * nativeLiquidity * lockLeft / (inviLiquidity * lockPeriod * 10);
 
         return (inviAmount, currentTimestamp );
     }

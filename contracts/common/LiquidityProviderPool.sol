@@ -118,6 +118,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @return The total liquidity amount.
      */
     function getTotalLiquidity() public view returns (uint256) {
+        require(totalStakedAmount >= totalLentAmount, "LpPool: total staked amount should be greater than total lent amount");
         return (totalStakedAmount - totalLentAmount);
     }
 
@@ -130,6 +131,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @return The maximum lent amount.
      */
     function getMaxLentAmount() public view returns (uint256) {
+        if (totalStakedAmount == 0) {
+            return 0;
+        }
         uint256 totalLiquidity = getTotalLiquidity();
         uint256 result = (totalLiquidity**2 * liquidityAllowableRatio) / (totalStakedAmount * 100 * LIQUIDITY_ALLOWABLE_RATIO_UNIT);
         return uint256(result);

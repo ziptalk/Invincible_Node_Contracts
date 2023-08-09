@@ -22,6 +22,7 @@ library Logics {
     function ProtocolFee(uint256 _lentAmount, uint32 _leverageRatio, uint256 _totalLiquidity) internal pure returns (uint256) {
         uint32 c = 360; //coefficient
         uint32 minFee = 2 * PROTOCOL_FEE_UNIT;
+        if (_totalLiquidity == 0) return minFee;
         return (c * _lentAmount * _leverageRatio / (_totalLiquidity * LEVERAGE_UNIT)) * PROTOCOL_FEE_UNIT+ minFee;
     }
     function ExpectedReward(uint256 _amount, uint256 _lockPeriod, uint32 _apr) internal pure returns (uint256) {

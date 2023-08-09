@@ -28,15 +28,12 @@ export const leverageStake = async (
   lockPeriod: number,
   nonce: number
 ) => {
-  try {
-    const slippage = 3 * units.slippageUnit;
-    let tx = await inviCoreContract
-      .connect(user)
-      .stake(principal, leverageRatio, lockPeriod, slippage, { value: principal });
-    await tx.wait();
-  } catch (e) {
-    console.log("leverageStake failed at " + e);
-  }
+  const slippage = 3 * units.slippageUnit;
+  let tx = await inviCoreContract
+    .connect(user)
+    .stake(principal, leverageRatio, lockPeriod, slippage, { value: principal });
+  // console.log(tx);
+  await tx.wait();
 };
 
 export const verifyRequest = async (request: any, recipient: string, amount: number, fee: number, type: number) => {
