@@ -13,9 +13,7 @@ string constant ILP_TOKEN_NAME = "ILPTest";
 contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     //------Contracts and Addresses------//
     LiquidityProviderPool public lpPoolContract;
-    mapping(uint256 => address) public ILPHolders;
-    uint256 public totalILPHoldersCount;
-    bool _setLpPoolContract;
+    bool private _setLpPoolContract;
 
     //====== modifiers ======//
     /**
@@ -34,7 +32,6 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         __ERC20_init(ILP_TOKEN_FULL_NAME, ILP_TOKEN_NAME);
         __Ownable_init();
 
-        totalILPHoldersCount = 0;
         _setLpPoolContract = false;
     }
 
@@ -61,18 +58,6 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
      */
     function mintToken(address _account, uint256 _amount) onlyLPPool external {
         _mint(_account, _amount);
-        
-        bool exist = false;
-        // if duplicated ILP holder
-        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
-            if (ILPHolders[i] == _account) {
-                exist = true;
-            }
-        }
-        // else update ILPHolderList 
-        if (!exist) {
-            ILPHolders[totalILPHoldersCount++] = _account;
-        }
     }
 
     /**
@@ -84,59 +69,23 @@ contract ILPToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _burn(_account, _amount);
     }
 
-    /**
-     * @notice transfer Token to target account
-     * @dev overrides previous function
-     * @param to receiving address
-     * @param amount sending amount
+     /**
+     * @notice Override the transfer function to prevent token transfers.
+     * @param recipient Recipient of the tokens.
+     * @param amount Amount of tokens to transfer.
      */
-    function transfer(address to, uint256 amount) public override returns (bool) {
-        address _owner = _msgSender();
-        _transfer(_owner, to, amount);
-        
-        bool exist = false;
-        // if duplicated ILP holder
-        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
-            if (ILPHolders[i] == to) {
-                exist = true;
-            }
-        }
-        // else update ILPHolderList 
-        if (!exist) {
-            ILPHolders[totalILPHoldersCount++] = to;
-        }
-        require(lpPoolContract.getStakedAmount(_owner) >= amount, "ILP: insufficient staked amount");
-        lpPoolContract.setStakedAmount(msg.sender, lpPoolContract.getStakedAmount(msg.sender) - uint256(amount));
-        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint256(amount));
-        return true;
+    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+        revert("ILP: Transfers are disabled");
     }
-    
+
     /**
-     * @notice transfer Token from sender to receiver
-     * @dev overrides previous function
-     * @param from sender
-     * @param to receiver
-     * @param amount sending amount
+     * @notice Override the transferFrom function to prevent token transfers.
+     * @param sender The address which you want to send tokens from.
+     * @param recipient Recipient of the tokens.
+     * @param amount Amount of tokens to transfer.
      */
-    function transferFrom(address from,address to,uint256 amount) public override returns (bool) {
-        address spender = _msgSender();
-        _spendAllowance(from, spender, amount);
-        _transfer(from, to, amount);
-        
-        bool exist = false;
-        // if duplicated ILP holder
-        for (uint256 i = 0; i < totalILPHoldersCount; i++) {
-            if (ILPHolders[i] == to) {
-                exist = true;
-            }
-        }
-        // else update ILPHolderList 
-        if (!exist) {
-            ILPHolders[totalILPHoldersCount++] = to;
-        }
-        require(lpPoolContract.getStakedAmount(from) >= amount, "ILP: insufficient staked amount");
-        lpPoolContract.setStakedAmount(from, lpPoolContract.getStakedAmount(from) - uint256(amount));
-        lpPoolContract.setStakedAmount(to, lpPoolContract.getStakedAmount(to) + uint256(amount));
-        return true;
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+        revert("ILP: Transfers are disabled");
     }
+
 }

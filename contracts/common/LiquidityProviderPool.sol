@@ -32,9 +32,14 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     mapping(address => uint256) public claimableUnstakeAmount;
     mapping(address => uint256) public unstakeRequestAmount;
     mapping(uint => UnstakeRequestLP) public unstakeRequests;
+    mapping(uint32 => address) public allStakers;
 
     //------variables------//
+    bool private _setInviCoreContract;
+    bool private _setStakeNFTContract;
+
     uint32 public liquidityAllowableRatio;
+    uint32 public totalStakersCount;
     
     uint32 public unstakeRequestsRear;
     uint32 public unstakeRequestsFront;
@@ -63,7 +68,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     //====== modifiers ======// 
     modifier nonReentrant() {
         require(!_locked, "Reentrant call detected");
-        _locked = true;
+        _locked = true; 
         _;
         _locked = false;
     }
@@ -102,6 +107,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         minStakeAmount = 10**16; // 0.01
 
         _locked = false;
+        _setInviCoreContract = false;
+        _setStakeNFTContract = false;
     }
 
     //====== getter functions ======//
@@ -154,7 +161,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @param _inviCore The address of the InviCore contract.
      */
     function setInviCoreContract(address payable _inviCore) external onlyOwner {
+        require(!_setInviCoreContract, "LpPool: invi core contract is already set");
         inviCoreContract = InviCore(_inviCore);
+        _setInviCoreContract = true;
     }
 
     /**
@@ -163,7 +172,9 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @param _stakeNFT The address of the StakeNFT contract.
      */
     function setStakeNFTContract(address _stakeNFT) external onlyOwner {
+        require(!_setStakeNFTContract, "LpPool: stake nft contract is already set");
         stakeNFT = StakeNFT(_stakeNFT);
+        _setStakeNFTContract = true;
     }
 
     /**
@@ -210,6 +221,19 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
     function stake() external payable nonReentrant {
         require(msg.value >= minStakeAmount, "LpPool: amount should be greater than minStakeAmount");
         uint256 stakeAmount = uint256(msg.value);
+        if (stakedAmount[msg.sender] == 0) {
+            bool stakedBefore = false;
+            for (uint32 i = 0 ; i < totalStakersCount; i++) {
+                if (allStakers[i] == msg.sender) {
+                    stakedBefore = true;
+                    break;
+                }
+            }
+            if (!stakedBefore) {
+                allStakers[totalStakersCount] = msg.sender;
+                totalStakersCount++;
+            }
+        }
         // update stake amount
         stakedAmount[msg.sender] += stakeAmount;
         totalStakedAmount += stakeAmount;
@@ -229,7 +253,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      * @param _amount The amount to unstake.
      */
     function unstake(uint256 _amount) external nonReentrant {
-        require(stakedAmount[msg.sender] >= _amount &&  _amount > 0, "LpPool: Improper request amount");
+        require(stakedAmount[msg.sender] >= _amount && totalStakedAmount >= _amount && _amount > 0 , "LpPool: Improper request amount");
         
         // update stake amount
         stakedAmount[msg.sender] -= _amount;
@@ -250,13 +274,13 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         // request inviCore
         inviCoreContract.unstakeLp(_amount);
         
-
         // create unstake request
         UnstakeRequestLP memory unstakeRequest = UnstakeRequestLP({
             recipient: msg.sender,
             amount: _amount,
             requestTime: block.timestamp
         });
+
         // update unstake request
         unstakeRequests[unstakeRequestsRear++] = unstakeRequest;
         totalUnstakeRequestAmount += _amount;
@@ -290,7 +314,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
         uint32 front = unstakeRequestsFront;
         uint32 rear = unstakeRequestsRear;
-        for (uint32 i=front; i< rear;) {
+        for (uint32 i=front; i< rear; i++) {
             UnstakeRequestLP storage request = unstakeRequests[i];
             console.log("lp pool balance: ", address(this).balance);
             console.log("request amount : ", request.amount);
@@ -312,7 +336,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
 
-            unchecked {i++;}
         }
 
         lastSplitUnstakedAmountTime = block.timestamp;
@@ -340,9 +363,8 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function distributeNativeReward() external payable onlyInviCore {
         require(totalStakedAmount > 0, "LpPool: No staked amount");
-        uint256 totalILPHoldersCount = iLP.totalILPHoldersCount();
-        for (uint256 i = 0; i < totalILPHoldersCount;) {
-            address account = iLP.ILPHolders(i);
+        for (uint32 i = 0; i < totalStakersCount;) {
+            address account = allStakers[i];
             
             uint256 rewardAmount = msg.value * stakedAmount[account] / totalStakedAmount;
             
@@ -368,10 +390,10 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         require(totalInviToken  > 1000000 + totalClaimableInviAmount, "LpPool: Insufficient invi token to distribute");
         uint256 intervalVar = uint256(inviReceiveInterval) / uint256(inviRewardInterval);
         uint256 rewardTotal = totalInviToken / intervalVar;
-        uint256 holderNumber = iLP.totalILPHoldersCount();
+        uint32 holderNumber = totalStakersCount;
         //console.log("holderNumber", holderNumber);
-        for (uint256 i = 0; i < holderNumber;) {
-            address account = iLP.ILPHolders(i);
+        for (uint32 i = 0; i < holderNumber;) {
+            address account = allStakers[i];
            // console.log("Account: ", account);
             if (stakedAmount[account] == 0) continue;
             uint256 rewardAmount = rewardTotal * stakedAmount[account] / totalStakedAmount ;
