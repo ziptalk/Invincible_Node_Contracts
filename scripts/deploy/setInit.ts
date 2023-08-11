@@ -13,7 +13,6 @@ import { klaytnTestAddress } from "../addresses/testAddresses/address.klaytn";
 
 let iLPTokenContract: Contract;
 let inviTokenContract: Contract;
-let iSPTTokenContract: Contract;
 let stakeNFTContract: Contract;
 let inviTokenStakeContract: Contract;
 let lpPoolContract: Contract;
@@ -31,7 +30,6 @@ export const setInit = async (address: any, network: string) => {
   stTokenContract = await ethers.getContractAt("StToken", address.stTokenContractAddress);
   iLPTokenContract = await ethers.getContractAt("ILPToken", address.iLPTokenContractAddress);
   inviTokenContract = await ethers.getContractAt("InviToken", address.inviTokenContractAddress);
-  iSPTTokenContract = await ethers.getContractAt("ISPTToken", address.iSPTTokenContractAddress);
   stakeNFTContract = await ethers.getContractAt("StakeNFT", address.stakeNFTContractAddress);
   lendingPoolContract = await ethers.getContractAt("LendingPool", address.lendingPoolContractAddress);
   inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", address.inviSwapPoolContractAddress);
@@ -89,16 +87,16 @@ export const setInit = async (address: any, network: string) => {
     }
   };
 
-  const isptTokenInit = async () => {
-    try {
-      // set ISPTToken init condition
-      tx = await iSPTTokenContract.connect(deployer).setInviSwapPool(inviSwapPoolContract.address, { nonce: nonce++ });
-      await tx.wait();
-      console.log("iSPTToken init condition set at " + nonce + "");
-    } catch (e) {
-      console.log("(error)iSPTToken init condition set failed at " + nonce);
-    }
-  };
+  // const isptTokenInit = async () => {
+  //   try {
+  //     // set ISPTToken init condition
+  //     tx = await iSPTTokenContract.connect(deployer).setInviSwapPool(inviSwapPoolContract.address, { nonce: nonce++ });
+  //     await tx.wait();
+  //     console.log("iSPTToken init condition set at " + nonce + "");
+  //   } catch (e) {
+  //     console.log("(error)iSPTToken init condition set failed at " + nonce);
+  //   }
+  // };
 
   const stakeNFTInit = async () => {
     try {
@@ -180,7 +178,7 @@ export const setInit = async (address: any, network: string) => {
 
   await ilpInit();
   await inviTokenInit();
-  await isptTokenInit();
+  //await isptTokenInit();
   await stakeNFTInit();
   await lpPoolInit();
   await inviTokenStakeInit();
@@ -190,7 +188,7 @@ export const setInit = async (address: any, network: string) => {
   return {
     inviTokenContract,
     iLPTokenContract,
-    iSPTTokenContract,
+    // iSPTTokenContract,
     stakeNFTContract,
     inviTokenStakeContract,
     lpPoolContract,

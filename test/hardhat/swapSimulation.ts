@@ -20,11 +20,13 @@ export const swapSimulation = async (
     const nativeBalanceUserA = await ethers.provider.getBalance(userA.address);
     console.log("nativeBalanceUserA        : ", ethers.utils.formatEther(nativeBalanceUserA.toString()));
     const nativeAmountToSwap = !getNativeToInviOutMaxInput.sub(nativeBalanceUserA).isNegative()
-      ? nativeBalanceUserA.mul(50).div(100)
-      : getNativeToInviOutMaxInput.mul(50).div(100);
+      ? nativeBalanceUserA.mul(5).div(100)
+      : getNativeToInviOutMaxInput.mul(5).div(100);
 
     console.log("nativeAmountToSwap        : ", ethers.utils.formatEther(nativeAmountToSwap.toString()));
-    const expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
+    let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
+    expectedAmountOut = expectedAmountOut[0];
+    console.log("expectedAmountOut         : ", ethers.utils.formatEther(expectedAmountOut.toString()));
     const swapNativeToInvi = await inviSwapPoolContract
       .connect(userA)
       .swapNativeToInvi(expectedAmountOut.mul(99).div(100), { value: nativeAmountToSwap });
@@ -69,7 +71,7 @@ export const swapSimulation = async (
   console.log("======Step 4");
   const inviTokenBalanceUserB: BigNumber = await inviTokenContract.balanceOf(userB.address);
   console.log("invi token balance userB: ", ethers.utils.formatEther(inviTokenBalanceUserB.toString()));
-  const lpAmountUserB: BigNumber = inviTokenBalanceUserB.mul(50).div(100);
+  const lpAmountUserB: BigNumber = inviTokenBalanceUserB.mul(5).div(100);
   // get native amount
   const nativeAmountUserB = await inviSwapPoolContract.connect(LP).getAddLiquidityNative(lpAmountUserB);
   console.log("require invi amount   : ", ethers.utils.formatEther(lpAmountUserB.toString()));
@@ -88,13 +90,14 @@ export const swapSimulation = async (
     console.log("userA inviToken Balance   : ", ethers.utils.formatEther(getInviTokenBalanceOfUserA.toString()));
     const getInviToNativeOutMaxInput = await inviSwapPoolContract.getInviToNativeOutMaxInput();
     const inviAmountToSwap = getInviTokenBalanceOfUserA.sub(getInviToNativeOutMaxInput).isNegative()
-      ? getInviTokenBalanceOfUserA.mul(50).div(100)
-      : getInviToNativeOutMaxInput.mul(50).div(100);
+      ? getInviTokenBalanceOfUserA.mul(5).div(100)
+      : getInviToNativeOutMaxInput.mul(5).div(100);
     console.log("getInviToNativeOutMaxInput: ", ethers.utils.formatEther(getInviToNativeOutMaxInput.toString()));
-    const expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
+    let expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
+    expectedAmountOut = expectedAmountOut[0];
     const swapInviToNative = await inviSwapPoolContract
       .connect(userA)
-      .swapInviToNative(inviAmountToSwap, expectedAmountOut.mul(99).div(100));
+      .swapInviToNative(inviAmountToSwap, expectedAmountOut.mul(98).div(100));
     receipt = await swapInviToNative.wait();
     console.log("gasUsed: ", receipt.gasUsed.toString());
 

@@ -25,7 +25,6 @@ describe("Swap test", function () {
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
   let inviSwapPoolContract: Contract;
-  let iSPTTokenContract: Contract;
 
   const network: string = hre.network.name;
   console.log(network);
@@ -42,7 +41,6 @@ describe("Swap test", function () {
         inviTokenStakeContract,
         inviTokenContract,
         inviSwapPoolContract,
-        iSPTTokenContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");
@@ -125,22 +123,22 @@ describe("Swap test", function () {
 
     // Get results
     console.log("==============Remove liquidity==============");
-    const isptBalanceLP = await iSPTTokenContract.balanceOf(LP.address);
-    console.log("isptBalanceLP      : ", ethers.utils.formatEther(isptBalanceLP.toString()));
-    let isptBalanceUserB = await iSPTTokenContract.balanceOf(userB.address);
-    isptBalanceUserB = isptBalanceUserB.mul(99999).div(100000);
-    console.log("isptBalanceUserB   : ", ethers.utils.formatEther(isptBalanceUserB.toString()));
+    const lpScoreLP = await inviSwapPoolContract.lpScore(LP.address);
+    console.log("LpScoreLP      : ", ethers.utils.formatEther(lpScoreLP.toString()));
+    let lpScoreUserB = await inviSwapPoolContract.lpScore(userB.address);
+    lpScoreUserB = lpScoreUserB.mul(99999).div(100000);
+    console.log("isptBalanceUserB   : ", ethers.utils.formatEther(lpScoreUserB.toString()));
 
     // remove liquidities
     const getExpectedAmountsOutRemoveLiquidityLP = await inviSwapPoolContract.getExpectedAmountsOutRemoveLiquidity(
-      isptBalanceLP
+      lpScoreLP
     );
     console.log(getExpectedAmountsOutRemoveLiquidityLP.toString());
 
     const removeLiquidityLP = await inviSwapPoolContract
       .connect(LP)
       .removeLiquidity(
-        isptBalanceLP,
+        lpScoreLP,
         getExpectedAmountsOutRemoveLiquidityLP[0],
         getExpectedAmountsOutRemoveLiquidityLP[1],
         1 * units.slippageUnit
@@ -155,13 +153,13 @@ describe("Swap test", function () {
 
     // remove liquidity userB
     const getExpectedAmountsOutRemoveLiquidityUserB = await inviSwapPoolContract.getExpectedAmountsOutRemoveLiquidity(
-      isptBalanceUserB
+      lpScoreUserB
     );
 
     const removeLiquidityUserB = await inviSwapPoolContract
       .connect(userB)
       .removeLiquidity(
-        isptBalanceUserB,
+        lpScoreUserB,
         getExpectedAmountsOutRemoveLiquidityUserB[0],
         getExpectedAmountsOutRemoveLiquidityUserB[1],
         1 * units.slippageUnit

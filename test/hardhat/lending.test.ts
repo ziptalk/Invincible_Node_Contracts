@@ -71,7 +71,7 @@ describe("Lending service test", function () {
     const lendingSimulation = async () => {
       // Step 1. Provide liquidity and stake
       console.log("step 1");
-      const lpAmount: BigNumber = ethers.utils.parseEther("1000");
+      const lpAmount: BigNumber = ethers.utils.parseEther("10000");
       await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
       console.log("provided liquidity");
 

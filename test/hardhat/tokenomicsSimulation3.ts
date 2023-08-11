@@ -6,7 +6,6 @@ import { units } from "../units";
 import { leverageStake, provideLiquidity } from "../utils";
 import { checkTx } from "../checkTx";
 import { deployAll } from "../../scripts/deploy/deployAll";
-import { all } from "axios";
 import { swap } from "../../typechain-types/contracts/common";
 
 describe("Tokenomics test", function () {
@@ -19,7 +18,6 @@ describe("Tokenomics test", function () {
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
   let inviSwapPoolContract: Contract;
-  let iSPTTokenContract: Contract;
 
   const network: string = hre.network.name;
   console.log(network);
@@ -36,7 +34,6 @@ describe("Tokenomics test", function () {
         inviTokenStakeContract,
         inviTokenContract,
         inviSwapPoolContract,
-        iSPTTokenContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");
@@ -281,6 +278,12 @@ describe("Tokenomics test", function () {
     const giveRewardAndStartUnstake = async (account: any) => {
       //=============== Give Rewards and start unstake ===============//
       console.log("======== Give Rewards and start unstake =========");
+      // send 100 ether to account
+      let tx = await deployer.sendTransaction({
+        to: account.address,
+        value: ethers.utils.parseEther("100"),
+      });
+      await tx.wait();
       // reward amount
       let totalStakedAmount = await inviCoreContract.getTotalStakedAmount();
       const rewardAmount = totalStakedAmount.mul(5).div(100);
@@ -388,7 +391,7 @@ describe("Tokenomics test", function () {
       console.log("lp1LpReward          : ", ethers.utils.formatEther(lp1LpReward));
     };
 
-    await iterate(1, userA);
+    await iterate(50, userA);
     await checkStatus(userA);
     await giveRewardAndStartUnstake(userA);
     // await iterate(100, userA);
