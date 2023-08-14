@@ -6,6 +6,7 @@ import hre from "hardhat";
 import { units } from "../../units";
 import { leverageStake, provideLiquidity } from "../../utils";
 import { getTestAddress } from "../../getTestAddress";
+import { deployAll } from "../../../scripts/deploy/deployAll";
 
 describe("LpPool service test", function () {
   let inviCoreContract: Contract;
@@ -17,14 +18,17 @@ describe("LpPool service test", function () {
 
   this.beforeAll(async function () {
     // for testnet test
-
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    if (network === "hardhat") {
+      ({ inviCoreContract, stakeNFTContract, lpPoolContract } = await deployAll());
+    } else {
+      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    }
   });
 
   it("Test unstake function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     //* given
     const stakedAmount: BigNumber = await lpPoolContract.connect(LP).stakedAmount(LP.address);
@@ -65,8 +69,7 @@ describe("LpPool service test", function () {
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     const lockPeriod = minLockPeriod * 2;
-    const stakeInfo = await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
-    console.log("stakeInfo: ", stakeInfo.toString());
+    await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
 
     // get total lent amount
     const totalLentAmount = await lpPoolContract.totalLentAmount();

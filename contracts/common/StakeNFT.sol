@@ -107,7 +107,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfosOfUser;
     }
 
-    function getBoostUnlockAmount(uint32 _nftTokenId) external view onlyInviCore returns (uint256, uint256) {
+    function getBoostUnlockAmount(uint32 _nftTokenId) external view returns (uint256, uint256) {
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         uint256 inviLiquidity = inviSwapPool.totalLiquidityInvi();
         uint256 nativeLiquidity = inviSwapPool.totalLiquidityNative();
