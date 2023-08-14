@@ -46,14 +46,14 @@ export const deployStakeNFT = async () => {
   return stakeNFTContract;
 };
 
-// deploy ISPTToken contract
-export const deployISPTToken = async () => {
-  const ISPTTokenContract = await ethers.getContractFactory("ISPTToken");
-  const iSPTTokenContract = await upgrades.deployProxy(ISPTTokenContract, [], { initializer: "initialize" });
-  await iSPTTokenContract.deployed();
+// // deploy ISPTToken contract
+// export const deployISPTToken = async () => {
+//   const ISPTTokenContract = await ethers.getContractFactory("ISPTToken");
+//   const iSPTTokenContract = await upgrades.deployProxy(ISPTTokenContract, [], { initializer: "initialize" });
+//   await iSPTTokenContract.deployed();
 
-  return iSPTTokenContract;
-};
+//   return iSPTTokenContract;
+// };
 
 // deploy lpPool contract
 export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContract: Contract, network: string) => {
@@ -262,9 +262,9 @@ export const deployAllContract = async (network: string) => {
   await iLPTokenContract.deployed();
   console.log("deployed iLPToken contract: ", iLPTokenContract.address);
   // deploy ISPTToken contract
-  const iSPTTokenContract = await deployISPTToken();
-  await iSPTTokenContract.deployed();
-  console.log("deployed iSPTToken contract: ", iSPTTokenContract.address);
+  // const iSPTTokenContract = await deployISPTToken();
+  // await iSPTTokenContract.deployed();
+  // console.log("deployed iSPTToken contract: ", iSPTTokenContract.address);
 
   // ==================== service contract ==================== //
   // deploy stakeNFT contract
@@ -305,7 +305,7 @@ export const deployAllContract = async (network: string) => {
   return {
     inviTokenContract,
     iLPTokenContract,
-    iSPTTokenContract,
+    //iSPTTokenContract,
     stakeNFTContract,
     inviTokenStakeContract,
     lpPoolContract,

@@ -17,7 +17,6 @@ describe("Tokenomics test", function () {
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
   let inviSwapPoolContract: Contract;
-  let iSPTTokenContract: Contract;
 
   const network: string = hre.network.name;
   console.log(network);
@@ -34,7 +33,6 @@ describe("Tokenomics test", function () {
         inviTokenStakeContract,
         inviTokenContract,
         inviSwapPoolContract,
-        iSPTTokenContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");
@@ -382,10 +380,10 @@ describe("Tokenomics test", function () {
       let totalStakedLP = await lpPoolContract.totalStakedAmount();
       console.log("totalStakedLPPool    : ", ethers.utils.formatEther(totalStakedLP));
       // get swap pool balance
-      totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
-      console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
+      totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
+      console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       // get total Invi Staked userA
       let totalInviStakedUserA = await inviTokenStakeContract.stakedAmount(userA.address);
       console.log("totalInviStakedUserA : ", ethers.utils.formatEther(totalInviStakedUserA));
@@ -406,9 +404,11 @@ describe("Tokenomics test", function () {
       console.log("totalBurntAmount     : ", ethers.utils.formatEther(totalBurntAmount));
       let swapPoolNativeBalance = await ethers.provider.getBalance(inviSwapPoolContract.address);
       console.log("swapPoolNativeBalance: ", ethers.utils.formatEther(swapPoolNativeBalance));
+      let swapPoolInviBalance = await inviTokenContract.balanceOf(inviSwapPoolContract.address);
+      console.log("swapPoolInviBalance  : ", ethers.utils.formatEther(swapPoolInviBalance));
     };
 
-    await iterate(50);
+    await iterate(100);
     await checkStatus();
     await startUnstake();
   });

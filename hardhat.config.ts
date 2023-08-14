@@ -74,10 +74,10 @@ const config: HardhatUserConfig = {
     },
 
     // mainnets
-    klaytn_mainnet: {
-      url: process.env.KLAYTN_MAINNET_URL,
-      accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
-    },
+    // klaytn_mainnet: {
+    //   url: process.env.KLAYTN_MAINNET_URL,
+    //   accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
+    // },
     // bifrost_mainnet: {
     //   url: process.env.BIFROST_MAINNET_URL,
     //   accounts: [MAINNET_OWNER_KEY, MAINNET_STAKE_MANAGER_KEY, USER_A_KEY, USER_B_KEY, USER_C_KEY],
