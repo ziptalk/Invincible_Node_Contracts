@@ -66,15 +66,19 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
         uint256 amountOut = currentNativeLiquidity - currentNativeLiquidity * currentInviLiquidity / (currentInviLiquidity + _amountIn);
-        amountOut = amountOut * 1000 / 1001;
+        uint256 slippage = amountOut * amountOut / totalLiquidityNative;
+        if (amountOut > slippage) {
+            amountOut -= slippage;
+        }
     
         uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+
         // extra fees for this swap if liquidity is unbalanced
-        if (totalLiquidityNative < totalLiquidityInvi) {
-            uint256 extraFees = fees * totalLiquidityInvi / totalLiquidityNative / 2;
-            fees += extraFees;
-            amountOut -= extraFees; 
-        }
+        // if (totalLiquidityNative < totalLiquidityInvi) {
+        //     uint256 extraFees = fees * totalLiquidityInvi / totalLiquidityNative / 2;
+        //     fees += extraFees;
+        //     amountOut -= extraFees; 
+        // }
         return (amountOut, fees); 
     }
 
@@ -87,7 +91,10 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
         uint256 amountOut = currentInviLiquidity - currentInviLiquidity * currentNativeLiquidity / (currentNativeLiquidity + _amountIn);
-        amountOut = amountOut * 1000 / 1001;
+        uint256 slippage = amountOut * amountOut / totalLiquidityInvi;
+        if (amountOut > slippage) {
+            amountOut -= slippage;
+        }
         uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
        
         return (amountOut, fees);

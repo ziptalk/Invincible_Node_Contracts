@@ -60,6 +60,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
     uint256 public lastStTokenDistributeTime;
     uint256 public lastClaimAndSplitUnstakedAmountTime;
     uint256 public stTokenDistributePeriod;
+    uint256 public totalStakedPure;
     
     //------Mappings------//
     mapping (uint32 => UnstakeRequest) public unstakeRequests;
@@ -342,6 +343,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      */
     function stake(uint256 _principal, uint32 _leverageRatio, uint256 _lockPeriod,uint32 _feeSlippage) external payable nonReentrant returns (uint) {
         require(msg.value >= minStakeAmount, "InviCore: amount is less than minimum stake amount");
+        require(msg.value == _principal, "InviCore: amount is not equal to principal");
          // get stakeInfo
         StakeInfo memory _stakeInfo = createStakeInfo(msg.sender, _principal, _leverageRatio, _lockPeriod);
 
@@ -358,6 +360,9 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint256 lentAmount = _stakeInfo.stakedAmount - _stakeInfo.principal;
         uint256 totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
+
+        // update totalStakedPure
+        totalStakedPure += msg.value;
 
         emit Stake(msg.sender, _stakeInfo.principal);
         return nftId;
@@ -570,11 +575,10 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint32 front = unstakeRequestsFront;
         uint32 rear = unstakeRequestsRear;
         uint32 count = 0;
-        uint256 balance = address(this).balance;
-        require(balance >= totalClaimableAmount , "InviCore: Not enough amount");
-        for (uint32 i = front; i < rear;) {
+        for (uint32 i = front; i < rear; i++) {
+            uint256 balance = address(this).balance;
             UnstakeRequest memory request = unstakeRequests[i];
-            if (request.amount > balance - totalClaimableAmount) {
+            if (request.amount + totalClaimableAmount > balance) {
                 break;
             }
             count++;
@@ -610,7 +614,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
                 lpPoolContract.receiveUnstaked{ value: amount }();
             }
 
-            unchecked {i++;}
+            //unchecked {i++;}
         }
 
         // update last send unstaked amount time

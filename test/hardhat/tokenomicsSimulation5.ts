@@ -34,7 +34,6 @@ describe("Tokenomics test 5", function () {
         inviTokenStakeContract,
         inviTokenContract,
         inviSwapPoolContract,
-        iSPTTokenContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");

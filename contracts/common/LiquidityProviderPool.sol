@@ -335,7 +335,6 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
 
             // remove unstake request
             delete unstakeRequests[unstakeRequestsFront++];
-
         }
 
         lastSplitUnstakedAmountTime = block.timestamp;
