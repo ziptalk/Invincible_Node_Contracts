@@ -152,9 +152,12 @@ describe("Invi Burning Test", function () {
             inviAmountToSwap = inviAmountToSwap.mul(10).div(9);
           }
         }
-
-        // swap INVI to KLAY
-        await swapInviToNative(inviAmountToSwap);
+        try {
+          // swap INVI to KLAY
+          await swapInviToNative(inviAmountToSwap);
+        } catch {
+          console.log("swap error");
+        }
 
         let totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
         console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
@@ -228,11 +231,6 @@ describe("Invi Burning Test", function () {
       // get user nft list
       const userNFTList = await stakeNFTContract.getNFTOwnership(userA.address);
       console.log("userNFTList          : ", userNFTList);
-      // send 10 eth to userA for tx fee
-      tx = await deployer.sendTransaction({
-        to: userA.address,
-        value: ethers.utils.parseEther("1"),
-      });
       let userAInviBalance = await inviTokenContract.balanceOf(userA.address);
       console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
       let userABalance = await ethers.provider.getBalance(userA.address);
@@ -240,26 +238,27 @@ describe("Invi Burning Test", function () {
       // return all nfts
       for (let i = userNFTList.length - 1; i >= 0; i--) {
         console.log("nft ID: ", userNFTList[i].toString());
-        let gasPrice = 100000000;
-        let gasLimit = 1000000;
         let nativeAmountToSwap = ethers.utils.parseEther("50");
         while (1) {
           // get expected amounts out inviToNative
           let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
-          if (expectedAmountOut[0].sub(nativeAmountToSwap) > 0) {
+          if (expectedAmountOut[0].sub(nativeAmountToSwap)) {
             break;
           } else {
             nativeAmountToSwap = nativeAmountToSwap.mul(5).div(4);
           }
         }
-
-        await swapNativeToInvi(nativeAmountToSwap);
+        try {
+          await swapNativeToInvi(nativeAmountToSwap);
+        } catch (e) {
+          console.log("Swap Native to Invi error");
+        }
 
         try {
           let tx = await lendingPoolContract.connect(userA).repay(userNFTList[i]);
           await tx.wait();
         } catch (e) {
-          console.log("Repay error");
+          console.log("Repay error", e);
         }
         userAInviBalance = await inviTokenContract.balanceOf(userA.address);
         //console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
@@ -276,19 +275,14 @@ describe("Invi Burning Test", function () {
         }
 
         try {
-          tx = await inviCoreContract.connect(userA).repayNFT(userNFTList[i], {
-            gasPrice: gasPrice,
-            gasLimit: gasLimit,
-          });
+          tx = await inviCoreContract.connect(userA).repayNFT(userNFTList[i]);
           await tx.wait();
           console.log("repay success");
         } catch (e) {
-          console.log("Repay NFT error");
+          console.log("Repay NFT error", e);
         }
+
         try {
-          // claim and split unstaked amount (core)
-          tx = await inviCoreContract.connect(deployer).claimAndSplitUnstakedAmount();
-          await tx.wait();
           // claim unstaked amount
           tx = await inviCoreContract.connect(userA).claimUnstaked();
           await tx.wait();

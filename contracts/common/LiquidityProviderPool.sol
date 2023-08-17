@@ -94,7 +94,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         inviToken = IERC20(_inviTokenAddr);
         liquidityAllowableRatio = LIQUIDITY_ALLOWABLE_RATIO_UNIT * 1;
 
-        inviRewardInterval = 1 hours; // testnet : 1 hours
+        inviRewardInterval = 10 hours; // testnet : 1 hours
         // inviRewardInterval = 1 days; // mainnet : 1 days
 
         inviReceiveInterval = 30 hours; // testnet : 30 hours

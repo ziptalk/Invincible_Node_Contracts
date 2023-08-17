@@ -67,6 +67,8 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (address => uint256) public claimableAmount;
     mapping (uint32 => uint256) public nftUnstakeTime;
 
+
+
     //------events------//
     event Stake(address indexed user, uint256 indexed amount);
     event Unstake(address indexed user, uint256 indexed amount);
@@ -361,7 +363,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint256 totalLentAmount = lpPoolContract.totalLentAmount() + lentAmount;
         lpPoolContract.setTotalLentAmount(totalLentAmount);
 
-        // update totalStakedPure
         totalStakedPure += msg.value;
 
         emit Stake(msg.sender, _stakeInfo.principal);

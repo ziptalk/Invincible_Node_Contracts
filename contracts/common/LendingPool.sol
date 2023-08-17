@@ -8,6 +8,7 @@ import "../interfaces/external/IERC20.sol";
 import "./lib/Structs.sol";
 import "./lib/Unit.sol";
 import "./tokens/InviToken.sol";
+import "./InviTokenStake.sol";
 import "hardhat/console.sol";
 import "./swap/InviSwapPool.sol";
 
@@ -19,10 +20,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     InviToken public inviToken;
     StakeNFT public stakeNFTContract;
     InviSwapPool public inviSwapPool;
+    InviTokenStake public inviTokenStake;
 
     uint32 public maxLendRatio;
     uint32 private _lendRatio;
     uint256 public totalLentAmount;
+    uint256 public boostRequirementAmount;
     bool private _setStakeNFTContract;
     bool private _setInviSwapPoolContract;
     bool private _locked;
@@ -45,17 +48,18 @@ contract LendingPool is Initializable, OwnableUpgradeable {
      * @dev Initializes the contract.
      * @param _inviTokenAddr The address of the InviToken contract.
      */
-    function initialize(address _inviTokenAddr) initializer public {
+    function initialize(address _inviTokenAddr, address _inviTokenStake) initializer public {
         __Ownable_init();
         inviToken = InviToken(_inviTokenAddr);
+        inviTokenStake = InviTokenStake(_inviTokenStake);
         _lendRatio = 90;
         maxLendRatio = _lendRatio * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
         _setStakeNFTContract = false;
+        boostRequirementAmount = 10000 * 10**18;
     }
 
     //====== modifiers ======//
-
     //====== getter functions ======//
     /**
      * @notice Retrieves the lend information for a given NFT ID.
@@ -167,13 +171,12 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         uint256 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint256 principal = stakeInfo.principal + rewardAmount;
         uint256 maxLendAmount = uint256(getMaxLendAmount(principal));
-        uint256 maxLendAmountWithBoost = getMaxLendAmountWithBoost(principal);
         if (_requestAmount > maxLendAmount) {
+            require(inviTokenStake.getStakedAmount(msg.sender) >= boostRequirementAmount, "LendingPool: insufficient inviStake amount" );
+            uint256 maxLendAmountWithBoost = getMaxLendAmountWithBoost(principal);
             require(maxLendAmountWithBoost >= _requestAmount, "LendingPool: invalid request amount");
-            stakeNFTContract.boostLendAmount(_nftId, maxLendAmount, _requestAmount);
         }
         
-        // require(_requestAmount <= maxLendAmount, "LendingPool: invalid request amount");
         totalLentAmount += _requestAmount;
         LendInfo memory lendInfo = LendInfo({
             user: stakeInfo.user,  

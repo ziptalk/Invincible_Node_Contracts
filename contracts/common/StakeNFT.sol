@@ -244,12 +244,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return lpReward;
     }
 
-    function boostLendAmount(uint32 _nftTokenId, uint256 _allowed, uint256 _requested) external onlyLendingPool {
-        uint256 newLockPeriod = stakeInfos[_nftTokenId].lockPeriod * _requested / _allowed;
-        stakeInfos[_nftTokenId].lockPeriod = newLockPeriod;
-        stakeInfos[_nftTokenId].lockEnd = stakeInfos[_nftTokenId].lockStart + newLockPeriod;
-    }
-
     function updateUnlockTimeWhenBoostUnlock(uint32 _nftId, uint256 _updatingTime) external onlyInviCore {
         stakeInfos[_nftId].lockPeriod = _updatingTime - stakeInfos[_nftId].lockStart;
         stakeInfos[_nftId].lockEnd = _updatingTime;
