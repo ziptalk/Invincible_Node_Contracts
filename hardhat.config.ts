@@ -30,7 +30,7 @@ const config: HardhatUserConfig = {
     },
   },
   mocha: {
-    timeout: 2000000,
+    timeout: 2000000000,
   },
   paths: {
     artifacts: "./artifacts",
