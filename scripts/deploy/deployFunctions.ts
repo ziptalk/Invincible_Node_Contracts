@@ -189,11 +189,15 @@ export const deployInviSwapPool = async (inviTokenContract: Contract) => {
   return inviSwapPool;
 };
 
-export const deployLendingPoolContract = async (inviToken: Contract) => {
+export const deployLendingPoolContract = async (inviToken: Contract, inviTokenStake: Contract) => {
   const LendingPoolContract = await ethers.getContractFactory("LendingPool");
-  const lendingPoolContract = await upgrades.deployProxy(LendingPoolContract, [inviToken.address], {
-    initializer: "initialize",
-  });
+  const lendingPoolContract = await upgrades.deployProxy(
+    LendingPoolContract,
+    [inviToken.address, inviTokenStake.address],
+    {
+      initializer: "initialize",
+    }
+  );
   await lendingPoolContract.deployed();
 
   return lendingPoolContract;
@@ -280,7 +284,7 @@ export const deployAllContract = async (network: string) => {
   await lpPoolContract.deployed();
   console.log("deployed lpPool contract: ", lpPoolContract.address);
   // deploy LendingPool contract
-  const lendingPoolContract = await deployLendingPoolContract(inviTokenContract);
+  const lendingPoolContract = await deployLendingPoolContract(inviTokenContract, inviTokenStakeContract);
   await lendingPoolContract.deployed();
   console.log("deployed lendingPool contract: ", lendingPoolContract.address);
   // deploy InviSwapPool contract

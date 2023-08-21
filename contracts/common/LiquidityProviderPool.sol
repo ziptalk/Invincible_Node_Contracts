@@ -431,7 +431,10 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
      */
     function claimInviReward() external nonReentrant {
         require(inviRewardAmount[msg.sender] > 0, "LpPool: No claimable amount");
-        require(inviToken.balanceOf(address(this)) > inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
+        console.log("invi token balance: ", inviToken.balanceOf(address(this)));
+        console.log("invi reward amount: ", inviRewardAmount[msg.sender]);
+
+        require(inviToken.balanceOf(address(this)) >= inviRewardAmount[msg.sender], "LpPool: Insufficient claimable amount");
         uint256 rewardAmount = inviRewardAmount[msg.sender];
         inviRewardAmount[msg.sender] = 0;
         totalClaimableInviAmount -= rewardAmount;

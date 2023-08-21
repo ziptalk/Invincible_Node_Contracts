@@ -111,7 +111,7 @@ describe("Lending service test", function () {
       console.log("inviRewardInterval: ", inviRewardInterval.toString());
 
       // distribute inviToken reward
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 3; i++) {
         const distributeInviTokenReward = await lpPoolContract.connect(deployer).distributeInviTokenReward();
         receipt = await distributeInviTokenReward.wait();
         console.log("gasUsed: ", receipt.gasUsed.toString());

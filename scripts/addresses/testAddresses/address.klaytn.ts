@@ -16,15 +16,15 @@ export const klaytnTestAddress = {
   mainnet: {
     klaytnLiquidStaking: "0xF80F2b22932fCEC6189b9153aA18662b15CC9C00",
 
-    stTokenContractAddress: "0x141c25aa825E46ebCefa7A049498076727C3a709",
-    inviTokenContractAddress: "0xfC3D3eD2B1bfcD71A759fD9fB9F25640F2117d51",
-    iLPTokenContractAddress: "0x53354c13D244e9acE2660283605Cbbd12a0cd9C1",
-    stakeNFTContractAddress: "0x94e130D1f5f62A38D5d168fEB7474368D9C970ce",
-    inviTokenStakeContractAddress: "0x27A64f4c23a883e19efECaC8DEb90666035c8f1B",
-    lpPoolContractAddress: "0xFc0C8919552F040d085587c36037280e2FE814f0",
-    lendingPoolContractAddress: "0xB87A3cbb05598Ad291d3b6e28A250C75d7f2A40f",
-    inviSwapPoolContractAddress: "0x0D6c4fc49ca3f4187a0eE87d30a4fc44E4B68b0b",
-    inviCoreContractAddress: "0x44868F0f97919034c15AB96b5d79321Fe30df5e2",
+    stTokenContractAddress: "0xA5683294c4317bA9696f5D2c4Dc7887153D5E692",
+    inviTokenContractAddress: "0x9B0E14A8B4DDEA69198cAf823A020E3A3bCd4c87",
+    iLPTokenContractAddress: "0x98e8669740e42eC69cB489380A7CAC16babF2EF6",
+    stakeNFTContractAddress: "0x8db78a3B4a041c940677e13692c1dEFb13318953",
+    inviTokenStakeContractAddress: "0x011698281E357cF3aEFFD6D61E12226a2048d0cf",
+    lpPoolContractAddress: "0x7B78F7A60860B491D1Bf995d92dE0071eAe41488",
+    lendingPoolContractAddress: "0x1338bDc2ee3C21285eEEAe2eAC12f670c7894bbd",
+    inviSwapPoolContractAddress: "0xd040Bdda9c1718697b68A2C8769A8DE0Ee7afA54",
+    inviCoreContractAddress: "0xe0F5e2a77e44650c405cAA66bFdda358037E2C57",
   },
 };
 

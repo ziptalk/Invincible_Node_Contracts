@@ -56,7 +56,7 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         maxLendRatio = _lendRatio * LEND_RATIO_UNIT / 100; // 90%
         _locked = false;
         _setStakeNFTContract = false;
-        boostRequirementAmount = 10000 * 10**18;
+        boostRequirementAmount = 10000 * 10**18; // 10000 INVI
     }
 
     //====== modifiers ======//
@@ -110,6 +110,10 @@ contract LendingPool is Initializable, OwnableUpgradeable {
         StakeInfo memory stakeInfo = stakeNFTContract.getStakeInfo(_nftId);
         uint256 rewardAmount = stakeNFTContract.rewardAmount(_nftId);
         uint256 principal = stakeInfo.principal + rewardAmount;
+        uint256 inviStakeAmount = inviTokenStake.getStakedAmount(msg.sender);
+        if (inviStakeAmount >= boostRequirementAmount) {
+            return getMaxLendAmountWithBoost(principal);
+        }
         return getMaxLendAmount(principal);
     }
 
@@ -155,6 +159,15 @@ contract LendingPool is Initializable, OwnableUpgradeable {
     function setMaxLendRatio(uint32 _maxLendRatio) external onlyOwner {
         require(_maxLendRatio <= LEND_RATIO_UNIT, "LendingPool: invalid max lend ratio");
         maxLendRatio = _maxLendRatio;
+    }
+
+    /**
+     * @notice Sets the boost requirement amount to activate INVI boosting when lending.
+     * @dev can be set only by owner
+     * @param _boostRequirementAmount required amount to boost INVI
+     */
+    function setBoostRequirementAmount(uint256 _boostRequirementAmount) external onlyOwner {
+        boostRequirementAmount = _boostRequirementAmount;
     }
 
     //====== service functions ======//

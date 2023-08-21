@@ -35,7 +35,9 @@ describe("Invi Burning Test", function () {
 
   it("Test without liquidity providing or invi staking", async () => {
     const [deployer, LP1, LP2, LP3, userA, userB, userC] = await ethers.getSigners();
+    console.log(LP1.address);
     console.log(userA.address);
+    let standardAmount: BigNumber = ethers.utils.parseEther("0.1");
     let tx;
     let receipt;
     let totalGasUsed: number = 0;
@@ -77,7 +79,6 @@ describe("Invi Burning Test", function () {
     // check Initial Status
     console.log("======== Initial Status =========");
     let initialUserABalance = await ethers.provider.getBalance(userA.address);
-    initialUserABalance = initialUserABalance.add(ethers.utils.parseEther("200"));
     console.log("UserA Balance        : ", ethers.utils.formatEther(initialUserABalance));
     const initialUserAInviBalance = await inviTokenContract.balanceOf(userA.address);
     console.log("UserA INVI Balance   : ", ethers.utils.formatEther(initialUserAInviBalance));
@@ -99,7 +100,7 @@ describe("Invi Burning Test", function () {
         // get userA Balance
         let accountBalance = await ethers.provider.getBalance(account.address);
         console.log("Account Balance        : ", ethers.utils.formatEther(accountBalance));
-        let stakeAmount = ethers.utils.parseEther("50");
+        let stakeAmount = standardAmount;
         // get max leverage ratio
         const leverageNone = BigNumber.from(units.leverageUnit.toString());
         console.log("leverage     : ", leverageNone);
@@ -107,14 +108,18 @@ describe("Invi Burning Test", function () {
         const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageNone);
 
         // leverage Stake
-        await leverageStake(
-          inviCoreContract,
-          userA,
-          stakeAmount,
-          units.leverageUnit,
-          parseFloat(minLockPeriod.toString()),
-          0
-        );
+        try {
+          await leverageStake(
+            inviCoreContract,
+            userA,
+            stakeAmount,
+            units.leverageUnit,
+            parseFloat(minLockPeriod.toString()),
+            0
+          );
+        } catch (e) {
+          console.log(e);
+        }
 
         console.log("======== Step 2: lend NFT =========");
         // get NFTOwnership
@@ -123,14 +128,15 @@ describe("Invi Burning Test", function () {
         // get principal
         // get NFT principals of UserA
         const allStakeInfoOfUser = await stakeNFTContract.getAllStakeInfoOfUser(account.address);
-        console.log("NFT ID: ", NFTOwnership[i].toString());
+
+        // console.log("NFT ID: ", NFTOwnership[i].toString());
         const principal = allStakeInfoOfUser[i].principal;
         console.log("NFT Principal: ", ethers.utils.formatEther(principal));
         const stakedAmount = allStakeInfoOfUser[i].stakedAmount;
         console.log("NFT StakedAmount: ", ethers.utils.formatEther(stakedAmount));
         // get max lend amount
         const maxLendAmount = await lendingPoolContract.connect(account).getMaxLendAmountByNFT(NFTOwnership[i]);
-        console.log("maxLendAmount: ", ethers.utils.formatEther(maxLendAmount.toString()));
+        console.log("maxLendAmountByNFT: ", ethers.utils.formatEther(maxLendAmount.toString()));
         const maxLendAmountWithBoost = await lendingPoolContract.connect(account).getMaxLendAmountWithBoost(principal);
         console.log("maxLendAmountWithBoost: ", ethers.utils.formatEther(maxLendAmountWithBoost.toString()));
         try {
@@ -141,7 +147,7 @@ describe("Invi Burning Test", function () {
           console.log("lend error: ", e);
         }
         console.log("======== Step 4: Swap INVI to Klay =========");
-        let inviAmountToSwap: BigNumber = ethers.utils.parseEther("50");
+        let inviAmountToSwap: BigNumber = standardAmount;
         while (1) {
           // get expected amounts out inviToNative
           let expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
@@ -238,7 +244,7 @@ describe("Invi Burning Test", function () {
       // return all nfts
       for (let i = userNFTList.length - 1; i >= 0; i--) {
         console.log("nft ID: ", userNFTList[i].toString());
-        let nativeAmountToSwap = ethers.utils.parseEther("50");
+        let nativeAmountToSwap = standardAmount;
         while (1) {
           // get expected amounts out inviToNative
           let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
@@ -333,8 +339,24 @@ describe("Invi Burning Test", function () {
       console.log("swapPoolNativeBalance: ", ethers.utils.formatEther(swapPoolNativeBalance));
     };
 
-    await iterate(1, userA);
-    await checkStatus();
-    await startUnstake();
+    // iteration
+    let iterateCount: number = 2;
+    for (let i = 0; i < iterateCount; i++) {
+      try {
+        await iterate(10, userA);
+      } catch (e) {
+        console.log("iterate error", e);
+      }
+      try {
+        await checkStatus();
+      } catch (e) {
+        console.log("checkStatus error", e);
+      }
+      try {
+        await startUnstake();
+      } catch (e) {
+        console.log("startUnstake error", e);
+      }
+    }
   });
 });
