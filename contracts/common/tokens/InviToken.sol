@@ -32,6 +32,17 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     uint256 public mintAmountChangeInterval;
     uint256 public lastMintAmountChange;
     uint256 public totalBurntAmount;
+    uint32 public vestingId;
+
+    //------ Structs ------//
+    struct Vesting {
+        address vestingAddress;
+        uint256 vestingAmount;
+        uint256 releaseTime;
+        bool released;
+    }
+
+    mapping (uint32 => Vesting) public vestings;
 
     //====== initializer ======//
     /**
@@ -146,15 +157,36 @@ contract InviToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         _mint(address(this), mintAmount);
         // set last Minted
         lastMinted = block.timestamp;
-
+    
         // send minted token to lendingPool (20%)
-        _transfer(address(this), lendingPoolAddress, mintAmount * 20 / 100);
+        require(transfer( lendingPoolAddress, mintAmount * 20 / 100));
 
         // send minted token to inviTokenStake (15%)
-        _transfer(address(this),inviTokenStakeAddress, mintAmount * 15 / 100);
+        require(transfer(inviTokenStakeAddress, mintAmount * 15 / 100));
 
         // send minted token to lpPool (15%)
-        _transfer(address(this), lpPoolAddress, mintAmount * 15 / 100);
+        require(transfer( lpPoolAddress, mintAmount * 15 / 100));
+    }
+
+    function addVesting(address _vestingAddress, uint256 _releaseTime, uint256 _amount) external onlyOwner {
+        require(_vestingAddress != address(0), "InviToken: receivingAddress is zero address");
+        vestingId += 1;
+        vestings[vestingId] = Vesting({
+            vestingAddress: _vestingAddress,
+            releaseTime: _releaseTime,
+            vestingAmount: _amount,
+            released: false
+        });
+    }
+
+    function release(uint32 _vestingId) external {
+        Vesting memory vesting = vestings[_vestingId];
+        require(vesting.vestingAddress != address(0), "InviToken: vestingId is not exist");
+        require(vesting.released == false, "InviToken: already released");
+        require(block.timestamp >= vesting.releaseTime, "InviToken: not released time");
+        require(balanceOf(address(this)) >= vesting.vestingAmount, "InviToken: insufficient balance");
+        require(transfer(vesting.vestingAddress, vesting.vestingAmount), "InviToken: transfer failed");
+        vestings[_vestingId].released = true;
     }
 
     function burnToken(address _targetAddress, uint256 _amount) external onlyInviCore {
