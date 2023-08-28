@@ -63,13 +63,13 @@ describe("Invi core service test", function () {
     const totalClaimableAmount = await inviCoreContract.totalClaimableAmount();
     console.log("totalClaimableAmount   : ", totalClaimableAmount.toString());
 
-    // get all unstake requests
-    const unstakeRequests: UnstakeRequest[] = [];
-    for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
-      const unstakeRequest = await inviCoreContract.unstakeRequests(i);
-      unstakeRequests.push(unstakeRequest.toString());
-    }
-    console.log("unstakeRequests: ", unstakeRequests);
+    // // get all unstake requests
+    // const unstakeRequests: UnstakeRequest[] = [];
+    // for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
+    //   const unstakeRequest = await inviCoreContract.unstakeRequests(i);
+    //   unstakeRequests.push(unstakeRequest.toString());
+    // }
+    // console.log("unstakeRequests: ", unstakeRequests);
 
     //* when
     try {

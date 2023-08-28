@@ -340,7 +340,7 @@ describe("Invi Burning Test", function () {
     };
 
     // iteration
-    let iterateCount: number = 10;
+    let iterateCount: number = 50;
     for (let i = 0; i < iterateCount; i++) {
       try {
         await iterate(10, userA);
