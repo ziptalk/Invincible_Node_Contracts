@@ -1,80 +1,61 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
+const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
 import { units } from "../units";
-import { leverageStake, provideLiquidity } from "../utils";
-import { checkTx } from "../checkTx";
+import { leverageStake } from "../utils";
+import { getTestAddress } from "../getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
 
-describe("Tokenomics test 5", function () {
+describe("Invi Burning Test", function () {
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
-  let stTokenContract: Contract;
-  let iLPTokenContract: Contract;
-  let lendingPoolContract: Contract;
-  let inviTokenContract: Contract;
-  let inviTokenStakeContract: Contract;
   let inviSwapPoolContract: Contract;
-  let iSPTTokenContract: Contract;
+  let inviTokenContract: Contract;
+  let lendingPoolContract: Contract;
 
   const network: string = hre.network.name;
-  console.log(network);
+  const testAddresses: any = getTestAddress(network);
 
   this.beforeAll(async function () {
     // for testnet test
     if (network === "hardhat") {
-      ({
-        inviCoreContract,
-        stakeNFTContract,
-        lpPoolContract,
-        stTokenContract,
-        lendingPoolContract,
-        inviTokenStakeContract,
-        inviTokenContract,
-        inviSwapPoolContract,
-      } = await deployAll());
+      return; // test only for actual testnet
     } else {
-      console.log("only hardhat test");
+      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
+      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+      inviSwapPoolContract = await ethers.getContractAt("InviSwapPool", testAddresses.inviSwapPoolContractAddress);
+      inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
+      lendingPoolContract = await ethers.getContractAt("LendingPool", testAddresses.lendingPoolContractAddress);
     }
   });
 
   it("Test without liquidity providing or invi staking", async () => {
-    if (network !== "hardhat") return; // only hardhat test
-
     const [deployer, LP1, LP2, LP3, userA, userB, userC] = await ethers.getSigners();
-
+    console.log(userA.address);
     let tx;
     let receipt;
-
+    let totalGasUsed: number = 0;
     //*given
     // LP Pool: 10000
     // User Coin: 100
     // Swap Pool LP: 1000 1000
 
-    const swapNativeToInvi = async (account: any, swapAmountRatio: number) => {
-      // swap native to invi (user A balance)
-      let userABalance = await ethers.provider.getBalance(account.address);
-      const nativeAmountToSwap = userABalance.mul(swapAmountRatio).div(100);
-      //console.log("nativeAmountToSwap   : ", ethers.utils.formatEther(nativeAmountToSwap.toString()));
-      let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
+    const swapNativeToInvi = async (amount: BigNumber) => {
+      let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(amount);
       expectedAmountOut = expectedAmountOut[0].sub(expectedAmountOut[1]);
       //console.log("expectedAmountOut    : ", ethers.utils.formatEther(expectedAmountOut.toString()));
-      tx = await inviSwapPoolContract.connect(account).swapNativeToInvi(expectedAmountOut.mul(99).div(100), {
-        value: nativeAmountToSwap,
+      tx = await inviSwapPoolContract.connect(userA).swapNativeToInvi(expectedAmountOut.mul(99).div(100), {
+        value: amount,
       });
       receipt = await tx.wait();
-      userABalance = await ethers.provider.getBalance(userA.address);
-      //console.log("UserA Native Balance : ", ethers.utils.formatEther(userABalance));
-      let userAInviBalance = await inviTokenContract.balanceOf(account.address);
-      //console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
     };
 
-    const swapInviToNative = async (account: any, swapAmountRatio: number) => {
-      const getInviTokenBalanceOfUserA = await inviTokenContract.balanceOf(account.address);
-      //console.log("userA inviToken Balance   : ", ethers.utils.formatEther(getInviTokenBalanceOfUserA.toString()));
-      let inviAmountToSwap = getInviTokenBalanceOfUserA.mul(swapAmountRatio).div(100);
+    const swapInviToNative = async (amount: BigNumber) => {
+      let inviAmountToSwap = amount;
       console.log("inviAmountToSwap          : ", ethers.utils.formatEther(inviAmountToSwap.toString()));
       const getInviToNativeOutMaxInput = await inviSwapPoolContract.getInviToNativeOutMaxInput();
       inviAmountToSwap = inviAmountToSwap.sub(getInviToNativeOutMaxInput).isNegative()
@@ -85,83 +66,18 @@ describe("Tokenomics test 5", function () {
       let expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
       expectedAmountOut = expectedAmountOut[0].sub(expectedAmountOut[1]);
       const swapInviToNative = await inviSwapPoolContract
-        .connect(account)
+        .connect(userA)
         .swapInviToNative(inviAmountToSwap, expectedAmountOut.mul(99).div(100));
       receipt = await swapInviToNative.wait();
-      const userABalanceAfterSwap = await ethers.provider.getBalance(account.address);
+      const userABalanceAfterSwap = await ethers.provider.getBalance(userA.address);
       console.log("userA Balance After Swap  : ", ethers.utils.formatEther(userABalanceAfterSwap.toString()));
       //console.log("gasUsed: ", receipt.gasUsed.toString());
     };
 
-    console.log("======== Initial Setup =========");
-    // regular minting INVI Token
-    const regularMinting = await inviTokenContract.connect(deployer).regularMinting();
-    await regularMinting.wait();
-
-    // lp 1 and lp 2 provide liquidity of 5000 each
-    let lpAmount = ethers.utils.parseEther("50000");
-    tx = await provideLiquidity(lpPoolContract, LP1, lpAmount, 0);
-    tx = await provideLiquidity(lpPoolContract, LP2, lpAmount, 0);
-
-    // spread INVI to give INVI tokens to LPs
-    // get inviRewardInterval
-    const inviRewardInterval = await lpPoolContract.inviRewardInterval();
-    console.log("inviRewardInterval: ", inviRewardInterval.toString());
-
-    // distribute inviToken reward
-    for (let i = 0; i < 20; i++) {
-      const lpPoolInviBalance = await inviTokenContract.balanceOf(lpPoolContract.address);
-      console.log("lpPool invi balance: ", ethers.utils.formatEther(lpPoolInviBalance));
-      const distributeInviTokenReward = await lpPoolContract.connect(deployer).distributeInviTokenReward();
-      receipt = await distributeInviTokenReward.wait();
-      //console.log("gasUsed: ", receipt.gasUsed.toString());
-      // time pass
-      await ethers.provider.send("evm_increaseTime", [inviRewardInterval.toNumber()]);
-    }
-    // claim inviToken reward
-    let claimInviTokenReward = await lpPoolContract.connect(LP1).claimInviReward();
-    receipt = await claimInviTokenReward.wait();
-    console.log("gasUsed: ", receipt.gasUsed.toString());
-    claimInviTokenReward = await lpPoolContract.connect(LP2).claimInviReward();
-    receipt = await claimInviTokenReward.wait();
-    console.log("gasUsed: ", receipt.gasUsed.toString());
-
-    // lp 1  provide liquidity to swap pool 1000 each
-    let lp1InviBalance = await inviTokenContract.balanceOf(LP1.address);
-    //console.log("lp1 invi balance: ", ethers.utils.formatEther(lp1InviBalance));
-    const lpAmountPool: BigNumber = ethers.utils.parseEther("10000");
-    const addLiquidity = await inviSwapPoolContract
-      .connect(LP1)
-      .addLiquidity(lpAmountPool, 1 * units.slippageUnit, { value: lpAmountPool });
-    receipt = await addLiquidity.wait();
-    //console.log("gasUsed: ", receipt.gasUsed.toString());
-
-    await swapInviToNative(LP2, 2);
-    await swapInviToNative(LP2, 2);
-
-    // userA sends 9900 ether to lp1
-    const userAAmount = ethers.utils.parseEther("99800");
-    tx = await userA.sendTransaction({
-      to: LP1.address,
-      value: userAAmount,
-    });
-    receipt = await tx.wait();
-    console.log("gasUsed: ", receipt.gasUsed.toString());
-
-    // lp2 stakes token to invi Stake
-
-    // transfer 10000 INVI to userA
-    tx = await inviTokenContract.connect(LP2).transfer(userA.address, ethers.utils.parseEther("10000"));
-    await tx.wait();
-    const lp2InviAmount = await inviTokenContract.balanceOf(LP2.address);
-    console.log("lp2 invi balance: ", await ethers.utils.formatEther(lp2InviAmount));
-    const stakeInviToken = await inviTokenStakeContract.connect(LP2).stake(lp2InviAmount);
-    receipt = await stakeInviToken.wait();
-    console.log("gasUsed: ", receipt.gasUsed.toString());
-
     // check Initial Status
     console.log("======== Initial Status =========");
-    const initialUserABalance = await ethers.provider.getBalance(userA.address);
+    let initialUserABalance = await ethers.provider.getBalance(userA.address);
+    initialUserABalance = initialUserABalance.add(ethers.utils.parseEther("200"));
     console.log("UserA Balance        : ", ethers.utils.formatEther(initialUserABalance));
     const initialUserAInviBalance = await inviTokenContract.balanceOf(userA.address);
     console.log("UserA INVI Balance   : ", ethers.utils.formatEther(initialUserAInviBalance));
@@ -174,55 +90,75 @@ describe("Tokenomics test 5", function () {
     const initialTotalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
     console.log("totalLiquidityNative : ", ethers.utils.formatEther(initialTotalLiquidityNative));
 
-    const iterate = async (iteration: number) => {
+    const iterate = async (iteration: number, account: any) => {
       // Iterate Operation
       console.log("======== Start Iteration =========");
       for (let i = 0; i < iteration; i++) {
         console.log("======== Iteration ", i, " =========");
         console.log("======== Step 1: leverage Stake =========");
         // get userA Balance
-        let userABalance = await ethers.provider.getBalance(userA.address);
-        console.log("UserA Balance        : ", ethers.utils.formatEther(userABalance));
-        let stakeAmount = userABalance.mul(45).div(100);
+        let accountBalance = await ethers.provider.getBalance(account.address);
+        console.log("Account Balance        : ", ethers.utils.formatEther(accountBalance));
+        let stakeAmount = ethers.utils.parseEther("50");
         // get max leverage ratio
-        const maxLeverageRatio = await inviCoreContract.getMaxLeverageRatio(stakeAmount);
-        console.log("maxLeverageRatio     : ", maxLeverageRatio.toString());
+        const leverageNone = BigNumber.from(units.leverageUnit.toString());
+        console.log("leverage     : ", leverageNone);
         // get min lock period
-        const minLockPeriod = await inviCoreContract.functions.getLockPeriod(maxLeverageRatio);
+        const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageNone);
 
         // leverage Stake
         await leverageStake(
           inviCoreContract,
           userA,
           stakeAmount,
-          parseFloat(maxLeverageRatio.toString()),
+          units.leverageUnit,
           parseFloat(minLockPeriod.toString()),
           0
         );
 
         console.log("======== Step 2: lend NFT =========");
         // get NFTOwnership
-        const NFTOwnership = await stakeNFTContract.connect(userA).getNFTOwnership(userA.address);
+        const NFTOwnership = await stakeNFTContract.connect(account).getNFTOwnership(account.address);
         console.log("NFTOwnership: ", NFTOwnership.toString());
         // get principal
         // get NFT principals of UserA
-        const allStakeInfoOfUser = await stakeNFTContract.getAllStakeInfoOfUser(userA.address);
-        console.log("NFT ID: ", i);
+        const allStakeInfoOfUser = await stakeNFTContract.getAllStakeInfoOfUser(account.address);
+        console.log("NFT ID: ", NFTOwnership[i].toString());
         const principal = allStakeInfoOfUser[i].principal;
         console.log("NFT Principal: ", ethers.utils.formatEther(principal));
         const stakedAmount = allStakeInfoOfUser[i].stakedAmount;
         console.log("NFT StakedAmount: ", ethers.utils.formatEther(stakedAmount));
         // get max lend amount
-        const maxLendAmount = await lendingPoolContract.connect(userA).getMaxLendAmountByNFT(NFTOwnership[i]);
+        const maxLendAmount = await lendingPoolContract.connect(account).getMaxLendAmountByNFT(NFTOwnership[i]);
         console.log("maxLendAmount: ", ethers.utils.formatEther(maxLendAmount.toString()));
-        const maxLendAmountWithBoost = await lendingPoolContract.connect(userA).getMaxLendAmountWithBoost(principal);
+        const maxLendAmountWithBoost = await lendingPoolContract.connect(account).getMaxLendAmountWithBoost(principal);
         console.log("maxLendAmountWithBoost: ", ethers.utils.formatEther(maxLendAmountWithBoost.toString()));
-        // lend NFT
-        const lend = await lendingPoolContract.connect(userA).lend(NFTOwnership[i], maxLendAmountWithBoost);
-        await lend.wait();
-
+        try {
+          // lend NFT
+          const lend = await lendingPoolContract.connect(account).lend(NFTOwnership[i], maxLendAmountWithBoost);
+          await lend.wait();
+        } catch (e) {
+          console.log("lend error: ", e);
+        }
         console.log("======== Step 4: Swap INVI to Klay =========");
-        await swapInviToNative(userA, 1);
+        let inviAmountToSwap: BigNumber = ethers.utils.parseEther("50");
+        while (1) {
+          // get expected amounts out inviToNative
+          let expectedAmountOut = await inviSwapPoolContract.getInviToNativeOutAmount(inviAmountToSwap);
+          console.log("expected amount out: ", ethers.utils.formatEther(expectedAmountOut[0].toString()));
+          if (expectedAmountOut[0].sub(stakeAmount) > 0) {
+            break;
+          } else {
+            inviAmountToSwap = inviAmountToSwap.mul(10).div(9);
+          }
+        }
+        try {
+          // swap INVI to KLAY
+          await swapInviToNative(inviAmountToSwap);
+        } catch {
+          console.log("swap error");
+        }
+
         let totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
         console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
         let totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
@@ -247,7 +183,7 @@ describe("Tokenomics test 5", function () {
       let totalNFTPrincipal = ethers.BigNumber.from(0);
       let totalNFTStakedAmount = ethers.BigNumber.from(0);
       for (let i = 0; i < allStakeInfoOfUser.length; i++) {
-        console.log("NFT ID             : ", i);
+        console.log("NFT                : ", i);
         const principal = allStakeInfoOfUser[i].principal;
         totalNFTPrincipal = totalNFTPrincipal.add(principal);
         console.log("NFT Principal      : ", ethers.utils.formatEther(principal));
@@ -275,9 +211,7 @@ describe("Tokenomics test 5", function () {
       console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       let totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
-      // get total Invi Staked userA
-      let totalInviStakedUserA = await inviTokenStakeContract.stakedAmount(userA.address);
-      console.log("totalInviStakedUserA : ", ethers.utils.formatEther(totalInviStakedUserA));
+
       // get total staked amount
       let totalStakedAmount = await inviCoreContract.getTotalStakedAmount();
       console.log("totalStakedAmount    : ", ethers.utils.formatEther(totalStakedAmount));
@@ -294,46 +228,37 @@ describe("Tokenomics test 5", function () {
     const startUnstake = async () => {
       //=============== Give Rewards and start unstake ===============//
       console.log("======== start unstake =========");
-      // send 100 native to userA
-      tx = await deployer.sendTransaction({
-        to: userA.address,
-        value: ethers.utils.parseEther("200"),
-      });
-      await tx.wait();
-
-      // pass time by 10 seconds
-      await ethers.provider.send("evm_increaseTime", [10]);
-      await swapNativeToInvi(userA, 95);
-      //console.log("gasUsed              : ", receipt.gasUsed.toString());
       // get user nft list
       const userNFTList = await stakeNFTContract.getNFTOwnership(userA.address);
       console.log("userNFTList          : ", userNFTList);
-      // send 10 eth to userA for tx fee
-      tx = await deployer.sendTransaction({
-        to: userA.address,
-        value: ethers.utils.parseEther("1"),
-      });
       let userAInviBalance = await inviTokenContract.balanceOf(userA.address);
       console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
       let userABalance = await ethers.provider.getBalance(userA.address);
       console.log("UserA Native Balance : ", ethers.utils.formatEther(userABalance));
       // return all nfts
-      for (let i = userNFTList.length - 1; i > 0; i--) {
-        console.log("nft ID: ", i);
-        let gasPrice = 100000000;
-        let gasLimit = 1000000;
-
-        await swapNativeToInvi(userA, 95);
-        userAInviBalance = await inviTokenContract.balanceOf(userA.address);
-        console.log("===== balance after repay =====");
-        console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
-        userABalance = await ethers.provider.getBalance(userA.address);
-        console.log("UserA Native Balance : ", ethers.utils.formatEther(userABalance));
+      for (let i = userNFTList.length - 1; i >= 0; i--) {
+        console.log("nft ID: ", userNFTList[i].toString());
+        let nativeAmountToSwap = ethers.utils.parseEther("50");
+        while (1) {
+          // get expected amounts out inviToNative
+          let expectedAmountOut = await inviSwapPoolContract.getNativeToInviOutAmount(nativeAmountToSwap);
+          if (expectedAmountOut[0].sub(nativeAmountToSwap)) {
+            break;
+          } else {
+            nativeAmountToSwap = nativeAmountToSwap.mul(5).div(4);
+          }
+        }
         try {
-          let tx = await lendingPoolContract.connect(userA).repay(i);
+          await swapNativeToInvi(nativeAmountToSwap);
+        } catch (e) {
+          console.log("Swap Native to Invi error");
+        }
+
+        try {
+          let tx = await lendingPoolContract.connect(userA).repay(userNFTList[i]);
           await tx.wait();
         } catch (e) {
-          console.log("Repay error");
+          console.log("Repay error", e);
         }
         userAInviBalance = await inviTokenContract.balanceOf(userA.address);
         //console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
@@ -341,26 +266,29 @@ describe("Tokenomics test 5", function () {
         //console.log("UserA Native Balance : ", ethers.utils.formatEther(userABalance));
         //console.log("gasUsed              : ", receipt.gasUsed.toString());
 
-        // boostUnlock
-        tx = await inviCoreContract.connect(userA).boostUnlock(i);
-        await tx.wait();
+        try {
+          // boostUnlock
+          tx = await inviCoreContract.connect(userA).boostUnlock(userNFTList[i]);
+          await tx.wait();
+        } catch (e) {
+          console.log("Boost Unlock error");
+        }
 
         try {
-          tx = await inviCoreContract.connect(userA).repayNFT(i, {
-            gasPrice: gasPrice,
-            gasLimit: gasLimit,
-          });
+          tx = await inviCoreContract.connect(userA).repayNFT(userNFTList[i]);
           await tx.wait();
           console.log("repay success");
         } catch (e) {
-          console.log("Repay NFT error");
+          console.log("Repay NFT error", e);
         }
-        // claim and split unstaked amount (core)
-        tx = await inviCoreContract.connect(deployer).claimAndSplitUnstakedAmount();
-        await tx.wait();
-        // claim unstaked amount
-        tx = await inviCoreContract.connect(userA).claimUnstaked();
-        await tx.wait();
+
+        try {
+          // claim unstaked amount
+          tx = await inviCoreContract.connect(userA).claimUnstaked();
+          await tx.wait();
+        } catch (e) {
+          console.log("Claim error");
+        }
         userAInviBalance = await inviTokenContract.balanceOf(userA.address);
         console.log("UserA Invi Balance   : ", ethers.utils.formatEther(userAInviBalance));
         userABalance = await ethers.provider.getBalance(userA.address);
@@ -371,8 +299,6 @@ describe("Tokenomics test 5", function () {
       //console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       let totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       //console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
-
-      await swapInviToNative(userA, 20);
 
       // get status
       console.log("======== Final Status after returning nfts =========");
@@ -388,9 +314,6 @@ describe("Tokenomics test 5", function () {
       console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
-      // get total Invi Staked userA
-      let totalInviStakedUserA = await inviTokenStakeContract.stakedAmount(userA.address);
-      console.log("totalInviStakedUserA : ", ethers.utils.formatEther(totalInviStakedUserA));
       // get total staked amount
       let totalStakedAmount = await inviCoreContract.getTotalStakedAmount();
       console.log("totalStakedAmount    : ", ethers.utils.formatEther(totalStakedAmount));
@@ -406,9 +329,11 @@ describe("Tokenomics test 5", function () {
       console.log("lp1LpReward          : ", ethers.utils.formatEther(lp1LpReward));
       let totalBurntAmount = await inviTokenContract.totalBurntAmount();
       console.log("totalBurntAmount     : ", ethers.utils.formatEther(totalBurntAmount));
+      let swapPoolNativeBalance = await ethers.provider.getBalance(inviSwapPoolContract.address);
+      console.log("swapPoolNativeBalance: ", ethers.utils.formatEther(swapPoolNativeBalance));
     };
 
-    await iterate(100);
+    await iterate(1, userA);
     await checkStatus();
     await startUnstake();
   });

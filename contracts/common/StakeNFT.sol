@@ -107,7 +107,7 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         return stakeInfosOfUser;
     }
 
-    function getBoostUnlockAmount(uint32 _nftTokenId) external view onlyInviCore returns (uint256, uint256) {
+    function getBoostUnlockAmount(uint32 _nftTokenId) external view returns (uint256, uint256) {
         StakeInfo memory stakeInfo = stakeInfos[_nftTokenId];
         uint256 inviLiquidity = inviSwapPool.totalLiquidityInvi();
         uint256 nativeLiquidity = inviSwapPool.totalLiquidityNative();
@@ -242,12 +242,6 @@ contract StakeNFT is Initializable, ERC721Upgradeable, OwnableUpgradeable {
             }
         }
         return lpReward;
-    }
-
-    function boostLendAmount(uint32 _nftTokenId, uint256 _allowed, uint256 _requested) external onlyLendingPool {
-        uint256 newLockPeriod = stakeInfos[_nftTokenId].lockPeriod * _requested / _allowed;
-        stakeInfos[_nftTokenId].lockPeriod = newLockPeriod;
-        stakeInfos[_nftTokenId].lockEnd = stakeInfos[_nftTokenId].lockStart + newLockPeriod;
     }
 
     function updateUnlockTimeWhenBoostUnlock(uint32 _nftId, uint256 _updatingTime) external onlyInviCore {

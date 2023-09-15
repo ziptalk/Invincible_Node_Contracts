@@ -8,7 +8,6 @@ import { targets } from "../targets";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
-let iSPTTokenContract: Contract;
 
 let stakeNFTContract: Contract;
 let inviTokenStakeContract: Contract;
@@ -16,7 +15,6 @@ let lpPoolContract: Contract;
 let lendingPoolContract: Contract;
 let inviSwapPoolContract: Contract;
 let inviCoreContract: Contract;
-let priceManagerContract: Contract;
 
 let stTokenContract: Contract;
 
@@ -36,7 +34,7 @@ const deploy = async () => {
   ({
     inviTokenContract,
     iLPTokenContract,
-    iSPTTokenContract,
+    // iSPTTokenContract,
     stakeNFTContract,
     inviTokenStakeContract,
     lpPoolContract,
@@ -54,7 +52,7 @@ const deploy = async () => {
     stTokenContractAddress: stTokenContract.address,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
-    iSPTTokenContractAddress: iSPTTokenContract.address,
+    //iSPTTokenContractAddress: iSPTTokenContract.address,
     stakeNFTContractAddress: stakeNFTContract.address,
     inviTokenStakeContractAddress: inviTokenStakeContract.address,
     lpPoolContractAddress: lpPoolContract.address,
@@ -71,7 +69,7 @@ const deploy = async () => {
     stTokenContractAddress: stTokenContract.address,
     inviTokenContractAddress: inviTokenContract.address,
     iLPTokenContractAddress: iLPTokenContract.address,
-    iSPTTokenContractAddress: iSPTTokenContract.address,
+    //iSPTTokenContractAddress: iSPTTokenContract.address,
     stakeNFTContractAddress: stakeNFTContract.address,
     inviTokenStakeContractAddress: inviTokenStakeContract.address,
     lpPoolContractAddress: lpPoolContract.address,

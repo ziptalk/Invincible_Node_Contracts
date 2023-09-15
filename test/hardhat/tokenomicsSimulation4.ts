@@ -17,7 +17,6 @@ describe("Tokenomics test", function () {
   let inviTokenContract: Contract;
   let inviTokenStakeContract: Contract;
   let inviSwapPoolContract: Contract;
-  let iSPTTokenContract: Contract;
 
   const network: string = hre.network.name;
   console.log(network);
@@ -34,7 +33,6 @@ describe("Tokenomics test", function () {
         inviTokenStakeContract,
         inviTokenContract,
         inviSwapPoolContract,
-        iSPTTokenContract,
       } = await deployAll());
     } else {
       console.log("only hardhat test");
@@ -110,7 +108,7 @@ describe("Tokenomics test", function () {
     console.log("inviRewardInterval: ", inviRewardInterval.toString());
 
     // distribute inviToken reward
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 3; i++) {
       const lpPoolInviBalance = await inviTokenContract.balanceOf(lpPoolContract.address);
       console.log("lpPool invi balance: ", ethers.utils.formatEther(lpPoolInviBalance));
       const distributeInviTokenReward = await lpPoolContract.connect(deployer).distributeInviTokenReward();
@@ -137,6 +135,15 @@ describe("Tokenomics test", function () {
     receipt = await addLiquidity.wait();
     //console.log("gasUsed: ", receipt.gasUsed.toString());
 
+    // send INVI to userA
+    // get lending pool boost requirement
+    const lendingPoolBoostRequirement = await lendingPoolContract.boostRequirementAmount();
+    tx = await inviTokenContract.connect(LP1).transfer(userA.address, lendingPoolBoostRequirement);
+
+    // userA stake inviToken to inviTokenStakeContract
+    const stakeAmount = lendingPoolBoostRequirement;
+    tx = await inviTokenStakeContract.connect(userA).stake(stakeAmount);
+
     // userA sends 9900 ether to lp1
     const userAAmount = ethers.utils.parseEther("99800");
     tx = await userA.sendTransaction({
@@ -155,7 +162,6 @@ describe("Tokenomics test", function () {
     console.log("lp2 invi balance: ", await ethers.utils.formatEther(lp2InviAmount));
     const stakeInviToken = await inviTokenStakeContract.connect(LP2).stake(lp2InviAmount);
     receipt = await stakeInviToken.wait();
-    console.log("gasUsed: ", receipt.gasUsed.toString());
 
     // check Initial Status
     console.log("======== Initial Status =========");
@@ -382,10 +388,10 @@ describe("Tokenomics test", function () {
       let totalStakedLP = await lpPoolContract.totalStakedAmount();
       console.log("totalStakedLPPool    : ", ethers.utils.formatEther(totalStakedLP));
       // get swap pool balance
-      totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
-      console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       totalLiquidityNative = await inviSwapPoolContract.totalLiquidityNative();
       console.log("totalLiquidityNative : ", ethers.utils.formatEther(totalLiquidityNative));
+      totalLiquidityInvi = await inviSwapPoolContract.totalLiquidityInvi();
+      console.log("totalLiquidityInvi   : ", ethers.utils.formatEther(totalLiquidityInvi));
       // get total Invi Staked userA
       let totalInviStakedUserA = await inviTokenStakeContract.stakedAmount(userA.address);
       console.log("totalInviStakedUserA : ", ethers.utils.formatEther(totalInviStakedUserA));
@@ -406,9 +412,11 @@ describe("Tokenomics test", function () {
       console.log("totalBurntAmount     : ", ethers.utils.formatEther(totalBurntAmount));
       let swapPoolNativeBalance = await ethers.provider.getBalance(inviSwapPoolContract.address);
       console.log("swapPoolNativeBalance: ", ethers.utils.formatEther(swapPoolNativeBalance));
+      let swapPoolInviBalance = await inviTokenContract.balanceOf(inviSwapPoolContract.address);
+      console.log("swapPoolInviBalance  : ", ethers.utils.formatEther(swapPoolInviBalance));
     };
 
-    await iterate(50);
+    await iterate(100);
     await checkStatus();
     await startUnstake();
   });

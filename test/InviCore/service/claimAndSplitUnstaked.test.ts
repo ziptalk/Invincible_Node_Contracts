@@ -63,21 +63,26 @@ describe("Invi core service test", function () {
     const totalClaimableAmount = await inviCoreContract.totalClaimableAmount();
     console.log("totalClaimableAmount   : ", totalClaimableAmount.toString());
 
-    // get all unstake requests
-    const unstakeRequests: UnstakeRequest[] = [];
-    for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
-      const unstakeRequest = await inviCoreContract.unstakeRequests(i);
-      unstakeRequests.push(unstakeRequest.toString());
-    }
-    console.log("unstakeRequests: ", unstakeRequests);
+    // // get all unstake requests
+    // const unstakeRequests: UnstakeRequest[] = [];
+    // for (let i = unstakeRequestFront; i < unstakeRequestRear; i++) {
+    //   const unstakeRequest = await inviCoreContract.unstakeRequests(i);
+    //   unstakeRequests.push(unstakeRequest.toString());
+    // }
+    // console.log("unstakeRequests: ", unstakeRequests);
 
     //* when
-    try {
-      tx = await inviCoreContract.connect(userA).claimAndSplitUnstakedAmount({ nonce: nonceUserA });
-      await tx.wait();
-    } catch (error) {
-      console.log("claim and split unstaked error: ", error);
+
+    for (let i = 0; i < 200; i++) {
+      try {
+        tx = await inviCoreContract.connect(deployer).claimAndSplitUnstakedAmount();
+        await tx.wait();
+        console.log("claimed");
+      } catch (error) {
+        console.log("claim and split unstaked error: ", error);
+      }
     }
+
     //* then
     const afterUnstakeRequestsLength = await inviCoreContract.getUnstakeRequestsLength();
     console.log("afterUnstakeRequestsLength: ", afterUnstakeRequestsLength);

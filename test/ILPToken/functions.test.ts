@@ -5,6 +5,7 @@ import hre from "hardhat";
 import { getTestAddress } from "../getTestAddress";
 import { units } from "../units";
 import { provideLiquidity } from "../utils";
+import { deployAll } from "../../scripts/deploy/deployAll";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
 console.log("current Network: ", network);
@@ -12,7 +13,7 @@ const testAddresses: any = getTestAddress(network);
 
 describe("ILPToken functions test", function () {
   let lpPoolContract: Contract;
-  let ilpTokenContract: Contract;
+  let iLPTokenContract: Contract;
 
   let nonceDeployer: number;
   let nonceLP: number;
@@ -31,27 +32,31 @@ describe("ILPToken functions test", function () {
     nonceUserC = await ethers.provider.getTransactionCount(userC.address);
     tx;
 
-    // for testnet test
-    ilpTokenContract = await ethers.getContractAt("ILPToken", testAddresses.iLPTokenContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    if (network === "hardhat") {
+      ({ iLPTokenContract, lpPoolContract } = await deployAll());
+    } else {
+      // for testnet test
+      iLPTokenContract = await ethers.getContractAt("ILPToken", testAddresses.iLPTokenContractAddress);
+      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    }
   });
 
   it("Test transfer, transferFrom function", async () => {
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     //* given
-    const initBalance = await ilpTokenContract.functions.balanceOf(LP.address);
+    const initBalance = await iLPTokenContract.functions.balanceOf(LP.address);
     if (initBalance.toString() === "0") {
       // provide lp if none
       const lpAmount = ethers.utils.parseEther("0.1");
       await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP);
       console.log("provided liquidity");
     }
-    const lpILPBalance = await ilpTokenContract.functions.balanceOf(LP.address);
+    const lpILPBalance = await iLPTokenContract.functions.balanceOf(LP.address);
     console.log("ilp lp balance: ", lpILPBalance.toString());
     const lpStakedAmount: BigNumber = await lpPoolContract.functions.stakedAmount(LP.address);
     console.log("lp staked amount: ", lpStakedAmount.toString());
-    const userAILPBalance: BigNumber = await ilpTokenContract.functions.balanceOf(userA.address);
+    const userAILPBalance: BigNumber = await iLPTokenContract.functions.balanceOf(userA.address);
     console.log("ilp userA balance: ", userAILPBalance.toString());
     const userAStakedAmount: BigNumber = await lpPoolContract.functions.stakedAmount(userA.address);
     console.log("userA staked amount: ", userAStakedAmount.toString());
@@ -59,7 +64,7 @@ describe("ILPToken functions test", function () {
     //* when
     const transferAmount: BigNumber = ethers.utils.parseEther("0.01");
     try {
-      tx = await ilpTokenContract.connect(LP).transfer(userA.address, transferAmount);
+      tx = await iLPTokenContract.connect(LP).transfer(userA.address, transferAmount);
       await tx.wait();
     } catch (e) {
       console.log("transfer failed at " + nonceLP, e);
@@ -67,10 +72,10 @@ describe("ILPToken functions test", function () {
 
     try {
       // approve userA to transferFrom LP
-      tx = await ilpTokenContract.connect(LP).approve(userA.address, transferAmount);
+      tx = await iLPTokenContract.connect(LP).approve(userA.address, transferAmount);
       await tx.wait();
       // transferFrom LP to userB
-      tx = await ilpTokenContract.connect(userA).transferFrom(LP.address, userA.address, transferAmount);
+      tx = await iLPTokenContract.connect(userA).safeTransferFrom(LP.address, userA.address, transferAmount);
       await tx.wait();
     } catch (e) {
       console.log("transferFrom failed at " + nonceUserA, e);
@@ -78,11 +83,11 @@ describe("ILPToken functions test", function () {
 
     //* then
     // check balance
-    const lpILPBalanceAfter = await ilpTokenContract.functions.balanceOf(LP.address);
+    const lpILPBalanceAfter = await iLPTokenContract.functions.balanceOf(LP.address);
     console.log("ilp lp balance after: ", lpILPBalanceAfter.toString());
     const lpStakedAmountAfter = await lpPoolContract.functions.stakedAmount(LP.address);
     console.log("lp staked amount after: ", lpStakedAmountAfter.toString());
-    const userAILPBalanceAfter = await ilpTokenContract.functions.balanceOf(userA.address);
+    const userAILPBalanceAfter = await iLPTokenContract.functions.balanceOf(userA.address);
     console.log("ilp userA balance after: ", userAILPBalanceAfter.toString());
     const userAStakedAmountAfter = await lpPoolContract.functions.stakedAmount(userA.address);
     console.log("userA staked amount after: ", userAStakedAmountAfter.toString());

@@ -42,7 +42,6 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
     uint256 public totalAddressNumber;
     mapping(uint256 => address) public addressList;
    
-
     //====== upgrades ======//
     //====== modifiers ======// 
     modifier nonReentrant() {
@@ -65,7 +64,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         __Ownable_init();
         inviToken = IERC20(_inviTokenAddr);
 
-        inviRewardInterval = 1 hours; // testnet : 1 hours
+        inviRewardInterval = 10 hours; // testnet : 1 hours
         // inviRewardInterval = 1 days; // mainnet : 1 days
 
         inviReceiveInterval = 30 hours; // testnet : 30 hours
@@ -101,6 +100,10 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         } else {
             return claimableUnstakeAmount[_addr];
         }
+    }
+
+    function getStakedAmount(address _addr) public view returns (uint) {
+        return stakedAmount[_addr];
     }
     
     //====== setter functions ======//

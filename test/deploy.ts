@@ -49,7 +49,9 @@ export const deployISPTToken = async () => {
 // deploy lpPool contract
 export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContract: Contract) => {
   const LpPoolContract = await ethers.getContractFactory("LiquidityProviderPool");
-  const lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], { initializer: "initialize" });
+  const lpPoolContract = await upgrades.deployProxy(LpPoolContract, [iLPContract.address, inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await lpPoolContract.deployed();
 
   return lpPoolContract;
@@ -58,7 +60,9 @@ export const deployLpPoolContract = async (iLPContract: Contract, inviTokenContr
 // deploy inviTokenStake contract
 export const deployInviTokenStakeContract = async (inviTokenContract: Contract) => {
   const InviTokenStakeContract = await ethers.getContractFactory("InviTokenStake");
-  const inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], { initializer: "initialize" });
+  const inviTokenStakeContract = await upgrades.deployProxy(InviTokenStakeContract, [inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await inviTokenStakeContract.deployed();
 
   return inviTokenStakeContract;
@@ -67,7 +71,9 @@ export const deployInviTokenStakeContract = async (inviTokenContract: Contract) 
 // deploy inviCore contract
 export const deployInviCoreContract = async (inviTokenContract: Contract) => {
   const InviCoreContract = await ethers.getContractFactory("InviCore");
-  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [inviTokenContract.address], { initializer: "initialize" });
+  const inviCoreContract = await upgrades.deployProxy(InviCoreContract, [inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await inviCoreContract.deployed();
 
   return inviCoreContract;
@@ -76,7 +82,9 @@ export const deployInviCoreContract = async (inviTokenContract: Contract) => {
 // deploy SwapPoolInviKlay contract
 export const deploySwapPoolInviKlay = async (inviTokenContract: Contract) => {
   const SwapPoolInviKlay = await ethers.getContractFactory("SwapPoolInviKlay");
-  const swapPoolInviKlay = await upgrades.deployProxy(SwapPoolInviKlay, [inviTokenContract.address], { initializer: "initialize" });
+  const swapPoolInviKlay = await upgrades.deployProxy(SwapPoolInviKlay, [inviTokenContract.address], {
+    initializer: "initialize",
+  });
   await swapPoolInviKlay.deployed();
 
   return swapPoolInviKlay;
@@ -85,7 +93,11 @@ export const deploySwapPoolInviKlay = async (inviTokenContract: Contract) => {
 // deploy InviSwapPool contract
 export const deployInviSwapPool = async (inviTokenContract: Contract, iSPTTokenContract: Contract) => {
   const InviSwapPool = await ethers.getContractFactory("InviSwapPool");
-  const inviSwapPool = await upgrades.deployProxy(InviSwapPool, [inviTokenContract.address, iSPTTokenContract.address], { initializer: "initialize" });
+  const inviSwapPool = await upgrades.deployProxy(
+    InviSwapPool,
+    [inviTokenContract.address, iSPTTokenContract.address],
+    { initializer: "initialize" }
+  );
   await inviSwapPool.deployed();
 
   return inviSwapPool;
@@ -93,7 +105,9 @@ export const deployInviSwapPool = async (inviTokenContract: Contract, iSPTTokenC
 
 export const deployLendingPoolContract = async (inviToken: Contract) => {
   const LendingPoolContract = await ethers.getContractFactory("LendingPool");
-  const lendingPoolContract = await upgrades.deployProxy(LendingPoolContract, [inviToken.address], { initializer: "initialize" });
+  const lendingPoolContract = await upgrades.deployProxy(LendingPoolContract, [inviToken.address], {
+    initializer: "initialize",
+  });
   await lendingPoolContract.deployed();
 
   return lendingPoolContract;

@@ -17,6 +17,7 @@ const contractLists = [
   "PriceManager", // 5
   "InviToken", // 6
   "ILPToken", // 7
+  "InviSwapPool", // 8
 ];
 
 export const targets = {
@@ -25,8 +26,8 @@ export const targets = {
   networkType: "MAINNET",
 
   // ======== upgrade Addresses ========//
-  upgradingContract: contractLists[0],
-  upgradingContractAddress: klaytnTestAddress.testnet.inviCoreContractAddress,
+  upgradingContract: contractLists[2],
+  upgradingContractAddress: klaytnTestAddress.testnet.stakeNFTContractAddress,
 
   // ======== test Addresses ========//
   testNetworkType: "MAINNET",

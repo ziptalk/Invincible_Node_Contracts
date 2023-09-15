@@ -65,14 +65,20 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getInviToNativeOutAmount(uint _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentNativeLiquidity / currentInviLiquidity;
-        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
-        // extra fees for this swap if liquidity is unbalanced
-        if (totalLiquidityNative < totalLiquidityInvi) {
-            uint256 extraFees = fees * totalLiquidityNative / totalLiquidityInvi / 2;
-            fees += extraFees;
-            amountOut -= extraFees;
+        uint256 amountOut = currentNativeLiquidity - currentNativeLiquidity * currentInviLiquidity / (currentInviLiquidity + _amountIn);
+        uint256 slippage = amountOut * amountOut / totalLiquidityNative;
+        if (amountOut > slippage) {
+            amountOut -= slippage;
         }
+    
+        uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+
+        // extra fees for this swap if liquidity is unbalanced
+        // if (totalLiquidityNative < totalLiquidityInvi) {
+        //     uint256 extraFees = fees * totalLiquidityInvi / totalLiquidityNative / 2;
+        //     fees += extraFees;
+        //     amountOut -= extraFees; 
+        // }
         return (amountOut, fees); 
     }
 
@@ -84,8 +90,13 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     function getNativeToInviOutAmount(uint256 _amountIn) public view returns (uint256, uint256) {
         uint256 currentInviLiquidity = totalLiquidityInvi;
         uint256 currentNativeLiquidity = totalLiquidityNative;
-        uint256 amountOut = _amountIn * currentInviLiquidity / currentNativeLiquidity;
+        uint256 amountOut = currentInviLiquidity - currentInviLiquidity * currentNativeLiquidity / (currentNativeLiquidity + _amountIn);
+        uint256 slippage = amountOut * amountOut / totalLiquidityInvi;
+        if (amountOut > slippage) {
+            amountOut -= slippage;
+        }
         uint256 fees = (amountOut * nativeFees) / SWAP_FEE_UNIT; // 0.5% fee
+       
         return (amountOut, fees);
     }
 
@@ -142,7 +153,9 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         // including fees
         (uint256 amountOut, uint256 fees) = getInviToNativeOutAmount(_amountIn);
         require(amountOut < totalLiquidityNative, "not enough reserves");
-        require(amountOut >= _amountOutMin + fees, "InviSwapPool: less than min amount");
+        console.log(amountOut);
+        console.log(_amountOutMin + fees);
+        require(amountOut >= _amountOutMin, "InviSwapPool: less than min amount");
         require(inviToken.transferToken(msg.sender, address(this), _amountIn), "InviSwapPool: transfer failed");
         totalLiquidityInvi += _amountIn;
         totalLiquidityNative -= amountOut ;
