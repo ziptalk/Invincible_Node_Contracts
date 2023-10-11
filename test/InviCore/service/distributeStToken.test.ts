@@ -1,46 +1,38 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import hre from "hardhat";
-import { leverageStake, provideLiquidity, verifyRequest } from "../../utils";
-import { units } from "../../units";
-import { getTestAddress } from "../../getTestAddress";
-import { deployAll } from "../../../scripts/deploy/deployAll";
+import { provideLiquidity } from "../../utils";
+import { initializeContracts } from "../../utils/initializeContracts";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
 console.log("current Network: ", network);
-const testAddresses: any = getTestAddress(network);
 
 describe("Invi core service test", function () {
-  let stKlayContract: Contract;
   let inviCoreContract: Contract;
   let stakeNFTContract: Contract;
   let lpPoolContract: Contract;
   let inviTokenStakeContract: Contract;
   let stTokenContract: Contract;
 
-  this.beforeAll(async function () {
-    if (network === "hardhat") {
-      ({ inviCoreContract, stakeNFTContract, lpPoolContract, inviTokenStakeContract, stTokenContract } =
-        await deployAll());
-    } else {
-      // for testnet test
-      inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-      inviTokenStakeContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenStakeContractAddress);
-      stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-      lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
-    }
+  before(async function () {
+    const contracts = await initializeContracts(network, [
+      "InviCore",
+      "StakeNFT",
+      "LiquidityProviderPool",
+      "InviTokenStake",
+      "StToken",
+    ]);
+
+    inviCoreContract = contracts["InviCore"];
+    stakeNFTContract = contracts["StakeNFT"];
+    lpPoolContract = contracts["LiquidityProviderPool"];
+    inviTokenStakeContract = contracts["InviToken"];
+    stTokenContract = contracts["StToken"];
   });
 
   it("Test stToken reward distribute function", async () => {
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
-
-    let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
-    let nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    let nonceUserB = await ethers.provider.getTransactionCount(userB.address);
-    let nonceUserC = await ethers.provider.getTransactionCount(userC.address);
-    console.log("nonce deployer: ", nonceDeployer);
 
     //* given
     // get current unstake requests
@@ -60,7 +52,7 @@ describe("Invi core service test", function () {
 
     if (network === "hardhat") {
       const lpAmount: BigNumber = ethers.utils.parseEther("0.01");
-      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+      await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
       const rewardsAmount = ethers.utils.parseUnits("100", 18);
       const spreadRewards = await stTokenContract.connect(deployer).spreadRewards(inviCoreContract.address, {
         value: rewardsAmount,

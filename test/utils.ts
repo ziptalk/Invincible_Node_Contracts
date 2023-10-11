@@ -6,12 +6,7 @@ import { ethers as hardhatEthers } from "hardhat";
 
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };
 
-export const provideLiquidity = async (
-  lpPoolContract: Contract,
-  user: SignerWithAddress,
-  amount: BigNumber,
-  nonce: number
-) => {
+export const provideLiquidity = async (lpPoolContract: Contract, user: SignerWithAddress, amount: BigNumber) => {
   try {
     let tx = await lpPoolContract.connect(user).stake({ value: amount });
     await tx.wait();
@@ -25,8 +20,7 @@ export const leverageStake = async (
   user: SignerWithAddress,
   principal: BigNumber,
   leverageRatio: number,
-  lockPeriod: number,
-  nonce: number
+  lockPeriod: number
 ) => {
   const slippage = 3 * units.slippageUnit;
   let tx = await inviCoreContract

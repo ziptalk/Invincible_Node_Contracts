@@ -7,7 +7,6 @@ import { setBlockGasLimit } from "@nomicfoundation/hardhat-network-helpers";
 
 // testnet
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;
-const STAKE_MANAGER_KEY: string = process.env.STAKE_MANAGER_PRIVATE_KEY as string;
 const LP_KEY: string = process.env.LP_PRIVATE_KEY as string;
 const USER_A_KEY: string = process.env.USER_A_PRIVATE_KEY as string;
 const USER_B_KEY: string = process.env.USER_B_PRIVATE_KEY as string;
