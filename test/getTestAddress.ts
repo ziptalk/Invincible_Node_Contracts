@@ -15,5 +15,7 @@ export const getTestAddress = (network: string) => {
     return evmosTestAddress.testnet;
   } else if (network === "evmos_mainnet") {
     return evmosTestAddress.mainnet;
+  } else {
+    return;
   }
 };
