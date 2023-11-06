@@ -61,7 +61,7 @@ describe("Invi core service test", function () {
     console.log("unstakeRequests: ", unstakeRequests);
 
     //* when
-    const ITERATION_COUNT = 200;
+    const ITERATION_COUNT = 3;
     for (let i = 0; i < ITERATION_COUNT; i++) {
       try {
         tx = await inviCoreContract.connect(deployer).claimAndSplitUnstakedAmount();

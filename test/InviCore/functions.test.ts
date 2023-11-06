@@ -3,6 +3,7 @@ import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
 import { initializeContracts } from "../utils/initializeContracts";
+import { units } from "../units";
 
 const network: string = hre.network.name;
 
@@ -48,14 +49,25 @@ describe("Invi core functions test", function () {
   it("Test getExpectedReward function", async () => {
     const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
 
+    // ====== Get Functions ====== //
+    // get Lock Period
+    const leverageRatio = 5 * units.leverageUnit;
+    const lockPeriod = await inviCoreContract.connect(userA).getLockPeriod(leverageRatio);
+    console.log("lockPeriod: ", lockPeriod.toString());
+    expect(lockPeriod).to.equal(1300 * 24 * 60 * 60);
+
     // lp stake coin
     const lpAmount = 100000;
     await lpPoolContract.connect(LP).stake({ value: lpAmount });
 
-    const principal = 1000;
-    const lockPeriod = 1000000;
-    const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
+    // get Total Liquidity
+    const totalLiquidity = await inviCoreContract.connect(userA).getTotalLiquidity();
+    console.log("totalLiquidity: ", totalLiquidity.toString());
+    expect(totalLiquidity).to.equal(lpAmount);
 
+    // get Expected Reward
+    const principal = 1000;
+    const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
     console.log("expected reward: ", expectedReward);
   });
 });
