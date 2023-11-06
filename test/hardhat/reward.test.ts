@@ -13,10 +13,10 @@ import {
   repayNFT,
   splitUnstakedLPP,
   stTokenRewardDistribution,
-} from "../utils";
-import { getTestAddress } from "../getTestAddress";
+} from "../utils/utils";
+import { getTestAddress } from "../utils/getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
-import { checkTx } from "../checkTx";
+import { checkTx } from "../utils/checkTx";
 
 describe("Invi core service test", function () {
   let inviCoreContract: Contract;
@@ -54,12 +54,12 @@ describe("Invi core service test", function () {
       // Step 1. provide liquidity
       console.log("===Step 1 - provide liquidity");
       const lpAmount: BigNumber = ethers.utils.parseEther("1000");
-      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+      await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
       console.log("provided liquidity");
 
       // another lp
       const lpAmount2: BigNumber = ethers.utils.parseEther("100");
-      await provideLiquidity(lpPoolContract, userC, lpAmount2, nonceLP); // userC stake
+      await provideLiquidity(lpPoolContract, userC, lpAmount2); // userC stake
 
       // Step 2. stake
       console.log("===Step 2 - stake");
@@ -68,12 +68,12 @@ describe("Invi core service test", function () {
       const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
       console.log("minLockPeriod: ", minLockPeriod);
       const lockPeriod = minLockPeriod * 2;
-      await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+      await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod); // userA stake
 
       // add userB
       const principalB: BigNumber = ethers.utils.parseEther("2");
       const leverageRatioB = 3 * units.leverageUnit;
-      await leverageStake(inviCoreContract, userB, principalB, leverageRatioB, lockPeriod, nonceUserA); // userB stake
+      await leverageStake(inviCoreContract, userB, principalB, leverageRatioB, lockPeriod); // userB stake
 
       // Step 3. Reward distribution from stToken
       console.log("===Step 3 - distribute reward");
@@ -186,7 +186,7 @@ describe("Invi core service test", function () {
         const leverageRatio = 3 * units.leverageUnit;
         const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
         const lockPeriod = minLockPeriod * 1;
-        await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+        await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod); // userA stake
       }
       console.log("userA stake complete");
       // user B
@@ -195,7 +195,7 @@ describe("Invi core service test", function () {
         const leverageRatio = 2 * units.leverageUnit;
         const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
         const lockPeriod = minLockPeriod * 2;
-        await leverageStake(inviCoreContract, userB, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+        await leverageStake(inviCoreContract, userB, principal, leverageRatio, lockPeriod); // userA stake
       }
       console.log("userB stake complete");
 

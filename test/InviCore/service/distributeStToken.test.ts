@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { provideLiquidity } from "../../utils";
+import { provideLiquidity } from "../../utils/utils";
 import { initializeContracts } from "../../utils/initializeContracts";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS

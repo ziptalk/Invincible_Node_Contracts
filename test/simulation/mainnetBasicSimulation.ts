@@ -4,8 +4,8 @@ import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
 import { units } from "../units";
-import { leverageStake } from "../utils";
-import { getTestAddress } from "../getTestAddress";
+import { leverageStake } from "../utils/utils";
+import { getTestAddress } from "../utils/getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
 
 describe("Invi Burning Test", function () {

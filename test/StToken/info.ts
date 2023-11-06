@@ -3,7 +3,7 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
+import { getTestAddress } from "../utils/getTestAddress";
 
 describe("LpPool service test", function () {
   let stTokenContract: Contract;

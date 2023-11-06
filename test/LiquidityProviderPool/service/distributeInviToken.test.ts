@@ -4,8 +4,8 @@ import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
 import { units } from "../../units";
-import { leverageStake, provideLiquidity } from "../../utils";
-import { getTestAddress } from "../../getTestAddress";
+import { leverageStake, provideLiquidity } from "../../utils/utils";
+import { getTestAddress } from "../../utils/getTestAddress";
 
 describe("LpPool service test", function () {
   let inviTokenContract: Contract;

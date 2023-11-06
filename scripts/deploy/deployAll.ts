@@ -5,6 +5,7 @@ import { setInit } from "./setInit";
 import { walletAddresses } from "../addresses/walletAddresses";
 import { deployAllContract } from "./deployFunctions";
 import { targets } from "../targets";
+import { ContractLists } from "../../test/utils/interface";
 
 let inviTokenContract: Contract;
 let iLPTokenContract: Contract;
@@ -80,12 +81,12 @@ const deploy = async () => {
   };
 };
 
-export const deployAll = async () => {
+export const deployAll = async (): Promise<Record<string, Contract>> => {
   console.log("deploying start ...");
   const ContractAddresses = await deploy();
   console.log("deploying end ...");
   // set init
-  const contracts = await setInit(ContractAddresses, network);
+  const contracts: Record<string, Contract> = await setInit(ContractAddresses, network);
   console.log("ContractAddresses: ", ContractAddresses);
   return contracts;
 };

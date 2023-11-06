@@ -1,38 +1,21 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import hre from "hardhat";
-import { units } from "../../units";
-import { getTestAddress } from "../../getTestAddress";
+import { initializeContracts } from "../../utils/initializeContracts";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
 console.log("current Network: ", network);
-const testAddresses: any = getTestAddress(network);
 
 describe("InviTokenStake service test", function () {
   let inviTokenContract: Contract;
-  let inviTokenStake: Contract;
-  let lpPoolContract: Contract;
-  let nonceDeployer;
-  let nonceLP: number;
-  let nonceUserA: number;
-  let nonceUserB: number;
-  let nonceUserC: number;
-  let tx: any;
+  let inviTokenStakeContract: Contract;
 
-  this.beforeAll(async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+  before(async function () {
+    const contracts = await initializeContracts(network, ["InviTokenStake", "InviToken"]);
 
-    nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
-    nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    nonceUserB = await ethers.provider.getTransactionCount(userB.address);
-    nonceUserC = await ethers.provider.getTransactionCount(userC.address);
-    tx;
-
-    // for testnet test
-    inviTokenStake = await ethers.getContractAt("InviTokenStake", testAddresses.inviTokenStakeContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
+    inviTokenContract = contracts["InviCore"];
+    inviTokenStakeContract = contracts["StakeNFT"];
   });
 
   it("Test claim Unstaked function", async () => {
@@ -49,15 +32,15 @@ describe("InviTokenStake service test", function () {
     const inviTokenBalance = await inviTokenContract.balanceOf(userA.address);
     console.log("inviTokenBalance userA: ", inviTokenBalance.toString());
     // get request unstake amount
-    const unstakeRequestAmount = await inviTokenStake.connect(userA).unstakeRequestAmount(userA.address);
+    const unstakeRequestAmount = await inviTokenStakeContract.connect(userA).unstakeRequestAmount(userA.address);
     console.log("unstakeRequestAmount: ", unstakeRequestAmount.toString());
-    const claimableUnstakeAmount = await inviTokenStake.connect(userA).claimableUnstakeAmount(userA.address);
+    const claimableUnstakeAmount = await inviTokenStakeContract.connect(userA).claimableUnstakeAmount(userA.address);
     console.log("claimableUnstakeAmount: ", claimableUnstakeAmount.toString());
     // get unstake request time userA
-    const prevUnstakeRequestTimeUserA = await inviTokenStake.connect(userA).unstakeRequestTime(userA.address);
+    const prevUnstakeRequestTimeUserA = await inviTokenStakeContract.connect(userA).unstakeRequestTime(userA.address);
     console.log(" prevunstakeRequestTimeUserA: ", prevUnstakeRequestTimeUserA.toString());
     // get unstake period
-    const unstakePeriod = await inviTokenStake.unstakePeriod();
+    const unstakePeriod = await inviTokenStakeContract.unstakePeriod();
     console.log("unstakePeriod: ", unstakePeriod.toString());
     // compare current timestamp and unstake end time
     const currentTimestamp = await ethers.provider.getBlock("latest").then((block) => block.timestamp);
@@ -67,7 +50,7 @@ describe("InviTokenStake service test", function () {
     //* when
     try {
       // claim unstaked
-      const claimUnstaked = await inviTokenStake.connect(userA).claimUnstaked({ nonce: nonceUserA++ });
+      const claimUnstaked = await inviTokenStakeContract.connect(userA).claimUnstaked();
       await claimUnstaked.wait();
     } catch (error) {
       console.log(error);

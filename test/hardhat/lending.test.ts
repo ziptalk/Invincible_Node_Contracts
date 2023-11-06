@@ -12,8 +12,8 @@ import {
   leverageStake,
   provideLiquidity,
   splitUnstakedLPP,
-} from "../utils";
-import { getTestAddress } from "../getTestAddress";
+} from "../utils/utils";
+import { getTestAddress } from "../utils/getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
 import { swapSimulation } from "./swapSimulation";
 
@@ -53,12 +53,6 @@ describe("Lending service test", function () {
     if (network !== "hardhat") return; // only hardhat test
 
     const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
-
-    let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
-    let nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    let nonceUserB = await ethers.provider.getTransactionCount(userB.address);
-    let tx;
     let receipt;
 
     //* given
@@ -72,7 +66,7 @@ describe("Lending service test", function () {
       // Step 1. Provide liquidity and stake
       console.log("step 1");
       const lpAmount: BigNumber = ethers.utils.parseEther("10000");
-      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+      await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
       console.log("provided liquidity");
 
       // userA
@@ -80,7 +74,7 @@ describe("Lending service test", function () {
       const leverageRatioA = 4 * units.leverageUnit;
       const minLockPeriodA = await inviCoreContract.functions.getLockPeriod(leverageRatioA);
       const lockPeriodA = minLockPeriodA * 2;
-      await leverageStake(inviCoreContract, userA, principalA, leverageRatioA, lockPeriodA, nonceUserA); // userA stake
+      await leverageStake(inviCoreContract, userA, principalA, leverageRatioA, lockPeriodA); // userA stake
 
       // userB (repeat 10 times)
       for (let i = 0; i < 10; i++) {
@@ -88,7 +82,7 @@ describe("Lending service test", function () {
         const leverageRatioB = 2 * units.leverageUnit;
         const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatioB);
         const lockPeriod = minLockPeriod * 1;
-        await leverageStake(inviCoreContract, userB, principalB, leverageRatioB, lockPeriod, nonceUserB); // userA stake
+        await leverageStake(inviCoreContract, userB, principalB, leverageRatioB, lockPeriod); // userA stake
       }
 
       // check INVI balances
@@ -102,8 +96,8 @@ describe("Lending service test", function () {
       // Step2. conduct Swap
       console.log("step 2");
       // provide lp
-      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
-      await provideLiquidity(lpPoolContract, userB, lpAmount, nonceUserB); // lp stake
+      await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
+      await provideLiquidity(lpPoolContract, userB, lpAmount); // lp stake
       console.log("provided liquidity LP / userB");
 
       // get inviRewardInterval

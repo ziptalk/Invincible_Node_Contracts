@@ -3,8 +3,8 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
-import { leverageStake } from "../utils";
+import { getTestAddress } from "../utils/getTestAddress";
+import { leverageStake } from "../utils/utils";
 import { units } from "../units";
 
 describe("LpPool service test", function () {

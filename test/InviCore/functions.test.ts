@@ -2,7 +2,9 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
+import { initializeContracts } from "../utils/initializeContracts";
+
+const network: string = hre.network.name;
 
 describe("Invi core functions test", function () {
   let inviCoreContract: Contract;
@@ -11,16 +13,20 @@ describe("Invi core functions test", function () {
   let inviTokenContract: Contract;
   let iLPTokenContract: Contract;
 
-  const network: string = hre.network.name;
-  const testAddresses: any = getTestAddress(network);
+  before(async function () {
+    const contracts = await initializeContracts(network, [
+      "InviCore",
+      "StakeNFT",
+      "LiquidityProviderPool",
+      "InviTokenStake",
+      "ILPToken",
+    ]);
 
-  this.beforeAll(async function () {
-    // for testnet test
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
-    iLPTokenContract = await ethers.getContractAt("ILPToken", testAddresses.iLPTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    inviCoreContract = contracts["InviCore"];
+    stakeNFTContract = contracts["StakeNFT"];
+    lpPoolContract = contracts["LiquidityProviderPool"];
+    inviTokenContract = contracts["InviToken"];
+    iLPTokenContract = contracts["ILPToken"];
   });
 
   it("Test deploy success", async () => {

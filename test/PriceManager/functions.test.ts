@@ -3,8 +3,8 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
-import { leverageStake } from "../utils";
+import { getTestAddress } from "../utils/getTestAddress";
+import { leverageStake } from "../utils/utils";
 import { units } from "../units";
 
 describe("PriceManager service test", function () {
@@ -26,10 +26,7 @@ describe("PriceManager service test", function () {
     console.log("LP: ", LP.address);
     console.log("userA: ", userA.address);
 
-    let nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
     let nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    let nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    let tx;
     console.log("nonce lp: ", nonceLP);
 
     //* given

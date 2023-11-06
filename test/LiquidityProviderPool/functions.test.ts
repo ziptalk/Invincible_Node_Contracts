@@ -4,7 +4,7 @@ import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
 import { units } from "../units";
-import { getTestAddress } from "../getTestAddress";
+import { getTestAddress } from "../utils/getTestAddress";
 
 describe("LpPool service test", function () {
   let inviCoreContract: Contract;
