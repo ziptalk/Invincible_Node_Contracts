@@ -19,7 +19,7 @@ describe("Invi core functions test", function () {
       "InviCore",
       "StakeNFT",
       "LiquidityProviderPool",
-      "InviTokenStake",
+      "InviToken",
       "ILPToken",
     ]);
 
@@ -41,13 +41,11 @@ describe("Invi core functions test", function () {
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
     expect(await lpPoolContract.inviCoreContract()).equals(inviCoreContract.address);
-
-    // verify owner
-    expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
+    expect(await iLPTokenContract.lpPoolContract()).equals(lpPoolContract.address);
   });
 
-  it("Test getExpectedReward function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+  it("Test get functions", async () => {
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
 
     // ====== Get Functions ====== //
     // get Lock Period
@@ -57,7 +55,7 @@ describe("Invi core functions test", function () {
     expect(lockPeriod).to.equal(1300 * 24 * 60 * 60);
 
     // lp stake coin
-    const lpAmount = 100000;
+    const lpAmount = ethers.utils.parseEther("1");
     await lpPoolContract.connect(LP).stake({ value: lpAmount });
 
     // get Total Liquidity
@@ -69,5 +67,10 @@ describe("Invi core functions test", function () {
     const principal = 1000;
     const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
     console.log("expected reward: ", expectedReward);
+
+    // get protocol fee
+    const lentAmount = ethers.utils.parseEther("0.0001");
+    const protocolFee = await inviCoreContract.connect(userA).getProtocolFee(lentAmount, 2);
+    console.log("protocolFee: ", protocolFee.toString());
   });
 });
