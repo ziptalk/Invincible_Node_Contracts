@@ -23,9 +23,6 @@ https://www.invinciblenode.app/
 
 <a id="walletAddresses"></a>
 |Wallet Name|Address|
-|------|---|
-|Stake Manager|0x81DB617Fe8f2f38F949f8f1Ee4E9DB7f164408CE|
-|LP Manager|0x8fd6A85Ca1afC8fD3298338A6b23c5ad5469488E|
 
 # Contract Addresses
 
@@ -36,6 +33,12 @@ https://www.invinciblenode.app/
 # Product Explanation
 
 <a id="productExplanation"></a>
+
+# Tests
+```shell
+npx hardhat coverage
+
+```
 
 <!-- ```shell
 npx hardhat help

@@ -163,7 +163,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         totalLiquidityNative -= amountOut ;
         totalRewardNative += fees;
         _splitRewards(0, fees);
-        (bool success, ) = msg.sender.call{value: amountOut - fees}("");
+        bool success = payable(msg.sender).send(amountOut - fees);
         require(success, "InviSwapPool: transfer failed");
     
         require(totalLiquidityNative <= address(this).balance + 10, "Test logic");
@@ -253,7 +253,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
 
 
          // Transfer the Native and Invi tokens to the user
-        (bool NativeSuccess, ) = msg.sender.call{value: nativeAmount}("");
+        bool NativeSuccess = payable(msg.sender).send(nativeAmount);
         require(NativeSuccess, "InviSwapPool: Native transfer failed");
         require(inviToken.transfer(msg.sender, inviAmount), "InviSwapPool: Invi transfer failed");
     }
@@ -272,7 +272,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         if (nativeReward > 0) {
             totalRewardNative -= nativeReward;
             lpRewardNative[msg.sender] = 0;
-            (bool NativeSuccess, ) = msg.sender.call{value: nativeReward}("");
+            bool NativeSuccess = payable(msg.sender).send(nativeReward);
             require(NativeSuccess, "InviSwapPool: Native transfer failed");
         }
     }

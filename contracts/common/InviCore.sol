@@ -629,7 +629,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint256 amount = claimableAmount[msg.sender];
         totalClaimableAmount -= amount;
         claimableAmount[msg.sender] = 0;
-        (bool sent, ) = msg.sender.call{value : amount }("");
+        bool sent  = payable(msg.sender).send(amount);
         require(sent, "InviCore: Failed to send coin");
     }
     

@@ -294,7 +294,7 @@ contract InviTokenStake is Initializable, OwnableUpgradeable {
         nativeRewardAmount[msg.sender] = 0;  
 
         // send reward to requester
-        (bool sent, ) = msg.sender.call{value: rewardAmount}("");
+        bool sent = payable(msg.sender).send(rewardAmount);
         require(sent, "InviTokenStake: Failed to send reward to requester");
     }
 

@@ -352,7 +352,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         claimableUnstakeAmount[msg.sender] = 0;
         totalClaimableUnstakeAmount -= amount;
 
-        (bool send, ) = msg.sender.call{value: amount}("");
+        bool send = payable(msg.sender).send(amount);
         require(send, "Transfer failed");
     }
     
@@ -421,7 +421,7 @@ contract LiquidityProviderPool is Initializable, OwnableUpgradeable {
         totalNativeRewardAmount -= rewardAmount;
 
         // send native coin to account
-        (bool sent, ) = msg.sender.call{value: rewardAmount}("");
+        bool sent = payable(msg.sender).send(rewardAmount);
         require(sent, "LpPool: Transfer failed");
     }
 
