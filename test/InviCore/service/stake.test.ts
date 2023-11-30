@@ -3,7 +3,7 @@ import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
 import { units } from "../../units";
-import { leverageStake, provideLiquidity } from "../../utils";
+import { leverageStake, provideLiquidity } from "../../utils/utils";
 import { initializeContracts } from "../../utils/initializeContracts";
 
 describe("Invi core service", function () {

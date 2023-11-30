@@ -1,4 +1,4 @@
-import { Contract, Wallet } from "ethers";
+import { Contract, ContractFactory, Wallet } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 // addresses
@@ -21,7 +21,7 @@ let networkId: number;
 
 // deploy InviToken contract
 export const deployInviToken = async () => {
-  const InviTokenContract = await ethers.getContractFactory("InviToken");
+  const InviTokenContract: ContractFactory = await ethers.getContractFactory("InviToken");
   const inviTokenContract = await upgrades.deployProxy(InviTokenContract, [], { initializer: "initialize" });
   await inviTokenContract.deployed();
 

@@ -1,9 +1,9 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
-import "dotenv/config";
-import { ethers } from "hardhat";
-import { setBlockGasLimit } from "@nomicfoundation/hardhat-network-helpers";
+import "solidity-coverage";
+import dotenv from "dotenv";
+dotenv.config();
 
 // testnet
 const OWNER_KEY: string = process.env.OWNER_PRIVATE_KEY as string;

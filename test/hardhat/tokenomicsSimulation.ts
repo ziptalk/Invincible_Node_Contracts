@@ -3,8 +3,8 @@ import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
 import { units } from "../units";
-import { leverageStake, provideLiquidity } from "../utils";
-import { checkTx } from "../checkTx";
+import { leverageStake, provideLiquidity } from "../utils/utils";
+import { checkTx } from "../utils/checkTx";
 import { deployAll } from "../../scripts/deploy/deployAll";
 
 describe("Tokenomics test", function () {
@@ -59,8 +59,8 @@ describe("Tokenomics test", function () {
 
     // lp 1 and lp 2 provide liquidity of 5000 each
     let lpAmount = ethers.utils.parseEther("5000");
-    tx = await provideLiquidity(lpPoolContract, LP1, lpAmount, 0);
-    tx = await provideLiquidity(lpPoolContract, LP2, lpAmount, 0);
+    tx = await provideLiquidity(lpPoolContract, LP1, lpAmount);
+    tx = await provideLiquidity(lpPoolContract, LP2, lpAmount);
 
     // spread INVI to give INVI tokens to LPs
     // get inviRewardInterval
@@ -144,8 +144,7 @@ describe("Tokenomics test", function () {
         userA,
         stakeAmount,
         parseFloat(maxLeverageRatio.toString()),
-        parseFloat(minLockPeriod.toString()),
-        0
+        parseFloat(minLockPeriod.toString())
       );
 
       console.log("======== Step 2: lend NFT =========");
@@ -201,7 +200,7 @@ describe("Tokenomics test", function () {
       userABalance = await ethers.provider.getBalance(userA.address);
       const lpAmount = userABalance.div(2);
       // provide liquidity
-      tx = await provideLiquidity(lpPoolContract, userA, lpAmount, 0);
+      tx = await provideLiquidity(lpPoolContract, userA, lpAmount);
     }
 
     // check Initial Status

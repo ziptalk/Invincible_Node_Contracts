@@ -3,7 +3,7 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import hre from "hardhat";
 import { units } from "../../units";
-import { getTestAddress } from "../../getTestAddress";
+import { getTestAddress } from "../../utils/getTestAddress";
 
 interface UnstakeRequest {
   recipient: string;

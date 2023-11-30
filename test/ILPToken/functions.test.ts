@@ -1,10 +1,8 @@
-import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
-import { units } from "../units";
-import { provideLiquidity } from "../utils";
+import { getTestAddress } from "../utils/getTestAddress";
+import { provideLiquidity } from "../utils/utils";
 import { deployAll } from "../../scripts/deploy/deployAll";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
@@ -49,7 +47,7 @@ describe("ILPToken functions test", function () {
     if (initBalance.toString() === "0") {
       // provide lp if none
       const lpAmount = ethers.utils.parseEther("0.1");
-      await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP);
+      await provideLiquidity(lpPoolContract, LP, lpAmount);
       console.log("provided liquidity");
     }
     const lpILPBalance = await iLPTokenContract.functions.balanceOf(LP.address);

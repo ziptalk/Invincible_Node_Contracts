@@ -1,6 +1,6 @@
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
-import { provideLiquidity, leverageStake } from "../../utils";
+import { provideLiquidity, leverageStake } from "../../utils/utils";
 import { units } from "../../units";
 import hre from "hardhat";
 import { initializeContracts } from "../../utils/initializeContracts";

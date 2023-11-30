@@ -3,7 +3,8 @@ import { BigNumber, Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import hre from "hardhat";
 import { units } from "../../units";
-import { getTestAddress } from "../../getTestAddress";
+import { getTestAddress } from "../../utils/getTestAddress";
+import { initializeContracts } from "../../utils/initializeContracts";
 
 const network: string = hre.network.name; // BIFROST, KLAYTN, EVMOS
 console.log("current Network: ", network);
@@ -13,26 +14,11 @@ describe("InviToken service test", function () {
   let inviTokenContract: Contract;
   let lpPoolContract: Contract;
 
-  let nonceDeployer: number;
-  let nonceLP: number;
-  let nonceUserA: number;
-  let nonceUserB: number;
-  let nonceUserC: number;
-  let tx: any;
+  before(async function () {
+    const contracts = await initializeContracts(network, ["InviToken", "LiquidityProviderPool"]);
 
-  this.beforeAll(async () => {
-    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
-
-    nonceDeployer = await ethers.provider.getTransactionCount(deployer.address);
-    nonceLP = await ethers.provider.getTransactionCount(LP.address);
-    nonceUserA = await ethers.provider.getTransactionCount(userA.address);
-    nonceUserB = await ethers.provider.getTransactionCount(userB.address);
-    nonceUserC = await ethers.provider.getTransactionCount(userC.address);
-    tx;
-
-    // for testnet test
-    inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    inviTokenContract = contracts["InviToken"];
+    lpPoolContract = contracts["LiquidityProviderPool"];
   });
 
   it("Test regularMint function", async () => {
@@ -56,7 +42,7 @@ describe("InviToken service test", function () {
 
     // //* when
     try {
-      const regularMint = await inviTokenContract.connect(deployer).regularMinting({ nonce: nonceDeployer });
+      const regularMint = await inviTokenContract.connect(deployer).regularMinting();
       await regularMint.wait();
       console.log("regular mint success");
     } catch (e) {

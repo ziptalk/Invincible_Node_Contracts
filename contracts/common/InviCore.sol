@@ -67,8 +67,6 @@ contract InviCore is Initializable, OwnableUpgradeable {
     mapping (address => uint256) public claimableAmount;
     mapping (uint32 => uint256) public nftUnstakeTime;
 
-
-
     //------events------//
     event Stake(address indexed user, uint256 indexed amount);
     event Unstake(address indexed user, uint256 indexed amount);
@@ -315,7 +313,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
      * @param _lpPoolRewardPortion The reward portion for the LP pool.
      * @param _inviTokenStakeRewardPortion The reward portion for the INVI token stake.
      */
-    function _setRewardPortion(uint32 _lpPoolRewardPortion, uint32 _inviTokenStakeRewardPortion) external onlyOwner {
+    function setRewardPortion(uint32 _lpPoolRewardPortion, uint32 _inviTokenStakeRewardPortion) external onlyOwner {
         require (_lpPoolRewardPortion + _inviTokenStakeRewardPortion == REWARD_PORTION_TOTAL_UNIT, "InviCore: invalid reward portion");
         lpPoolRewardPortion = _lpPoolRewardPortion;
         inviTokenStakeRewardPortion = _inviTokenStakeRewardPortion;
@@ -631,7 +629,7 @@ contract InviCore is Initializable, OwnableUpgradeable {
         uint256 amount = claimableAmount[msg.sender];
         totalClaimableAmount -= amount;
         claimableAmount[msg.sender] = 0;
-        (bool sent, ) = msg.sender.call{value : amount }("");
+        bool sent  = payable(msg.sender).send(amount);
         require(sent, "InviCore: Failed to send coin");
     }
     
@@ -675,7 +673,5 @@ contract InviCore is Initializable, OwnableUpgradeable {
 
     // remove it later
     receive () external payable {}
-
-
     fallback () external payable {}
 }

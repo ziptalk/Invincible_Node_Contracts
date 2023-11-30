@@ -1,7 +1,7 @@
 import { BigNumber, Contract } from "ethers";
 import hre, { ethers } from "hardhat";
 import { units } from "../units";
-import { getSwapPoolStatus, provideLiquidity } from "../utils";
+import { getSwapPoolStatus, provideLiquidity } from "../utils/utils";
 
 export const swapSimulation = async (
   inviSwapPoolContract: Contract,

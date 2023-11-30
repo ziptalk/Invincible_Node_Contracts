@@ -2,7 +2,7 @@
 pragma solidity ^0.8;
 
 library Math {
-    function sqrt(uint256 y) pure internal returns (uint256) {
+    function sqrt(uint256 y) internal pure returns (uint256) {
         uint256 z = (y + 1) / 2;
         uint256 x = y;
         while (z < x) {

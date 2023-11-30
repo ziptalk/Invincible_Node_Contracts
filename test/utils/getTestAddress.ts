@@ -1,6 +1,6 @@
-import { bfcTestAddress } from "../scripts/addresses/testAddresses/address.bfc";
-import { evmosTestAddress } from "../scripts/addresses/testAddresses/address.evmos";
-import { klaytnTestAddress } from "../scripts/addresses/testAddresses/address.klaytn";
+import { bfcTestAddress } from "../../scripts/addresses/testAddresses/address.bfc";
+import { evmosTestAddress } from "../../scripts/addresses/testAddresses/address.evmos";
+import { klaytnTestAddress } from "../../scripts/addresses/testAddresses/address.klaytn";
 
 export const getTestAddress = (network: string) => {
   if (network === "bifrost_testnet") {

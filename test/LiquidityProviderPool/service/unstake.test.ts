@@ -4,8 +4,8 @@ import { ethers, upgrades } from "hardhat";
 const { expectRevert } = require("@openzeppelin/test-helpers");
 import hre from "hardhat";
 import { units } from "../../units";
-import { leverageStake, provideLiquidity } from "../../utils";
-import { getTestAddress } from "../../getTestAddress";
+import { leverageStake, provideLiquidity } from "../../utils/utils";
+import { getTestAddress } from "../../utils/getTestAddress";
 import { deployAll } from "../../../scripts/deploy/deployAll";
 
 describe("LpPool service test", function () {
@@ -62,14 +62,14 @@ describe("LpPool service test", function () {
     //* given
     // step 1: provide liquidity
     const lpAmount: BigNumber = ethers.utils.parseEther("0.1");
-    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
+    await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
 
     // step 2: stake LP
     const principal: BigNumber = ethers.utils.parseEther("0.00001");
     const leverageRatio = 3 * units.leverageUnit;
     const minLockPeriod = await inviCoreContract.functions.getLockPeriod(leverageRatio);
     const lockPeriod = minLockPeriod * 2;
-    await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod, nonceUserA); // userA stake
+    await leverageStake(inviCoreContract, userA, principal, leverageRatio, lockPeriod); // userA stake
 
     // get total lent amount
     const totalLentAmount = await lpPoolContract.totalLentAmount();

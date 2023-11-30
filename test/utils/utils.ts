@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "ethers";
-import { units } from "./units";
+import { units } from "../units";
 import { ethers as hardhatEthers } from "hardhat";
 
 type SignerWithAddress = ethers.Signer & { getAddress: () => Promise<string> };

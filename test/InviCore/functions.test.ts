@@ -2,7 +2,10 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { getTestAddress } from "../getTestAddress";
+import { initializeContracts } from "../utils/initializeContracts";
+import { units } from "../units";
+
+const network: string = hre.network.name;
 
 describe("Invi core functions test", function () {
   let inviCoreContract: Contract;
@@ -11,16 +14,20 @@ describe("Invi core functions test", function () {
   let inviTokenContract: Contract;
   let iLPTokenContract: Contract;
 
-  const network: string = hre.network.name;
-  const testAddresses: any = getTestAddress(network);
+  before(async function () {
+    const contracts = await initializeContracts(network, [
+      "InviCore",
+      "StakeNFT",
+      "LiquidityProviderPool",
+      "InviToken",
+      "ILPToken",
+    ]);
 
-  this.beforeAll(async function () {
-    // for testnet test
-    inviCoreContract = await ethers.getContractAt("InviCore", testAddresses.inviCoreContractAddress);
-    inviTokenContract = await ethers.getContractAt("InviToken", testAddresses.inviTokenContractAddress);
-    iLPTokenContract = await ethers.getContractAt("ILPToken", testAddresses.iLPTokenContractAddress);
-    stakeNFTContract = await ethers.getContractAt("StakeNFT", testAddresses.stakeNFTContractAddress);
-    lpPoolContract = await ethers.getContractAt("LiquidityProviderPool", testAddresses.lpPoolContractAddress);
+    inviCoreContract = contracts["InviCore"];
+    stakeNFTContract = contracts["StakeNFT"];
+    lpPoolContract = contracts["LiquidityProviderPool"];
+    inviTokenContract = contracts["InviToken"];
+    iLPTokenContract = contracts["ILPToken"];
   });
 
   it("Test deploy success", async () => {
@@ -34,22 +41,36 @@ describe("Invi core functions test", function () {
     expect(await inviCoreContract.stakeNFTContract()).equals(stakeNFTContract.address);
     expect(await inviCoreContract.lpPoolContract()).equals(lpPoolContract.address);
     expect(await lpPoolContract.inviCoreContract()).equals(inviCoreContract.address);
-
-    // verify owner
-    expect(await iLPTokenContract.owner()).equals(lpPoolContract.address);
+    expect(await iLPTokenContract.lpPoolContract()).equals(lpPoolContract.address);
   });
 
-  it("Test getExpectedReward function", async () => {
-    const [deployer, stakeManager, LP, userA, userB, userC] = await ethers.getSigners();
+  it("Test get functions", async () => {
+    const [deployer, LP, userA, userB, userC] = await ethers.getSigners();
+
+    // ====== Get Functions ====== //
+    // get Lock Period
+    const leverageRatio = 5 * units.leverageUnit;
+    const lockPeriod = await inviCoreContract.connect(userA).getLockPeriod(leverageRatio);
+    console.log("lockPeriod: ", lockPeriod.toString());
+    expect(lockPeriod).to.equal(1300 * 24 * 60 * 60);
 
     // lp stake coin
-    const lpAmount = 100000;
+    const lpAmount = ethers.utils.parseEther("1");
     await lpPoolContract.connect(LP).stake({ value: lpAmount });
 
-    const principal = 1000;
-    const lockPeriod = 1000000;
-    const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
+    // get Total Liquidity
+    const totalLiquidity = await inviCoreContract.connect(userA).getTotalLiquidity();
+    console.log("totalLiquidity: ", totalLiquidity.toString());
+    expect(totalLiquidity).to.equal(lpAmount);
 
+    // get Expected Reward
+    const principal = 1000;
+    const expectedReward = await inviCoreContract.connect(userA).getExpectedReward(principal, lockPeriod);
     console.log("expected reward: ", expectedReward);
+
+    // get protocol fee
+    const lentAmount = ethers.utils.parseEther("0.0001");
+    const protocolFee = await inviCoreContract.connect(userA).getProtocolFee(lentAmount, 2);
+    console.log("protocolFee: ", protocolFee.toString());
   });
 });

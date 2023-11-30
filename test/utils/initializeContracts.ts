@@ -2,14 +2,14 @@ import { Contract } from "ethers";
 import { deployAll } from "../../scripts/deploy/deployAll";
 import { NETWORK_NAMES, contractToDeployedPropertyMap } from "../constants";
 import { ethers } from "hardhat";
-import { getTestAddress } from "../getTestAddress";
+import { getTestAddress } from "./getTestAddress";
 
 export const initializeContracts = async (network: string, names: string[]): Promise<Record<string, Contract>> => {
   const contracts: Record<string, Contract> = {};
   const testAddresses: any = getTestAddress(network);
 
   if (network === NETWORK_NAMES.HARDHAT) {
-    const deployedContracts: Record<string, Contract> = (await deployAll()) as any; // Type cast here
+    const deployedContracts: Record<string, Contract> = (await deployAll()) as Record<string, Contract>; // Type cast here
 
     for (const name of names) {
       const property = contractToDeployedPropertyMap[name];

@@ -26,6 +26,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     mapping(address => uint256) public lpScore;
     mapping(uint32 => address) public lpList;
 
+    uint32 public inviFees;
+    uint32 public nativeFees;
     uint32 public lpCount;
     uint256 public totalLiquidityNative;
     uint256 public totalLiquidityInvi;
@@ -33,8 +35,8 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
     uint256 public totalRewardInvi;
     uint256 public totalLpScore;
 
-    uint public inviFees;
-    uint public nativeFees;
+
+
 
     //======initializer======//
     /**
@@ -129,7 +131,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @dev Sets the fees in InviTokens for swaps from native token to InviToken.
      * @param _fees The fees in InviTokens.
      */
-    function setInviFees(uint _fees) public onlyOwner {
+    function setInviFees(uint32 _fees) external onlyOwner {
         inviFees = _fees;
     }
 
@@ -137,7 +139,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
      * @dev Sets the fees in native token for swaps from InviToken to native token.
      * @param _fees The fees in native token.
      */
-    function setNativeFees(uint _fees) public onlyOwner {
+    function setNativeFees(uint32 _fees) external onlyOwner {
         nativeFees = _fees;
     }
 
@@ -161,7 +163,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         totalLiquidityNative -= amountOut ;
         totalRewardNative += fees;
         _splitRewards(0, fees);
-        (bool success, ) = msg.sender.call{value: amountOut - fees}("");
+        bool success = payable(msg.sender).send(amountOut - fees);
         require(success, "InviSwapPool: transfer failed");
     
         require(totalLiquidityNative <= address(this).balance + 10, "Test logic");
@@ -251,7 +253,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
 
 
          // Transfer the Native and Invi tokens to the user
-        (bool NativeSuccess, ) = msg.sender.call{value: nativeAmount}("");
+        bool NativeSuccess = payable(msg.sender).send(nativeAmount);
         require(NativeSuccess, "InviSwapPool: Native transfer failed");
         require(inviToken.transfer(msg.sender, inviAmount), "InviSwapPool: Invi transfer failed");
     }
@@ -270,7 +272,7 @@ contract InviSwapPool is Initializable, OwnableUpgradeable {
         if (nativeReward > 0) {
             totalRewardNative -= nativeReward;
             lpRewardNative[msg.sender] = 0;
-            (bool NativeSuccess, ) = msg.sender.call{value: nativeReward}("");
+            bool NativeSuccess = payable(msg.sender).send(nativeReward);
             require(NativeSuccess, "InviSwapPool: Native transfer failed");
         }
     }

@@ -41,7 +41,8 @@ contract StToken is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     function claim(address _requester) external {
         uint _amount = claimableAmount;
         claimableAmount = 0;
-        (bool send, ) = _requester.call{value: _amount}("");
+        
+        bool send = payable(_requester).send(_amount);
         require(send, "Failed to send Ether");
     }
 

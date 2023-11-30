@@ -11,8 +11,8 @@ import {
   leverageStake,
   provideLiquidity,
   splitUnstakedLPP,
-} from "../utils";
-import { getTestAddress } from "../getTestAddress";
+} from "../utils/utils";
+import { getTestAddress } from "../utils/getTestAddress";
 import { deployAll } from "../../scripts/deploy/deployAll";
 import { swapSimulation } from "./swapSimulation";
 
@@ -66,8 +66,8 @@ describe("Swap test", function () {
 
     // provide lp
     const lpAmount: BigNumber = ethers.utils.parseEther("1000");
-    await provideLiquidity(lpPoolContract, LP, lpAmount, nonceLP); // lp stake
-    await provideLiquidity(lpPoolContract, userB, lpAmount, nonceUserB); // lp stake
+    await provideLiquidity(lpPoolContract, LP, lpAmount); // lp stake
+    await provideLiquidity(lpPoolContract, userB, lpAmount); // lp stake
     console.log("provided liquidity LP / userB");
 
     // get inviRewardInterval
