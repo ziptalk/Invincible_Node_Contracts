@@ -4,8 +4,6 @@
 
 - [Introduction](#introduction)
 - [URL](#url)
-- [Wallet Addresses](#walletAddresses)
-- [Contract Addresses](#contractAddresses)
 - [Product Explanation](#productExplanation)
 
 ## Introduction
@@ -17,33 +15,24 @@ sustaining-scalable chain
 # URL
 
 <a id="url"></a>
-https://www.invinciblenode.app/
+Website : https://www.invinciblenode.app/
+GitBook : https://app.gitbook.com/o/DMw9ZD8DKVA7RP1fWgNZ/s/wJE15IsgIm0uyQfaPiB2/
 
-# Wallet Addresses
-
-<a id="walletAddresses"></a>
-|Wallet Name|Address|
-
-# Contract Addresses
-
-<a id="contractAddresses"></a>
-|Contract Name|Address|
-|------|---|
 
 # Product Explanation
 
 <a id="productExplanation"></a>
 
+
 # Tests
 ```shell
+# Check coverage
 npx hardhat coverage
 
-```
-
-<!-- ```shell
-npx hardhat help
+# Test
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-``` -->
+
+# Deploy
+npx hardhat run scripts/deploy.ts --network (network name)
+
+```
